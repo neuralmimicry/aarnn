@@ -10,6 +10,7 @@ if(WIN32)
     set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} ws2_32)
 endif(WIN32)
 
+include_directories(./include)
 
 # the server
 
@@ -20,7 +21,7 @@ SET(server_SRCS
 
 add_executable(aarnnServer ${server_SRCS})
 
-target_link_libraries(server
+target_link_libraries(aarnnServer
                       ${ADDITIONAL_LIBS}
 )
 
@@ -36,9 +37,24 @@ SET(client_SRCS
 
 add_executable(aarnnClient ${client_SRCS})
 
-target_link_libraries(client
+target_link_libraries(aarnnClient
                       ${ADDITIONAL_LIBS}
 )
 
 install(TARGETS aarnnClient DESTINATION bin)
+
+
+# aarnn integrated
+
+SET(aarnn_SRCS
+   src/aarnn.c
+)
+
+add_executable(aarnn ${aarnn_SRCS})
+
+target_link_libraries(aarnn
+                      ${ADDITIONAL_LIBS}
+)
+
+install(TARGETS aarnn DESTINATION bin)
 
