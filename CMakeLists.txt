@@ -10,13 +10,15 @@ if(WIN32)
     set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} ws2_32)
 endif(WIN32)
 
-include_directories(./include)
+include_directories(
+    include
+)
 
 # the server
 
 SET(server_SRCS
-   src/server.c
-   src/msock.c
+    src/server.c
+    src/msock.c
 )
 
 add_executable(aarnnServer ${server_SRCS})
