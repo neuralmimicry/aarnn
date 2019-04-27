@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include "../include/msock.h"
+#include "msock.h"
 
 //static void DieWithError(char* errorMessage)
 //{
