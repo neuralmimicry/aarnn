@@ -1,9 +1,10 @@
 #include <stdio.h>
-#include "new.h"
-#include "Object.h"
+#include <stddef.h>
 #include "Set.h"
+#include "Object.h"
+#include "new.h"
 
-int main ()
+int main (int argc, char* argv[])
 {
     void * s = new(Set);
     void * a = add(s, new(Object));

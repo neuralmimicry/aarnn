@@ -50,6 +50,7 @@ install(TARGETS aarnnClient DESTINATION bin)
 
 SET(aarnn_SRCS
    src/aarnn.c
+   src/Set.c
 )
 
 add_executable(aarnn ${aarnn_SRCS})
