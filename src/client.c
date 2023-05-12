@@ -28,6 +28,7 @@
 #include <string.h>
 #include <time.h>
 #include "msock.h"
+#include "new.h"
 
 #define MULTICAST_SO_RCVBUF 300000
 

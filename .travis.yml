@@ -1,4 +1,4 @@
-language: c
+language: cpp
 dist: trusty
 sudo: required
 
@@ -7,7 +7,7 @@ os:
   - osx
 
 compiler:
-  - gcc
+  - g++
   - clang
 
 # Build steps
