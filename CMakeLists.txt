@@ -8,6 +8,9 @@ set(PostgreSQL_ROOT "/usr/pgsql-15")
 
 find_package(PostgreSQL REQUIRED)
 find_library(PQXX_LIB pqxx HINTS /usr/lib64)
+if(NOT PQXX_LIB)
+    message(FATAL_ERROR "pqxx library not found")
+endif()
 
 # Add the src subdirectory to the include paths
 include_directories(src)
