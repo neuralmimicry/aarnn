@@ -1,63 +1,27 @@
-cmake_minimum_required(VERSION 3.0)
-project(NeuralMimicry LANGUAGES C)
+cmake_minimum_required(VERSION 3.10)
 
-if(UNIX)
-    add_definitions(-DUNIX)
-endif(UNIX)
+project(AARNN)
 
-if(WIN32)
-    add_definitions(-DWIN32)
-    set(ADDITIONAL_LIBS ${ADDITIONAL_LIBS} ws2_32)
-endif(WIN32)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(PostgreSQL_ROOT "/usr/pgsql-15")
 
-include_directories(
-    include
-)
+find_package(PostgreSQL REQUIRED)
+find_library(PQXX_LIB pqxx HINTS /usr/lib64)
 
-# the server
+# Add the src subdirectory to the include paths
+include_directories(src)
+include_directories(include)
+include_directories (${PostgreSQL_INCLUDE_DIR})
+link_directories(${PostgreSQL_LIBRARY_DIR})
 
-SET(server_SRCS
-    src/server.c
-    src/msock.c
-)
+# Add all source files in the src subfolder
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-add_executable(aarnnServer ${server_SRCS})
+# Add the -pthread option for GCC
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+endif()
 
-target_link_libraries(aarnnServer
-                      ${ADDITIONAL_LIBS}
-)
-
-install(TARGETS aarnnServer DESTINATION bin)
-
-
-# the client
-
-SET(client_SRCS
-   src/client.c
-   src/msock.c
-)
-
-add_executable(aarnnClient ${client_SRCS})
-
-target_link_libraries(aarnnClient
-                      ${ADDITIONAL_LIBS}
-)
-
-install(TARGETS aarnnClient DESTINATION bin)
-
-
-# aarnn integrated
-
-SET(aarnn_SRCS
-   src/aarnn.c
-   src/Set.c
-)
-
-add_executable(aarnn ${aarnn_SRCS})
-
-target_link_libraries(aarnn
-                      ${ADDITIONAL_LIBS}
-)
-
-install(TARGETS aarnn DESTINATION bin)
-
+add_executable(AARNN ${SOURCES})
+target_link_libraries(AARNN PRIVATE ${PQXX_LIB} ${PostgreSQL_LIBRARIES})
