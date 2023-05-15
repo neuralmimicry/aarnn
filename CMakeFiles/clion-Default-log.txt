@@ -1,16 +1,4 @@
 /home/pbisaacs/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/231.8770.66/bin/cmake/linux/x64/bin/cmake -DCMAKE_MAKE_PROGRAM=/home/pbisaacs/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/231.8770.66/bin/ninja/linux/x64/ninja -G Ninja -S /home/pbisaacs/Developer/aarnn -B /home/pbisaacs/Developer/aarnn
--- The C compiler identification is GNU 8.5.0
--- The CXX compiler identification is GNU 11.1.0
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/lib64/ccache/cc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/lib64/ccache/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
 CMake Warning (dev) at CMakeLists.txt:9 (find_package):
   Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
   Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy
@@ -23,7 +11,6 @@ CMake Warning (dev) at CMakeLists.txt:9 (find_package):
   For compatibility, CMake is ignoring the variable.
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
--- Found PostgreSQL: /usr/lib64/libpq.so (found version "15.2")  
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/pbisaacs/Developer/aarnn

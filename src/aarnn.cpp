@@ -1,6 +1,9 @@
 /**
- * @file
+ * @file  aarnn.cpp
  * @brief This file contains the implementation of a neuronal network simulation.
+ * @author Paul B. Isaac's
+ * @version 0.1
+ * @date  12-May-2023
  */
 #include <iostream>
 #include <vector>
@@ -17,9 +20,6 @@
 #include <map>
 #include <set>
 #include "aarnn.h"
-
-
-// Function declarations
 
 /**
  * @brief Read configuration files and return a map of key-value pairs.
