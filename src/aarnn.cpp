@@ -13,13 +13,86 @@
 #include <mutex>
 #include <atomic>
 #include <cmath>
+#include <memory>
 #include <pqxx/pqxx>
 #include <stdexcept>
 #include <fstream>
 #include <string>
 #include <map>
 #include <set>
+
+/*!
+ * The VTK_MODULE_INIT is definitely required. Without it NULL is returned to ::New() type calls
+ */
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkRenderingOpenGL2); //! VTK was built with vtkRenderingOpenGL2
+VTK_MODULE_INIT(vtkRenderingFreeType); //!
+VTK_MODULE_INIT(vtkInteractionStyle); //!
+#include <vtkVersion.h>
+#include <vtkActor.h>
+#include <vtkActor2D.h>
+#include <vtkCamera.h>
+#include <vtkCellArray.h>
+#include <vtkCellData.h>
+#include <vtkColorTransferFunction.h>
+#include <vtkContourFilter.h>
+#include <vtkCoordinate.h>
+#include <vtkFloatArray.h>
+#include <vtkMath.h>
+#include <vtkParametricFunctionSource.h>
+#include <vtkPointData.h>
+#include <vtkPoints.h>
+#include <vtkPolygon.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkPolyDataMapper2D.h>
+#include <vtkAppendPolyData.h>
+#include <vtkProgrammableSource.h>
+#include <vtkProperty.h>
+#include <vtkProperty2D.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkReverseSense.h>
+#include <vtkSmartPointer.h>
+#include <vtkSurfaceReconstructionFilter.h>
+#include <vtkTextActor.h>
+#include <vtkTextMapper.h>
+#include <vtkTextProperty.h>
+#include <vtkUnsignedCharArray.h>
+#include <vtkVertexGlyphFilter.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <cmath>
+
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+
+
 #include "aarnn.h"
+
+/*
+Setup VTK environment
+ */
+
+vtkSmartPointer<vtkRenderWindow> render_window;
+vtkSmartPointer<vtkRenderWindowInteractor> render_window_interactor;
+
+vtkSmartPointer<vtkPoints> define_points = vtkSmartPointer<vtkPoints>::New();
+std::vector<vtkSmartPointer<vtkCellArray>> define_cellarrays;
+std::vector<vtkSmartPointer<vtkPolyData>> define_polydata;
+
+std::vector<vtkSmartPointer<vtkSurfaceReconstructionFilter>> define_surfaces;
+std::vector<vtkSmartPointer<vtkContourFilter>> define_contourfilters;
+std::vector<vtkSmartPointer<vtkReverseSense>> define_reversals;
+std::vector<vtkSmartPointer<vtkPolyDataMapper>> define_datamappers;
+std::vector<vtkSmartPointer<vtkPolyDataMapper2D>> define_datamappers2D;
+std::vector<vtkSmartPointer<vtkActor>> define_actors;
+std::vector<vtkSmartPointer<vtkActor2D>> define_actors2D;
+std::vector<vtkSmartPointer<vtkTextActor>> define_textactors;
+
+std::vector<vtkSmartPointer<vtkRenderer>> define_renderers;
+
+static vtkSmartPointer<vtkPolyData> TransformBack(vtkSmartPointer<vtkPoints> pt, vtkSmartPointer<vtkPolyData> pd);
 
 /**
  * @brief Read configuration files and return a map of key-value pairs.
@@ -113,6 +186,15 @@ private:
     std::ofstream log_file;
 };
 
+class Shape3D {
+public:
+    Shape3D() = default;
+    ~Shape3D() = default;
+
+    // Add methods and data members to represent the 3D shape, e.g., vertices, faces, etc.
+    // Use VTK smart pointers for shape representation if needed
+};
+
 // Add a new class to store neuron parameters and access the database
 class NeuronParameters {
 public:
@@ -142,279 +224,523 @@ public:
     Position(double x, double y, double z) : x(x), y(y), z(z) {}
 
     // Function to calculate the Euclidean distance between two positions
-    static double distance(const Position& p1, const Position& p2) {
-        return std::sqrt(std::pow(p1.x - p2.x, 2) +
-                         std::pow(p1.y - p2.y, 2) +
-                         std::pow(p1.z - p2.z, 2));
+    static double distance(const std::shared_ptr<Position>& p1, const std::shared_ptr<Position>& p2) {
+        double diff[3] = { p1->x - p2->x, p1->y - p2->y, p1->z - p2->z };
+        return vtkMath::Norm(diff);
     }
 
     double x, y, z;
+
+    // Function to set the position coordinates
+    void set(double newX, double newY, double newZ) {
+        x = newX;
+        y = newY;
+        z = newZ;
+    }
+
+    // Comparison operator for Position class
+    bool operator==(const Position& other) const {
+        return (this == &other);
+    }
+
 };
 
+using PositionPtr = std::shared_ptr<Position>;
+
 // Neuron component base class
+template <typename PositionType>
 class NeuronComponent {
 public:
-    explicit NeuronComponent(const Position& position) : position(position) {}
+    using PositionPtr = std::shared_ptr<PositionType>;
+
+    explicit NeuronComponent(const PositionPtr& position) : position(position) {}
     virtual ~NeuronComponent() = default;
 
-    [[nodiscard]] const Position& getPosition() const {
+    [[nodiscard]] const PositionPtr& getPosition() const {
         return position;
     }
 
-    // Add other relevant member functions and data members for different components
-    virtual double getPropagationRate() = 0;
+    virtual void receiveStimulation(int8_t stimulation) {
+        // Implement the stimulation logic
+        propagationRate += double((propagationRate * 0.01) * stimulation);
+        // Clamp propagationRate within the range 0.1 to 0.9
+        propagationRate = propagationRate < 0.1 || propagationRate > 0.9 ? 0 : propagationRate;
+    }
 
-private:
-    Position position;
-};
+    virtual double getPropagationRate() {
+        // Implement the calculation based on the synapse properties
+        return propagationRate;
+    }
 
-class Shape3D {
-public:
-    Shape3D() = default;
-    ~Shape3D() = default;
-
-    // Add methods and data members to represent the 3D shape, e.g., vertices, faces, etc.
+protected:
+    PositionPtr position;
+    double propagationRate{0.5};
 };
 
 // Neuron shape component base class
 class NeuronShapeComponent {
 public:
+    using ShapePtr = std::shared_ptr<Shape3D>;
+
     NeuronShapeComponent() = default;
     virtual ~NeuronShapeComponent() = default;
 
-    virtual void setShape(const Shape3D& newShape) { // Change the parameter name to 'newShape'
+    virtual void setShape(const ShapePtr& newShape) {
         this->shape = newShape;
     }
 
-    [[nodiscard]] virtual const Shape3D& getShape() const {
+    [[nodiscard]] virtual const ShapePtr& getShape() const {
         return shape;
     }
 
 private:
-    Shape3D shape{};
+    ShapePtr shape;
 };
 
-// Dendrite Bouton class
-class DendriteBouton : public NeuronComponent, public NeuronShapeComponent {
+/// Synaptic gap class
+class SynapticGap : public std::enable_shared_from_this<SynapticGap>, public NeuronComponent<Position>, public NeuronShapeComponent {
 public:
-    explicit DendriteBouton(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
+    explicit SynapticGap(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+    }
+    ~SynapticGap() override = default;
+    // Method to check if the SynapticGap has been associated
+    bool isAssociated() const {
+        return associated;
+    }
+    // Method to set the SynapticGap as associated
+    void setAsAssociated() {
+        associated = true;
+    }
+
+    void updateFromSynapticBouton(std::shared_ptr<SynapticBouton> parentSynapticBoutonPointer) { parentSynapticBouton = std::move(parentSynapticBoutonPointer); }
+
+    [[nodiscard]] std::shared_ptr<SynapticBouton> getParentSynapticBouton() const { return parentSynapticBouton; }
+
+    void updateFromDendriteBouton(std::shared_ptr<DendriteBouton> parentDendriteBoutonPointer) { parentDendriteBouton = std::move(parentDendriteBoutonPointer); }
+
+    [[nodiscard]] std::shared_ptr<DendriteBouton> getParentDendriteBouton() const { return parentDendriteBouton; }
+
+private:
+    bool associated = false;  // Initially, the SynapticGap is not associated with a DendriteBouton
+    std::shared_ptr<SynapticBouton> parentSynapticBouton;
+    std::shared_ptr<DendriteBouton> parentDendriteBouton;
+};
+
+
+// Dendrite Bouton class
+class DendriteBouton : public std::enable_shared_from_this<DendriteBouton>, public NeuronComponent<Position>, public NeuronShapeComponent {
+public:
+    explicit DendriteBouton(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+    }
     ~DendriteBouton() override = default;
+
+    void connectSynapticGap(const std::shared_ptr<SynapticGap>& gap) {
+        onwardSynapticGap = gap;
+    }
+
+    [[nodiscard]] std::shared_ptr<SynapticGap> getOnwardSynapticGap() const {
+        return onwardSynapticGap;
+    }
 
     double getPropagationRate() override {
         // Implement the calculation based on the dendrite bouton properties
-        return 0;
+        return propagationRate;
     }
+
+    void updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer) { parentDendrite = std::move(parentDendritePointer); }
+
+    [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const { return parentDendrite; }
+
+private:
+    std::shared_ptr<SynapticGap> onwardSynapticGap{};
+    std::shared_ptr<Dendrite> parentDendrite{};
 };
 
 // Dendrite class
-class Dendrite : public NeuronComponent, public NeuronShapeComponent {
+class Dendrite : public std::enable_shared_from_this<Dendrite>, public NeuronComponent<Position>, public NeuronShapeComponent {
 public:
-    explicit Dendrite(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
+    explicit Dendrite(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+        addBouton(std::make_shared<DendriteBouton>(position));
+    }
     ~Dendrite() override = default;
 
-    void addBouton(double position, DendriteBouton* bouton) {
-        boutons.push_back(std::make_pair(position, bouton));
+    void addBranch(double position, std::shared_ptr<DendriteBranch> branch) {
+        branches.emplace_back(branch);
     }
 
-    [[nodiscard]] const std::vector<std::pair<double, DendriteBouton*>>& getBoutons() const {
-        return boutons;
-    }
-
-    double getPropagationRate() override {
-        double rate = 0;
-        for (const auto& pair : boutons) {
-            rate += pair.second->getPropagationRate();
-        }
-        return rate;
-    }
-
-private:
-    std::vector<std::pair<double, DendriteBouton*>> boutons;
-    DendriteBranch* branch;
-};
-
-// Dendrite branch class
-class DendriteBranch : public NeuronComponent, public NeuronShapeComponent {
-public:
-    explicit DendriteBranch(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
-    ~DendriteBranch() override = default;
-
-    void connectDendrites(Dendrite* dendrite1, Dendrite* dendrite2) {
-        onwardDendrites[0] = dendrite1;
-        onwardDendrites[1] = dendrite2;
-    }
-
-    [[nodiscard]] Dendrite* getOnwardDendrite(int index) const {
-        return onwardDendrites[index];
-    }
-
-    double getPropagationRate() override {
-        // Implement the calculation based on the dendrite branch properties
-        return 0;
-    }
-
-private:
-    Dendrite* onwardDendrites[2];
-};
-
-// Soma class
-class Soma : public NeuronComponent, public NeuronShapeComponent {
-public:
-    explicit Soma(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
-    ~Soma() override = default;
-
-    void addDendrite(Dendrite* dendrite) {
-        dendrites.push_back(dendrite);
-    }
-
-    [[nodiscard]] const std::vector<Dendrite*>& getDendrites() const {
-        return dendrites;
-    }
-
-    double getPropagationRate() override {
-        double rate = 0;
-        for (const auto& dendrite : dendrites) {
-            rate += dendrite->getPropagationRate();
-        }
-        return rate;
-    }
-
-private:
-    std::vector<Dendrite*> dendrites;
-};
-
-// Axon branch class
-class AxonBranch : public NeuronComponent, public NeuronShapeComponent {
-public:
-    explicit AxonBranch(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
-    ~AxonBranch() override = default;
-
-    double getPropagationRate() override {
-        // Implement the calculation based on the axon branch properties
-        return 0;
-    }
-};
-
-// Axon class
-class Axon : public NeuronComponent, public NeuronShapeComponent {
-public:
-    explicit Axon(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
-    ~Axon() override = default;
-
-    void addBranch(AxonBranch* branch) {
-        branches.push_back(branch);
-    }
-
-    [[nodiscard]] const std::vector<AxonBranch*>& getBranches() const {
+    [[nodiscard]] const std::vector<std::shared_ptr<DendriteBranch>>& getBranches() const {
         return branches;
     }
 
-    double getPropagationRate() override {
-        double rate = 0;
-        for (const auto& branch : branches) {
-            rate += branch->getPropagationRate();
-        }
-        return rate;
+    void addBouton(std::shared_ptr<DendriteBouton> bouton) {
+        boutons.emplace_back(bouton);
     }
+
+    [[nodiscard]] const std::vector<std::shared_ptr<DendriteBouton>>& getBoutons() const {
+        return boutons;
+    }
+
+    void updateFromDendriteBranch(std::shared_ptr<DendriteBranch> parentDendriteBranchPointer) { parentDendriteBranch = std::move(parentDendriteBranchPointer); }
+
+    [[nodiscard]] std::shared_ptr<DendriteBranch> getParentDendriteBranch() const { return parentDendriteBranch; }
 
 private:
-    std::vector<AxonBranch*> branches;
+    std::vector<std::shared_ptr<DendriteBranch>> branches;
+    std::vector<std::shared_ptr<DendriteBouton>> boutons;
+    std::shared_ptr<DendriteBranch> branch{};
+    std::shared_ptr<DendriteBouton> bouton{};
+    std::shared_ptr<DendriteBranch> parentDendriteBranch{};
 };
 
-// Axon hillock class
-class AxonHillock : public NeuronComponent, public NeuronShapeComponent {
+// Dendrite branch class
+class DendriteBranch : public std::enable_shared_from_this<DendriteBranch>, public NeuronComponent<Position>, public NeuronShapeComponent {
 public:
-    explicit AxonHillock(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
-    ~AxonHillock() override = default;
-
-    double getPropagationRate() override {
-        // Implement the calculation based on the axon hillock properties
-        return 0;
+    explicit DendriteBranch(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+        connectDendrite(std::make_shared<Dendrite>(position));
     }
+    ~DendriteBranch() override = default;
+
+    void connectDendrite(std::shared_ptr<Dendrite> dendrite) {
+        onwardDendrites.emplace_back(dendrite);
+    }
+
+    [[nodiscard]] std::vector<std::shared_ptr<Dendrite>> getOnwardDendrites() const {
+        return onwardDendrites;
+    }
+
+    void updateFromSoma(std::shared_ptr<Soma> parentSomaPointer) { parentSoma = std::move(parentSomaPointer); }
+
+    [[nodiscard]] std::shared_ptr<Soma> getParentSoma() const { return parentSoma; }
+
+    void updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer) { parentDendrite = std::move(parentDendritePointer); }
+
+    [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const { return parentDendrite; }
+
+private:
+    std::vector<std::shared_ptr<Dendrite>> onwardDendrites;
+    std::shared_ptr<Soma> parentSoma;
+    std::shared_ptr<Dendrite> parentDendrite;
 };
 
 // Synaptic bouton class
-class SynapticBouton : public NeuronComponent, public NeuronShapeComponent {
+class SynapticBouton : public std::enable_shared_from_this<SynapticBouton>, public NeuronComponent<Position>, public NeuronShapeComponent {
 public:
-    explicit SynapticBouton(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
+    explicit SynapticBouton(const PositionPtr& position);
     ~SynapticBouton() override = default;
 
-    double getPropagationRate() override {
-        // Implement the calculation based on the synapse properties
-        return 0;
+    void connectSynapticGap(std::shared_ptr<SynapticGap> gap);
+
+    [[nodiscard]] std::shared_ptr<SynapticGap> getOnwardSynapticGap() const {
+        return onwardSynapticGap;
     }
+
+    void setSoma(std::weak_ptr<Soma> soma) {
+        this->soma = soma;
+    }
+
+    void updateFromAxon(std::shared_ptr<Axon> parentAxonPointer) { parentAxon = std::move(parentAxonPointer); }
+
+    [[nodiscard]] std::shared_ptr<Axon> getParentAxon() const { return parentAxon; }
+
+private:
+    std::shared_ptr<SynapticGap> onwardSynapticGap{};
+    std::weak_ptr<Soma> soma;
+    std::shared_ptr<Axon> parentAxon;
 };
 
-// Synaptic gap class
-class SynapticGap : public NeuronComponent, public NeuronShapeComponent {
+// Axon class
+class Axon : public std::enable_shared_from_this<Axon>, public NeuronComponent<Position>, public NeuronShapeComponent {
 public:
-    explicit SynapticGap(const Position& position) : NeuronComponent(position), NeuronShapeComponent() {}
-    ~SynapticGap() override = default;
-
-    double getPropagationRate() override {
-        // Implement the calculation based on the synapse properties
-        return 0;
+    explicit Axon(const PositionPtr& position)
+            : NeuronComponent(position),
+              NeuronShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+        onwardSynapticBouton = std::make_shared<SynapticBouton>(position);
     }
+    ~Axon() override = default;
+
+    void addBranch(std::shared_ptr<AxonBranch> branch) {
+        branches.emplace_back(branch);
+    }
+
+    [[nodiscard]] const std::vector<std::shared_ptr<AxonBranch>>& getBranches() const {
+        return branches;
+    }
+
+    [[nodiscard]] std::shared_ptr<SynapticBouton> getOnwardSynapticBouton() const {
+        return onwardSynapticBouton;
+    }
+
+    void updateFromAxonHillock(std::shared_ptr<AxonHillock> parentAxonHillockPointer) { parentAxonHillock = std::move(parentAxonHillockPointer); }
+
+    [[nodiscard]] std::shared_ptr<AxonHillock> getParentAxonHillock() const { return parentAxonHillock; }
+
+    void updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer) { parentAxonBranch = std::move(parentAxonBranchPointer); }
+
+    [[nodiscard]] std::shared_ptr<AxonBranch> getParentAxonBranch() const { return parentAxonBranch; }
+
+private:
+    std::vector<std::shared_ptr<AxonBranch>> branches;
+    std::shared_ptr<SynapticBouton> onwardSynapticBouton;
+    std::shared_ptr<AxonHillock> parentAxonHillock;
+    std::shared_ptr<AxonBranch> parentAxonBranch;
 };
+
+// Axon branch class
+class AxonBranch : public std::enable_shared_from_this<AxonBranch>, public NeuronComponent<Position>, public NeuronShapeComponent {
+public:
+    explicit AxonBranch(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+        addAxon(std::make_shared<Axon>(position));
+    }
+    ~AxonBranch() override = default;
+
+    void addAxon(std::shared_ptr<Axon> axon) {
+        axons.emplace_back(axon);
+    }
+
+    [[nodiscard]] const std::vector<std::shared_ptr<Axon>>& getAxons() const {
+        return axons;
+    }
+    void updateFromAxon(std::shared_ptr<Axon> parentPointer) { parentAxon = std::move(parentPointer); }
+
+    [[nodiscard]] std::shared_ptr<Axon> getParentAxon() const { return parentAxon; }
+
+private:
+    std::vector<std::shared_ptr<Axon>> axons;
+    std::shared_ptr<Axon> parentAxon;
+};
+
+// Axon hillock class
+class AxonHillock : public std::enable_shared_from_this<AxonHillock>, public NeuronComponent<Position>, public NeuronShapeComponent {
+public:
+    explicit AxonHillock(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+        addAxon(std::make_shared<Axon>(position));
+    }
+    ~AxonHillock() override = default;
+
+    void addAxon(std::shared_ptr<Axon> axon) {
+        onwardAxon = axon;
+    }
+
+    [[nodiscard]] std::shared_ptr<Axon> getOnwardAxon() const {
+        return onwardAxon;
+    }
+
+    void updateFromSoma(std::shared_ptr<Soma> parentPointer) { parentSoma = std::move(parentPointer); }
+
+    [[nodiscard]] std::shared_ptr<Soma> getParentSoma() const { return parentSoma; }
+
+private:
+    std::shared_ptr<Axon> onwardAxon{};
+    std::shared_ptr<Soma> parentSoma;
+};
+
+class Soma : public std::enable_shared_from_this<Soma>, public NeuronComponent<Position>, public NeuronShapeComponent {
+public:
+    explicit Soma(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+        addAxonHillock(std::make_shared<AxonHillock>(position));
+        addDendriteBranch(std::make_shared<DendriteBranch>(position));
+    }
+    ~Soma() override = default;
+
+    void addAxonHillock(std::shared_ptr<AxonHillock> axonHillock) {
+        onwardAxonHillock = std::move(axonHillock);
+    }
+
+    [[nodiscard]] std::shared_ptr<AxonHillock> getOnwardAxonHillock() const {
+        return onwardAxonHillock;
+    }
+
+    void addDendriteBranch(std::shared_ptr<DendriteBranch> dendriteBranch) {
+        dendriteBranches.emplace_back(std::move(dendriteBranch));
+    }
+
+    [[nodiscard]] const std::vector<std::shared_ptr<DendriteBranch>>& getDendriteBranches() const {
+        return dendriteBranches;
+    }
+
+    void addSynapticGap(std::shared_ptr<SynapticGap> synapticGap) {
+        synapticGaps.emplace_back(std::move(synapticGap));
+    }
+
+    [[nodiscard]] const std::vector<std::shared_ptr<SynapticGap>>& getSynapticGaps() const {
+        return synapticGaps;
+    }
+
+    void updateFromNeuron(std::shared_ptr<Neuron> parentPointer) { parentNeuron = std::move(parentPointer); }
+
+    [[nodiscard]] std::shared_ptr<Neuron> getParentNeuron() const { return parentNeuron; }
+
+private:
+    std::vector<std::shared_ptr<SynapticGap>> synapticGaps;
+    std::vector<std::shared_ptr<DendriteBranch>> dendriteBranches;
+    std::shared_ptr<AxonHillock> onwardAxonHillock{};
+    std::shared_ptr<Neuron> parentNeuron{};
+};
+
+// Now that Soma is fully defined, we can define the member functions of SynapticBouton that use it
+SynapticBouton::SynapticBouton(const PositionPtr& position)
+        : NeuronComponent(position), NeuronShapeComponent()
+{
+    // On construction set a default propagation rate
+    propagationRate = 0.5;
+    connectSynapticGap(std::make_shared<SynapticGap>(position));
+}
+
+void SynapticBouton::connectSynapticGap(std::shared_ptr<SynapticGap> gap)
+{
+    onwardSynapticGap = std::move(gap);
+    if (auto spt = soma.lock()) { // has to check if the shared_ptr is still valid
+        spt->addSynapticGap(onwardSynapticGap);
+    }
+}
 
 /**
  * @brief Neuron class representing a neuron in the simulation.
  */
-class Neuron {
+class Neuron : public std::enable_shared_from_this<Neuron>, public NeuronComponent<Position>, public NeuronShapeComponent {
 public:
-    /**
-     * @brief Construct a new Neuron object.
-     * @param dendrite Pointer to the Dendrite object of the neuron.
-     * @param soma Pointer to the Soma object of the neuron.
-     * @param axonHillock Pointer to the AxonHillock object of the neuron.
-     * @param axon Pointer to the Axon object of the neuron.
-     */
-    Neuron(Dendrite* dendrite, Soma* soma, AxonHillock* axonHillock, Axon* axon)
-        : dendrite(dendrite), soma(soma), axonHillock(axonHillock), axon(axon) {}
-
+    explicit Neuron(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
+        /**
+         * @brief Construct a new Neuron object.
+         * @param soma Shared pointer to the Soma object of the neuron.
+         */
+        soma = std::make_shared<Soma>(position);
+        registerSomaChild(soma);
+    }
     /**
      * @brief Destroy the Neuron object.
      */
     ~Neuron() = default;
 
+    void registerSomaChild(std::shared_ptr<Soma> somaChild) {
+        somaChildren.emplace_back(somaChild);
+    }
+
+    void updateSomaChildren() {
+        for (std::shared_ptr<Soma> somaChild : somaChildren) {
+            somaChild->updateFromNeuron(shared_from_this());
+        }
+    }
+
     /**
      * @brief Getter function for the soma of the neuron.
-     * @return Pointer to the Soma object of the neuron.
+     * @return Shared pointer to the Soma object of the neuron.
      */
-    Soma* getSoma() {
+    std::shared_ptr<Soma> getSoma() {
         return soma;
     }
 
-    /**
-     * @brief Getter function for the axon hillock of the neuron.
-     * @return Pointer to the AxonHillock object of the neuron.
-     */
-    AxonHillock* getAxonHillock() {
-        return axonHillock;
+    std::shared_ptr<SynapticGap> findSynapticGap(const PositionPtr& positionPtr) {
+        // Follow the route of soma, axon hillock, axon, synaptic bouton, until reaching the synaptic gap
+
+        // Get the onward axon hillock from the soma
+        std::shared_ptr<AxonHillock> onwardAxonHillock = soma->getOnwardAxonHillock();
+        if (!onwardAxonHillock) {
+            return nullptr;
+        }
+
+        // Get the onward axon from the axon hillock
+        std::shared_ptr<Axon> onwardAxon = onwardAxonHillock->getOnwardAxon();
+        if (!onwardAxon) {
+            return nullptr;
+        }
+
+        // Recursively traverse the onward axons and their synaptic boutons
+        std::shared_ptr<SynapticGap> gap = traverseAxons(onwardAxon, positionPtr);
+        return gap;
     }
 
-    /**
-     * @brief Getter function for the axon of the neuron.
-     * @return Pointer to the Axon object of the neuron.
-     */
-    Axon* getAxon() {
-        return axon;
+    void storeAllSynapticGaps() {
+        // Clear the synapticGaps vector before traversing
+        synapticGaps.clear();
+
+        // Get the onward axon hillock from the soma
+        std::shared_ptr<AxonHillock> onwardAxonHillock = soma->getOnwardAxonHillock();
+        if (!onwardAxonHillock) {
+            return;
+        }
+
+        // Get the onward axon from the axon hillock
+        std::shared_ptr<Axon> onwardAxon = onwardAxonHillock->getOnwardAxon();
+        if (!onwardAxon) {
+            return;
+        }
+
+        // Recursively traverse the onward axons and their synaptic boutons to store all synaptic gaps
+        traverseAxonsForStorage(onwardAxon);
     }
 
-    /**
-     * @brief Getter function for the dendrite of the neuron.
-     * @return Pointer to the Dendrite object of the neuron.
-     */
-    Dendrite* getDendrite() {
-        return dendrite;
+    [[nodiscard]] const std::vector<std::shared_ptr<SynapticGap>>& getSynapticGaps() const {
+        return synapticGaps;
     }
 
 private:
-    Soma* soma;
-    AxonHillock* axonHillock;
-    Axon* axon;
-    Dendrite* dendrite;
+    std::shared_ptr<Soma> soma;
+    std::vector<std::shared_ptr<SynapticGap>> synapticGaps;
+    std::vector<std::shared_ptr<Soma>> somaChildren;
+
+    // Helper function to recursively traverse the axons and find the synaptic gap
+    std::shared_ptr<SynapticGap> traverseAxons(std::shared_ptr<Axon> axon, const PositionPtr* positionPtr) {
+        // Check if the current axon's bouton has a gap using the same position pointer
+        std::shared_ptr<SynapticBouton> bouton = axon->getOnwardSynapticBouton();
+        if (bouton) {
+            std::shared_ptr<SynapticGap> gap = bouton->getOnwardSynapticGap();
+            if (gap->getPosition() == positionPtr) {
+                return gap;
+            }
+        }
+
+        // Recursively traverse the axon's branches and onward axons
+        const std::vector<std::shared_ptr<AxonBranch>>& branches = axon->getBranches();
+        for (const auto& branch : branches) {
+            const std::vector<std::shared_ptr<Axon>>& onwardAxons = branch->getAxons();
+            for (const auto& onwardAxon : onwardAxons) {
+                std::shared_ptr<SynapticGap> gap = traverseAxons(onwardAxon, positionPtr);
+                if (gap) {
+                    return gap;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    // Helper function to recursively traverse the axons and store all synaptic gaps
+    void traverseAxonsForStorage(std::shared_ptr<Axon> axon) {
+        // Check if the current axon's bouton has a gap and store it
+        std::shared_ptr<SynapticBouton> bouton = axon->getOnwardSynapticBouton();
+        if (bouton) {
+            std::shared_ptr<SynapticGap> gap = bouton->getOnwardSynapticGap();
+            synapticGaps.emplace_back(gap);
+        }
+
+        // Recursively traverse the axon's branches and onward axons
+        const std::vector<std::shared_ptr<AxonBranch>>& branches = axon->getBranches();
+        for (const auto& branch : branches) {
+            const std::vector<std::shared_ptr<Axon>>& onwardAxons = branch->getAxons();
+            for (const auto& onwardAxon : onwardAxons) {
+                traverseAxonsForStorage(onwardAxon);
+            }
+        }
+    }
 };
+
 
 // Global variables
 std::atomic<double> totalPropagationRate(0.0);
@@ -424,16 +750,35 @@ std::mutex mtx;
  * @brief Compute the propagation rate of a neuron.
  * @param neuron Pointer to the Neuron object for which the propagation rate is to be calculated.
  */
-void computePropagationRate(Neuron* neuron) {
-    double propagationRate = neuron->getDendrite()->getPropagationRate() +
-                             neuron->getSoma()->getPropagationRate() +
-                             neuron->getAxonHillock()->getPropagationRate() +
-                             neuron->getAxon()->getPropagationRate();
+void computePropagationRate(std::shared_ptr<Neuron> neuron) {
+    // Get the propagation rate of the neuron from the DendriteBouton to the SynapticGap
+    double propagationRate = neuron->getSoma()->getPropagationRate();
 
     // Lock the mutex to safely update the totalPropagationRate
     {
         std::lock_guard<std::mutex> lock(mtx);
         totalPropagationRate = totalPropagationRate + propagationRate;
+    }
+}
+
+void associateSynapticGap(Neuron& neuron1, Neuron& neuron2, double proximityThreshold) {
+    // Iterate over all SynapticGaps in neuron1
+    for (auto& gap : neuron1.getSoma()->getSynapticGaps()) {
+        // If the bouton has a synaptic gap, and it is not associated yet
+        if (gap && !gap->isAssociated()) {
+            // Iterate over all DendriteBoutons in neuron2
+            for (auto& dendriteBouton : neuron2.getSoma()->getDendriteBoutons()) {
+                // If the distance between the bouton and the dendriteBouton is below the proximity threshold
+                if (gap->getPosition().distanceTo(dendriteBouton->getPosition()) < proximityThreshold) {
+                    // Associate the synaptic gap with the dendriteBouton
+                    dendriteBouton->connectSynapticGap(gap);
+                    // Set the SynapticGap as associated
+                    gap->setAsAssociated();
+                    // No need to check other DendriteBoutons once the gap is associated
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -469,6 +814,34 @@ void initialize_database(pqxx::connection& conn) {
     }
 }
 
+void addPositionsToPolyData(std::shared_ptr<DendriteBranch> dendriteBranch, vtkSmartPointer<vtkPoints> define_points, vtkSmartPointer<vtkIdList> point_ids) {
+    // Add the position of the dendrite branch to vtkPolyData
+    PositionPtr branchPosition = dendriteBranch->getPosition();
+    point_ids->InsertNextId(define_points->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
+
+    // Iterate over the dendrites and add their positions to vtkPolyData
+    const std::vector<std::shared_ptr<Dendrite>> &dendrites = dendriteBranch->getOnwardDendrites();
+    for (const auto &dendrite: dendrites) {
+        PositionPtr dendritePosition = dendrite->getPosition();
+        point_ids->InsertNextId(define_points->InsertNextPoint(dendritePosition->x, dendritePosition->y,
+                                                               dendritePosition->z));
+
+        // Iterate over the dendrite boutons and add their positions to vtkPolyData
+        const std::vector<std::shared_ptr<DendriteBouton>> &boutons = dendrite->getBoutons();
+        for (const auto &bouton: boutons) {
+            PositionPtr boutonPosition = bouton->getPosition();
+            point_ids->InsertNextId(define_points->InsertNextPoint(boutonPosition->x, boutonPosition->y,
+                                                                   boutonPosition->z));
+        }
+
+        // Recursively process child dendrite branches
+        const std::vector<std::shared_ptr<DendriteBranch>> &childBranches = dendrite->getBranches();
+        for (const auto &childBranch: childBranches) {
+            addPositionsToPolyData(childBranch, define_points, point_ids);
+        }
+    }
+}
+
 /**
  * @brief Main function to initialize, run, and finalize the neuron network simulation.
  * @return int Status code (0 for success, non-zero for failures).
@@ -476,6 +849,21 @@ void initialize_database(pqxx::connection& conn) {
 int main() {
     // Initialize logger
     Logger logger("errors.log");
+
+    // Initialize VTK
+    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+    render_window = vtkSmartPointer<vtkRenderWindow>::New();
+    render_window->AddRenderer(renderer);
+    render_window_interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    render_window_interactor->SetRenderWindow(render_window);
+
+    // Create a vtkPolyData object to hold the neuron positions
+    vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+    polydata->SetPoints(define_points);
+
+    // Create a vtkCellArray object to hold the lines
+    vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+
 
     try {
         // Read the database connection configuration and simulation configuration
@@ -499,41 +887,33 @@ int main() {
 
         // Create a single instance of NeuronParameters to access the database
         NeuronParameters params;
+        double proximityThreshold = std::stod(config["proximity_threshold"]);
 
         // Create shared instances of neuron components
-        Dendrite sharedDendrite(Position(0, 0, 0));
-        Soma sharedSoma(Position(0, 0, 0));
-        AxonHillock sharedAxonHillock(Position(0, 0, 0));
-        Axon sharedAxon(Position(0, 0, 0));
+        PositionPtr sharedNeuronPosition = std::make_shared<Position>(0, 0, 0);
 
         // Create a list of neurons
-        std::vector<Neuron*> neurons;
+        std::vector<std::shared_ptr<Neuron>> neurons;
         neurons.reserve(num_neurons);
         for (int i = 0; i < num_neurons; ++i) {
-            neurons.push_back(new Neuron(&sharedDendrite, &sharedSoma, &sharedAxonHillock, &sharedAxon));
+            neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(0, 0, 0)));
         }
 
-        // Add multiple dendrite branches and axon branches to the neurons
-        for (Neuron* neuron : neurons) {
-        // Add dendrite branches to the dendrite
-        for (int i = 0; i < 3; ++i) {
-        auto* dendriteBranch = new DendriteBranch(Position(0, 0, 0));
-        neuron->getDendrite()->addBranch(dendriteBranch);
+        // After all neurons have been created...
+        for (size_t i = 0; i < neurons.size(); ++i) {
+            for (size_t j = i + 1; j < neurons.size(); ++j) {
+                associateSynapticGap(*neurons[i], *neurons[j], proximityThreshold);
+            }
         }
-        // Add axon branches to the axon
-        for (int i = 0; i < 3; ++i) {
-            auto* axonBranch = new AxonBranch(Position(0, 0, 0));
-            neuron->getAxon()->addBranch(axonBranch);
-        }
-    }
 
         // Calculate the propagation rate in parallel
         std::vector<std::thread> threads;
         threads.reserve(neurons.size());  // Pre-allocate the capacity before the loop
 
-        for (Neuron* neuron : neurons) {
-            threads.emplace_back(computePropagationRate, neuron);
+        for (auto& neuron : neurons) {
+            threads.emplace_back([=](){ computePropagationRate(neuron); });
         }
+
         // Join the threads
         for (std::thread& t : threads) {
             t.join();
@@ -554,20 +934,43 @@ int main() {
                 throw std::runtime_error("The propagation rate is not valid. Skipping database insertion.");
             }
 
-    // Clean up memory
-        for (Neuron* neuron : neurons) {
-            // Delete dendrite branches
-            for (DendriteBranch* branch : neuron->getDendrite()->getBranches()) {
-                delete branch;
+        // Iterate over the neurons and add their positions to the vtkPolyData
+        for (const auto& neuron : neurons) {
+            const PositionPtr& neuronPosition = neuron->getPosition();
+
+            // Create a vtkIdList to hold the point indices of the line vertices
+            vtkSmartPointer<vtkIdList> point_ids = vtkSmartPointer<vtkIdList>::New();
+            point_ids->InsertNextId(define_points->InsertNextPoint(neuronPosition->x, neuronPosition->y, neuronPosition->z));
+
+            const PositionPtr& somaPosition = neuron->getSoma()->getPosition();
+            point_ids->InsertNextId(define_points->InsertNextPoint(somaPosition->x, somaPosition->y, somaPosition->z));
+
+            const PositionPtr& axonHillockPosition = neuron->getSoma()->getOnwardAxonHillock()->getPosition();
+            point_ids->InsertNextId(define_points->InsertNextPoint(axonHillockPosition->x, axonHillockPosition->y, axonHillockPosition->z));
+
+            // Iterate over the dendrite branches and add their positions to the vtkPolyData
+            const std::vector<std::shared_ptr<DendriteBranch>>& dendriteBranches = neuron->getSoma()->getDendriteBranches();
+            for (const auto& dendriteBranch : dendriteBranches) {
+                addPositionsToPolyData(dendriteBranch, define_points, point_ids);
             }
 
-            // Delete axon branches
-            for (AxonBranch* branch : neuron->getAxon()->getBranches()) {
-                delete branch;
-            }
-
-            delete neuron;
+            // Add the line to the cell array
+            lines->InsertNextCell(point_ids);
         }
+
+        // Add the cell array to the vtkPolyData
+        polydata->SetLines(lines);
+
+        // Create a mapper and actor for the neuron positions
+        vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        mapper->SetInputData(polydata);
+        vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+        actor->SetMapper(mapper);
+        renderer->AddActor(actor);
+
+        // Set up the render window and start the interaction
+        render_window->Render();
+        render_window_interactor->Start();
 
     } catch (const std::exception &e) {
         logger << "Error: " << e.what() << std::endl;
