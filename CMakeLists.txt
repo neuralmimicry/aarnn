@@ -11,11 +11,16 @@ find_library(PQXX_LIB pqxx HINTS /usr/lib64)
 if(NOT PQXX_LIB)
     message(FATAL_ERROR "pqxx library not found")
 endif()
+find_package(VTK REQUIRED)
+if(NOT VTK_FOUND)
+    message(FATAL_ERROR "VTK library not found")
+endif()
 
 # Add the src subdirectory to the include paths
 include_directories(src)
 include_directories(include)
 include_directories (${PostgreSQL_INCLUDE_DIR})
+include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
 link_directories(${PostgreSQL_LIBRARY_DIR})
 
 # Add all source files in the src subfolder
@@ -27,4 +32,4 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 add_executable(AARNN ${SOURCES})
-target_link_libraries(AARNN PRIVATE ${PQXX_LIB} ${PostgreSQL_LIBRARIES})
+target_link_libraries(AARNN PRIVATE ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES})  # Link VTK libraries
