@@ -1046,7 +1046,7 @@ int main() {
             // Add any additional functionality for virtual volume constraint and relaxation here
             // Save the propagation rate to the database if it's valid (not null)
             if (propagationRate != 0) {
-                std::string query = "INSERT INTO neurons (propagation_rate) VALUES (" + std::to_string(propagationRate) + ")";
+                std::string query = "INSERT INTO neurons (propagation_rate, neuron_type, axon_length) VALUES (" + std::to_string(propagationRate) + ", 0, 0)";
                 txn.exec(query);
                 txn.commit();
             } else {
