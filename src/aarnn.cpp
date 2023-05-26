@@ -18,6 +18,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <string>
+#include <tuple>
 #include <map>
 #include <set>
 
@@ -67,8 +68,9 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
-
 #include "aarnn.h"
+#include "dendrite.h"
+#include "dendritebranch.h"
 
 /*
 Setup VTK environment
@@ -116,6 +118,36 @@ static vtkSmartPointer<vtkPolyData> TransformBack(vtkSmartPointer<vtkPoints> pt,
     }
 
     return config;
+}
+
+std::tuple<double, double, double> get_coordinates(int i, int total_points, int points_per_layer) {
+    const double golden_angle = M_PI * (3 - std::sqrt(5)); // golden angle in radians
+
+    // calculate the layer and index in layer based on i
+    int layer = i / points_per_layer;
+    int index_in_layer = i % points_per_layer;
+
+    // normalize radial distance based on layer number
+    double r = (double)(layer + 1) / (total_points / points_per_layer);
+
+    // azimuthal angle based on golden angle
+    double theta = golden_angle * index_in_layer;
+
+    // height y is a function of layer
+    double y = 1 - (double)(layer) / (total_points / points_per_layer - 1);
+
+    // radius at y
+    double radius = std::sqrt(1 - y*y);
+
+    // polar angle evenly distributed
+    double phi = 2 * M_PI * (double)(index_in_layer) / points_per_layer;
+
+    // Convert spherical coordinates to Cartesian coordinates
+    double x = r * radius * std::cos(theta);
+    y = r * y;
+    double z = r * radius * std::sin(theta);
+
+    return std::make_tuple(x, y, z);
 }
 
 /**
@@ -223,19 +255,23 @@ class Position {
 public:
     Position(double x, double y, double z) : x(x), y(y), z(z) {}
 
+    double x, y, z;
+
     // Function to calculate the Euclidean distance between two positions
-    static double distance(const std::shared_ptr<Position>& p1, const std::shared_ptr<Position>& p2) {
-        double diff[3] = { p1->x - p2->x, p1->y - p2->y, p1->z - p2->z };
+    double distanceTo(const Position& other) const {
+        double diff[3] = { x - other.x, y - other.y, z - other.z };
         return vtkMath::Norm(diff);
     }
-
-    double x, y, z;
 
     // Function to set the position coordinates
     void set(double newX, double newY, double newZ) {
         x = newX;
         y = newY;
         z = newZ;
+    }
+
+    [[nodiscard]] std::array<double, 3> get() const {
+        return {x, y, z};
     }
 
     // Comparison operator for Position class
@@ -351,6 +387,11 @@ public:
         return propagationRate;
     }
 
+    Position updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+        return *position;
+    }
+
     void updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer) { parentDendrite = std::move(parentDendritePointer); }
 
     [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const { return parentDendrite; }
@@ -366,19 +407,25 @@ public:
     explicit Dendrite(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
         // On construction set a default propagation rate
         propagationRate = 0.5;
-        addBouton(std::make_shared<DendriteBouton>(position));
+        addBouton(std::make_shared<DendriteBouton>(std::make_shared<Position>(position->x, position->y, position->z)));
     }
     ~Dendrite() override = default;
 
-    void addBranch(double position, std::shared_ptr<DendriteBranch> branch) {
-        branches.emplace_back(branch);
-    }
+    void addBranch(std::shared_ptr<DendriteBranch> branch);
 
     [[nodiscard]] const std::vector<std::shared_ptr<DendriteBranch>>& getBranches() const {
         return branches;
     }
 
     void addBouton(std::shared_ptr<DendriteBouton> bouton) {
+        auto coords = get_coordinates(int (boutons.size() + 1), int(boutons.size() + 1), int(5));
+        PositionPtr currentPosition = bouton->getPosition();
+        double x = std::get<0>(coords) + currentPosition->x;
+        double y = std::get<1>(coords) + currentPosition->y;
+        double z = std::get<2>(coords) + currentPosition->z;
+        currentPosition->x = x;
+        currentPosition->y = y;
+        currentPosition->z = z;
         boutons.emplace_back(bouton);
     }
 
@@ -404,11 +451,19 @@ public:
     explicit DendriteBranch(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
         // On construction set a default propagation rate
         propagationRate = 0.5;
-        connectDendrite(std::make_shared<Dendrite>(position));
+        connectDendrite(std::make_shared<Dendrite>(std::make_shared<Position>(position->x, position->y, position->z)));
     }
     ~DendriteBranch() override = default;
 
     void connectDendrite(std::shared_ptr<Dendrite> dendrite) {
+        auto coords = get_coordinates(int (onwardDendrites.size() + 1), int(onwardDendrites.size() + 1), int(5));
+        PositionPtr currentPosition = dendrite->getPosition();
+        double x = std::get<0>(coords) + currentPosition->x;
+        double y = std::get<1>(coords) + currentPosition->y;
+        double z = std::get<2>(coords) + currentPosition->z;
+        currentPosition->x = x;
+        currentPosition->y = y;
+        currentPosition->z = z;
         onwardDendrites.emplace_back(dendrite);
     }
 
@@ -430,6 +485,18 @@ private:
     std::shared_ptr<Dendrite> parentDendrite;
 };
 
+void Dendrite::addBranch(std::shared_ptr<DendriteBranch> branch) {
+    auto coords = get_coordinates(int (branches.size() + 1), int(branches.size() + 1), int(5));
+    PositionPtr currentPosition = branch->getPosition();
+    double x = std::get<0>(coords) + currentPosition->x;
+    double y = std::get<1>(coords) + currentPosition->y;
+    double z = std::get<2>(coords) + currentPosition->z;
+    currentPosition->x = x;
+    currentPosition->y = y;
+    currentPosition->z = z;
+    branches.emplace_back(branch);
+}
+
 // Synaptic bouton class
 class SynapticBouton : public std::enable_shared_from_this<SynapticBouton>, public NeuronComponent<Position>, public NeuronShapeComponent {
 public:
@@ -442,8 +509,8 @@ public:
         return onwardSynapticGap;
     }
 
-    void setSoma(std::weak_ptr<Soma> soma) {
-        this->soma = soma;
+    void setNeuron(std::weak_ptr<Neuron> neuron) {
+        this->neuron = neuron;
     }
 
     void updateFromAxon(std::shared_ptr<Axon> parentAxonPointer) { parentAxon = std::move(parentAxonPointer); }
@@ -452,7 +519,7 @@ public:
 
 private:
     std::shared_ptr<SynapticGap> onwardSynapticGap{};
-    std::weak_ptr<Soma> soma;
+    std::weak_ptr<Neuron> neuron;
     std::shared_ptr<Axon> parentAxon;
 };
 
@@ -464,13 +531,11 @@ public:
               NeuronShapeComponent() {
         // On construction set a default propagation rate
         propagationRate = 0.5;
-        onwardSynapticBouton = std::make_shared<SynapticBouton>(position);
+        onwardSynapticBouton = std::make_shared<SynapticBouton>(std::make_shared<Position>(position->x, position->y, position->z));
     }
     ~Axon() override = default;
 
-    void addBranch(std::shared_ptr<AxonBranch> branch) {
-        branches.emplace_back(branch);
-    }
+    void addBranch(std::shared_ptr<AxonBranch> branch);
 
     [[nodiscard]] const std::vector<std::shared_ptr<AxonBranch>>& getBranches() const {
         return branches;
@@ -501,11 +566,19 @@ public:
     explicit AxonBranch(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
         // On construction set a default propagation rate
         propagationRate = 0.5;
-        addAxon(std::make_shared<Axon>(position));
+        addAxon(std::make_shared<Axon>(std::make_shared<Position>(position->x, position->y, position->z)));
     }
     ~AxonBranch() override = default;
 
     void addAxon(std::shared_ptr<Axon> axon) {
+        auto coords = get_coordinates(int (axons.size() + 1), int(axons.size() + 1), int(5));
+        PositionPtr currentPosition = axon->getPosition();
+        double x = std::get<0>(coords) + currentPosition->x;
+        double y = std::get<1>(coords) + currentPosition->y;
+        double z = std::get<2>(coords) + currentPosition->z;
+        currentPosition->x = x;
+        currentPosition->y = y;
+        currentPosition->z = z;
         axons.emplace_back(axon);
     }
 
@@ -521,17 +594,38 @@ private:
     std::shared_ptr<Axon> parentAxon;
 };
 
+void Axon::addBranch(std::shared_ptr<AxonBranch> branch) {
+    auto coords = get_coordinates(int (branches.size() + 1), int(branches.size() + 1), int(5));
+    PositionPtr currentPosition = branch->getPosition();
+    double x = std::get<0>(coords) + currentPosition->x;
+    double y = std::get<1>(coords) + currentPosition->y;
+    double z = std::get<2>(coords) + currentPosition->z;
+    currentPosition->x = x;
+    currentPosition->y = y;
+    currentPosition->z = z;
+    branches.emplace_back(branch);
+}
+
+
 // Axon hillock class
 class AxonHillock : public std::enable_shared_from_this<AxonHillock>, public NeuronComponent<Position>, public NeuronShapeComponent {
 public:
     explicit AxonHillock(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
         // On construction set a default propagation rate
         propagationRate = 0.5;
-        addAxon(std::make_shared<Axon>(position));
+        addAxon(std::make_shared<Axon>(std::make_shared<Position>(position->x, position->y, position->z)));
     }
     ~AxonHillock() override = default;
 
     void addAxon(std::shared_ptr<Axon> axon) {
+        auto coords = get_coordinates(int (1), int(1), int(5));
+        PositionPtr currentPosition = axon->getPosition();
+        double x = std::get<0>(coords) + currentPosition->x;
+        double y = std::get<1>(coords) + currentPosition->y;
+        double z = std::get<2>(coords) + currentPosition->z;
+        currentPosition->x = x;
+        currentPosition->y = y;
+        currentPosition->z = z;
         onwardAxon = axon;
     }
 
@@ -553,12 +647,20 @@ public:
     explicit Soma(const PositionPtr& position) : NeuronComponent(position), NeuronShapeComponent() {
         // On construction set a default propagation rate
         propagationRate = 0.5;
-        addAxonHillock(std::make_shared<AxonHillock>(position));
-        addDendriteBranch(std::make_shared<DendriteBranch>(position));
+        addAxonHillock(std::make_shared<AxonHillock>(std::make_shared<Position>(position->x, position->y, position->z)));
+        addDendriteBranch(std::make_shared<DendriteBranch>(std::make_shared<Position>(position->x, position->y, position->z)));
     }
     ~Soma() override = default;
 
     void addAxonHillock(std::shared_ptr<AxonHillock> axonHillock) {
+        auto coords = get_coordinates(int (1), int(1), int(5));
+        PositionPtr currentPosition = axonHillock->getPosition();
+        double x = std::get<0>(coords) + currentPosition->x;
+        double y = std::get<1>(coords) + currentPosition->y;
+        double z = std::get<2>(coords) + currentPosition->z;
+        currentPosition->x = x;
+        currentPosition->y = y;
+        currentPosition->z = z;
         onwardAxonHillock = std::move(axonHillock);
     }
 
@@ -567,19 +669,19 @@ public:
     }
 
     void addDendriteBranch(std::shared_ptr<DendriteBranch> dendriteBranch) {
+        auto coords = get_coordinates(int (dendriteBranches.size() + 1), int(dendriteBranches.size() + 1), int(5));
+        PositionPtr currentPosition = dendriteBranch->getPosition();
+        double x = std::get<0>(coords) + currentPosition->x;
+        double y = std::get<1>(coords) + currentPosition->y;
+        double z = std::get<2>(coords) + currentPosition->z;
+        currentPosition->x = x;
+        currentPosition->y = y;
+        currentPosition->z = z;
         dendriteBranches.emplace_back(std::move(dendriteBranch));
     }
 
     [[nodiscard]] const std::vector<std::shared_ptr<DendriteBranch>>& getDendriteBranches() const {
         return dendriteBranches;
-    }
-
-    void addSynapticGap(std::shared_ptr<SynapticGap> synapticGap) {
-        synapticGaps.emplace_back(std::move(synapticGap));
-    }
-
-    [[nodiscard]] const std::vector<std::shared_ptr<SynapticGap>>& getSynapticGaps() const {
-        return synapticGaps;
     }
 
     void updateFromNeuron(std::shared_ptr<Neuron> parentPointer) { parentNeuron = std::move(parentPointer); }
@@ -599,15 +701,7 @@ SynapticBouton::SynapticBouton(const PositionPtr& position)
 {
     // On construction set a default propagation rate
     propagationRate = 0.5;
-    connectSynapticGap(std::make_shared<SynapticGap>(position));
-}
-
-void SynapticBouton::connectSynapticGap(std::shared_ptr<SynapticGap> gap)
-{
-    onwardSynapticGap = std::move(gap);
-    if (auto spt = soma.lock()) { // has to check if the shared_ptr is still valid
-        spt->addSynapticGap(onwardSynapticGap);
-    }
+    connectSynapticGap(std::make_shared<SynapticGap>(std::make_shared<Position>(position->x, position->y, position->z)));
 }
 
 /**
@@ -620,7 +714,8 @@ public:
          * @brief Construct a new Neuron object.
          * @param soma Shared pointer to the Soma object of the neuron.
          */
-        soma = std::make_shared<Soma>(position);
+        soma = std::make_shared<Soma>(std::make_shared<Position>(position->x, position->y, position->z));
+
         registerSomaChild(soma);
     }
     /**
@@ -686,17 +781,30 @@ public:
         traverseAxonsForStorage(onwardAxon);
     }
 
+    void addSynapticGap(std::shared_ptr<SynapticGap> synapticGap) {
+        synapticGaps.emplace_back(std::move(synapticGap));
+    }
+
     [[nodiscard]] const std::vector<std::shared_ptr<SynapticGap>>& getSynapticGaps() const {
         return synapticGaps;
+    }
+
+    void addDendriteBouton(std::shared_ptr<DendriteBouton> dendriteBouton) {
+        dendriteBoutons.emplace_back(std::move(dendriteBouton));
+    }
+
+    [[nodiscard]] const std::vector<std::shared_ptr<DendriteBouton>>& getDendriteBoutons() const {
+        return dendriteBoutons;
     }
 
 private:
     std::shared_ptr<Soma> soma;
     std::vector<std::shared_ptr<SynapticGap>> synapticGaps;
+    std::vector<std::shared_ptr<DendriteBouton>> dendriteBoutons;
     std::vector<std::shared_ptr<Soma>> somaChildren;
 
     // Helper function to recursively traverse the axons and find the synaptic gap
-    std::shared_ptr<SynapticGap> traverseAxons(std::shared_ptr<Axon> axon, const PositionPtr* positionPtr) {
+    std::shared_ptr<SynapticGap> traverseAxons(std::shared_ptr<Axon> axon, const PositionPtr& positionPtr) {
         // Check if the current axon's bouton has a gap using the same position pointer
         std::shared_ptr<SynapticBouton> bouton = axon->getOnwardSynapticBouton();
         if (bouton) {
@@ -741,6 +849,14 @@ private:
     }
 };
 
+void SynapticBouton::connectSynapticGap(std::shared_ptr<SynapticGap> gap)
+{
+    onwardSynapticGap = std::move(gap);
+    if (auto spt = neuron.lock()) { // has to check if the shared_ptr is still valid
+        spt->addSynapticGap(onwardSynapticGap);
+    }
+}
+
 
 // Global variables
 std::atomic<double> totalPropagationRate(0.0);
@@ -763,13 +879,13 @@ void computePropagationRate(std::shared_ptr<Neuron> neuron) {
 
 void associateSynapticGap(Neuron& neuron1, Neuron& neuron2, double proximityThreshold) {
     // Iterate over all SynapticGaps in neuron1
-    for (auto& gap : neuron1.getSoma()->getSynapticGaps()) {
+    for (auto& gap : neuron1.getSynapticGaps()) {
         // If the bouton has a synaptic gap, and it is not associated yet
         if (gap && !gap->isAssociated()) {
             // Iterate over all DendriteBoutons in neuron2
-            for (auto& dendriteBouton : neuron2.getSoma()->getDendriteBoutons()) {
+            for (auto& dendriteBouton : neuron2.getDendriteBoutons()) {
                 // If the distance between the bouton and the dendriteBouton is below the proximity threshold
-                if (gap->getPosition().distanceTo(dendriteBouton->getPosition()) < proximityThreshold) {
+                if (gap->getPosition()->distanceTo(*(dendriteBouton->getPosition())) < proximityThreshold) {
                     // Associate the synaptic gap with the dendriteBouton
                     dendriteBouton->connectSynapticGap(gap);
                     // Set the SynapticGap as associated
@@ -781,6 +897,7 @@ void associateSynapticGap(Neuron& neuron1, Neuron& neuron2, double proximityThre
         }
     }
 }
+
 
 /**
  * @brief Initialize the database, checking and creating the required table if needed.
@@ -873,6 +990,7 @@ int main() {
 
         // Get the number of neurons from the configuration
         int num_neurons = std::stoi(config["num_neurons"]);
+        int points_per_layer = std::stoi(config["points_per_layer"]);
 
         // Connect to PostgreSQL
         pqxx::connection conn(connection_string);
@@ -896,7 +1014,8 @@ int main() {
         std::vector<std::shared_ptr<Neuron>> neurons;
         neurons.reserve(num_neurons);
         for (int i = 0; i < num_neurons; ++i) {
-            neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(0, 0, 0)));
+            auto coords = get_coordinates(i, num_neurons, points_per_layer);
+            neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(std::get<0>(coords), std::get<1>(coords), std::get<2>(coords))));
         }
 
         // After all neurons have been created...

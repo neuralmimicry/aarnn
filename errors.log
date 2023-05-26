@@ -42,3 +42,6 @@ DETAIL:  Failing row contains (7, 5000, null, null).
 Error: ERROR:  null value in column "neuron_type" of relation "neurons" violates not-null constraint
 DETAIL:  Failing row contains (8, 5000, null, null).
 
+Error: ERROR:  null value in column "neuron_type" of relation "neurons" violates not-null constraint
+DETAIL:  Failing row contains (9, 5000, null, null).
+
