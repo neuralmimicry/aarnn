@@ -56,3 +56,10 @@ Error: ERROR:  INSERT has more expressions than target columns
 LINE 1: ...s (propagation_rate, neuron_type) VALUES (5000.000000, 0, 0)
                                                                      ^
 
+Error: bad_weak_ptr
+Error: bad_weak_ptr
+Error: bad_weak_ptr
+Error: bad_weak_ptr
+Error: bad_weak_ptr
+Error: bad_weak_ptr
+Error: bad_weak_ptr
