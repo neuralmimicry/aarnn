@@ -7,7 +7,7 @@ class Position;
 class Shape3D;
 class NeuronShapeComponent;
 class SynapticGap;
-class SynapticBouton;
+class AxonBouton;
 class DendriteBouton;
 class Soma;
 class AxonBranch;
