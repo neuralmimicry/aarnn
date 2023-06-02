@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y libpqxx-dev podman buildah libvtk9-dev python3-vtk9 qtcreator qtbase5-dev qt5-qmake cmake boost-dev openssl-dev build-essential cmake xorg-dev libx11-dev libglu1-mesa-dev freeglut3-dev libglew2.2 libglew-dev libglu1-mesa libgl1-mesa-glx libgl1-mesa-dev libglfw3-dev libglfw3
+        run: sudo apt-get update && sudo apt-get install -y libpqxx-dev podman buildah libvtk9-dev python3-vtk9 qtcreator qtbase5-dev qt5-qmake cmake libboost-all-dev libssl-dev build-essential cmake xorg-dev libx11-dev libglu1-mesa-dev freeglut3-dev libglew2.2 libglew-dev libglu1-mesa libgl1-mesa-glx libgl1-mesa-dev libglfw3-dev libglfw3
 
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
