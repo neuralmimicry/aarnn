@@ -23,6 +23,16 @@ AARNN_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 AARNN_SOURCE_DIR:STATIC=/home/pbisaacs/Developer/aarnn
 
+//The directory containing a CMake configuration file for Boost.
+Boost_DIR:PATH=/usr/local/lib/cmake/Boost-1.82.0
+
+Boost_FILESYSTEM_LIBRARY_RELEASE:STRING=/usr/local/lib/libboost_filesystem.so.1.82.0
+
+//Path to a file.
+Boost_INCLUDE_DIR:PATH=/usr/local/include
+
+Boost_SYSTEM_LIBRARY_RELEASE:STRING=/usr/local/lib/libboost_system.so.1.82.0
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/local/bin/addr2line
 
@@ -221,6 +231,246 @@ CMAKE_STRIP:FILEPATH=/usr/local/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//The avcodec CFLAGS.
+FFMPEG_AVCODEC_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_AVCODEC_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_AVCODEC_LIBRARIES:STRING=/usr/lib64/libavcodec.so
+
+//The avcodec version number.
+FFMPEG_AVCODEC_VERSION:STRING=58.54.100
+
+//The avdevice CFLAGS.
+FFMPEG_AVDEVICE_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_AVDEVICE_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_AVDEVICE_LIBRARIES:STRING=/usr/lib64/libavdevice.so
+
+//The avdevice version number.
+FFMPEG_AVDEVICE_VERSION:STRING=58.8.100
+
+//The avfilter CFLAGS.
+FFMPEG_AVFILTER_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_AVFILTER_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_AVFILTER_LIBRARIES:STRING=/usr/lib64/libavfilter.so
+
+//The avfilter version number.
+FFMPEG_AVFILTER_VERSION:STRING=7.57.100
+
+//The avformat CFLAGS.
+FFMPEG_AVFORMAT_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_AVFORMAT_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_AVFORMAT_LIBRARIES:STRING=/usr/lib64/libavformat.so
+
+//The avformat version number.
+FFMPEG_AVFORMAT_VERSION:STRING=58.29.100
+
+//The avresample CFLAGS.
+FFMPEG_AVRESAMPLE_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_AVRESAMPLE_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_AVRESAMPLE_LIBRARIES:STRING=/usr/lib64/libavresample.so
+
+//The avresample version number.
+FFMPEG_AVRESAMPLE_VERSION:STRING=4.0.0
+
+//The avutil CFLAGS.
+FFMPEG_AVUTIL_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_AVUTIL_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_AVUTIL_LIBRARIES:STRING=/usr/lib64/libavutil.so
+
+//The avutil version number.
+FFMPEG_AVUTIL_VERSION:STRING=56.31.100
+
+//The FFmpeg cflags.
+FFMPEG_DEFINITIONS:STRING=
+
+//The FFmpeg include directories.
+FFMPEG_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//The FFmpeg libraries.
+FFMPEG_LIBRARIES:STRING=/usr/lib64/libavcodec.so;/usr/lib64/libavdevice.so;/usr/lib64/libavformat.so;/usr/lib64/libavfilter.so;/usr/lib64/libavutil.so;/usr/lib64/libpostproc.so;/usr/lib64/libswscale.so;/usr/lib64/libswresample.so;/usr/lib64/libavresample.so
+
+//The postproc CFLAGS.
+FFMPEG_POSTPROC_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_POSTPROC_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_POSTPROC_LIBRARIES:STRING=/usr/lib64/libpostproc.so
+
+//The postproc version number.
+FFMPEG_POSTPROC_VERSION:STRING=55.5.100
+
+//The swresample CFLAGS.
+FFMPEG_SWRESAMPLE_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_SWRESAMPLE_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_SWRESAMPLE_LIBRARIES:STRING=/usr/lib64/libswresample.so
+
+//The swresample version number.
+FFMPEG_SWRESAMPLE_VERSION:STRING=3.5.100
+
+//The swscale CFLAGS.
+FFMPEG_SWSCALE_DEFINITIONS:STRING=
+
+//Path to a file.
+FFMPEG_SWSCALE_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//Path to a library.
+FFMPEG_SWSCALE_LIBRARIES:STRING=/usr/lib64/libswscale.so
+
+//The swscale version number.
+FFMPEG_SWSCALE_VERSION:STRING=5.5.100
+
+//The overall FFmpeg version.
+FFMPEG_VERSION:STRING=4.2.9
+
+//The FFmpeg cflags.
+FFmpeg_DEFINITIONS:STRING=
+
+//The FFmpeg include directories.
+FFmpeg_INCLUDE_DIRS:STRING=/usr/include/ffmpeg
+
+//The FFmpeg libraries.
+FFmpeg_LIBRARIES:STRING=/usr/lib64/libavcodec.so;/usr/lib64/libavdevice.so;/usr/lib64/libavformat.so;/usr/lib64/libavfilter.so;/usr/lib64/libavutil.so;/usr/lib64/libpostproc.so;/usr/lib64/libswscale.so;/usr/lib64/libswresample.so;/usr/lib64/libavresample.so
+
+//The overall FFmpeg version.
+FFmpeg_VERSION:STRING=4.2.9
+
+//The avcodec CFLAGS.
+FFmpeg_avcodec_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_avcodec_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_avcodec_LIBRARIES:FILEPATH=/usr/lib64/libavcodec.so
+
+//The avcodec version number.
+FFmpeg_avcodec_VERSION:STRING=58.54.100
+
+//The avdevice CFLAGS.
+FFmpeg_avdevice_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_avdevice_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_avdevice_LIBRARIES:FILEPATH=/usr/lib64/libavdevice.so
+
+//The avdevice version number.
+FFmpeg_avdevice_VERSION:STRING=58.8.100
+
+//The avfilter CFLAGS.
+FFmpeg_avfilter_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_avfilter_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_avfilter_LIBRARIES:FILEPATH=/usr/lib64/libavfilter.so
+
+//The avfilter version number.
+FFmpeg_avfilter_VERSION:STRING=7.57.100
+
+//The avformat CFLAGS.
+FFmpeg_avformat_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_avformat_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_avformat_LIBRARIES:FILEPATH=/usr/lib64/libavformat.so
+
+//The avformat version number.
+FFmpeg_avformat_VERSION:STRING=58.29.100
+
+//The avresample CFLAGS.
+FFmpeg_avresample_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_avresample_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_avresample_LIBRARIES:FILEPATH=/usr/lib64/libavresample.so
+
+//The avresample version number.
+FFmpeg_avresample_VERSION:STRING=4.0.0
+
+//The avutil CFLAGS.
+FFmpeg_avutil_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_avutil_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_avutil_LIBRARIES:FILEPATH=/usr/lib64/libavutil.so
+
+//The avutil version number.
+FFmpeg_avutil_VERSION:STRING=56.31.100
+
+//The postproc CFLAGS.
+FFmpeg_postproc_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_postproc_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_postproc_LIBRARIES:FILEPATH=/usr/lib64/libpostproc.so
+
+//The postproc version number.
+FFmpeg_postproc_VERSION:STRING=55.5.100
+
+//The swresample CFLAGS.
+FFmpeg_swresample_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_swresample_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_swresample_LIBRARIES:FILEPATH=/usr/lib64/libswresample.so
+
+//The swresample version number.
+FFmpeg_swresample_VERSION:STRING=3.5.100
+
+//The swscale CFLAGS.
+FFmpeg_swscale_DEFINITIONS:STRING=
+
+//Path to a file.
+FFmpeg_swscale_INCLUDE_DIRS:PATH=/usr/include/ffmpeg
+
+//Path to a library.
+FFmpeg_swscale_LIBRARIES:FILEPATH=/usr/lib64/libswscale.so
+
+//The swscale version number.
+FFmpeg_swscale_VERSION:STRING=5.5.100
+
 //Path to a file.
 FREETYPE_INCLUDE_DIR_freetype2:PATH=/usr/include/freetype2
 
@@ -258,6 +508,9 @@ OPENGL_INCLUDE_DIR:PATH=/usr/include
 OPENGL_egl_LIBRARY:FILEPATH=/usr/lib64/libEGL.so
 
 //Path to a library.
+OPENGL_gl_LIBRARY:FILEPATH=/usr/lib64/libGL.so
+
+//Path to a library.
 OPENGL_gles2_LIBRARY:FILEPATH=/usr/lib64/libGLESv2.so
 
 //Path to a library.
@@ -274,6 +527,15 @@ OPENGL_opengl_LIBRARY:FILEPATH=/usr/lib64/libOpenGL.so
 
 //Path to a file.
 OPENGL_xmesa_INCLUDE_DIR:PATH=OPENGL_xmesa_INCLUDE_DIR-NOTFOUND
+
+//Path to a library.
+OPENSSL_CRYPTO_LIBRARY:FILEPATH=/usr/lib64/libcrypto.so
+
+//Path to a file.
+OPENSSL_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+OPENSSL_SSL_LIBRARY:FILEPATH=/usr/lib64/libssl.so
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
@@ -485,17 +747,64 @@ X11_xkbfile_INCLUDE_PATH:PATH=X11_xkbfile_INCLUDE_PATH-NOTFOUND
 //Path to a library.
 X11_xkbfile_LIB:FILEPATH=X11_xkbfile_LIB-NOTFOUND
 
+//The directory containing a CMake configuration file for boost_atomic.
+boost_atomic_DIR:PATH=/usr/local/lib/cmake/boost_atomic-1.82.0
+
+//The directory containing a CMake configuration file for boost_filesystem.
+boost_filesystem_DIR:PATH=/usr/local/lib/cmake/boost_filesystem-1.82.0
+
+//The directory containing a CMake configuration file for boost_headers.
+boost_headers_DIR:PATH=/usr/local/lib/cmake/boost_headers-1.82.0
+
+//The directory containing a CMake configuration file for boost_system.
+boost_system_DIR:PATH=/usr/local/lib/cmake/boost_system-1.82.0
+
+//Path to a library.
+pkgcfg_lib_PC_avcodec_avcodec:FILEPATH=/usr/lib64/libavcodec.so
+
+//Path to a library.
+pkgcfg_lib_PC_avdevice_avdevice:FILEPATH=/usr/lib64/libavdevice.so
+
+//Path to a library.
+pkgcfg_lib_PC_avfilter_avfilter:FILEPATH=/usr/lib64/libavfilter.so
+
+//Path to a library.
+pkgcfg_lib_PC_avformat_avformat:FILEPATH=/usr/lib64/libavformat.so
+
+//Path to a library.
+pkgcfg_lib_PC_avresample_avresample:FILEPATH=/usr/lib64/libavresample.so
+
+//Path to a library.
+pkgcfg_lib_PC_avutil_avutil:FILEPATH=/usr/lib64/libavutil.so
+
+//Path to a library.
+pkgcfg_lib_PC_postproc_postproc:FILEPATH=/usr/lib64/libpostproc.so
+
+//Path to a library.
+pkgcfg_lib_PC_swresample_swresample:FILEPATH=/usr/lib64/libswresample.so
+
+//Path to a library.
+pkgcfg_lib_PC_swscale_swscale:FILEPATH=/usr/lib64/libswscale.so
+
 //Path to a library.
 pkgcfg_lib_PKG_FONTCONFIG_fontconfig:FILEPATH=/usr/lib64/libfontconfig.so
 
 //Path to a library.
 pkgcfg_lib_PKG_FONTCONFIG_freetype:FILEPATH=/usr/lib64/libfreetype.so
 
+//Path to a library.
+pkgcfg_lib__OPENSSL_crypto:FILEPATH=/usr/lib64/libcrypto.so
+
+//Path to a library.
+pkgcfg_lib__OPENSSL_ssl:FILEPATH=/usr/lib64/libssl.so
+
 
 ########################
 # INTERNAL cache entries
 ########################
 
+//ADVANCED property for variable: Boost_DIR
+Boost_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_ADDR2LINE
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
@@ -651,10 +960,178 @@ CMAKE_STRIP-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVCODEC_DEFINITIONS
+FFMPEG_AVCODEC_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVCODEC_INCLUDE_DIRS
+FFMPEG_AVCODEC_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVCODEC_LIBRARIES
+FFMPEG_AVCODEC_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVCODEC_VERSION
+FFMPEG_AVCODEC_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVDEVICE_DEFINITIONS
+FFMPEG_AVDEVICE_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVDEVICE_INCLUDE_DIRS
+FFMPEG_AVDEVICE_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVDEVICE_LIBRARIES
+FFMPEG_AVDEVICE_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVDEVICE_VERSION
+FFMPEG_AVDEVICE_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVFILTER_DEFINITIONS
+FFMPEG_AVFILTER_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVFILTER_INCLUDE_DIRS
+FFMPEG_AVFILTER_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVFILTER_LIBRARIES
+FFMPEG_AVFILTER_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVFILTER_VERSION
+FFMPEG_AVFILTER_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVFORMAT_DEFINITIONS
+FFMPEG_AVFORMAT_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVFORMAT_INCLUDE_DIRS
+FFMPEG_AVFORMAT_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVFORMAT_LIBRARIES
+FFMPEG_AVFORMAT_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVFORMAT_VERSION
+FFMPEG_AVFORMAT_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVRESAMPLE_DEFINITIONS
+FFMPEG_AVRESAMPLE_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVRESAMPLE_INCLUDE_DIRS
+FFMPEG_AVRESAMPLE_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVRESAMPLE_LIBRARIES
+FFMPEG_AVRESAMPLE_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVRESAMPLE_VERSION
+FFMPEG_AVRESAMPLE_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVUTIL_DEFINITIONS
+FFMPEG_AVUTIL_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVUTIL_INCLUDE_DIRS
+FFMPEG_AVUTIL_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVUTIL_LIBRARIES
+FFMPEG_AVUTIL_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_AVUTIL_VERSION
+FFMPEG_AVUTIL_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_DEFINITIONS
+FFMPEG_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_INCLUDE_DIRS
+FFMPEG_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_LIBRARIES
+FFMPEG_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_POSTPROC_DEFINITIONS
+FFMPEG_POSTPROC_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_POSTPROC_INCLUDE_DIRS
+FFMPEG_POSTPROC_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_POSTPROC_LIBRARIES
+FFMPEG_POSTPROC_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_POSTPROC_VERSION
+FFMPEG_POSTPROC_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_SWRESAMPLE_DEFINITIONS
+FFMPEG_SWRESAMPLE_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_SWRESAMPLE_INCLUDE_DIRS
+FFMPEG_SWRESAMPLE_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_SWRESAMPLE_LIBRARIES
+FFMPEG_SWRESAMPLE_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_SWRESAMPLE_VERSION
+FFMPEG_SWRESAMPLE_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_SWSCALE_DEFINITIONS
+FFMPEG_SWSCALE_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_SWSCALE_INCLUDE_DIRS
+FFMPEG_SWSCALE_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_SWSCALE_LIBRARIES
+FFMPEG_SWSCALE_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_SWSCALE_VERSION
+FFMPEG_SWSCALE_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFMPEG_VERSION
+FFMPEG_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_DEFINITIONS
+FFmpeg_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_INCLUDE_DIRS
+FFmpeg_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_LIBRARIES
+FFmpeg_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_VERSION
+FFmpeg_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avcodec_DEFINITIONS
+FFmpeg_avcodec_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avcodec_INCLUDE_DIRS
+FFmpeg_avcodec_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avcodec_LIBRARIES
+FFmpeg_avcodec_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avcodec_VERSION
+FFmpeg_avcodec_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avdevice_DEFINITIONS
+FFmpeg_avdevice_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avdevice_INCLUDE_DIRS
+FFmpeg_avdevice_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avdevice_LIBRARIES
+FFmpeg_avdevice_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avdevice_VERSION
+FFmpeg_avdevice_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avfilter_DEFINITIONS
+FFmpeg_avfilter_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avfilter_INCLUDE_DIRS
+FFmpeg_avfilter_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avfilter_LIBRARIES
+FFmpeg_avfilter_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avfilter_VERSION
+FFmpeg_avfilter_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avformat_DEFINITIONS
+FFmpeg_avformat_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avformat_INCLUDE_DIRS
+FFmpeg_avformat_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avformat_LIBRARIES
+FFmpeg_avformat_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avformat_VERSION
+FFmpeg_avformat_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avresample_DEFINITIONS
+FFmpeg_avresample_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avresample_INCLUDE_DIRS
+FFmpeg_avresample_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avresample_LIBRARIES
+FFmpeg_avresample_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avresample_VERSION
+FFmpeg_avresample_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avutil_DEFINITIONS
+FFmpeg_avutil_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avutil_INCLUDE_DIRS
+FFmpeg_avutil_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avutil_LIBRARIES
+FFmpeg_avutil_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_avutil_VERSION
+FFmpeg_avutil_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_postproc_DEFINITIONS
+FFmpeg_postproc_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_postproc_INCLUDE_DIRS
+FFmpeg_postproc_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_postproc_LIBRARIES
+FFmpeg_postproc_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_postproc_VERSION
+FFmpeg_postproc_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_swresample_DEFINITIONS
+FFmpeg_swresample_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_swresample_INCLUDE_DIRS
+FFmpeg_swresample_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_swresample_LIBRARIES
+FFmpeg_swresample_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_swresample_VERSION
+FFmpeg_swresample_VERSION-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_swscale_DEFINITIONS
+FFmpeg_swscale_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_swscale_INCLUDE_DIRS
+FFmpeg_swscale_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_swscale_LIBRARIES
+FFmpeg_swscale_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FFmpeg_swscale_VERSION
+FFmpeg_swscale_VERSION-ADVANCED:INTERNAL=1
+//Details about finding Boost
+FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/local/lib/cmake/Boost-1.82.0/BoostConfig.cmake][cfound components: system filesystem ][v1.82.0()]
+//Details about finding FFmpeg
+FIND_PACKAGE_MESSAGE_DETAILS_FFmpeg:INTERNAL=[/usr/lib64/libavcodec.so;/usr/lib64/libavdevice.so;/usr/lib64/libavformat.so;/usr/lib64/libavfilter.so;/usr/lib64/libavutil.so;/usr/lib64/libpostproc.so;/usr/lib64/libswscale.so;/usr/lib64/libswresample.so;/usr/lib64/libavresample.so][/usr/include/ffmpeg][cfound components: avcodec avdevice avformat avfilter avutil postproc swscale swresample avresample ][v4.2.9()]
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib64/libOpenGL.so][/usr/lib64/libGLX.so][/usr/include][cfound components: OpenGL GLX ][v()]
+//Details about finding OpenSSL
+FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/usr/lib64/libcrypto.so][/usr/include][c ][v1.1.1k()]
+//Details about finding PkgConfig
+FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.4.2()]
 //Details about finding PostgreSQL
-FIND_PACKAGE_MESSAGE_DETAILS_PostgreSQL:INTERNAL=[/usr/lib64/libpq.so][/usr/pgsql-15/include][c ][v15.2()]
+FIND_PACKAGE_MESSAGE_DETAILS_PostgreSQL:INTERNAL=[/usr/lib64/libpq.so][/usr/pgsql-15/include][c ][v15.3()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Details about finding X11
@@ -683,6 +1160,8 @@ OPENGL_GLX_INCLUDE_DIR-ADVANCED:INTERNAL=1
 OPENGL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_egl_LIBRARY
 OPENGL_egl_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENGL_gl_LIBRARY
+OPENGL_gl_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_gles2_LIBRARY
 OPENGL_gles2_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_gles3_LIBRARY
@@ -695,6 +1174,327 @@ OPENGL_glx_LIBRARY-ADVANCED:INTERNAL=1
 OPENGL_opengl_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_xmesa_INCLUDE_DIR
 OPENGL_xmesa_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENSSL_CRYPTO_LIBRARY
+OPENSSL_CRYPTO_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENSSL_INCLUDE_DIR
+OPENSSL_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENSSL_SSL_LIBRARY
+OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL=1
+PC_avcodec_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avcodec_CFLAGS_I:INTERNAL=
+PC_avcodec_CFLAGS_OTHER:INTERNAL=
+PC_avcodec_FOUND:INTERNAL=1
+PC_avcodec_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_avcodec_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avcodec_LDFLAGS:INTERNAL=-L/usr/lib64;-lavcodec
+PC_avcodec_LDFLAGS_OTHER:INTERNAL=
+PC_avcodec_LIBDIR:INTERNAL=/usr/lib64
+PC_avcodec_LIBRARIES:INTERNAL=avcodec
+PC_avcodec_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_avcodec_LIBS:INTERNAL=
+PC_avcodec_LIBS_L:INTERNAL=
+PC_avcodec_LIBS_OTHER:INTERNAL=
+PC_avcodec_LIBS_PATHS:INTERNAL=
+PC_avcodec_MODULE_NAME:INTERNAL=libavcodec
+PC_avcodec_PREFIX:INTERNAL=/usr
+PC_avcodec_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avcodec_STATIC_CFLAGS_I:INTERNAL=
+PC_avcodec_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_avcodec_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avcodec_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-pthread;-lm;-llzma;-ldav1d;-lopencore-amrwb;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lz;-laom;-lgsm;-lmp3lame;-lm;-lopencore-amrnb;-lopenjp2;-lopus;-lspeex;-ltheoraenc;-ltheoradec;-logg;-lvo-amrwbenc;-lvorbis;-lvorbisenc;-lx264;-lx265;-lxvidcore;-lva;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lswresample;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_avcodec_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread
+PC_avcodec_STATIC_LIBDIR:INTERNAL=
+PC_avcodec_STATIC_LIBRARIES:INTERNAL=avcodec;vpx;m;vpx;m;vpx;m;vpx;m;m;lzma;dav1d;opencore-amrwb;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;z;aom;gsm;mp3lame;m;opencore-amrnb;openjp2;opus;speex;theoraenc;theoradec;ogg;vo-amrwbenc;vorbis;vorbisenc;x264;x265;xvidcore;va;dl;mfx;stdc++;dl;va-drm;va-x11;va;swresample;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_avcodec_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/usr/lib64
+PC_avcodec_STATIC_LIBS:INTERNAL=
+PC_avcodec_STATIC_LIBS_L:INTERNAL=
+PC_avcodec_STATIC_LIBS_OTHER:INTERNAL=
+PC_avcodec_STATIC_LIBS_PATHS:INTERNAL=
+PC_avcodec_VERSION:INTERNAL=58.54.100
+PC_avcodec_libavcodec_INCLUDEDIR:INTERNAL=
+PC_avcodec_libavcodec_LIBDIR:INTERNAL=
+PC_avcodec_libavcodec_PREFIX:INTERNAL=
+PC_avcodec_libavcodec_VERSION:INTERNAL=
+PC_avdevice_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avdevice_CFLAGS_I:INTERNAL=
+PC_avdevice_CFLAGS_OTHER:INTERNAL=
+PC_avdevice_FOUND:INTERNAL=1
+PC_avdevice_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_avdevice_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avdevice_LDFLAGS:INTERNAL=-L/usr/lib64;-lavdevice
+PC_avdevice_LDFLAGS_OTHER:INTERNAL=
+PC_avdevice_LIBDIR:INTERNAL=/usr/lib64
+PC_avdevice_LIBRARIES:INTERNAL=avdevice
+PC_avdevice_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_avdevice_LIBS:INTERNAL=
+PC_avdevice_LIBS_L:INTERNAL=
+PC_avdevice_LIBS_OTHER:INTERNAL=
+PC_avdevice_LIBS_PATHS:INTERNAL=
+PC_avdevice_MODULE_NAME:INTERNAL=libavdevice
+PC_avdevice_PREFIX:INTERNAL=/usr
+PC_avdevice_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avdevice_STATIC_CFLAGS_I:INTERNAL=
+PC_avdevice_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_avdevice_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avdevice_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lavdevice;-lm;-ljack;-ldrm;-lopenal;-lxcb;-lxcb-shm;-lxcb-shape;-lxcb-xfixes;-lcdio_paranoia;-lcdio_cdda;-lcdio;-lm;-lasound;-lGL;-lpulse;-lSDL2;-lv4l2;-L/usr/lib64;-lavfilter;-lm;-lfribidi;-lvmaf;-pthread;-lass;-lva;-lvidstab;-lm;-lgomp;-lpthread;-lzimg;-lOpenCL;-lfontconfig;-lfreetype;-lfreetype;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lm;-lbz2;-lmodplug;-lvapoursynth-script;-lvapoursynth;-lbluray;-lgcrypt;-ldl;-lgpg-error;-lz;-lgnutls;-lsrt;-lssh;-L/usr/lib64;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-pthread;-lm;-llzma;-ldav1d;-lopencore-amrwb;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lz;-laom;-lgsm;-lmp3lame;-lm;-lopencore-amrnb;-lopenjp2;-lopus;-lspeex;-ltheoraenc;-ltheoradec;-logg;-lvo-amrwbenc;-lvorbis;-lvorbisenc;-lx264;-lx265;-lxvidcore;-lva;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lswresample;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-pthread;-lm;-llzma;-ldav1d;-lopencore-amrwb;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lz;-laom;-lgsm;-lmp3lame;-lm;-lopencore-amrnb;-lopenjp2;-lopus;-lspeex;-ltheoraenc;-ltheoradec;-logg;-lvo-amrwbenc;-lvorbis;-lvorbisenc;-lx264;-lx265;-lxvidcore;-lva;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lswresample;-lm;-lsoxr;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lm;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lswscale;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lpostproc;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavformat;-lm;-lbz2;-lmodplug;-lvapoursynth-script;-lvapoursynth;-lbluray;-lgcrypt;-ldl;-lgpg-error;-lz;-lgnutls;-lsrt;-lssh;-L/usr/lib64;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-pthread;-lm;-llzma;-ldav1d;-lopencore-amrwb;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lz;-laom;-lgsm;-lmp3lame;-lm;-lopencore-amrnb;-lopenjp2;-lopus;-lspeex;-ltheoraenc;-ltheoradec;-logg;-lvo-amrwbenc;-lvorbis;-lvorbisenc;-lx264;-lx265;-lxvidcore;-lva;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lswresample;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-pthread;-lm;-llzma;-ldav1d;-lopencore-amrwb;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lz;-laom;-lgsm;-lmp3lame;-lm;-lopencore-amrnb;-lopenjp2;-lopus;-lspeex;-ltheoraenc;-ltheoradec;-logg;-lvo-amrwbenc;-lvorbis;-lvorbisenc;-lx264;-lx265;-lxvidcore;-lva;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lswresample;-lm;-lsoxr;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavresample;-lm;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_avdevice_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread
+PC_avdevice_STATIC_LIBDIR:INTERNAL=
+PC_avdevice_STATIC_LIBRARIES:INTERNAL=avdevice;m;jack;drm;openal;xcb;xcb-shm;xcb-shape;xcb-xfixes;cdio_paranoia;cdio_cdda;cdio;m;asound;GL;pulse;SDL2;v4l2;avfilter;m;fribidi;vmaf;ass;va;vidstab;m;gomp;pthread;zimg;OpenCL;fontconfig;freetype;freetype;dl;mfx;stdc++;dl;va-drm;va-x11;va;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;m;bz2;modplug;vapoursynth-script;vapoursynth;bluray;gcrypt;dl;gpg-error;z;gnutls;srt;ssh;vpx;m;vpx;m;vpx;m;vpx;m;m;lzma;dav1d;opencore-amrwb;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;z;aom;gsm;mp3lame;m;opencore-amrnb;openjp2;opus;speex;theoraenc;theoradec;ogg;vo-amrwbenc;vorbis;vorbisenc;x264;x265;xvidcore;va;dl;mfx;stdc++;dl;va-drm;va-x11;va;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;swresample;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;m;lzma;dav1d;opencore-amrwb;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;z;aom;gsm;mp3lame;m;opencore-amrnb;openjp2;opus;speex;theoraenc;theoradec;ogg;vo-amrwbenc;vorbis;vorbisenc;x264;x265;xvidcore;va;dl;mfx;stdc++;dl;va-drm;va-x11;va;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;swresample;m;soxr;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;m;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;swscale;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;postproc;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avformat;m;bz2;modplug;vapoursynth-script;vapoursynth;bluray;gcrypt;dl;gpg-error;z;gnutls;srt;ssh;vpx;m;vpx;m;vpx;m;vpx;m;m;lzma;dav1d;opencore-amrwb;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;z;aom;gsm;mp3lame;m;opencore-amrnb;openjp2;opus;speex;theoraenc;theoradec;ogg;vo-amrwbenc;vorbis;vorbisenc;x264;x265;xvidcore;va;dl;mfx;stdc++;dl;va-drm;va-x11;va;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;swresample;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;m;lzma;dav1d;opencore-amrwb;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;z;aom;gsm;mp3lame;m;opencore-amrnb;openjp2;opus;speex;theoraenc;theoradec;ogg;vo-amrwbenc;vorbis;vorbisenc;x264;x265;xvidcore;va;dl;mfx;stdc++;dl;va-drm;va-x11;va;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;swresample;m;soxr;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avresample;m;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_avdevice_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64
+PC_avdevice_STATIC_LIBS:INTERNAL=
+PC_avdevice_STATIC_LIBS_L:INTERNAL=
+PC_avdevice_STATIC_LIBS_OTHER:INTERNAL=
+PC_avdevice_STATIC_LIBS_PATHS:INTERNAL=
+PC_avdevice_VERSION:INTERNAL=58.8.100
+PC_avdevice_libavdevice_INCLUDEDIR:INTERNAL=
+PC_avdevice_libavdevice_LIBDIR:INTERNAL=
+PC_avdevice_libavdevice_PREFIX:INTERNAL=
+PC_avdevice_libavdevice_VERSION:INTERNAL=
+PC_avfilter_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avfilter_CFLAGS_I:INTERNAL=
+PC_avfilter_CFLAGS_OTHER:INTERNAL=
+PC_avfilter_FOUND:INTERNAL=1
+PC_avfilter_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_avfilter_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avfilter_LDFLAGS:INTERNAL=-L/usr/lib64;-lavfilter
+PC_avfilter_LDFLAGS_OTHER:INTERNAL=
+PC_avfilter_LIBDIR:INTERNAL=/usr/lib64
+PC_avfilter_LIBRARIES:INTERNAL=avfilter
+PC_avfilter_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_avfilter_LIBS:INTERNAL=
+PC_avfilter_LIBS_L:INTERNAL=
+PC_avfilter_LIBS_OTHER:INTERNAL=
+PC_avfilter_LIBS_PATHS:INTERNAL=
+PC_avfilter_MODULE_NAME:INTERNAL=libavfilter
+PC_avfilter_PREFIX:INTERNAL=/usr
+PC_avfilter_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avfilter_STATIC_CFLAGS_I:INTERNAL=
+PC_avfilter_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_avfilter_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avfilter_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lavfilter;-lm;-lfribidi;-lvmaf;-pthread;-lass;-lva;-lvidstab;-lm;-lgomp;-lpthread;-lzimg;-lOpenCL;-lfontconfig;-lfreetype;-lfreetype;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lswscale;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lpostproc;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavformat;-lm;-lbz2;-lmodplug;-lvapoursynth-script;-lvapoursynth;-lbluray;-lgcrypt;-ldl;-lgpg-error;-lz;-lgnutls;-lsrt;-lssh;-L/usr/lib64;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-pthread;-lm;-llzma;-ldav1d;-lopencore-amrwb;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lz;-laom;-lgsm;-lmp3lame;-lm;-lopencore-amrnb;-lopenjp2;-lopus;-lspeex;-ltheoraenc;-ltheoradec;-logg;-lvo-amrwbenc;-lvorbis;-lvorbisenc;-lx264;-lx265;-lxvidcore;-lva;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lswresample;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-pthread;-lm;-llzma;-ldav1d;-lopencore-amrwb;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lz;-laom;-lgsm;-lmp3lame;-lm;-lopencore-amrnb;-lopenjp2;-lopus;-lspeex;-ltheoraenc;-ltheoradec;-logg;-lvo-amrwbenc;-lvorbis;-lvorbisenc;-lx264;-lx265;-lxvidcore;-lva;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lswresample;-lm;-lsoxr;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavresample;-lm;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_avfilter_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread
+PC_avfilter_STATIC_LIBDIR:INTERNAL=
+PC_avfilter_STATIC_LIBRARIES:INTERNAL=avfilter;m;fribidi;vmaf;ass;va;vidstab;m;gomp;pthread;zimg;OpenCL;fontconfig;freetype;freetype;dl;mfx;stdc++;dl;va-drm;va-x11;va;swscale;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;postproc;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avformat;m;bz2;modplug;vapoursynth-script;vapoursynth;bluray;gcrypt;dl;gpg-error;z;gnutls;srt;ssh;vpx;m;vpx;m;vpx;m;vpx;m;m;lzma;dav1d;opencore-amrwb;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;z;aom;gsm;mp3lame;m;opencore-amrnb;openjp2;opus;speex;theoraenc;theoradec;ogg;vo-amrwbenc;vorbis;vorbisenc;x264;x265;xvidcore;va;dl;mfx;stdc++;dl;va-drm;va-x11;va;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;swresample;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;m;lzma;dav1d;opencore-amrwb;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;z;aom;gsm;mp3lame;m;opencore-amrnb;openjp2;opus;speex;theoraenc;theoradec;ogg;vo-amrwbenc;vorbis;vorbisenc;x264;x265;xvidcore;va;dl;mfx;stdc++;dl;va-drm;va-x11;va;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;swresample;m;soxr;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avresample;m;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_avfilter_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64
+PC_avfilter_STATIC_LIBS:INTERNAL=
+PC_avfilter_STATIC_LIBS_L:INTERNAL=
+PC_avfilter_STATIC_LIBS_OTHER:INTERNAL=
+PC_avfilter_STATIC_LIBS_PATHS:INTERNAL=
+PC_avfilter_VERSION:INTERNAL=7.57.100
+PC_avfilter_libavfilter_INCLUDEDIR:INTERNAL=
+PC_avfilter_libavfilter_LIBDIR:INTERNAL=
+PC_avfilter_libavfilter_PREFIX:INTERNAL=
+PC_avfilter_libavfilter_VERSION:INTERNAL=
+PC_avformat_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avformat_CFLAGS_I:INTERNAL=
+PC_avformat_CFLAGS_OTHER:INTERNAL=
+PC_avformat_FOUND:INTERNAL=1
+PC_avformat_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_avformat_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avformat_LDFLAGS:INTERNAL=-L/usr/lib64;-lavformat
+PC_avformat_LDFLAGS_OTHER:INTERNAL=
+PC_avformat_LIBDIR:INTERNAL=/usr/lib64
+PC_avformat_LIBRARIES:INTERNAL=avformat
+PC_avformat_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_avformat_LIBS:INTERNAL=
+PC_avformat_LIBS_L:INTERNAL=
+PC_avformat_LIBS_OTHER:INTERNAL=
+PC_avformat_LIBS_PATHS:INTERNAL=
+PC_avformat_MODULE_NAME:INTERNAL=libavformat
+PC_avformat_PREFIX:INTERNAL=/usr
+PC_avformat_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avformat_STATIC_CFLAGS_I:INTERNAL=
+PC_avformat_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_avformat_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avformat_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lavformat;-lm;-lbz2;-lmodplug;-lvapoursynth-script;-lvapoursynth;-lbluray;-lgcrypt;-ldl;-lgpg-error;-lz;-lgnutls;-lsrt;-lssh;-L/usr/lib64;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-pthread;-lm;-llzma;-ldav1d;-lopencore-amrwb;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lz;-laom;-lgsm;-lmp3lame;-lm;-lopencore-amrnb;-lopenjp2;-lopus;-lspeex;-ltheoraenc;-ltheoradec;-logg;-lvo-amrwbenc;-lvorbis;-lvorbisenc;-lx264;-lx265;-lxvidcore;-lva;-ldl;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-L/usr/lib64;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lswresample;-lm;-lsoxr;-L/usr/lib64;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_avformat_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-pthread
+PC_avformat_STATIC_LIBDIR:INTERNAL=
+PC_avformat_STATIC_LIBRARIES:INTERNAL=avformat;m;bz2;modplug;vapoursynth-script;vapoursynth;bluray;gcrypt;dl;gpg-error;z;gnutls;srt;ssh;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;m;lzma;dav1d;opencore-amrwb;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;z;aom;gsm;mp3lame;m;opencore-amrnb;openjp2;opus;speex;theoraenc;theoradec;ogg;vo-amrwbenc;vorbis;vorbisenc;x264;x265;xvidcore;va;dl;mfx;stdc++;dl;va-drm;va-x11;va;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;swresample;m;soxr;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_avformat_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64;/usr/lib64
+PC_avformat_STATIC_LIBS:INTERNAL=
+PC_avformat_STATIC_LIBS_L:INTERNAL=
+PC_avformat_STATIC_LIBS_OTHER:INTERNAL=
+PC_avformat_STATIC_LIBS_PATHS:INTERNAL=
+PC_avformat_VERSION:INTERNAL=58.29.100
+PC_avformat_libavformat_INCLUDEDIR:INTERNAL=
+PC_avformat_libavformat_LIBDIR:INTERNAL=
+PC_avformat_libavformat_PREFIX:INTERNAL=
+PC_avformat_libavformat_VERSION:INTERNAL=
+PC_avresample_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avresample_CFLAGS_I:INTERNAL=
+PC_avresample_CFLAGS_OTHER:INTERNAL=
+PC_avresample_FOUND:INTERNAL=1
+PC_avresample_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_avresample_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avresample_LDFLAGS:INTERNAL=-L/usr/lib64;-lavresample
+PC_avresample_LDFLAGS_OTHER:INTERNAL=
+PC_avresample_LIBDIR:INTERNAL=/usr/lib64
+PC_avresample_LIBRARIES:INTERNAL=avresample
+PC_avresample_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_avresample_LIBS:INTERNAL=
+PC_avresample_LIBS_L:INTERNAL=
+PC_avresample_LIBS_OTHER:INTERNAL=
+PC_avresample_LIBS_PATHS:INTERNAL=
+PC_avresample_MODULE_NAME:INTERNAL=libavresample
+PC_avresample_PREFIX:INTERNAL=/usr
+PC_avresample_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avresample_STATIC_CFLAGS_I:INTERNAL=
+PC_avresample_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_avresample_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avresample_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lavresample;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_avresample_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+PC_avresample_STATIC_LIBDIR:INTERNAL=
+PC_avresample_STATIC_LIBRARIES:INTERNAL=avresample;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_avresample_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64
+PC_avresample_STATIC_LIBS:INTERNAL=
+PC_avresample_STATIC_LIBS_L:INTERNAL=
+PC_avresample_STATIC_LIBS_OTHER:INTERNAL=
+PC_avresample_STATIC_LIBS_PATHS:INTERNAL=
+PC_avresample_VERSION:INTERNAL=4.0.0
+PC_avresample_libavresample_INCLUDEDIR:INTERNAL=
+PC_avresample_libavresample_LIBDIR:INTERNAL=
+PC_avresample_libavresample_PREFIX:INTERNAL=
+PC_avresample_libavresample_VERSION:INTERNAL=
+PC_avutil_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avutil_CFLAGS_I:INTERNAL=
+PC_avutil_CFLAGS_OTHER:INTERNAL=
+PC_avutil_FOUND:INTERNAL=1
+PC_avutil_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_avutil_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avutil_LDFLAGS:INTERNAL=-L/usr/lib64;-lavutil
+PC_avutil_LDFLAGS_OTHER:INTERNAL=
+PC_avutil_LIBDIR:INTERNAL=/usr/lib64
+PC_avutil_LIBRARIES:INTERNAL=avutil
+PC_avutil_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_avutil_LIBS:INTERNAL=
+PC_avutil_LIBS_L:INTERNAL=
+PC_avutil_LIBS_OTHER:INTERNAL=
+PC_avutil_LIBS_PATHS:INTERNAL=
+PC_avutil_MODULE_NAME:INTERNAL=libavutil
+PC_avutil_PREFIX:INTERNAL=/usr
+PC_avutil_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_avutil_STATIC_CFLAGS_I:INTERNAL=
+PC_avutil_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_avutil_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_avutil_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_avutil_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+PC_avutil_STATIC_LIBDIR:INTERNAL=
+PC_avutil_STATIC_LIBRARIES:INTERNAL=avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_avutil_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_avutil_STATIC_LIBS:INTERNAL=
+PC_avutil_STATIC_LIBS_L:INTERNAL=
+PC_avutil_STATIC_LIBS_OTHER:INTERNAL=
+PC_avutil_STATIC_LIBS_PATHS:INTERNAL=
+PC_avutil_VERSION:INTERNAL=56.31.100
+PC_avutil_libavutil_INCLUDEDIR:INTERNAL=
+PC_avutil_libavutil_LIBDIR:INTERNAL=
+PC_avutil_libavutil_PREFIX:INTERNAL=
+PC_avutil_libavutil_VERSION:INTERNAL=
+PC_postproc_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_postproc_CFLAGS_I:INTERNAL=
+PC_postproc_CFLAGS_OTHER:INTERNAL=
+PC_postproc_FOUND:INTERNAL=1
+PC_postproc_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_postproc_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_postproc_LDFLAGS:INTERNAL=-L/usr/lib64;-lpostproc
+PC_postproc_LDFLAGS_OTHER:INTERNAL=
+PC_postproc_LIBDIR:INTERNAL=/usr/lib64
+PC_postproc_LIBRARIES:INTERNAL=postproc
+PC_postproc_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_postproc_LIBS:INTERNAL=
+PC_postproc_LIBS_L:INTERNAL=
+PC_postproc_LIBS_OTHER:INTERNAL=
+PC_postproc_LIBS_PATHS:INTERNAL=
+PC_postproc_MODULE_NAME:INTERNAL=libpostproc
+PC_postproc_PREFIX:INTERNAL=/usr
+PC_postproc_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_postproc_STATIC_CFLAGS_I:INTERNAL=
+PC_postproc_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_postproc_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_postproc_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lpostproc;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_postproc_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+PC_postproc_STATIC_LIBDIR:INTERNAL=
+PC_postproc_STATIC_LIBRARIES:INTERNAL=postproc;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_postproc_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64
+PC_postproc_STATIC_LIBS:INTERNAL=
+PC_postproc_STATIC_LIBS_L:INTERNAL=
+PC_postproc_STATIC_LIBS_OTHER:INTERNAL=
+PC_postproc_STATIC_LIBS_PATHS:INTERNAL=
+PC_postproc_VERSION:INTERNAL=55.5.100
+PC_postproc_libpostproc_INCLUDEDIR:INTERNAL=
+PC_postproc_libpostproc_LIBDIR:INTERNAL=
+PC_postproc_libpostproc_PREFIX:INTERNAL=
+PC_postproc_libpostproc_VERSION:INTERNAL=
+PC_swresample_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_swresample_CFLAGS_I:INTERNAL=
+PC_swresample_CFLAGS_OTHER:INTERNAL=
+PC_swresample_FOUND:INTERNAL=1
+PC_swresample_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_swresample_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_swresample_LDFLAGS:INTERNAL=-L/usr/lib64;-lswresample
+PC_swresample_LDFLAGS_OTHER:INTERNAL=
+PC_swresample_LIBDIR:INTERNAL=/usr/lib64
+PC_swresample_LIBRARIES:INTERNAL=swresample
+PC_swresample_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_swresample_LIBS:INTERNAL=
+PC_swresample_LIBS_L:INTERNAL=
+PC_swresample_LIBS_OTHER:INTERNAL=
+PC_swresample_LIBS_PATHS:INTERNAL=
+PC_swresample_MODULE_NAME:INTERNAL=libswresample
+PC_swresample_PREFIX:INTERNAL=/usr
+PC_swresample_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_swresample_STATIC_CFLAGS_I:INTERNAL=
+PC_swresample_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_swresample_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_swresample_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lswresample;-lm;-lsoxr;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_swresample_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+PC_swresample_STATIC_LIBDIR:INTERNAL=
+PC_swresample_STATIC_LIBRARIES:INTERNAL=swresample;m;soxr;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_swresample_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64
+PC_swresample_STATIC_LIBS:INTERNAL=
+PC_swresample_STATIC_LIBS_L:INTERNAL=
+PC_swresample_STATIC_LIBS_OTHER:INTERNAL=
+PC_swresample_STATIC_LIBS_PATHS:INTERNAL=
+PC_swresample_VERSION:INTERNAL=3.5.100
+PC_swresample_libswresample_INCLUDEDIR:INTERNAL=
+PC_swresample_libswresample_LIBDIR:INTERNAL=
+PC_swresample_libswresample_PREFIX:INTERNAL=
+PC_swresample_libswresample_VERSION:INTERNAL=
+PC_swscale_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_swscale_CFLAGS_I:INTERNAL=
+PC_swscale_CFLAGS_OTHER:INTERNAL=
+PC_swscale_FOUND:INTERNAL=1
+PC_swscale_INCLUDEDIR:INTERNAL=/usr/include/ffmpeg
+PC_swscale_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_swscale_LDFLAGS:INTERNAL=-L/usr/lib64;-lswscale
+PC_swscale_LDFLAGS_OTHER:INTERNAL=
+PC_swscale_LIBDIR:INTERNAL=/usr/lib64
+PC_swscale_LIBRARIES:INTERNAL=swscale
+PC_swscale_LIBRARY_DIRS:INTERNAL=/usr/lib64
+PC_swscale_LIBS:INTERNAL=
+PC_swscale_LIBS_L:INTERNAL=
+PC_swscale_LIBS_OTHER:INTERNAL=
+PC_swscale_LIBS_PATHS:INTERNAL=
+PC_swscale_MODULE_NAME:INTERNAL=libswscale
+PC_swscale_PREFIX:INTERNAL=/usr
+PC_swscale_STATIC_CFLAGS:INTERNAL=-I/usr/include/ffmpeg
+PC_swscale_STATIC_CFLAGS_I:INTERNAL=
+PC_swscale_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_swscale_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ffmpeg
+PC_swscale_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lswscale;-lm;-L/usr/lib64;-lavutil;-pthread;-lva-drm;-lva;-lvdpau;-lX11;-lm;-ldrm;-lmfx;-lstdc++;-ldl;-lva-drm;-lva-x11;-lva;-lOpenCL;-lva;-ldl
+PC_swscale_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+PC_swscale_STATIC_LIBDIR:INTERNAL=
+PC_swscale_STATIC_LIBRARIES:INTERNAL=swscale;m;avutil;va-drm;va;vdpau;X11;m;drm;mfx;stdc++;dl;va-drm;va-x11;va;OpenCL;va;dl
+PC_swscale_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64
+PC_swscale_STATIC_LIBS:INTERNAL=
+PC_swscale_STATIC_LIBS_L:INTERNAL=
+PC_swscale_STATIC_LIBS_OTHER:INTERNAL=
+PC_swscale_STATIC_LIBS_PATHS:INTERNAL=
+PC_swscale_VERSION:INTERNAL=5.5.100
+PC_swscale_libswscale_INCLUDEDIR:INTERNAL=
+PC_swscale_libswscale_LIBDIR:INTERNAL=
+PC_swscale_libswscale_PREFIX:INTERNAL=
+PC_swscale_libswscale_VERSION:INTERNAL=
 //ADVANCED property for variable: PKG_CONFIG_ARGN
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
@@ -868,11 +1668,96 @@ X11_xkbfile_INCLUDE_PATH-ADVANCED:INTERNAL=1
 X11_xkbfile_LIB-ADVANCED:INTERNAL=1
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
+_OPENSSL_CFLAGS:INTERNAL=
+_OPENSSL_CFLAGS_I:INTERNAL=
+_OPENSSL_CFLAGS_OTHER:INTERNAL=
+_OPENSSL_FOUND:INTERNAL=1
+_OPENSSL_INCLUDEDIR:INTERNAL=/usr/include
+_OPENSSL_INCLUDE_DIRS:INTERNAL=
+_OPENSSL_LDFLAGS:INTERNAL=-L/usr/lib64;-lssl;-lcrypto
+_OPENSSL_LDFLAGS_OTHER:INTERNAL=
+_OPENSSL_LIBDIR:INTERNAL=/usr/lib64
+_OPENSSL_LIBRARIES:INTERNAL=ssl;crypto
+_OPENSSL_LIBRARY_DIRS:INTERNAL=/usr/lib64
+_OPENSSL_LIBS:INTERNAL=
+_OPENSSL_LIBS_L:INTERNAL=
+_OPENSSL_LIBS_OTHER:INTERNAL=
+_OPENSSL_LIBS_PATHS:INTERNAL=
+_OPENSSL_MODULE_NAME:INTERNAL=openssl
+_OPENSSL_PREFIX:INTERNAL=/usr
+_OPENSSL_STATIC_CFLAGS:INTERNAL=
+_OPENSSL_STATIC_CFLAGS_I:INTERNAL=
+_OPENSSL_STATIC_CFLAGS_OTHER:INTERNAL=
+_OPENSSL_STATIC_INCLUDE_DIRS:INTERNAL=
+_OPENSSL_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lssl;-L/usr/lib64;-lz;-ldl;-pthread;-lcrypto;-lz;-ldl;-pthread
+_OPENSSL_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread
+_OPENSSL_STATIC_LIBDIR:INTERNAL=
+_OPENSSL_STATIC_LIBRARIES:INTERNAL=ssl;z;dl;crypto;z;dl
+_OPENSSL_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64;/usr/lib64
+_OPENSSL_STATIC_LIBS:INTERNAL=
+_OPENSSL_STATIC_LIBS_L:INTERNAL=
+_OPENSSL_STATIC_LIBS_OTHER:INTERNAL=
+_OPENSSL_STATIC_LIBS_PATHS:INTERNAL=
+_OPENSSL_VERSION:INTERNAL=1.1.1k
+_OPENSSL_openssl_INCLUDEDIR:INTERNAL=
+_OPENSSL_openssl_LIBDIR:INTERNAL=
+_OPENSSL_openssl_PREFIX:INTERNAL=
+_OPENSSL_openssl_VERSION:INTERNAL=
+__pkg_config_arguments_PC_avcodec:INTERNAL=libavcodec
+__pkg_config_arguments_PC_avdevice:INTERNAL=libavdevice
+__pkg_config_arguments_PC_avfilter:INTERNAL=libavfilter
+__pkg_config_arguments_PC_avformat:INTERNAL=libavformat
+__pkg_config_arguments_PC_avresample:INTERNAL=libavresample
+__pkg_config_arguments_PC_avutil:INTERNAL=libavutil
+__pkg_config_arguments_PC_postproc:INTERNAL=libpostproc
+__pkg_config_arguments_PC_swresample:INTERNAL=libswresample
+__pkg_config_arguments_PC_swscale:INTERNAL=libswscale
 __pkg_config_arguments_PKG_FONTCONFIG:INTERNAL=QUIET;fontconfig
+__pkg_config_arguments__OPENSSL:INTERNAL=QUIET;openssl
+__pkg_config_checked_PC_avcodec:INTERNAL=1
+__pkg_config_checked_PC_avdevice:INTERNAL=1
+__pkg_config_checked_PC_avfilter:INTERNAL=1
+__pkg_config_checked_PC_avformat:INTERNAL=1
+__pkg_config_checked_PC_avresample:INTERNAL=1
+__pkg_config_checked_PC_avutil:INTERNAL=1
+__pkg_config_checked_PC_postproc:INTERNAL=1
+__pkg_config_checked_PC_swresample:INTERNAL=1
+__pkg_config_checked_PC_swscale:INTERNAL=1
 __pkg_config_checked_PKG_FONTCONFIG:INTERNAL=1
+__pkg_config_checked__OPENSSL:INTERNAL=1
+//ADVANCED property for variable: boost_atomic_DIR
+boost_atomic_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: boost_filesystem_DIR
+boost_filesystem_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: boost_headers_DIR
+boost_headers_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: boost_system_DIR
+boost_system_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_avcodec_avcodec
+pkgcfg_lib_PC_avcodec_avcodec-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_avdevice_avdevice
+pkgcfg_lib_PC_avdevice_avdevice-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_avfilter_avfilter
+pkgcfg_lib_PC_avfilter_avfilter-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_avformat_avformat
+pkgcfg_lib_PC_avformat_avformat-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_avresample_avresample
+pkgcfg_lib_PC_avresample_avresample-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_avutil_avutil
+pkgcfg_lib_PC_avutil_avutil-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_postproc_postproc
+pkgcfg_lib_PC_postproc_postproc-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_swresample_swresample
+pkgcfg_lib_PC_swresample_swresample-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_swscale_swscale
+pkgcfg_lib_PC_swscale_swscale-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PKG_FONTCONFIG_fontconfig
 pkgcfg_lib_PKG_FONTCONFIG_fontconfig-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PKG_FONTCONFIG_freetype
 pkgcfg_lib_PKG_FONTCONFIG_freetype-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib__OPENSSL_crypto
+pkgcfg_lib__OPENSSL_crypto-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib__OPENSSL_ssl
+pkgcfg_lib__OPENSSL_ssl-ADVANCED:INTERNAL=1
 prefix_result:INTERNAL=/usr/lib64
 
