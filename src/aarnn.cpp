@@ -22,6 +22,25 @@
 #include <tuple>
 #include <map>
 #include <set>
+#include <chrono>
+#include <cstdlib>
+#include <cstring>
+#include <websocketpp/config/asio_no_tls.hpp>
+#include <websocketpp/server.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/device/file.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/bzip2.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+
+extern "C" {
+#include <libavcodec/avcodec.h>
+}
 
 /*!
  * The VTK_MODULE_INIT is definitely required. Without it NULL is returned to ::New() type calls
@@ -41,7 +60,10 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include <vtkContourFilter.h>
 #include <vtkCoordinate.h>
 #include <vtkCylinderSource.h>
+#include <vtkDataSetMapper.h>
+#include <vtkDelaunay3D.h>
 #include <vtkFloatArray.h>
+#include <vtkGeometryFilter.h>
 #include <vtkGlyph3D.h>
 #include <vtkLineSource.h>
 #include <vtkMath.h>
@@ -72,7 +94,9 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include <vtkWarpTo.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <cmath>
-
+#include <vtkWindowToImageFilter.h>
+#include <vtkJPEGWriter.h>
+#include <vtkImageData.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
@@ -80,27 +104,31 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include "dendrite.h"
 #include "dendritebranch.h"
 
+// websocketpp typedefs
+typedef websocketpp::server<websocketpp::config::asio> Server;
+typedef websocketpp::connection_hdl ConnectionHandle;
+
 /*
 Setup VTK environment
  */
 
-vtkSmartPointer<vtkRenderWindow> render_window;
-vtkSmartPointer<vtkRenderWindowInteractor> render_window_interactor;
+vtkSmartPointer<vtkRenderWindow> renderWindow;
+vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
 
-vtkSmartPointer<vtkPoints> define_points = vtkSmartPointer<vtkPoints>::New();
-std::vector<vtkSmartPointer<vtkCellArray>> define_cellarrays;
-std::vector<vtkSmartPointer<vtkPolyData>> define_polydata;
+vtkSmartPointer<vtkPoints> definePoints = vtkSmartPointer<vtkPoints>::New();
+std::vector<vtkSmartPointer<vtkCellArray>> defineCellarrays;
+std::vector<vtkSmartPointer<vtkPolyData>> definePolydata;
 
-std::vector<vtkSmartPointer<vtkSurfaceReconstructionFilter>> define_surfaces;
-std::vector<vtkSmartPointer<vtkContourFilter>> define_contourfilters;
-std::vector<vtkSmartPointer<vtkReverseSense>> define_reversals;
-std::vector<vtkSmartPointer<vtkPolyDataMapper>> define_datamappers;
-std::vector<vtkSmartPointer<vtkPolyDataMapper2D>> define_datamappers2D;
-std::vector<vtkSmartPointer<vtkActor>> define_actors;
-std::vector<vtkSmartPointer<vtkActor2D>> define_actors2D;
-std::vector<vtkSmartPointer<vtkTextActor>> define_textactors;
+std::vector<vtkSmartPointer<vtkSurfaceReconstructionFilter>> defineSurfaces;
+std::vector<vtkSmartPointer<vtkContourFilter>> defineContourFilters;
+std::vector<vtkSmartPointer<vtkReverseSense>> defineReversals;
+std::vector<vtkSmartPointer<vtkPolyDataMapper>> defineDataMappers;
+std::vector<vtkSmartPointer<vtkPolyDataMapper2D>> defineDataMappers2D;
+std::vector<vtkSmartPointer<vtkActor>> defineActors;
+std::vector<vtkSmartPointer<vtkActor2D>> defineActors2D;
+std::vector<vtkSmartPointer<vtkTextActor>> defineTextActors;
 
-std::vector<vtkSmartPointer<vtkRenderer>> define_renderers;
+std::vector<vtkSmartPointer<vtkRenderer>> defineRenderers;
 
 static vtkSmartPointer<vtkPolyData> TransformBack(vtkSmartPointer<vtkPoints> pt, vtkSmartPointer<vtkPolyData> pd);
 
@@ -356,6 +384,11 @@ public:
         }
     }
 
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
+
     // Method to check if the SynapticGap has been associated
     bool isAssociated() const {
         return associated;
@@ -397,6 +430,10 @@ public:
     }
 
     void connectSynapticGap(std::shared_ptr<SynapticGap> gap);
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
 
     [[nodiscard]] std::shared_ptr<SynapticGap> getSynapticGap() const {
         return onwardSynapticGap;
@@ -405,11 +442,6 @@ public:
     double getPropagationRate() override {
         // Implement the calculation based on the dendrite bouton properties
         return propagationRate;
-    }
-
-    Position updatePosition(const PositionPtr& newPosition) {
-        position = newPosition;
-        return *position;
     }
 
     void setNeuron(std::weak_ptr<Neuron> parentNeuron) {
@@ -422,9 +454,9 @@ public:
 
 private:
     bool instanceInitialised = false;  // Initially, the DendriteBouton is not initialised
-    std::shared_ptr<SynapticGap> onwardSynapticGap{};
+    std::shared_ptr<SynapticGap> onwardSynapticGap;
     std::weak_ptr<Neuron> neuron;
-    std::shared_ptr<Dendrite> parentDendrite{};
+    std::shared_ptr<Dendrite> parentDendrite;
 };
 
 // Dendrite class
@@ -447,6 +479,11 @@ public:
         }
     }
 
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
+
     void addBranch(std::shared_ptr<DendriteBranch> branch);
 
     [[nodiscard]] const std::vector<std::shared_ptr<DendriteBranch>>& getDendriteBranches() const {
@@ -464,9 +501,9 @@ public:
 private:
     bool instanceInitialised = false;  // Initially, the Dendrite is not initialised
     std::vector<std::shared_ptr<DendriteBranch>> dendriteBranches;
-    std::shared_ptr<DendriteBranch> dendriteBranch{};
-    std::shared_ptr<DendriteBouton> dendriteBouton{};
-    std::shared_ptr<DendriteBranch> parentDendriteBranch{};
+    std::shared_ptr<DendriteBranch> dendriteBranch;
+    std::shared_ptr<DendriteBouton> dendriteBouton;
+    std::shared_ptr<DendriteBranch> parentDendriteBranch;
 };
 
 // Dendrite branch class
@@ -488,6 +525,11 @@ public:
             instanceInitialised = true;
         }
     }
+
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
 
     void connectDendrite(std::shared_ptr<Dendrite> dendrite) {
         auto coords = get_coordinates(int (onwardDendrites.size() + 1), int(onwardDendrites.size() + 1), int(5));
@@ -551,6 +593,11 @@ public:
         }
     }
 
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
+
     void AddSynapticGap(const std::shared_ptr<SynapticGap>& gap) {
         gap->updateFromAxonBouton(shared_from_this());
     }
@@ -598,6 +645,11 @@ public:
         }
     }
 
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
+
     void addBranch(std::shared_ptr<AxonBranch> branch);
 
     [[nodiscard]] const std::vector<std::shared_ptr<AxonBranch>>& getAxonBranches() const {
@@ -643,6 +695,11 @@ public:
             instanceInitialised = true;
         }
     }
+
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
 
     void connectAxon(std::shared_ptr<Axon> axon) {
         auto coords = get_coordinates(int (onwardAxons.size() + 1), int(onwardAxons.size() + 1), int(5));
@@ -702,6 +759,11 @@ public:
         }
     }
 
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
+
     [[nodiscard]] std::shared_ptr<Axon> getAxon() const {
         return onwardAxon;
     }
@@ -737,6 +799,11 @@ public:
             instanceInitialised = true;
         }
     }
+
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
+    }
+
 
     [[nodiscard]] std::shared_ptr<AxonHillock> getAxonHillock() const {
         return onwardAxonHillock;
@@ -804,6 +871,10 @@ public:
      */
     std::shared_ptr<Soma> getSoma() {
         return soma;
+    }
+
+    void updatePosition(const PositionPtr& newPosition) {
+        position = newPosition;
     }
 
     void storeAllSynapticGapsAxon() {
@@ -1150,60 +1221,151 @@ void addAxonBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<AxonBr
     // Add the actor to the renderer
     renderer->AddActor(coneActor);
 }
-void addDendriteBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch, vtkSmartPointer<vtkPoints> define_points, vtkSmartPointer<vtkIdList> point_ids) {
+
+void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_ptr<SynapticGap>& synapticGap) {
+    const PositionPtr& synapticGapPosition = synapticGap->getPosition();
+
+    // Create the sphere source for the glyph
+    vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
+    sphereSource->SetRadius(0.175);  // Set the radius of the sphere
+
+    // Create a vtkPoints object to hold the positions of the spheres
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+
+    // Add multiple points around the synaptic gap position to create a cloud
+    for (int i = 0; i < 8; ++i) {
+        double offsetX = (std::rand() / double(RAND_MAX)) - 0.15;
+        double offsetY = (std::rand() / double(RAND_MAX)) - 0.15;
+        double offsetZ = (std::rand() / double(RAND_MAX)) - 0.15;
+
+        double x = synapticGapPosition->x + offsetX;
+        double y = synapticGapPosition->y + offsetY;
+        double z = synapticGapPosition->z + offsetZ;
+
+        points->InsertNextPoint(x, y, z);
+    }
+
+    // Create a vtkPolyData object and set the points as its vertices
+    vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+    polyData->SetPoints(points);
+
+    // Create the glyph filter and set the polydata as the input
+    vtkSmartPointer<vtkGlyph3D> glyph3D = vtkSmartPointer<vtkGlyph3D>::New();
+    glyph3D->SetInputData(polyData);
+    glyph3D->SetSourceConnection(sphereSource->GetOutputPort());
+    glyph3D->SetScaleFactor(1.0);  // Set the scale factor for the glyph
+
+    // Create a mapper and actor for the glyph
+    vtkSmartPointer<vtkPolyDataMapper> glyphMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    glyphMapper->SetInputConnection(glyph3D->GetOutputPort());
+
+    vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
+    glyphActor->SetMapper(glyphMapper);
+    glyphActor->GetProperty()->SetColor(1.0, 1.0, 0.0);  // Set color to yellow
+
+    // Add the glyph actor to the renderer
+    renderer->AddActor(glyphActor);
+}
+
+
+void addDendriteBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch, vtkSmartPointer<vtkPoints> definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
     // Add the position of the dendrite branch to vtkPolyData
     PositionPtr branchPosition = dendriteBranch->getPosition();
-    point_ids->InsertNextId(define_points->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
+    pointIDs->InsertNextId(definePoints->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
 
     // Iterate over the dendrites and add their positions to vtkPolyData
-    const std::vector<std::shared_ptr<Dendrite>> &dendrites = dendriteBranch->getDendrites();
-    for (const auto &dendrite: dendrites) {
+    const std::vector<std::shared_ptr<Dendrite>>& dendrites = dendriteBranch->getDendrites();
+    for (const auto& dendrite : dendrites) {
         PositionPtr dendritePosition = dendrite->getPosition();
-        addDendriteBranchToRenderer(renderer, dendriteBranch, dendrite, define_points, point_ids);
+        addDendriteBranchToRenderer(renderer, dendriteBranch, dendrite, definePoints, pointIDs);
 
-        // Select the dendrite bouton and add their position to vtkPolyData
-        const std::shared_ptr<DendriteBouton> &bouton = dendrite->getDendriteBouton();
+        // Select the dendrite bouton and add its position to vtkPolyData
+        const std::shared_ptr<DendriteBouton>& bouton = dendrite->getDendriteBouton();
         PositionPtr boutonPosition = bouton->getPosition();
-        point_ids->InsertNextId(define_points->InsertNextPoint(boutonPosition->x, boutonPosition->y,
-                                                                   boutonPosition->z));
+        pointIDs->InsertNextId(definePoints->InsertNextPoint(boutonPosition->x, boutonPosition->y,
+                                                               boutonPosition->z));
 
         // Recursively process child dendrite branches
-        const std::vector<std::shared_ptr<DendriteBranch>> &childBranches = dendrite->getDendriteBranches();
-        for (const auto &childBranch: childBranches) {
-            addDendriteBranchPositionsToPolyData(renderer, childBranch, define_points, point_ids);
+        const std::vector<std::shared_ptr<DendriteBranch>>& childBranches = dendrite->getDendriteBranches();
+        for (const auto& childBranch : childBranches) {
+            addDendriteBranchPositionsToPolyData(renderer, childBranch, definePoints, pointIDs);
         }
     }
 }
 
-void addAxonBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch, vtkSmartPointer<vtkPoints> define_points, vtkSmartPointer<vtkIdList> point_ids) {
+void addAxonBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch, vtkSmartPointer<vtkPoints> definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
     // Add the position of the axon branch to vtkPolyData
     PositionPtr branchPosition = axonBranch->getPosition();
-    point_ids->InsertNextId(define_points->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
+    pointIDs->InsertNextId(definePoints->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
 
     // Iterate over the axons and add their positions to vtkPolyData
-    const std::vector<std::shared_ptr<Axon>> &axons = axonBranch->getAxons();
-    for (const auto &axon : axons) {
+    const std::vector<std::shared_ptr<Axon>>& axons = axonBranch->getAxons();
+    for (const auto& axon : axons) {
         PositionPtr axonPosition = axon->getPosition();
-        addAxonBranchToRenderer(renderer, axonBranch, axon, define_points, point_ids);
+        addAxonBranchToRenderer(renderer, axonBranch, axon, definePoints, pointIDs);
 
-        // Select the axon bouton and add their position to vtkPolyData
-        const std::shared_ptr<AxonBouton> &axonBouton = axon->getAxonBouton();
+        // Select the axon bouton and add its position to vtkPolyData
+        const std::shared_ptr<AxonBouton>& axonBouton = axon->getAxonBouton();
         PositionPtr axonBoutonPosition = axonBouton->getPosition();
-        point_ids->InsertNextId(define_points->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
+        pointIDs->InsertNextId(definePoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
                                                                axonBoutonPosition->z));
 
-        // Select the synaptic gap and add their position to vtkPolyData
-        const std::shared_ptr<SynapticGap> &synapticGap = axon->getAxonBouton()->getSynapticGap();
-        PositionPtr synapticGapPosition = synapticGap->getPosition();
-        point_ids->InsertNextId(define_points->InsertNextPoint(synapticGapPosition->x, synapticGapPosition->y,
-                                                               synapticGapPosition->z));
+        // Select the synaptic gap and add its position to vtkPolyData
+        const std::shared_ptr<SynapticGap>& synapticGap = axonBouton->getSynapticGap();
+        addSynapticGapToRenderer(renderer, synapticGap);
 
         // Recursively process child axon branches
-        const std::vector<std::shared_ptr<AxonBranch>> &childBranches = axon->getAxonBranches();
-        for (const auto &childBranch: childBranches) {
-            addAxonBranchPositionsToPolyData(renderer, childBranch, define_points, point_ids);
+        const std::vector<std::shared_ptr<AxonBranch>>& childBranches = axon->getAxonBranches();
+        for (const auto& childBranch : childBranches) {
+            addAxonBranchPositionsToPolyData(renderer, childBranch, definePoints, pointIDs);
         }
     }
+}
+
+const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+std::string base64_encode(const unsigned char* data, size_t length) {
+    std::string base64;
+    int i = 0;
+    int j = 0;
+    unsigned char char_array_3[3];
+    unsigned char char_array_4[4];
+
+    while (length--) {
+        char_array_3[i++] = *(data++);
+        if (i == 3) {
+            char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+            char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+            char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+            char_array_4[3] = char_array_3[2] & 0x3f;
+
+            for (i = 0; i < 4; i++) {
+                base64 += base64_chars[char_array_4[i]];
+            }
+            i = 0;
+        }
+    }
+
+    if (i) {
+        for (j = i; j < 3; j++) {
+            char_array_3[j] = '\0';
+        }
+
+        char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+        char_array_4[3] = char_array_3[2] & 0x3f;
+
+        for (j = 0; j < i + 1; j++) {
+            base64 += base64_chars[char_array_4[j]];
+        }
+
+        while ((i++ < 3)) {
+            base64 += '=';
+        }
+    }
+
+    return base64;
 }
 
 /**
@@ -1214,16 +1376,20 @@ int main() {
     // Initialize logger
     Logger logger("errors.log");
 
+    std::string input = "Hello, World!";
+    std::string encoded = base64_encode(reinterpret_cast<const unsigned char*>(input.c_str()), input.length());
+
+    std::cout << "Base64 Encoded: " << encoded << std::endl;
+
     // Initialize VTK
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-    render_window = vtkSmartPointer<vtkRenderWindow>::New();
+    vtkSmartPointer<vtkRenderWindow> render_window = vtkSmartPointer<vtkRenderWindow>::New();
     render_window->AddRenderer(renderer);
-    render_window_interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    vtkSmartPointer<vtkRenderWindowInteractor> render_window_interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
     render_window_interactor->SetRenderWindow(render_window);
 
-    // Create a vtkPolyData object to hold the neuron positions
-    vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-    polydata->SetPoints(define_points);
+    // Create a vtkPoints object to hold the neuron positions
+    vtkSmartPointer<vtkPoints> definePoints = vtkSmartPointer<vtkPoints>::New();
 
     // Create a vtkCellArray object to hold the lines
     vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
@@ -1258,10 +1424,30 @@ int main() {
         std::cout << "Creating neurons..." << std::endl;
         std::vector<std::shared_ptr<Neuron>> neurons;
         neurons.reserve(num_neurons);
+        double shiftX = 0.0;
+        double shiftY = 0.0;
+        double shiftZ = 0.0;
+        std::shared_ptr<Neuron> prevNeuron;
         for (int i = 0; i < num_neurons; ++i) {
             auto coords = get_coordinates(i, num_neurons, points_per_layer);
-            neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(std::get<0>(coords), std::get<1>(coords), std::get<2>(coords))));
+            if ( i > 0 ) {
+                prevNeuron = neurons.back();
+                shiftX = std::get<0>(coords) + (prevNeuron->getSoma()->getAxonHillock()->getPosition()->x);
+                shiftY = std::get<1>(coords) + (prevNeuron->getSoma()->getAxonHillock()->getPosition()->y);
+                shiftZ = std::get<2>(coords) + (prevNeuron->getSoma()->getAxonHillock()->getPosition()->z);
+            }
+            //shiftX = 1.1;
+            //shiftY = 1.2;
+            //shiftZ = 1.3;
+
+            std::cout << "Creating neuron " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
+            neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
             neurons.back()->initialise();
+            // Sparsely associate neurons
+            if (i > 0 && i % 3 > 0) {
+                neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->updatePosition( prevNeuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition());
+                associateSynapticGap(*neurons[i - 1], *neurons[i], proximityThreshold);
+            }
         }
         std::cout << "Created " << neurons.size() << " neurons." << std::endl;
 
@@ -1302,13 +1488,14 @@ int main() {
 
         // Iterate over the neurons and add their positions to the vtkPolyData
         for (const auto& neuron : neurons) {
-            const PositionPtr& neuronPosition = neuron->getPosition();
+            const PositionPtr &neuronPosition = neuron->getPosition();
 
             // Create a vtkIdList to hold the point indices of the line vertices
-            vtkSmartPointer<vtkIdList> point_ids = vtkSmartPointer<vtkIdList>::New();
-            point_ids->InsertNextId(define_points->InsertNextPoint(neuronPosition->x, neuronPosition->y, neuronPosition->z));
+            vtkSmartPointer<vtkIdList> pointIDs = vtkSmartPointer<vtkIdList>::New();
+            pointIDs->InsertNextId(
+                    definePoints->InsertNextPoint(neuronPosition->x, neuronPosition->y, neuronPosition->z));
 
-            const PositionPtr& somaPosition = neuron->getSoma()->getPosition();
+            const PositionPtr &somaPosition = neuron->getSoma()->getPosition();
             // Add the sphere centre point to the vtkPolyData
             vtkSmartPointer<vtkSphereSource> sphere = vtkSmartPointer<vtkSphereSource>::New();
             sphere->SetRadius(1.0); // Adjust the sphere radius as needed
@@ -1325,46 +1512,100 @@ int main() {
             renderer->AddActor(sphereActor);
 
             // Iterate over the dendrite branches and add their positions to the vtkPolyData
-            const std::vector<std::shared_ptr<DendriteBranch>>& dendriteBranches = neuron->getSoma()->getDendriteBranches();
-            for (const auto& dendriteBranch : dendriteBranches) {
-                    addDendriteBranchPositionsToPolyData(renderer, dendriteBranch, define_points, point_ids);
+            const std::vector<std::shared_ptr<DendriteBranch>> &dendriteBranches = neuron->getSoma()->getDendriteBranches();
+            for (const auto &dendriteBranch: dendriteBranches) {
+                addDendriteBranchPositionsToPolyData(renderer, dendriteBranch, definePoints, pointIDs);
             }
 
-            const PositionPtr& axonHillockPosition = neuron->getSoma()->getAxonHillock()->getPosition();
-            point_ids->InsertNextId(define_points->InsertNextPoint(axonHillockPosition->x, axonHillockPosition->y, axonHillockPosition->z));
+            // Add the position of the axon hillock to the vtkPoints and vtkPolyData
+            const PositionPtr &axonHillockPosition = neuron->getSoma()->getAxonHillock()->getPosition();
+            pointIDs->InsertNextId(definePoints->InsertNextPoint(axonHillockPosition->x, axonHillockPosition->y,
+                                                                   axonHillockPosition->z));
 
-            const PositionPtr& axonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getPosition();
-            point_ids->InsertNextId(define_points->InsertNextPoint(axonPosition->x, axonPosition->y, axonPosition->z));
+            // Add the position of the axon to the vtkPoints and vtkPolyData
+            const PositionPtr &axonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getPosition();
+            pointIDs->InsertNextId(definePoints->InsertNextPoint(axonPosition->x, axonPosition->y, axonPosition->z));
 
-            const PositionPtr& axonBoutonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
-            point_ids->InsertNextId(define_points->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y, axonBoutonPosition->z));
+            // Add the position of the axon bouton to the vtkPoints and vtkPolyData
+            const PositionPtr &axonBoutonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
+            pointIDs->InsertNextId(definePoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
+                                                                   axonBoutonPosition->z));
 
-            const PositionPtr& synapticGapPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
-            point_ids->InsertNextId(define_points->InsertNextPoint(synapticGapPosition->x, synapticGapPosition->y, synapticGapPosition->z));
+            // Add the position of the synaptic gap to the vtkPoints and vtkPolyData
+            addSynapticGapToRenderer(renderer,
+                                     neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap());
 
             // Iterate over the axon branches and add their positions to the vtkPolyData
-            const std::vector<std::shared_ptr<AxonBranch>>& axonBranches = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches();
-            for (const auto& axonBranch : axonBranches) {
-                    addAxonBranchPositionsToPolyData(renderer, axonBranch, define_points, point_ids);
+            const std::vector<std::shared_ptr<AxonBranch>> &axonBranches = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches();
+            for (const auto &axonBranch: axonBranches) {
+                addAxonBranchPositionsToPolyData(renderer, axonBranch, definePoints, pointIDs);
             }
 
             // Add the line to the cell array
-            lines->InsertNextCell(point_ids);
+            lines->InsertNextCell(pointIDs);
+
+
+            // Create a vtkPolyData object and set the points and lines as its data
+            vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+            polyData->SetPoints(definePoints);
+
+            vtkSmartPointer<vtkDelaunay3D> delaunay = vtkSmartPointer<vtkDelaunay3D>::New();
+            delaunay->SetInputData(polyData);
+            delaunay->SetAlpha(0.1); // Adjust for mesh density
+            //delaunay->Update();
+
+            // Extract the surface of the Delaunay output using vtkGeometryFilter
+            //vtkSmartPointer<vtkGeometryFilter> geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
+            //geometryFilter->SetInputConnection(delaunay->GetOutputPort());
+            //geometryFilter->Update();
+
+            // Get the vtkPolyData representing the membrane surface
+            //vtkSmartPointer<vtkPolyData> membranePolyData = geometryFilter->GetOutput();
+
+            // Create a vtkPolyDataMapper and set the input as the extracted surface
+            vtkSmartPointer<vtkPolyDataMapper> membraneMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+            //membraneMapper->SetInputData(membranePolyData);
+
+            // Create a vtkActor for the membrane and set its mapper
+            //vtkSmartPointer<vtkActor> membraneActor = vtkSmartPointer<vtkActor>::New();
+            //membraneActor->SetMapper(membraneMapper);
+            //membraneActor->GetProperty()->SetColor(0.7, 0.7, 0.7);  // Set color to gray
+
+            // Add the membrane actor to the renderer
+            // renderer->AddActor(membraneActor);
+
+            polyData->SetLines(lines);
+
+            // Create a mapper and actor for the neuron positions
+            vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+            mapper->SetInputData(polyData);
+            vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+            actor->SetMapper(mapper);
+            renderer->AddActor(actor);
+        }
+        // Set up the render window and start the interaction
+        renderWindow->SetSize(400, 300);
+        renderWindow->Render();
+        vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+        windowToImageFilter->SetInput(renderWindow);
+        windowToImageFilter->Update();
+
+        vtkSmartPointer<vtkJPEGWriter> jpegWriter = vtkSmartPointer<vtkJPEGWriter>::New();
+        jpegWriter->SetInputConnection(windowToImageFilter->GetOutputPort());
+        jpegWriter->SetQuality(80);  // Adjust the JPEG quality as needed
+        jpegWriter->Write();
+
+        vtkImageData* imageData = jpegWriter->GetResult();
+        if (!imageData) {
+            return "";
         }
 
-        // Add the cell array to the vtkPolyData
-        polydata->SetLines(lines);
+        unsigned char* buffer = static_cast<unsigned char*>(imageData->GetScalarPointer());
+        size_t bufferSize = imageData->GetScalarSize() * imageData->GetNumberOfPoints();
 
-        // Create a mapper and actor for the neuron positions
-        vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        mapper->SetInputData(polydata);
-        vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-        actor->SetMapper(mapper);
-        renderer->AddActor(actor);
+        std::string base64Image = base64_encode(buffer, bufferSize);
 
-        // Set up the render window and start the interaction
-        render_window->Render();
-        render_window_interactor->Start();
+        renderWindowInteractor->Start();
 
     } catch (const std::exception &e) {
         logger << "Error: " << e.what() << std::endl;
