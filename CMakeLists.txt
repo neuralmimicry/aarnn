@@ -44,24 +44,27 @@ if(NOT OpenSSL_FOUND)
     message(FATAL_ERROR "OpenSSL library not found")
 endif()
 
+# Find OpenMP
+find_package(OpenMP REQUIRED)
+if(NOT OpenMP_CXX_FOUND)
+    message(FATAL_ERROR "OpenMP library not found")
+endif()
+
 # Add the src subdirectory to the include paths
 include_directories(src)
 include_directories(include)
-include_directories (${PostgreSQL_INCLUDE_DIR})
+include_directories(${PostgreSQL_INCLUDE_DIR})
 include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
 include_directories(${Boost_INCLUDE_DIRS})  # Add Boost include directories
 include_directories(${OpenSSL_INCLUDE_DIRS})  # Add OpenSSL include directories
-include_directories(${FFmpeg_INCLUDE_DIRS})  # Add ffmpeg include directories
+include_directories(${FFmpeg_INCLUDE_DIRS})  # Add FFmpeg include directories
 
 link_directories(${PostgreSQL_LIBRARY_DIR})
 
-# Add all source files in the src subfolder
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+# Define the target for aarnn.cpp
+add_executable(AARNN "src/aarnn.cpp")
+target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL and OpenMP libraries
 
-# Add the -pthread option for GCC
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-endif()
-
-add_executable(AARNN ${SOURCES})
-target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES})  # Link VTK, Boost, and OpenSSL libraries
+# Define the target for visualiser.cpp
+add_executable(Visualiser "src/visualiser.cpp")
+target_link_libraries(Visualiser PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL and OpenMP libraries
