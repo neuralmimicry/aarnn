@@ -4,6 +4,13 @@ FROM ubuntu:latest
 # Set the working directory in the container to /app
 WORKDIR /app
 
+ARG POSTGRES_USER
+ARG POSTGRES_PASSWORD
+
+ENV POSTGRES_USER=${POSTGRES_USER}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+ENV POSTGRES_DB=neurons
+
 # Copy the compiled executable from your host to the current location in your docker image
 COPY ./build/AARNN /app/AARNN
 

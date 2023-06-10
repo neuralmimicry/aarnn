@@ -2,10 +2,14 @@
 #define AARNN_H
 // Forward declarations
 class Logger;
+class BodyParameters;
 class NeuronParameters;
 class Position;
 class Shape3D;
+class BodyShapeComponent;
 class NeuronShapeComponent;
+class SensoryReceptor;
+class Effector;
 class SynapticGap;
 class AxonBouton;
 class DendriteBouton;
