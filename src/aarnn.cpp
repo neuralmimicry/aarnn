@@ -343,8 +343,8 @@ public:
 
     void updateComponent(double time, double energy) {
         componentEnergyLevel = calculateEnergy(time, componentEnergyLevel + energy);// Update the component
-        // for (auto& synapticGapIndex : synapticGaps) {
-        //     synapticGapIndex->updateComponent(time + propagationTime(), componentEnergyLevel);
+        // for (auto& synapticGap_id : synapticGaps) {
+        //     synapticGap_id->updateComponent(time + propagationTime(), componentEnergyLevel);
         // }
     }
 
@@ -378,6 +378,10 @@ public:
 
         double x = 1 / (1 + exp(-callCount / timeSinceLastCall));
         return minPropagationTime + x * (maxPropagationTime - minPropagationTime);
+    }
+
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
     }
 
 private:
@@ -441,6 +445,10 @@ public:
 
     [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const { return parentDendrite; }
 
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
+    }
+
 private:
     bool instanceInitialised = false;  // Initially, the DendriteBouton is not initialised
     std::shared_ptr<SynapticGap> onwardSynapticGap;
@@ -486,6 +494,10 @@ public:
     void updateFromDendriteBranch(std::shared_ptr<DendriteBranch> parentDendriteBranchPointer) { parentDendriteBranch = std::move(parentDendriteBranchPointer); }
 
     [[nodiscard]] std::shared_ptr<DendriteBranch> getParentDendriteBranch() const { return parentDendriteBranch; }
+
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
+    }
 
 private:
     bool instanceInitialised = false;  // Initially, the Dendrite is not initialised
@@ -543,6 +555,10 @@ public:
     void updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer) { parentDendrite = std::move(parentDendritePointer); }
 
     [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const { return parentDendrite; }
+
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
+    }
 
 private:
     bool instanceInitialised = false;  // Initially, the Dendrite is not initialised
@@ -605,6 +621,10 @@ public:
 
     [[nodiscard]] std::shared_ptr<Axon> getParentAxon() const { return parentAxon; }
 
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
+    }
+
 private:
     bool instanceInitialised = false;
     std::shared_ptr<SynapticGap> onwardSynapticGap;
@@ -615,9 +635,7 @@ private:
 // Axon class
 class Axon : public std::enable_shared_from_this<Axon>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit Axon(const PositionPtr& position)
-            : BodyComponent(position),
-              BodyShapeComponent() {
+    explicit Axon(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
         // On construction set a default propagation rate
         propagationRate = 0.5;
     }
@@ -658,6 +676,10 @@ public:
     void updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer) { parentAxonBranch = std::move(parentAxonBranchPointer); }
 
     [[nodiscard]] std::shared_ptr<AxonBranch> getParentAxonBranch() const { return parentAxonBranch; }
+
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
+    }
 
 private:
     bool instanceInitialised = false;
@@ -711,6 +733,10 @@ public:
 
     [[nodiscard]] std::shared_ptr<Axon> getParentAxon() const { return parentAxon; }
 
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
+    }
+
 private:
     bool instanceInitialised = false;
     std::vector<std::shared_ptr<Axon>> onwardAxons;
@@ -763,9 +789,13 @@ public:
 
     [[nodiscard]] std::shared_ptr<Soma> getParentSoma() const { return parentSoma; }
 
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
+    }
+
 private:
     bool instanceInitialised = false;
-    std::shared_ptr<Axon> onwardAxon{};
+    std::shared_ptr<Axon> onwardAxon;
     std::shared_ptr<Soma> parentSoma;
 };
 
@@ -852,12 +882,16 @@ public:
 
     [[nodiscard]] std::shared_ptr<Neuron> getParentNeuron() const { return parentNeuron; }
 
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
+    }
+
 private:
     bool instanceInitialised = false;
     std::vector<std::shared_ptr<SynapticGap>> synapticGaps;
     std::vector<std::shared_ptr<DendriteBranch>> dendriteBranches;
-    std::shared_ptr<AxonHillock> onwardAxonHillock{};
-    std::shared_ptr<Neuron> parentNeuron{};
+    std::shared_ptr<AxonHillock> onwardAxonHillock;
+    std::shared_ptr<Neuron> parentNeuron;
 };
 
 // Sensory Actor class
@@ -890,6 +924,10 @@ public:
     double getPropagationRate() override {
         // Implement the calculation based on the dendrite bouton properties
         return propagationRate;
+    }
+
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
     }
 
 private:
@@ -1000,10 +1038,14 @@ public:
     void updateComponent(double time, double energy) {
         componentEnergyLevel = calculateEnergy(time, componentEnergyLevel + energy);// Update the component
         propagationRate = calcPropagationRate();
-        for (auto& synapticGapIndex : synapticGaps) {
-            synapticGapIndex->updateComponent(time + position->calcPropagationTime(*synapticGapIndex->getPosition(), propagationRate), componentEnergyLevel);
+        for (auto& synapticGap_id : synapticGaps) {
+            synapticGap_id->updateComponent(time + position->calcPropagationTime(*synapticGap_id->getPosition(), propagationRate), componentEnergyLevel);
         }
         componentEnergyLevel = 0;
+    }
+
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
     }
 
 private:
@@ -1117,6 +1159,10 @@ public:
 
     [[nodiscard]] const std::vector<std::shared_ptr<DendriteBouton>>& getDendriteBoutons() const {
         return dendriteBoutons;
+    }
+
+    [[nodiscard]] const PositionPtr& getPosition() const {
+        return position;
     }
 
 private:
@@ -1300,6 +1346,11 @@ void initialize_database(pqxx::connection& conn) {
     pqxx::work txn(conn);
 
     // Check if the "neurons" table exists
+    txn.exec(
+            "DROP TABLE IF EXISTS neurons, somas, axonhillocks, axons, axonboutons, synapticgaps, dendritebranches, dendrites, dendriteboutons CASCADE; COMMIT;"
+    );
+
+    // Check if the "neurons" table exists
     pqxx::result result = txn.exec(
             "SELECT EXISTS ("
             "SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'neurons'"
@@ -1310,10 +1361,77 @@ void initialize_database(pqxx::connection& conn) {
         // Create the "neurons" table if it does not exist
         txn.exec(
                 "CREATE TABLE neurons ("
-                "id SERIAL PRIMARY KEY,"
-                "propagation_rate REAL NOT NULL,"
-                "neuron_type INTEGER NOT NULL,"
-                "axon_length REAL NOT NULL"
+                "neuron_id SERIAL PRIMARY KEY,"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL,"
+                "propagation_rate REAL,"
+                "neuron_type INTEGER,"
+                "axon_length REAL"
+                ");"
+
+                "CREATE TABLE somas ("
+                "soma_id SERIAL PRIMARY KEY,"
+                "neuron_id INTEGER REFERENCES neurons(neuron_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+
+                "CREATE TABLE axonhillocks ("
+                "axon_hillock_id SERIAL PRIMARY KEY,"
+                "soma_id INTEGER REFERENCES somas(soma_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+
+                "CREATE TABLE axons ("
+                "axon_id SERIAL PRIMARY KEY,"
+                "axon_hillock_id INTEGER REFERENCES axonhillocks(axon_hillock_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+
+                "CREATE TABLE axonboutons ("
+                "axon_bouton_id SERIAL PRIMARY KEY,"
+                "axon_id INTEGER REFERENCES axons(axon_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+
+                "CREATE TABLE synapticgaps ("
+                "synaptic_gap_id SERIAL PRIMARY KEY,"
+                "axon_bouton_id INTEGER REFERENCES axonboutons(axon_bouton_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+
+                "CREATE TABLE dendritebranches ("
+                "dendrite_branch_id SERIAL PRIMARY KEY,"
+                "soma_id INTEGER REFERENCES somas(soma_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+
+                "CREATE TABLE dendrites ("
+                "dendrite_id SERIAL PRIMARY KEY,"
+                "dendrite_branch_id INTEGER REFERENCES dendritebranches(dendrite_branch_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+
+                "CREATE TABLE dendriteboutons ("
+                "dendrite_bouton_id SERIAL PRIMARY KEY,"
+                "dendrite_id INTEGER REFERENCES dendrites(dendrite_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
                 ");"
         );
 
@@ -1576,6 +1694,22 @@ std::string base64_encode(const unsigned char* data, size_t length) {
     return base64;
 }
 
+bool convertStringToBool(const std::string& value) {
+    // Convert to lowercase for case-insensitive comparison
+    std::string lowerValue = value;
+    std::transform(lowerValue.begin(), lowerValue.end(), lowerValue.begin(), ::tolower);
+
+    if (lowerValue == "true" || lowerValue == "yes" || lowerValue == "1") {
+        return true;
+    } else if (lowerValue == "false" || lowerValue == "no" || lowerValue == "0") {
+        return false;
+    } else {
+        // Handle error or throw an exception
+        std::cerr << "Invalid boolean string representation: " << value << std::endl;
+        return false;
+    }
+}
+
 /**
  * @brief Main function to initialize, run, and finalize the neuron network simulation.
  * @return int Status code (0 for success, non-zero for failures).
@@ -1588,6 +1722,7 @@ int main() {
     std::string encoded = base64_encode(reinterpret_cast<const unsigned char*>(input.c_str()), input.length());
 
     std::cout << "Base64 Encoded: " << encoded << std::endl;
+    std::string query;
 
     // Initialize VTK
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -1621,6 +1756,7 @@ int main() {
         int scentel_points_per_layer = std::stoi(config["scentel_points_per_layer"]);
         int vocel_points_per_layer = std::stoi(config["vocel_points_per_layer"]);
         double proximityThreshold = std::stod(config["proximity_threshold"]);
+        bool useDatabase = convertStringToBool(config["use_database"]);
 
         // Connect to PostgreSQL
         pqxx::connection conn(connection_string);
@@ -1913,11 +2049,61 @@ int main() {
 
         std::cout << "The propagation rate is " << propagationRate << std::endl;
 
+        int neuron_id = 0;
+        int soma_id = 0;
+        int axon_hillock_id = 0;
+        int axon_id = 0;
+        int axon_bouton_id = 0;
+        int axon_branch_id = 0;
+        int synaptic_gap_id = 0;
+        int dendrite_id = 0;
+        int dendrite_bouton_id = 0;
+        int dendrite_branch_id = 0;
+
+        for (auto& neuron : neurons) {
+            query = "INSERT INTO neurons (neuron_id, x, y, z) VALUES (" + std::to_string(neuron_id) + ", " + std::to_string(neuron->getPosition()->x) + ", " + std::to_string(neuron->getPosition()->y) + ", " + std::to_string(neuron->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            query = "INSERT INTO somas (soma_id, neuron_id, x, y, z) VALUES (" + std::to_string(soma_id) + ", " + std::to_string(neuron_id) + ", " + std::to_string(neuron->getSoma()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            query = "INSERT INTO axonhillocks (axon_hillock_id, soma_id, x, y, z) VALUES (" + std::to_string(axon_hillock_id) + ", " + std::to_string(soma_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            query = "INSERT INTO axons (axon_id, axon_hillock_id, x, y, z) VALUES (" + std::to_string(axon_id) + ", " + std::to_string(axon_hillock_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            query = "INSERT INTO axonboutons (axon_bouton_id, axon_id, x, y, z) VALUES (" + std::to_string(axon_bouton_id) + ", " + std::to_string(axon_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            query = "INSERT INTO synapticgaps (synaptic_gap_id, axon_bouton_id, x, y, z) VALUES (" + std::to_string(synaptic_gap_id) + ", " + std::to_string(axon_bouton_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            axon_id++;
+            axon_bouton_id++;
+            synaptic_gap_id++;
+            query = "INSERT INTO dendritebranches (dendrite_branch_id, soma_id, x, y, z) VALUES (" + std::to_string(dendrite_branch_id) + ", " + std::to_string(soma_id) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            query = "INSERT INTO dendrites (dendrite_id, dendrite_branch_id, x, y, z) VALUES (" + std::to_string(dendrite_id) + ", " + std::to_string(dendrite_branch_id) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            query = "INSERT INTO dendriteboutons (dendrite_bouton_id, dendrite_id, x, y, z) VALUES (" + std::to_string(dendrite_bouton_id) + ", " + std::to_string(dendrite_id) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition()->z) + ")";
+            std::cout << query << std::endl;
+            txn.exec(query);
+            axon_hillock_id++;
+            soma_id++;
+            neuron_id++;
+            dendrite_branch_id++;
+            dendrite_id++;
+            dendrite_bouton_id++;
+        }
+
         // Add any additional functionality for virtual volume constraint and relaxation here
         // Save the propagation rate to the database if it's valid (not null)
         if (propagationRate != 0) {
-            std::string query = "INSERT INTO neurons (propagation_rate, neuron_type, axon_length) VALUES (" + std::to_string(propagationRate) + ", 0, 0)";
-            txn.exec(query);
+            //std::string query = "INSERT INTO neurons (propagation_rate, neuron_type, axon_length) VALUES (" + std::to_string(propagationRate) + ", 0, 0)";
+            //txn.exec(query);
             txn.commit();
         } else {
             throw std::runtime_error("The propagation rate is not valid. Skipping database insertion.");

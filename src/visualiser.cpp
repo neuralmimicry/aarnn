@@ -1,10 +1,119 @@
 #include <iostream>
+#include <utility>
 #include <vector>
+#include <list>
+#include <algorithm>
+#include <thread>
+#include <mutex>
+#include <atomic>
+#include <cmath>
 #include <memory>
+#include <pqxx/pqxx>
+#include <stdexcept>
+#include <fstream>
+#include <string>
+#include <tuple>
+#include <map>
+#include <set>
+#include <chrono>
+#include <cstdlib>
+#include <cstring>
+#include <random>
 #include "boostincludes.h"
 #include "vtkincludes.h"
 #include "aarnn.h"
-#include "Neuron.h" // Include the necessary headers
+
+/**
+ * @brief Read configuration files and return a map of key-value pairs.
+ * @param filenames Vector of filenames to read the configuration from.
+ * @return A map containing the key-value pairs from the configuration files.
+ */
+std::map<std::string, std::string> read_config(const std::vector<std::string> &filenames) {
+    std::map<std::string, std::string> config;
+
+    for (const auto &filename : filenames) {
+        std::ifstream file(filename);
+        std::string line;
+
+        while (std::getline(file, line)) {
+            std::string key, value;
+            std::istringstream line_stream(line);
+            std::getline(line_stream, key, '=');
+            std::getline(line_stream, value);
+            config[key] = value;
+        }
+    }
+
+    return config;
+}
+
+/**
+ * @brief Build a connection string for the database using the configuration map.
+ * @param config A map containing the key-value pairs from the configuration files.
+ * @return A connection string containing the configuration for the database.
+ */
+std::string build_connection_string(const std::map<std::string, std::string> &config) {
+    std::string connection_string;
+
+    // List of allowed connection parameters
+    std::set<std::string> allowed_params = {"host", "port", "user", "password", "dbname"};
+
+    for (const auto &entry : config) {
+        if (allowed_params.count(entry.first) > 0) {
+            connection_string += entry.first + "=" + entry.second + " ";
+        }
+    }
+
+    return connection_string;
+}
+
+// Logger class to write log messages to a file
+class Logger {
+public:
+    /**
+     * @brief Construct a new Logger object.
+     * @param filename The name of the file to write log messages to.
+     */
+
+    explicit Logger(const std::string &filename) : log_file(filename, std::ofstream::out | std::ofstream::app) {}
+
+    /**
+     * @brief Destructor. Closes the log file.
+     */
+    ~Logger() {
+        log_file.close();
+    }
+
+    /**
+     * @brief Stream insertion operator to write messages to the log file.
+     * @tparam T Type of the message.
+     * @param msg The message to log.
+     * @return Reference to the Logger object.
+     */
+    template<typename T>
+    Logger &operator<<(const T &msg) {
+        log_file << msg;
+        log_file.flush();
+        return *this;
+    }
+
+    /**
+     * @brief Stream insertion operator overload for std::endl.
+     * @param pf Pointer to the std::endl function.
+     * @return Reference to the Logger object.
+     */
+    Logger &operator<<(std::ostream& (*pf)(std::ostream&)) {
+        log_file << pf;
+        log_file.flush();
+        return *this;
+    }
+
+private:
+    /**
+     * @brief Output file stream to write log messages.
+     */
+    std::ofstream log_file;
+};
 
 int main() {
     // Initialize logger
