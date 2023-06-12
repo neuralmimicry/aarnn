@@ -63,3 +63,62 @@ Error: bad_weak_ptr
 Error: bad_weak_ptr
 Error: bad_weak_ptr
 Error: bad_weak_ptr
+Error: stoi
+Error: ERROR:  column "neuronindex" of relation "neurons" does not exist
+LINE 1: INSERT INTO neurons (neuronIndex, x, y, z) VALUES (0, 0.0000...
+                             ^
+
+Error: ERROR:  cannot drop table neurons because other objects depend on it
+DETAIL:  constraint somas_neuron_id_fkey on table somas depends on table neurons
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+
+Error: ERROR:  relation "somas" already exists
+
+Error: ERROR:  table "neurons" does not exist
+
+Error: ERROR:  table "neurons" does not exist
+
+Error: ERROR:  relation "somas" already exists
+
+Error: ERROR:  table "neurons" does not exist
+
+Error: ERROR:  column "x" of relation "neurons" does not exist
+LINE 1: INSERT INTO neurons (neuron_id, x, y, z) VALUES (0, 0.000000...
+                                        ^
+
+Error: ERROR:  column "somaindex" of relation "somas" does not exist
+LINE 1: INSERT INTO somas (neuron_id, somaIndex, x, y, z) VALUES (0,...
+                                      ^
+
+Error: ERROR:  column "axonhillock_id" of relation "axonhillocks" does not exist
+LINE 1: INSERT INTO axonhillocks (soma_id, axonHillock_id, x, y, z) ...
+                                           ^
+
+Error: ERROR:  column "dendritebranch_id" of relation "dendritebranches" does not exist
+LINE 1: INSERT INTO dendritebranches (soma_id, dendriteBranch_id, x,...
+                                               ^
+
+Error: ERROR:  column "nan" does not exist
+LINE 1: ...axon_hillock_id, axon_id, x, y, z) VALUES (5, 5, -nan, -nan,...
+                                                             ^
+
+Error: ERROR:  column "nan" does not exist
+LINE 1: ...axon_id, axon_hillock_id, x, y, z) VALUES (5, 5, -nan, -nan,...
+                                                             ^
+
+Error: ERROR:  column "nan" does not exist
+LINE 1: ...axon_id, axon_hillock_id, x, y, z) VALUES (5, 5, -nan, -nan,...
+                                                             ^
+
+Error: ERROR:  column "nan" does not exist
+LINE 1: ...axon_id, axon_hillock_id, x, y, z) VALUES (5, 5, -nan, -nan,...
+                                                             ^
+
+Error: ERROR:  column "nan" does not exist
+LINE 1: ...axon_id, axon_hillock_id, x, y, z) VALUES (5, 5, -nan, -nan,...
+                                                             ^
+
+Error: ERROR:  column "nan" does not exist
+LINE 1: ...axon_id, axon_hillock_id, x, y, z) VALUES (5, 5, -nan, -nan,...
+                                                             ^
+
