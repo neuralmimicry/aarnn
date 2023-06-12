@@ -47,7 +47,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/aarnn:latest
-          build-args:
+          secrets: |
             POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
@@ -58,6 +58,6 @@ jobs:
           file: ./Dockerfile.postgres
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/aarnn-postgres:latest
-          build-args:
+          secrets: |
             POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
