@@ -122,3 +122,17 @@ Error: ERROR:  column "nan" does not exist
 LINE 1: ...axon_id, axon_hillock_id, x, y, z) VALUES (5, 5, -nan, -nan,...
                                                              ^
 
+Error: ERROR:  column "nan" does not exist
+LINE 1: ...axon_id, axon_hillock_id, x, y, z) VALUES (5, 5, -nan, -nan,...
+                                                             ^
+
+Error: ERROR:  column "nan" does not exist
+LINE 1: ...axon_id, axon_hillock_id, x, y, z) VALUES (5, 5, -nan, -nan,...
+                                                             ^
+
+Error: stoi
+Error: stoi
+Error: ERROR:  relation "axonbranches" does not exist
+LINE 1: SELECT axon_branch_id, axon_id, x, y, z FROM axonbranches
+                                                     ^
+
