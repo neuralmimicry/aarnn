@@ -148,136 +148,163 @@ int main() {
         while (true) {
             // Read data from the database
             std::vector<double> propagationRates;
-            std::string query = "SELECT propagation_rate FROM neurons";
-            pqxx::result result = txn.exec(query);
-            for (const auto& row : result) {
-                double propagationRate = row["propagation_rate"].as<double>();
-                propagationRates.push_back(propagationRate);
+            // Select neurons
+            pqxx::result neurons = txn.exec("SELECT neuron_id, x, y, z FROM neurons");
+
+            // Map neuron_id to the index of the point in vtkNeurons
+            std::unordered_map<int, int> neuronIndexMap;
+
+            // Create VTK points for neurons
+            vtkSmartPointer<vtkPoints> vtkNeurons = vtkSmartPointer<vtkPoints>::New();
+            int index = 0;
+            for (auto neuron : neurons) {
+                int neuron_id = neuron[0].as<int>();
+                double x = neuron[1].as<double>();
+                double y = neuron[2].as<double>();
+                double z = neuron[3].as<double>();
+                vtkNeurons->InsertNextPoint(x, y, z);
+                neuronIndexMap[neuron_id] = index++;
             }
 
-            // Iterate over the neurons and add their positions to the vtkPolyData
-            for (const auto& neuron : neurons) {
-                const PositionPtr &neuronPosition = neuron->getPosition();
+            // Map soma_id to the index of the point in vtkSomas
+            std::unordered_map<int, int> somaIndexMap;
 
-                // Create a vtkIdList to hold the point indices of the line vertices
-                vtkSmartPointer<vtkIdList> pointIDs = vtkSmartPointer<vtkIdList>::New();
-                pointIDs->InsertNextId(
-                        definePoints->InsertNextPoint(neuronPosition->x, neuronPosition->y, neuronPosition->z));
-
-                const PositionPtr &somaPosition = neuron->getSoma()->getPosition();
+            // Select somas and create VTK points
+            pqxx::result somas = txn.exec("SELECT soma_id, neuron_id, x, y, z FROM somas");
+            vtkSmartPointer<vtkPoints> vtkSomas = vtkSmartPointer<vtkPoints>::New();
+            for (auto soma : somas) {
+                double x = soma[2].as<double>();
+                double y = soma[3].as<double>();
+                double z = soma[4].as<double>();
                 // Add the sphere centre point to the vtkPolyData
                 vtkSmartPointer<vtkSphereSource> sphere = vtkSmartPointer<vtkSphereSource>::New();
                 sphere->SetRadius(1.0); // Adjust the sphere radius as needed
-                sphere->SetCenter(somaPosition->x, somaPosition->y, somaPosition->z);
+                sphere->SetCenter(x, y, z);
                 sphere->SetThetaResolution(32); // Set the sphere resolution
                 sphere->SetPhiResolution(16);
                 sphere->Update();
-
                 // Add the sphere to the renderer
                 vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
                 sphereMapper->SetInputData(sphere->GetOutput());
                 vtkSmartPointer<vtkActor> sphereActor = vtkSmartPointer<vtkActor>::New();
                 sphereActor->SetMapper(sphereMapper);
                 renderer->AddActor(sphereActor);
-
-                // Iterate over the dendrite branches and add their positions to the vtkPolyData
-                const std::vector<std::shared_ptr<DendriteBranch>> &dendriteBranches = neuron->getSoma()->getDendriteBranches();
-                for (const auto &dendriteBranch: dendriteBranches) {
-                    addDendriteBranchPositionsToPolyData(renderer, dendriteBranch, definePoints, pointIDs);
-                }
-
-                // Add the position of the axon hillock to the vtkPoints and vtkPolyData
-                const PositionPtr &axonHillockPosition = neuron->getSoma()->getAxonHillock()->getPosition();
-                pointIDs->InsertNextId(definePoints->InsertNextPoint(axonHillockPosition->x, axonHillockPosition->y,
-                                                                     axonHillockPosition->z));
-
-                // Add the position of the axon to the vtkPoints and vtkPolyData
-                const PositionPtr &axonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getPosition();
-                pointIDs->InsertNextId(definePoints->InsertNextPoint(axonPosition->x, axonPosition->y, axonPosition->z));
-
-                // Add the position of the axon bouton to the vtkPoints and vtkPolyData
-                const PositionPtr &axonBoutonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
-                pointIDs->InsertNextId(definePoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
-                                                                     axonBoutonPosition->z));
-
-                // Add the position of the synaptic gap to the vtkPoints and vtkPolyData
-                addSynapticGapToRenderer(renderer,
-                                         neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap());
-
-                // Iterate over the axon branches and add their positions to the vtkPolyData
-                const std::vector<std::shared_ptr<AxonBranch>> &axonBranches = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches();
-                for (const auto &axonBranch: axonBranches) {
-                    addAxonBranchPositionsToPolyData(renderer, axonBranch, definePoints, pointIDs);
-                }
-
-                // Add the line to the cell array
-                lines->InsertNextCell(pointIDs);
-
-
-                // Create a vtkPolyData object and set the points and lines as its data
-                vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-                polyData->SetPoints(definePoints);
-
-                vtkSmartPointer<vtkDelaunay3D> delaunay = vtkSmartPointer<vtkDelaunay3D>::New();
-                delaunay->SetInputData(polyData);
-                delaunay->SetAlpha(0.1); // Adjust for mesh density
-                //delaunay->Update();
-
-                // Extract the surface of the Delaunay output using vtkGeometryFilter
-                //vtkSmartPointer<vtkGeometryFilter> geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
-                //geometryFilter->SetInputConnection(delaunay->GetOutputPort());
-                //geometryFilter->Update();
-
-                // Get the vtkPolyData representing the membrane surface
-                //vtkSmartPointer<vtkPolyData> membranePolyData = geometryFilter->GetOutput();
-
-                // Create a vtkPolyDataMapper and set the input as the extracted surface
-                vtkSmartPointer<vtkPolyDataMapper> membraneMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-                //membraneMapper->SetInputData(membranePolyData);
-
-                // Create a vtkActor for the membrane and set its mapper
-                //vtkSmartPointer<vtkActor> membraneActor = vtkSmartPointer<vtkActor>::New();
-                //membraneActor->SetMapper(membraneMapper);
-                //membraneActor->GetProperty()->SetColor(0.7, 0.7, 0.7);  // Set color to gray
-
-                // Add the membrane actor to the renderer
-                // renderer->AddActor(membraneActor);
-
-                polyData->SetLines(lines);
-
-                // Create a mapper and actor for the neuron positions
-                vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-                mapper->SetInputData(polyData);
-                vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-                actor->SetMapper(mapper);
-                renderer->AddActor(actor);
+                // Link soma with neuron by index (in this example, just printing it)
+                int neuron_id = soma[1].as<int>();
+                std::cout << "Soma belongs to neuron at index " << neuronIndexMap[neuron_id] << std::endl;
             }
-            // Set up the render window and start the interaction
-            renderWindow->SetSize(400, 300);
+
+            // Iterate over the dendrite branches and add their positions to the vtkPolyData
+            pqxx::result dendritebranches = txn.exec("SELECT dendrite_branch_id, soma_id, x, y, z FROM dendritebranches");
+            vtkSmartPointer<vtkPoints> vtkDendriteBranches = vtkSmartPointer<vtkPoints>::New();
+            for (auto dendritebranch : dendritebranches) {
+                double x = dendritebranch[2].as<double>();
+                double y = dendritebranch[3].as<double>();
+                double z = dendritebranch[4].as<double>();
+                vtkDendriteBranches->InsertNextPoint(x, y, z);
+                // Link soma with dendritebranch by index
+                int soma_id = dendritebranch[1].as<int>();
+                std::cout << "DendriteBranch belongs to soma at index " << somaIndexMap[soma_id] << std::endl;
+            }
+
+            // Map axon_hillock_id to the index of the point in vtkAxonHillocks
+            std::unordered_map<int, int> axonHillockIndexMap;
+
+            // Add the position of the axon hillock to the vtkPoints and vtkPolyData
+            pqxx::result axonhillocks = txn.exec("SELECT axon_hillock_id, soma_id, x, y, z FROM axonhillocks");
+            vtkSmartPointer<vtkPoints> vtkAxonHillocks = vtkSmartPointer<vtkPoints>::New();
+            for (auto axonhillock : axonhillocks) {
+                double x = axonhillock[2].as<double>();
+                double y = axonhillock[3].as<double>();
+                double z = axonhillock[4].as<double>();
+                vtkAxonHillocks->InsertNextPoint(x, y, z);
+                // Link soma with axonhillock by index
+                int soma_id = axonhillock[1].as<int>();
+                std::cout << "AxonHillock belongs to soma at index " << somaIndexMap[soma_id] << std::endl;
+            }
+
+            // Map axon_id to the index of the point in vtkAxons
+            std::unordered_map<int, int> axonIndexMap;
+
+            // Add the position of the axon to the vtkPoints and vtkPolyData
+            pqxx::result axons = txn.exec("SELECT axon_id, axon_hillock_id, x, y, z FROM axons");
+            vtkSmartPointer<vtkPoints> vtkAxons = vtkSmartPointer<vtkPoints>::New();
+            for (auto axon : axons) {
+                double x = axon[2].as<double>();
+                double y = axon[3].as<double>();
+                double z = axon[4].as<double>();
+                vtkAxons->InsertNextPoint(x, y, z);
+                // Link axonhillock with axon by index
+                int axon_hillock_id = axon[1].as<int>();
+                std::cout << "Axon belongs to axon hillock at index " << axonHillockIndexMap[axon_hillock_id] << std::endl;
+            }
+
+            // Map axon_bouton_id to the index of the point in vtkAxonBoutons
+            std::unordered_map<int, int> axonBoutonIndexMap;
+
+            // Add the position of the axon bouton to the vtkPoints and vtkPolyData
+            pqxx::result axonboutons = txn.exec("SELECT axon_bouton_id, axon_id, x, y, z FROM axonboutons");
+            vtkSmartPointer<vtkPoints> vtkAxonBoutons = vtkSmartPointer<vtkPoints>::New();
+            for (auto axonbouton : axonboutons) {
+                double x = axonbouton[2].as<double>();
+                double y = axonbouton[3].as<double>();
+                double z = axonbouton[4].as<double>();
+                vtkAxonBoutons->InsertNextPoint(x, y, z);
+                // Link axon with axonbouton by index
+                int axon_id = axonbouton[1].as<int>();
+                std::cout << "Axon bouton belongs to axon at index " << axonIndexMap[axon_id] << std::endl;
+            }
+
+            // Add the position of the synaptic gap to the vtkPoints and vtkPolyData
+            pqxx::result synapticgaps = txn.exec("SELECT synaptic_gap_id, axon_bouton_id, x, y, z FROM synapticgaps");
+            vtkSmartPointer<vtkPoints> vtkSynapticGaps = vtkSmartPointer<vtkPoints>::New();
+            for (auto synapticgap : synapticgaps) {
+                double x = synapticgap[2].as<double>();
+                double y = synapticgap[3].as<double>();
+                double z = synapticgap[4].as<double>();
+                vtkSynapticGaps->InsertNextPoint(x, y, z);
+                // Link axonbouton with synapticgap by index
+                int axon_bouton_id = synapticgap[1].as<int>();
+                std::cout << "Synaptic Gap belongs to axon bouton at index " << axonBoutonIndexMap[axon_bouton_id] << std::endl;
+            }
+
+            // Iterate over the axon branches and add their positions to the vtkPolyData
+            pqxx::result axonbranches = txn.exec("SELECT axon_branch_id, axon_id, x, y, z FROM axonbranches");
+            vtkSmartPointer<vtkPoints> vtkAxonBranches = vtkSmartPointer<vtkPoints>::New();
+            for (auto axonbranch : axonbranches) {
+                double x = axonbranch[2].as<double>();
+                double y = axonbranch[3].as<double>();
+                double z = axonbranch[4].as<double>();
+                vtkAxonBranches->InsertNextPoint(x, y, z);
+                // Link axon with axonbranches by index
+                int axon_id = axonbranch[1].as<int>();
+                std::cout << "Axon branch belongs to axon at index " << axonIndexMap[axon_id] << std::endl;
+            }
+
+            // Create a polydata object
+            vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+            polyData->SetPoints(vtkNeurons);
+
+            // Create a mapper and actor
+            vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+            mapper->SetInputData(polyData);
+            vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+            actor->SetMapper(mapper);
+
+            // Create a renderer, render window, and interactor
+            vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+            vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+            renderWindow->AddRenderer(renderer);
+            vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+            renderWindowInteractor->SetRenderWindow(renderWindow);
+
+            // Add the actor to the scene
+            renderer->AddActor(actor);
+            renderer->SetBackground(0, 0, 0); // Background color
+
+            // Render and interact
             renderWindow->Render();
-            vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
-            windowToImageFilter->SetInput(renderWindow);
-            windowToImageFilter->Update();
-
-            vtkSmartPointer<vtkJPEGWriter> jpegWriter = vtkSmartPointer<vtkJPEGWriter>::New();
-            jpegWriter->SetInputConnection(windowToImageFilter->GetOutputPort());
-            jpegWriter->SetQuality(80);  // Adjust the JPEG quality as needed
-            jpegWriter->Write();
-
-            vtkImageData* imageData = jpegWriter->GetResult();
-            if (!imageData) {
-                return "";
-            }
-
-            unsigned char* buffer = static_cast<unsigned char*>(imageData->GetScalarPointer());
-            size_t bufferSize = imageData->GetScalarSize() * imageData->GetNumberOfPoints();
-
-            std::string base64Image = base64_encode(buffer, bufferSize);
-
             renderWindowInteractor->Start();
-
-            // Sleep for a certain interval to control the visualization rate
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     } catch (const std::exception &e) {
         logger << "Error: " << e.what() << std::endl;

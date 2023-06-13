@@ -55,3 +55,4 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include <vtkImageData.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <unordered_map>
