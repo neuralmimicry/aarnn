@@ -9,12 +9,14 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include <vtkActor.h>
 #include <vtkActor2D.h>
 #include <vtkCamera.h>
+#include <vtkCallbackCommand.h>
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkConeSource.h>
 #include <vtkContourFilter.h>
 #include <vtkCoordinate.h>
+#include <vtkCubeSource.h>
 #include <vtkCylinderSource.h>
 #include <vtkDataSetMapper.h>
 #include <vtkDelaunay3D.h>
@@ -22,7 +24,11 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include <vtkGeometryFilter.h>
 #include <vtkGlyph3D.h>
 #include <vtkLineSource.h>
+#include <vtkLine.h>
 #include <vtkMath.h>
+#include <vtkMultiBlockDataSet.h>
+#include <vtkObject.h>
+#include <vtkOutputWindow.h>
 #include <vtkParametricFunctionSource.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
