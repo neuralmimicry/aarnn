@@ -136,3 +136,34 @@ Error: ERROR:  relation "axonbranches" does not exist
 LINE 1: SELECT axon_branch_id, axon_id, x, y, z FROM axonbranches
                                                      ^
 
+Error: ERROR:  syntax error at or near ")"
+LINE 1: ...k_id, x, y, z FROM axons WHERE axon_hillock_id = 0) ORDER BY...
+                                                             ^
+
+Error: ERROR:  syntax error at or near ")"
+LINE 1: ...xon_id, x, y, z FROM axonboutons WHERE axon_id = 0)) ORDER B...
+                                                             ^
+
+Error: ERROR:  syntax error at or near "100"
+LINE 1: SELECT neuron_id, x, y, z FROM neurons TOP 100 ORDER BY neur...
+                                                   ^
+
+Error: ERROR:  relation "dendrites" does not exist
+
+Error: ERROR:  relation "dendritebranches" does not exist
+
+Error: ERROR:  relation "dendrites" does not exist
+
+Error: ERROR:  relation "dendritebranches" does not exist
+
+Error: ERROR:  insert or update on table "dendriteboutons" violates foreign key constraint "dendriteboutons_dendrite_id_fkey"
+DETAIL:  Key (dendrite_id)=(1) is not present in table "dendrites".
+
+Error: ERROR:  column "soma_id" does not exist
+LINE 1: SELECT dendrite_branch_id, soma_id, x, y, z FROM dendritebra...
+                                   ^
+
+Error: ERROR:  column "axon_branch_id" does not exist
+LINE 1: SELECT axon_id, axon_branch_id, x, y, z FROM axons WHERE axo...
+                        ^
+
