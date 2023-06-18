@@ -21,8 +21,13 @@ cmake ..
 
 ## Usage
 
+Two parts, first creates the neurons and stores in a postgres database.
+Second part visualisers the neurons created in the first part.
+
 ```bash
 ./aarnn
+
+./visualiser
 ```
 
 ## Contributing
