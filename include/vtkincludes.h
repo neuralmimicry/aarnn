@@ -13,6 +13,7 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkCommand.h>
 #include <vtkConeSource.h>
 #include <vtkContourFilter.h>
 #include <vtkCoordinate.h>
