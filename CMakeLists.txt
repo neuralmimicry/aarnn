@@ -54,6 +54,50 @@ if(NOT OpenMP_CXX_FOUND)
     message(FATAL_ERROR "OpenMP library not found")
 endif()
 
+# Find PortAudio
+find_package(PortAudio REQUIRED)
+if(NOT PortAudio_FOUND)
+    message(FATAL_ERROR "PortAudio library not found")
+endif()
+message(STATUS "PortAudio Include Dirs: ${PORTAUDIO_INCLUDE_DIRS}")
+message(STATUS "PortAudio Library Dirs: ${PORTAUDIO_LIBRARY_DIRS}")
+message(STATUS "PortAudio Libraries: ${PORTAUDIO_LIBRARIES}")
+message(STATUS "PortAudio CFlags: ${PORTAUDIO_CFLAGS}")
+if(NOT PORTAUDIO_INCLUDE_DIRS)
+    set(PORTAUDIO_INCLUDE_DIRS "/usr/local/include")
+    message(STATUS "Using default PortAudio include dir: ${PORTAUDIO_INCLUDE_DIRS}")
+endif()
+if(NOT PORTAUDIO_LIBRARY_DIRS)
+    set(PORTAUDIO_LIBRARY_DIRS "/usr/local/lib")
+    message(STATUS "Using default PortAudio library dir: ${PORTAUDIO_LIBRARY_DIRS}")
+endif()
+if(NOT PORTAUDIO_LIBRARIES)
+    set(PORTAUDIO_LIBRARIES "-pthread -lportaudio -lm -lpthread -lasound")
+    message(STATUS "Using default PortAudio libraries: ${PORTAUDIO_LIBRARIES}")
+endif()
+
+# Find PulseAudio
+find_package(PulseAudio REQUIRED)
+if(NOT PulseAudio_FOUND)
+    message(FATAL_ERROR "PulseAudio library not found")
+endif()
+message(STATUS "PulseAudio Include Dirs: ${PulseAudio_INCLUDE_DIRS}")
+message(STATUS "PulseAudio Library Dirs: ${PulseAudio_LIBRARY_DIRS}")
+message(STATUS "PulseAudio Libraries: ${PulseAudio_LIBRARIES}")
+message(STATUS "PulseAudio CFlags: ${PulseAudio_CFLAGS}")
+if(NOT PulseAudio_INCLUDE_DIRS)
+    set(PulseAudio_INCLUDE_DIRS "/usr/local/include")
+    message(STATUS "Using default PulseAudio include dir: ${PulseAudio_INCLUDE_DIRS}")
+endif()
+if(NOT PulseAudio_LIBRARY_DIRS)
+    set(PulseAudio_LIBRARY_DIRS "/usr/local/lib")
+    message(STATUS "Using default PulseAudio library dir: ${PulseAudio_LIBRARY_DIRS}")
+endif()
+if(NOT PulseAudio_LIBRARIES)
+    set(PulseAudio_LIBRARIES "-lpulse -lpulse-simple")
+    message(STATUS "Using default PulseAudio libraries: ${PulseAudio_LIBRARIES}")
+endif()
+
 # Add the src subdirectory to the include paths
 include_directories(src)
 include_directories(include)
@@ -62,13 +106,19 @@ include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
 include_directories(${Boost_INCLUDE_DIRS})  # Add Boost include directories
 include_directories(${OpenSSL_INCLUDE_DIRS})  # Add OpenSSL include directories
 include_directories(${FFmpeg_INCLUDE_DIRS})  # Add FFmpeg include directories
+include_directories(${PORTAUDIO_INCLUDE_DIRS}) # Add PortAudio include directories
+include_directories(${PulseAudio_INCLUDE_DIRS}) # Add PulseAudio include directories
 
 link_directories(${PostgreSQL_LIBRARY_DIR})
+link_directories(${PORTAUDIO_LIBRARY_DIR})
+link_directories(${PulseAudio_LIBRARY_DIRS})
+link_directories(/usr/local/lib64)
 
 # Define the target for aarnn.cpp
 add_executable(AARNN "src/aarnn.cpp")
-target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL and OpenMP libraries
+target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PulseAudio_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
+
 
 # Define the target for visualiser.cpp
 add_executable(Visualiser "src/visualiser.cpp")
-target_link_libraries(Visualiser PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL and OpenMP libraries
+target_link_libraries(Visualiser PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PulseAudio_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
