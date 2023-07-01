@@ -97,6 +97,26 @@ if(NOT PulseAudio_LIBRARIES)
     set(PulseAudio_LIBRARIES "-lpulse -lpulse-simple")
     message(STATUS "Using default PulseAudio libraries: ${PulseAudio_LIBRARIES}")
 endif()
+# Find FFTW
+#find_package(FFTW3 REQUIRED)
+#if(NOT FFTW3_FOUND)
+#    message(FATAL_ERROR "FFTW3 library not found")
+#endif()
+message(STATUS "FFTW3 Include Dirs: ${FFTW3_INCLUDE_DIRS}")
+message(STATUS "FFTW3 Library Dirs: ${FFTW3_LIBRARY_DIRS}")
+message(STATUS "FFTW3 Libraries: ${FFTW3_LIBRARIES}")
+if(NOT FFTW3_INCLUDE_DIRS)
+    set(FFTW3_INCLUDE_DIRS "/usr/local/include")
+    message(STATUS "Using default FFTW3 include dir: ${FFTW3_INCLUDE_DIRS}")
+endif()
+if(NOT FFTW3_LIBRARY_DIRS)
+    set(FFTW3_LIBRARY_DIRS "/usr/local/lib")
+    message(STATUS "Using default FFTW3 library dir: ${FFTW3_LIBRARY_DIRS}")
+endif()
+if(NOT FFTW3_LIBRARIES)
+    set(FFTW3_LIBRARIES "-lfftw3")
+    message(STATUS "Using default FFTW3 libraries: ${FFTW3_LIBRARIES}")
+endif()
 
 # Add the src subdirectory to the include paths
 include_directories(src)
@@ -108,17 +128,19 @@ include_directories(${OpenSSL_INCLUDE_DIRS})  # Add OpenSSL include directories
 include_directories(${FFmpeg_INCLUDE_DIRS})  # Add FFmpeg include directories
 include_directories(${PORTAUDIO_INCLUDE_DIRS}) # Add PortAudio include directories
 include_directories(${PulseAudio_INCLUDE_DIRS}) # Add PulseAudio include directories
+include_directories(${FFTW3_INCLUDE_DIRS}) # Add FFTW3 include directories
 
 link_directories(${PostgreSQL_LIBRARY_DIR})
 link_directories(${PORTAUDIO_LIBRARY_DIR})
 link_directories(${PulseAudio_LIBRARY_DIRS})
+link_directories(${FFTW3_LIBRARY_DIRS})
 link_directories(/usr/local/lib64)
 
 # Define the target for aarnn.cpp
 add_executable(AARNN "src/aarnn.cpp")
-target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PulseAudio_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
+target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PulseAudio_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
 
 
 # Define the target for visualiser.cpp
 add_executable(Visualiser "src/visualiser.cpp")
-target_link_libraries(Visualiser PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PulseAudio_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
+target_link_libraries(Visualiser PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PulseAudio_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries

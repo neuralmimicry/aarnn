@@ -495,6 +495,50 @@ Fontconfig_INCLUDE_DIR:PATH=/usr/include
 //Path to a library.
 Fontconfig_LIBRARY:FILEPATH=/usr/lib64/libfontconfig.so
 
+//Executable for running MPI programs.
+MPIEXEC_EXECUTABLE:FILEPATH=/usr/lib64/openmpi/bin/mpiexec
+
+//Maximum number of processors available to run MPI applications.
+MPIEXEC_MAX_NUMPROCS:STRING=8
+
+//Flag used by MPI to specify the number of processes for mpiexec;
+// the next option will be the number of processes.
+MPIEXEC_NUMPROC_FLAG:STRING=-n
+
+//These flags will be placed after all flags passed to mpiexec.
+MPIEXEC_POSTFLAGS:STRING=
+
+//These flags will be directly before the executable that is being
+// run by mpiexec.
+MPIEXEC_PREFLAGS:STRING=
+
+//MPI C additional include directories
+MPI_C_ADDITIONAL_INCLUDE_DIRS:STRING=
+
+//MPI compiler for C
+MPI_C_COMPILER:FILEPATH=/usr/lib64/openmpi/bin/mpicc
+
+//MPI C compiler wrapper include directories
+MPI_C_COMPILER_INCLUDE_DIRS:STRING=/usr/include/openmpi-x86_64
+
+//MPI C compilation definitions
+MPI_C_COMPILE_DEFINITIONS:STRING=
+
+//MPI C compilation options
+MPI_C_COMPILE_OPTIONS:STRING=-pthread
+
+//Path to a file.
+MPI_C_HEADER_DIR:PATH=/usr/include/openmpi-x86_64
+
+//MPI C libraries to link against
+MPI_C_LIB_NAMES:STRING=mpi
+
+//MPI C linker flags
+MPI_C_LINK_FLAGS:STRING=-Wl,-rpath -Wl,/usr/lib64/openmpi/lib -Wl,--enable-new-dtags -pthread
+
+//Location of the mpi library for MPI
+MPI_mpi_LIBRARY:FILEPATH=/usr/lib64/openmpi/lib/libmpi.so
+
 //Path to a file.
 OPENGL_EGL_INCLUDE_DIR:PATH=/usr/include
 
@@ -601,7 +645,10 @@ PostgreSQL_TYPE_INCLUDE_DIR:PATH=/usr/pgsql-15/include/server
 PulseAudio_DIR:PATH=/usr/lib64/cmake/PulseAudio
 
 //The directory containing a CMake configuration file for VTK.
-VTK_DIR:PATH=/usr/local/lib64/cmake/vtk-9.0
+VTK_DIR:PATH=/usr/local/lib64/cmake/vtk-9.2
+
+//Number of processors available to run parallel tests.
+VTK_MPI_NUMPROCS:STRING=2
 
 //Path to a file.
 X11_ICE_INCLUDE_PATH:PATH=/usr/include
@@ -620,6 +667,12 @@ X11_X11_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a library.
 X11_X11_LIB:FILEPATH=/usr/lib64/libX11.so
+
+//Path to a file.
+X11_X11_xcb_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_X11_xcb_LIB:FILEPATH=/usr/lib64/libX11-xcb.so
 
 //Path to a file.
 X11_XRes_INCLUDE_PATH:PATH=X11_XRes_INCLUDE_PATH-NOTFOUND
@@ -644,6 +697,12 @@ X11_Xau_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a library.
 X11_Xau_LIB:FILEPATH=/usr/lib64/libXau.so
+
+//Path to a file.
+X11_Xaw_INCLUDE_PATH:PATH=X11_Xaw_INCLUDE_PATH-NOTFOUND
+
+//Path to a library.
+X11_Xaw_LIB:FILEPATH=/usr/lib64/libXaw.so
 
 //Path to a file.
 X11_Xcomposite_INCLUDE_PATH:PATH=/usr/include
@@ -776,6 +835,63 @@ X11_Xxf86vm_LIB:FILEPATH=/usr/lib64/libXxf86vm.so
 
 //Path to a file.
 X11_dpms_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a file.
+X11_xcb_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_xcb_LIB:FILEPATH=/usr/lib64/libxcb.so
+
+//Path to a file.
+X11_xcb_icccm_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_xcb_icccm_LIB:FILEPATH=/usr/lib64/libxcb-icccm.so
+
+//Path to a file.
+X11_xcb_keysyms_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_xcb_keysyms_LIB:FILEPATH=/usr/lib64/libxcb-keysyms.so
+
+//Path to a file.
+X11_xcb_randr_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_xcb_randr_LIB:FILEPATH=/usr/lib64/libxcb-randr.so
+
+//Path to a file.
+X11_xcb_util_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_xcb_util_LIB:FILEPATH=/usr/lib64/libxcb-util.so
+
+//Path to a file.
+X11_xcb_xfixes_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_xcb_xfixes_LIB:FILEPATH=/usr/lib64/libxcb-xfixes.so
+
+//Path to a library.
+X11_xcb_xkb_LIB:FILEPATH=/usr/lib64/libxcb-xkb.so
+
+//Path to a file.
+X11_xcb_xtest_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_xcb_xtest_LIB:FILEPATH=/usr/lib64/libxcb-xtest.so
+
+//Path to a file.
+X11_xkbcommon_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_xkbcommon_LIB:FILEPATH=/usr/lib64/libxkbcommon.so
+
+//Path to a file.
+X11_xkbcommon_X11_INCLUDE_PATH:PATH=X11_xkbcommon_X11_INCLUDE_PATH-NOTFOUND
+
+//Path to a library.
+X11_xkbcommon_X11_LIB:FILEPATH=X11_xkbcommon_X11_LIB-NOTFOUND
 
 //Path to a file.
 X11_xkbfile_INCLUDE_PATH:PATH=X11_xkbfile_INCLUDE_PATH-NOTFOUND
@@ -1166,6 +1282,10 @@ FIND_PACKAGE_MESSAGE_DETAILS_ALSA:INTERNAL=[/usr/lib64/libasound.so][/usr/includ
 FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/local/lib/cmake/Boost-1.82.0/BoostConfig.cmake][cfound components: system filesystem ][v1.82.0()]
 //Details about finding FFmpeg
 FIND_PACKAGE_MESSAGE_DETAILS_FFmpeg:INTERNAL=[/usr/lib64/libavcodec.so;/usr/lib64/libavdevice.so;/usr/lib64/libavformat.so;/usr/lib64/libavfilter.so;/usr/lib64/libavutil.so;/usr/lib64/libpostproc.so;/usr/lib64/libswscale.so;/usr/lib64/libswresample.so;/usr/lib64/libavresample.so][/usr/include/ffmpeg][cfound components: avcodec avdevice avformat avfilter avutil postproc swscale swresample avresample ][v4.2.9()]
+//Details about finding MPI
+FIND_PACKAGE_MESSAGE_DETAILS_MPI:INTERNAL=[TRUE][cfound components: C ][v3.1()]
+//Details about finding MPI_C
+FIND_PACKAGE_MESSAGE_DETAILS_MPI_C:INTERNAL=[/usr/lib64/openmpi/lib/libmpi.so][mpi][/usr/include/openmpi-x86_64][TRUE][v3.1()]
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib64/libOpenGL.so][/usr/lib64/libGLX.so][/usr/include][cfound components: OpenGL GLX ][v()]
 //Details about finding OpenMP
@@ -1183,7 +1303,7 @@ FIND_PACKAGE_MESSAGE_DETAILS_PostgreSQL:INTERNAL=[/usr/lib64/libpq.so][/usr/pgsq
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Details about finding X11
-FIND_PACKAGE_MESSAGE_DETAILS_X11:INTERNAL=[/usr/include][/usr/lib64/libX11.so][cfound components: Xt ][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_X11:INTERNAL=[/usr/include][/usr/lib64/libX11.so][c ][v()]
 //ADVANCED property for variable: FREETYPE_INCLUDE_DIR_freetype2
 FREETYPE_INCLUDE_DIR_freetype2-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: FREETYPE_INCLUDE_DIR_ft2build
@@ -1196,12 +1316,38 @@ FREETYPE_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 Fontconfig_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Fontconfig_LIBRARY
 Fontconfig_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPIEXEC_EXECUTABLE
+MPIEXEC_EXECUTABLE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPIEXEC_MAX_NUMPROCS
+MPIEXEC_MAX_NUMPROCS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPIEXEC_NUMPROC_FLAG
+MPIEXEC_NUMPROC_FLAG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPIEXEC_POSTFLAGS
+MPIEXEC_POSTFLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPIEXEC_PREFLAGS
+MPIEXEC_PREFLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_C_ADDITIONAL_INCLUDE_DIRS
+MPI_C_ADDITIONAL_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_C_COMPILER
+MPI_C_COMPILER-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_C_COMPILER_INCLUDE_DIRS
+MPI_C_COMPILER_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_C_COMPILE_DEFINITIONS
+MPI_C_COMPILE_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_C_COMPILE_OPTIONS
+MPI_C_COMPILE_OPTIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_C_HEADER_DIR
+MPI_C_HEADER_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_C_LIB_NAMES
+MPI_C_LIB_NAMES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_C_LINK_FLAGS
+MPI_C_LINK_FLAGS-ADVANCED:INTERNAL=1
+//Result of TRY_COMPILE
+MPI_RESULT_C_test_mpi_normal:INTERNAL=TRUE
+//ADVANCED property for variable: MPI_mpi_LIBRARY
+MPI_mpi_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_EGL_INCLUDE_DIR
 OPENGL_EGL_INCLUDE_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: OPENGL_GLES2_INCLUDE_DIR
-OPENGL_GLES2_INCLUDE_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: OPENGL_GLES3_INCLUDE_DIR
-OPENGL_GLES3_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_GLX_INCLUDE_DIR
 OPENGL_GLX_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_INCLUDE_DIR
@@ -1612,8 +1758,6 @@ PostgreSQL_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 PostgreSQL_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PostgreSQL_TYPE_INCLUDE_DIR
 PostgreSQL_TYPE_INCLUDE_DIR-ADVANCED:INTERNAL=1
-//Number of processors available to run parallel tests.
-VTK_MPI_NUMPROCS:INTERNAL=2
 //ADVANCED property for variable: X11_ICE_INCLUDE_PATH
 X11_ICE_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_ICE_LIB
@@ -1628,6 +1772,10 @@ X11_SM_LIB-ADVANCED:INTERNAL=1
 X11_X11_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_X11_LIB
 X11_X11_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_X11_xcb_INCLUDE_PATH
+X11_X11_xcb_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_X11_xcb_LIB
+X11_X11_xcb_LIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_XRes_INCLUDE_PATH
 X11_XRes_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_XRes_LIB
@@ -1644,6 +1792,10 @@ X11_Xaccessstr_INCLUDE_PATH-ADVANCED:INTERNAL=1
 X11_Xau_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_Xau_LIB
 X11_Xau_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_Xaw_INCLUDE_PATH
+X11_Xaw_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_Xaw_LIB
+X11_Xaw_LIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_Xcomposite_INCLUDE_PATH
 X11_Xcomposite_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_Xcomposite_LIB
@@ -1732,6 +1884,44 @@ X11_Xxf86vm_INCLUDE_PATH-ADVANCED:INTERNAL=1
 X11_Xxf86vm_LIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_dpms_INCLUDE_PATH
 X11_dpms_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_INCLUDE_PATH
+X11_xcb_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_LIB
+X11_xcb_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_icccm_INCLUDE_PATH
+X11_xcb_icccm_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_icccm_LIB
+X11_xcb_icccm_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_keysyms_INCLUDE_PATH
+X11_xcb_keysyms_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_keysyms_LIB
+X11_xcb_keysyms_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_randr_INCLUDE_PATH
+X11_xcb_randr_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_randr_LIB
+X11_xcb_randr_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_util_INCLUDE_PATH
+X11_xcb_util_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_util_LIB
+X11_xcb_util_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_xfixes_INCLUDE_PATH
+X11_xcb_xfixes_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_xfixes_LIB
+X11_xcb_xfixes_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_xkb_LIB
+X11_xcb_xkb_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_xtest_INCLUDE_PATH
+X11_xcb_xtest_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xcb_xtest_LIB
+X11_xcb_xtest_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xkbcommon_INCLUDE_PATH
+X11_xkbcommon_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xkbcommon_LIB
+X11_xkbcommon_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xkbcommon_X11_INCLUDE_PATH
+X11_xkbcommon_X11_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_xkbcommon_X11_LIB
+X11_xkbcommon_X11_LIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_xkbfile_INCLUDE_PATH
 X11_xkbfile_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_xkbfile_LIB

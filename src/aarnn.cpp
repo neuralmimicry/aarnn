@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 #include <atomic>
 #include <cmath>
 #include <memory>
@@ -26,9 +27,12 @@
 #include <cstdlib>
 #include <cstring>
 #include <random>
+#include <fftw3.h>
 #include <portaudio.h>
+#include <pulse/pulseaudio.h>
 #include <pulse/simple.h>
 #include <pulse/error.h>
+#include <pulse/proplist.h>
 #include "boostincludes.h"
 
 #include <websocketpp/config/asio_no_tls.hpp>
@@ -115,6 +119,57 @@ std::tuple<double, double, double> get_coordinates(int i, int total_points, int 
     return std::make_tuple(x, y, z);
 }
 
+std::atomic<bool> running(true);
+
+void checkForQuit() {
+    struct pollfd fds[1];
+    fds[0].fd = STDIN_FILENO;
+    fds[0].events = POLLIN;
+
+    while(running) {
+        int ret = poll(fds, 1, 1000); // 1000ms timeout
+
+        if(ret > 0) {
+            char key;
+            read(STDIN_FILENO, &key, 1);
+            if(key == 'q') {
+                running = false;
+                break;
+            }
+        } else if(ret < 0) {
+            // Handle error
+        }
+
+        // Else timeout occurred, just loop back and poll again
+    }
+}
+
+template <typename T>
+class ThreadSafeQueue {
+public:
+    void push(const T& value) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        queue_.push(value);
+        cond_.notify_one();
+    }
+
+    T pop() {
+        std::unique_lock<std::mutex> lock(mutex_);
+        while(queue_.empty()) {
+            cond_.wait(lock);
+        }
+        T val = queue_.front();
+        queue_.pop();
+        return val;
+    }
+
+private:
+    std::queue<T> queue_;
+    std::mutex mutex_;
+    std::condition_variable cond_;
+};
+
+
 /**
  * @brief Build a connection string for the database using the configuration map.
  * @param config A map containing the key-value pairs from the configuration files.
@@ -182,6 +237,21 @@ private:
      */
     std::ofstream log_file;
 };
+
+template <typename Func>
+void logExecutionTime(Func function, const std::string& functionName) {
+    auto start = std::chrono::high_resolution_clock::now();
+
+    function();
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+    std::ofstream logFile("execution_times.log", std::ios_base::app); // Open the log file in append mode
+    logFile << functionName << " execution time: " << duration.count() << " microseconds\n";
+    logFile.close();
+}
 
 class Shape3D {
 public:
@@ -284,64 +354,255 @@ protected:
     double propagationRate{0.5};
 };
 
-static std::vector<SAMPLE> capturedAudio; // Shared buffer
-
-static pa_simple *s = NULL;
-
-void pulseaudioMicCallback(const void *inputBuffer, unsigned long framesPerBuffer) {
-
-    if (inputBuffer == nullptr) {
-        for (unsigned int i = 0; i < framesPerBuffer; i++) {
-            // Handle the case where there's no input data
-            gNumNoInputs += 1;
-        }
-    } else {
-        // Capture audio data
-        const SAMPLE *in = (const SAMPLE *) inputBuffer;
-        for (unsigned int i = 0; i < framesPerBuffer; i++) {
-            capturedAudio.push_back(in[i]);
-        }
-    }
-}
-
-class pulseaudioMicThread {
+class PulseAudioMic {
 public:
-    pulseaudioMicThread() {
-        int error;
-
-        // Create a new playback stream
-        pa_sample_spec ss;
-        ss.format = PA_SAMPLE_S16NE;
-        ss.rate = 44100;
-        ss.channels = 2;
-
-        s = pa_simple_new(NULL, "Application Name", PA_STREAM_RECORD, NULL, "record", &ss, NULL, NULL, &error);
-        if (!s) {
-            std::cerr << "pa_simple_new() failed: " << pa_strerror(error) << std::endl;
-        }
+    PulseAudioMic(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &audioQueue)
+            : audioQueue(audioQueue), sample_spec({PA_SAMPLE_S16NE, 16000, 2}) {
+        initializeContext();
+        initializeCallbacks();
     }
 
-    ~pulseaudioMicThread() {
-        if (s) {
-            pa_simple_free(s);
-        }
+    ~PulseAudioMic() {
+        cleanUp();
     }
 
-    int run() {
-        while (1) {
-            // Record some data
-            uint8_t buf[1024];
-            int error;
-            if (pa_simple_read(s, buf, sizeof(buf), &error) < 0) {
-                std::cerr << "pa_simple_read() failed: " << pa_strerror(error) << std::endl;
-                return 1;
-            }
+    void sourceSelection()
+    {
+        std::vector<std::string> sourceList = this->getSources();
 
-            // Call our callback with the data
-            pulseaudioMicCallback(buf, sizeof(buf)/sizeof(SAMPLE));
+        // List sources
+        for (size_t i = 0; i < sourceList.size(); ++i) {
+            std::cout << i << ": " << sourceList[i] << "\n";
         }
 
+        // Select source
+        int selected_source;
+        std::cout << "Select a source: ";
+        std::cin >> selected_source;
+        this->setSource(sourceList[selected_source]);
+    }
+
+    int micRun() {
+        if (!context) {
+            std::cerr << "Context was not initialized correctly.\n";
+            return 1;
+        }
+        pa_threaded_mainloop_start(mainloop);
+        std::this_thread::sleep_for(std::chrono::seconds(1)); // Wait for a while to let the mic populate the sources list
+        sourceSelection();
         return 0;
+    }
+
+    void micStop() {
+        pa_threaded_mainloop_stop(mainloop);
+    }
+
+    std::vector<std::string> getSources() {
+        std::lock_guard<std::mutex> lock(capturedAudio_mtx);
+        return sources;
+    }
+
+    std::vector<std::tuple<double, double>> getCapturedAudio() {
+        std::lock_guard<std::mutex> lock(capturedAudio_mtx);
+        return capturedAudio;
+    }
+
+    void setSource(const std::string& source) {
+        initializeStream(source.c_str());
+    }
+
+    void readStream() {
+        const void *data;
+        size_t length;
+        if (pa_stream_peek(stream, &data, &length) < 0) {
+            std::cerr << "Read failed: " << pa_strerror(pa_context_errno(pa_stream_get_context(stream))) << "\n";
+            return;
+        }
+
+        processStream(data, length);
+        pa_stream_drop(stream);
+    }
+
+private:
+    pa_threaded_mainloop *mainloop = nullptr;
+    pa_mainloop_api *mainloop_api = nullptr;
+    pa_context *context = nullptr;
+    pa_stream *stream = nullptr;
+    pa_sample_spec sample_spec;
+
+    std::vector<std::string> sources;
+    unsigned int sample_rate;
+    std::vector<std::tuple<double, double>> capturedAudio;
+    std::mutex capturedAudio_mtx;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> &audioQueue;
+
+    void initializeContext() {
+        mainloop = pa_threaded_mainloop_new();
+        mainloop_api = pa_threaded_mainloop_get_api(mainloop);
+
+        pa_proplist *proplist = pa_proplist_new();
+        pa_proplist_sets(proplist, PA_PROP_APPLICATION_NAME, "AARNN");
+
+        context = pa_context_new_with_proplist(mainloop_api, nullptr, proplist);
+        pa_proplist_free(proplist);
+
+        if (pa_context_connect(context, nullptr, PA_CONTEXT_NOFLAGS, nullptr) < 0) {
+            std::cerr << "pa_context_connect() failed: " << pa_strerror(pa_context_errno(context)) << "\n";
+        }
+    }
+
+    void initializeCallbacks() {
+        pa_context_set_state_callback(context, context_state_callback_static, this);
+        // pa_context_set_source_info_callback(context, source_info_callback_static, this);
+    }
+
+    void initializeStream(const char* source) {
+        if (stream) {
+            pa_stream_disconnect(stream);
+            pa_stream_unref(stream);
+        }
+        stream = pa_stream_new(context, "Playback", &sample_spec, nullptr);
+        if (stream) {
+            pa_stream_set_state_callback(stream, stream_state_callback_static, this);
+            pa_stream_set_read_callback(stream, stream_read_callback_static, this);
+            if (pa_stream_connect_record(stream, source, nullptr, PA_STREAM_NOFLAGS))
+                std::cerr << "pa_stream_connect_record() failed: " << pa_strerror(pa_context_errno(context)) << "\n";
+        } else {
+            std::cerr << "pa_stream_new() failed: " << pa_strerror(pa_context_errno(context)) << "\n";
+            return;
+        }
+    }
+
+    void cleanUp() {
+        if (stream) {
+            pa_stream_disconnect(stream);
+            pa_stream_unref(stream);
+        }
+        if (context) {
+            pa_context_disconnect(context);
+            pa_context_unref(context);
+        }
+        if (mainloop) {
+            pa_threaded_mainloop_free(mainloop);
+        }
+    }
+
+    void processStream(const void* inputBuffer, size_t framesPerBuffer) {
+        // Capture audio data
+
+        std::lock_guard<std::mutex> lock(capturedAudio_mtx);
+
+        //auto executeFunc = [&]() {
+        //    std::lock_guard<std::mutex> lock(capturedAudio_mtx);
+        //};
+        //logExecutionTime(executeFunc, "processStream_mutex");
+        capturedAudio.clear();
+        // perform FFT
+        fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * framesPerBuffer);
+        for(int i = 0; i < framesPerBuffer; ++i) {
+            out[i][0] = 0.0;
+            out[i][1] = 0.0;
+        }
+        //for(int i = 0; i < framesPerBuffer; ++i) {
+        //    std::cout << ((double*) inputBuffer)[i] << " ";
+        //}
+        fftw_plan p = fftw_plan_dft_r2c_1d(framesPerBuffer, (double *) inputBuffer, out, FFTW_ESTIMATE);
+        fftw_execute(p);
+        // calculate magnitude
+        std::vector<double> magnitude;
+        magnitude.reserve(framesPerBuffer);
+        for (int i = 0; i < framesPerBuffer; ++i)
+        {
+            magnitude.emplace_back(std::sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]));
+        }
+        //std::cout << "o";
+
+        // clean up
+        fftw_destroy_plan(p);
+        fftw_free(out);
+        for (unsigned int i = 0; i < framesPerBuffer; i++) {
+            if (!std::isnan(magnitude[i])) {
+                capturedAudio.emplace_back((double) i * SAMPLE_RATE / framesPerBuffer, magnitude[i]);
+                //std::cout << std::get<0>(capturedAudio.back()) << " " << std::get<1>(capturedAudio.back()) << ", ";
+            }
+        }
+        audioQueue.push(capturedAudio);
+    }
+
+    static void context_state_callback_static(pa_context *c, void *userdata) {
+        PulseAudioMic *self = reinterpret_cast<PulseAudioMic *>(userdata);
+        self->context_state_callback(c);
+    }
+
+    void context_state_callback(pa_context *c) {
+        switch (pa_context_get_state(c)) {
+            case PA_CONTEXT_UNCONNECTED:
+            case PA_CONTEXT_CONNECTING:
+            case PA_CONTEXT_AUTHORIZING:
+            case PA_CONTEXT_SETTING_NAME:
+            default:
+                break;
+
+            case PA_CONTEXT_READY:
+                pa_operation_unref(pa_context_get_source_info_list(c, source_info_callback_static, this));
+                break;
+
+            case PA_CONTEXT_FAILED:
+                std::cerr << "Connection failed\n";
+                break;
+
+            case PA_CONTEXT_TERMINATED:
+                std::cerr << "Connection terminated\n";
+                break;
+        }
+    }
+
+    static void source_info_callback_static(pa_context *c, const pa_source_info *i, int eol, void *userdata) {
+        PulseAudioMic *self = reinterpret_cast<PulseAudioMic *>(userdata);
+        self->source_info_callback(c, i, eol);
+    }
+
+    void source_info_callback(pa_context *c, const pa_source_info *i, int eol) {
+        if (eol > 0) {
+            return;
+        }
+        sources.emplace_back(i->name);
+    }
+
+    static void stream_state_callback_static(pa_stream *s, void *userdata) {
+        PulseAudioMic *self = reinterpret_cast<PulseAudioMic *>(userdata);
+        std::cout << "Stream state changed\n";
+        self->stream_state_callback(s);
+    }
+
+    void stream_state_callback(pa_stream *s) {
+        assert(s);
+        switch (pa_stream_get_state(s)) {
+            case PA_STREAM_CREATING:
+                std::cout << "Stream is being created...\n";
+                break;
+            case PA_STREAM_READY:
+                std::cout << "Stream is ready to be used.\n";
+                break;
+            case PA_STREAM_FAILED:
+                std::cerr << "Stream has failed.\n";
+                break;
+            case PA_STREAM_TERMINATED:
+                std::cout << "Stream has been terminated.\n";
+                break;
+            case PA_STREAM_UNCONNECTED:
+                std::cerr << "Stream is unconnected.\n";
+                break;
+            default:
+                std::cerr << "Unknown stream state.\n";
+                break;
+        }
+    }
+
+    static void stream_read_callback_static(pa_stream *s, size_t length, void *userdata) {
+        PulseAudioMic *self = reinterpret_cast<PulseAudioMic *>(userdata);
+        //std::cout << "O";
+        self->readStream();
     }
 };
 
@@ -355,7 +616,7 @@ static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, uns
     (void) statusFlags;
     (void) userData;
 
-    if (inputBuffer == NULL) {
+    if (inputBuffer == nullptr) {
         for (unsigned int i = 0; i < framesPerBuffer; i++) {
             *out++ = 0;  /* left - silent */
             *out++ = 0;  /* right - silent */
@@ -364,7 +625,7 @@ static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, uns
     } else {
         for (unsigned int i = 0; i < framesPerBuffer; i++) {
             // Here you might want to capture audio data
-            capturedAudio.push_back(in[i]);
+            //capturedAudio.push_back(in[i]);
         }
     }
     return paContinue;
@@ -859,9 +1120,9 @@ public:
     void connectDendrite(std::shared_ptr<Dendrite> dendrite) {
         auto coords = get_coordinates(int (onwardDendrites.size() + 1), int(onwardDendrites.size() + 1), int(5));
         PositionPtr currentPosition = dendrite->getPosition();
-        double x = std::get<0>(coords) + currentPosition->x;
-        double y = std::get<1>(coords) + currentPosition->y;
-        double z = std::get<2>(coords) + currentPosition->z;
+        auto x = double(std::get<0>(coords)) + currentPosition->x;
+        auto y = double(std::get<1>(coords)) + currentPosition->y;
+        auto z = double(std::get<2>(coords)) + currentPosition->z;
         currentPosition->x = x;
         currentPosition->y = y;
         currentPosition->z = z;
@@ -894,9 +1155,9 @@ private:
 void Dendrite::addBranch(std::shared_ptr<DendriteBranch> branch) {
     auto coords = get_coordinates(int (dendriteBranches.size() + 1), int(dendriteBranches.size() + 1), int(5));
     PositionPtr currentPosition = branch->getPosition();
-    double x = std::get<0>(coords) + currentPosition->x;
-    double y = std::get<1>(coords) + currentPosition->y;
-    double z = std::get<2>(coords) + currentPosition->z;
+    auto x = double(std::get<0>(coords)) + currentPosition->x;
+    auto y = double(std::get<1>(coords)) + currentPosition->y;
+    auto z = double(std::get<2>(coords)) + currentPosition->z;
     currentPosition->x = x;
     currentPosition->y = y;
     currentPosition->z = z;
@@ -1041,9 +1302,9 @@ public:
     void connectAxon(std::shared_ptr<Axon> axon) {
         auto coords = get_coordinates(int (onwardAxons.size() + 1), int(onwardAxons.size() + 1), int(5));
         PositionPtr currentPosition = axon->getPosition();
-        double x = std::get<0>(coords) + currentPosition->x;
-        double y = std::get<1>(coords) + currentPosition->y;
-        double z = std::get<2>(coords) + currentPosition->z;
+        auto x = double(std::get<0>(coords)) + currentPosition->x;
+        auto y = double(std::get<1>(coords)) + currentPosition->y;
+        auto z = double(std::get<2>(coords)) + currentPosition->z;
         currentPosition->x = x;
         currentPosition->y = y;
         currentPosition->z = z;
@@ -1070,9 +1331,9 @@ private:
 void Axon::addBranch(std::shared_ptr<AxonBranch> branch) {
     auto coords = get_coordinates(int (axonBranches.size() + 1), int(axonBranches.size() + 1), int(5));
     PositionPtr currentPosition = branch->getPosition();
-    double x = std::get<0>(coords) + currentPosition->x;
-    double y = std::get<1>(coords) + currentPosition->y;
-    double z = std::get<2>(coords) + currentPosition->z;
+    auto x = double(std::get<0>(coords)) + currentPosition->x;
+    auto y = double(std::get<1>(coords)) + currentPosition->y;
+    auto z = double(std::get<2>(coords)) + currentPosition->z;
     currentPosition->x = x;
     currentPosition->y = y;
     currentPosition->z = z;
@@ -1189,9 +1450,9 @@ public:
     void addDendriteBranch(std::shared_ptr<DendriteBranch> dendriteBranch) {
         auto coords = get_coordinates(int (dendriteBranches.size() + 1), int(dendriteBranches.size() + 1), int(5));
         PositionPtr currentPosition = dendriteBranch->getPosition();
-        double x = std::get<0>(coords) + currentPosition->x;
-        double y = std::get<1>(coords) + currentPosition->y;
-        double z = std::get<2>(coords) + currentPosition->z;
+        auto x = double(std::get<0>(coords)) + currentPosition->x;
+        auto y = double(std::get<1>(coords)) + currentPosition->y;
+        auto z = double(std::get<2>(coords)) + currentPosition->z;
         currentPosition->x = x;
         currentPosition->y = y;
         currentPosition->z = z;
@@ -2175,7 +2436,7 @@ class nvTimerCallback : public vtkCommand
 
     static nvTimerCallback *New()
     {
-        nvTimerCallback *nvCB = new nvTimerCallback;
+        auto *nvCB = new nvTimerCallback;
         nvCB->nvTimerCount = 0;
         return nvCB;
     }
@@ -2185,8 +2446,9 @@ class nvTimerCallback : public vtkCommand
         if (vtkCommand::TimerEvent == eventId) {
             ++this->nvTimerCount;
         }
-
+        std::lock_guard<std::mutex> lock(*nvMutex);
         // Iterate over the neurons and add their positions to the vtkPolyData
+        nvPoints->Reset();
         for (const auto &neuron: nvNeurons) {
             const PositionPtr &neuronPosition = neuron->getPosition();
 
@@ -2220,7 +2482,7 @@ class nvTimerCallback : public vtkCommand
             // Add the position of the axon hillock to the vtkPoints and vtkPolyData
             const PositionPtr &axonHillockPosition = neuron->getSoma()->getAxonHillock()->getPosition();
             pointIDs->InsertNextId(nvPoints->InsertNextPoint(axonHillockPosition->x, axonHillockPosition->y,
-                                                                 axonHillockPosition->z));
+                                                             axonHillockPosition->z));
 
             // Add the position of the axon to the vtkPoints and vtkPolyData
             const PositionPtr &axonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getPosition();
@@ -2229,7 +2491,7 @@ class nvTimerCallback : public vtkCommand
             // Add the position of the axon bouton to the vtkPoints and vtkPolyData
             const PositionPtr &axonBoutonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
             pointIDs->InsertNextId(nvPoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
-                                                                 axonBoutonPosition->z));
+                                                             axonBoutonPosition->z));
 
             // Add the position of the synaptic gap to the vtkPoints and vtkPolyData
             addSynapticGapToRenderer(nvRenderer,
@@ -2242,15 +2504,15 @@ class nvTimerCallback : public vtkCommand
             }
 
             // Add the line to the cell array
-            lines->InsertNextCell(pointIDs);
+            nvLines->InsertNextCell(pointIDs);
 
 
             // Create a vtkPolyData object and set the points and lines as its data
-            vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-            polyData->SetPoints(nvPoints);
+
+            nvPolyData->SetPoints(nvPoints);
 
             vtkSmartPointer<vtkDelaunay3D> delaunay = vtkSmartPointer<vtkDelaunay3D>::New();
-            delaunay->SetInputData(polyData);
+            delaunay->SetInputData(nvPolyData);
             delaunay->SetAlpha(0.1); // Adjust for mesh density
             //delaunay->Update();
 
@@ -2274,34 +2536,66 @@ class nvTimerCallback : public vtkCommand
             // Add the membrane actor to the renderer
             // renderer->AddActor(membraneActor);
 
-            polyData->SetLines(lines);
+            nvPolyData->SetLines(nvLines);
 
             // Create a mapper and actor for the neuron positions
-            vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            mapper->SetInputData(polyData);
-            vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-            nvActor->SetMapper(mapper);
-            nvRenderer->AddActor(actor);
-
-            void setNeurons(std::vector<std::shared_ptr>> &visualiseNeurons) {
-                this->nvNeurons = visualiseNeurons;
-            }
-
-            void setActor(const vtkSmartPointer<vtkActor> &actor) {
-                this->nvActor = actor;
-            }
-
-            void setRenderer(const vtkSmartPointer<vtkRenderer> &renderer) {
-                this->nvRenderer = renderer;
-            }
+            nvPolyData->Modified();
+            nvMapper->SetInputData(nvPolyData);
+            nvActor->SetMapper(nvMapper);
+            nvRenderer->AddActor(nvActor);
         }
+        nvRenderer->Modified();
     }
+    void setNeurons(const std::vector<std::shared_ptr<Neuron>>& visualiseNeurons) {
+        this->nvNeurons = visualiseNeurons;
+    }
+
+    void setMutex(std::mutex& mutex) {
+        this->nvMutex = &mutex;
+    }
+
+    void setPoints(const vtkSmartPointer<vtkPoints>& points)
+    {
+        this->nvPoints = points;
+    }
+
+    void setLines(const vtkSmartPointer<vtkCellArray>& lines)
+    {
+        this->nvLines = lines;
+    }
+
+    void setPolyData(const vtkSmartPointer<vtkPolyData>& polydata)
+    {
+        this->nvPolyData = polydata;
+    }
+
+    void setActor(const vtkSmartPointer<vtkActor>& actor) {
+        this->nvActor = actor;
+    }
+
+    void setMapper(const vtkSmartPointer<vtkPolyDataMapper>& mapper) {
+        this->nvMapper = mapper;
+    }
+
+    void setRenderer(const vtkSmartPointer<vtkRenderer>& renderer) {
+        this->nvRenderer = renderer;
+    }
+
+    void setRenderWindow(const vtkSmartPointer<vtkRenderWindow>& renderWindow)
+    {
+        this->nvRenderWindow = renderWindow;
+    }
+
     std::vector<std::shared_ptr<Neuron>> nvNeurons;
     int nvTimerCount{};
-    vtkSmartPointer<vtkActor> nvActor;
-    vtkSmartPointer<vtkRenderer> nvRenderer;
-    vtkSmartPointer<vtkPolyData> nvPolyData;
-    vtkSmartPointer<vtkPoints> nvPoints;
+    vtkSmartPointer<vtkActor> nvActor = vtkSmartPointer<vtkActor>::New();
+    vtkSmartPointer<vtkPolyDataMapper> nvMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    vtkSmartPointer<vtkRenderer> nvRenderer = vtkSmartPointer<vtkRenderer>::New();
+    vtkSmartPointer<vtkRenderWindow> nvRenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    vtkSmartPointer<vtkPolyData> nvPolyData = vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkPoints> nvPoints = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkCellArray> nvLines = vtkSmartPointer<vtkCellArray>::New();
+    std::mutex* nvMutex{};
 };
 
 class avTimerCallback : public vtkCommand
@@ -2309,65 +2603,161 @@ class avTimerCallback : public vtkCommand
 public:
     static avTimerCallback *New()
     {
-        avTimerCallback *avCB = new avTimerCallback;
-        avCB->audioTimerCount = 0;
+        auto *avCB = new avTimerCallback;
+        avCB->avTimerCount = 0;
         return avCB;
     }
 
     void Execute(vtkObject *vtkNotUsed(caller), unsigned long eventId,
-                         void *vtkNotUsed(callData)) override
-    {
-        if (vtkCommand::TimerEvent == eventId)
-        {
-            ++this->audioTimerCount;
+                         void *vtkNotUsed(callData)) override {
+        if (vtkCommand::TimerEvent == eventId) {
+            ++this->avTimerCount;
         }
 
-        double soundByte = 0;
-        double frequency = 0;
-        std::vector<double> frequency_data;
-        // Convert the data to frequency data.
-        for (float i : capturedAudio) {
-            soundByte = i;
-            if (!std::isnan(soundByte)) {
-                frequency = (soundByte * 16000.0) / 32768.0;
-                frequency_data.push_back(frequency);
-            }
-        }
-        capturedAudio.clear();
-
+        capturedAudio = avQueue->pop();
+        //avPolyData->SetLines(nullptr);
+        //avPolyData->SetPoints(nullptr);
+        std::cout << ".";
         // Plot the frequency data.
-        audioPolyData = vtkSmartPointer<vtkPolyData>::New();
-        audioPoints = vtkSmartPointer<vtkPoints>::New();
-        for (double i : frequency_data) {
-            audioPoints->InsertNextPoint(i, 0.0, 0.0);
+        avLines->Reset();
+        avPoints->Reset();
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        for (const auto &point: capturedAudio) {
+            vtkSmartPointer<vtkLine> line = vtkSmartPointer<vtkLine>::New();
+            x = double(std::get<0>(point)) / 160.0;
+            y = double(std::get<1>(point)) / 160.0;
+            avPoints->InsertNextPoint(x, 0.0, z);
+            line->GetPointIds()->SetId(0, avPoints->GetNumberOfPoints() - 1);   // the first point of the line
+            avPoints->InsertNextPoint(x, y, z);
+            line->GetPointIds()->SetId(1, avPoints->GetNumberOfPoints() - 1);   // the first point of the line
+            avLines->InsertNextCell(line);
+            //std::cout << avPoints->GetNumberOfPoints() << std::endl;
         }
-        audioPolyData->SetPoints(audioPoints);
 
-        //if (this->TimerCount <= 100) {
-        //    points->InsertNextPoint(this->TimerCount, 0, this->TimerCount);
-        //}
+        avPolyData->SetPoints(avPoints);
+        avPolyData->SetLines(avLines);
+        //std::cout << avPolyData->GetNumberOfPoints() << ", " << avPolyData->GetNumberOfLines() << std::endl;
+        avMapper->SetInputData(avPolyData);
+        avRenderer->RemoveActor(avActor);
+        avActor = vtkSmartPointer<vtkActor>::New();
+        avActor->SetMapper(avMapper);
+        avActor->GetProperty()->SetColor(0.7, 0.7, 0.0);
+        avRenderer->AddActor(avActor);
+        avRenderer->Modified();
+    }
 
-        audioPolyData->Modified();
-        audioActor->GetMapper()->Update();
-        audioRenderer->Render();
+    void setAudio(ThreadSafeQueue<std::vector<std::tuple<double, double>>>& aQueue) {
+        this->avQueue = &aQueue;
+    }
+
+    void setPoints(const vtkSmartPointer<vtkPoints>& points)
+    {
+        this->avPoints = points;
+    }
+
+    void setLines(const vtkSmartPointer<vtkCellArray>& lines)
+    {
+        this->avLines = lines;
+    }
+
+    void setPolyData(const vtkSmartPointer<vtkPolyData>& polydata)
+    {
+        this->avPolyData = polydata;
     }
 
     void setActor(const vtkSmartPointer<vtkActor>& actor)
     {
-        this->audioActor = actor;
+        this->avActor = actor;
+    }
+
+    void setMapper(const vtkSmartPointer<vtkPolyDataMapper>& mapper) {
+        this->avMapper = mapper;
     }
 
     void setRenderer(const vtkSmartPointer<vtkRenderer>& renderer)
     {
-        this->audioRenderer = renderer;
+        this->avRenderer = renderer;
     }
 
-    int audioTimerCount{};
-    vtkSmartPointer<vtkActor> audioActor;
-    vtkSmartPointer<vtkRenderer> audioRenderer;
-    vtkSmartPointer<vtkPolyData> audioPolyData;
-    vtkSmartPointer<vtkPoints> audioPoints;
+    void setRenderWindow(const vtkSmartPointer<vtkRenderWindow>& renderWindow)
+    {
+        this->avRenderWindow = renderWindow;
+    }
+
+    int avTimerCount{};
+    vtkSmartPointer<vtkActor> avActor = vtkSmartPointer<vtkActor>::New();
+    vtkSmartPointer<vtkPolyDataMapper> avMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    vtkSmartPointer<vtkRenderer> avRenderer = vtkSmartPointer<vtkRenderer>::New();
+    vtkSmartPointer<vtkRenderWindow> avRenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    vtkSmartPointer<vtkPolyData> avPolyData = vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkPoints> avPoints = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkCellArray> avLines = vtkSmartPointer<vtkCellArray>::New();
+    std::vector<std::tuple<double, double>> capturedAudio;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> *avQueue{};
 };
+
+void runInteractor(std::vector<std::shared_ptr<Neuron>>& neurons, std::mutex& neuron_mutex, ThreadSafeQueue<std::vector<std::tuple<double, double>>>& audioQueue, int whichCallBack)
+{
+    // Initialize VTK
+    //vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    //vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+    //vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+    //vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    //polyData->SetPoints(points);
+    //polyData->SetLines(lines);
+    //mapper->SetInputData(polyData);
+    //vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+    //vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+    //vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    //actor->SetMapper(mapper);
+    //renderWindow->AddRenderer(renderer);
+
+    if (whichCallBack == 0) {
+
+        vtkSmartPointer<nvTimerCallback> nvCB = vtkSmartPointer<nvTimerCallback>::New();
+        nvCB->setNeurons(neurons);
+        nvCB->setMutex(neuron_mutex);
+        //nvCB->setPoints(points);
+        //nvCB->setLines(lines);
+        //nvCB->setPolyData(polyData);
+        //nvCB->setActor(actor);
+        //nvCB->setMapper(mapper);
+        //nvCB->setRenderer(renderer);
+        nvCB->nvRenderWindow->AddRenderer(nvCB->nvRenderer);
+
+        // Custom main loop
+        while (true) { // or a more appropriate loop condition
+            auto executeFunc = [nvCB] () mutable { nvCB->Execute(nullptr, vtkCommand::TimerEvent, nullptr); };
+            logExecutionTime(executeFunc, "nvCB->Execute");
+            nvCB->nvRenderWindow->Render();
+            std::cout << "x";
+            //std::this_thread::sleep_for(std::chrono::milliseconds(501));
+        }
+    }
+    if (whichCallBack == 1) {
+        vtkSmartPointer<avTimerCallback> avCB = vtkSmartPointer<avTimerCallback>::New();
+        avCB->setAudio(audioQueue);
+        //avCB->setPoints(points);
+        //avCB->setLines(lines);
+        //avCB->setPolyData(polyData);
+        //avCB->setActor(actor);
+        //avCB->setMapper(mapper);
+        //avCB->setRenderer(renderer);
+        avCB->avRenderWindow->AddRenderer(avCB->avRenderer);
+
+        // Custom main loop
+        while (true) { // or a more appropriate loop condition
+            auto executeFunc = [avCB] () mutable { avCB->Execute(nullptr, vtkCommand::TimerEvent, nullptr); };
+            logExecutionTime(executeFunc, "avCB->Execute");
+            avCB->avRenderWindow->AddRenderer(avCB->avRenderer);
+            avCB->avRenderWindow->Render();
+            std::cout << "X";
+            //std::this_thread::sleep_for(std::chrono::milliseconds(99));
+        }
+    }
+}
 
 /**
  * @brief Main function to initialize, run, and finalize the neuron network simulation.
@@ -2383,566 +2773,412 @@ int main() {
 
     std::cout << "Base64 Encoded: " << encoded << std::endl;
     std::string query;
-    std::vector<double> frequency_data;
-    pulseaudioMicThread audioThread;
 
-    std::thread audioThreadRunner(&pulseaudioMicThread::run, &audioThread);
-    std::cout << "Mic input thread started." << std::endl;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
 
-    // Initialize VTK
-    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    renderWindow->AddRenderer(renderer);
-    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    renderWindowInteractor->SetRenderWindow(renderWindow);
+    std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
+    std::thread micThread(&PulseAudioMic::micRun, mic);
 
-    // Create a vtkPoints object to hold the neuron positions
-    vtkSmartPointer<vtkPoints> definePoints = vtkSmartPointer<vtkPoints>::New();
+    // Read the database connection configuration and simulation configuration
+    std::vector<std::string> config_filenames = {"db_connection.conf", "simulation.conf"};
+    auto config = read_config(config_filenames);
+    std::string connection_string = build_connection_string(config);
 
-    // Create a vtkCellArray object to hold the lines
-    vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+    // Get the number of neurons from the configuration
+    int num_neurons = std::stoi(config["num_neurons"]);
+    int num_pixels = std::stoi(config["num_pixels"]);
+    int num_phonels = std::stoi(config["num_phonels"]);
+    int num_scentels = std::stoi(config["num_scentels"]);
+    int num_vocels = std::stoi(config["num_vocels"]);
+    int neuron_points_per_layer = std::stoi(config["neuron_points_per_layer"]);
+    int pixel_points_per_layer = std::stoi(config["pixel_points_per_layer"]);
+    int phonel_points_per_layer = std::stoi(config["phonel_points_per_layer"]);
+    int scentel_points_per_layer = std::stoi(config["scentel_points_per_layer"]);
+    int vocel_points_per_layer = std::stoi(config["vocel_points_per_layer"]);
+    double proximityThreshold = std::stod(config["proximity_threshold"]);
+    bool useDatabase = convertStringToBool(config["use_database"]);
 
+    // Connect to PostgreSQL
+    pqxx::connection conn(connection_string);
 
-    try {
-        // Read the database connection configuration and simulation configuration
-        std::vector<std::string> config_filenames = {"db_connection.conf", "simulation.conf"};
-        auto config = read_config(config_filenames);
-        std::string connection_string = build_connection_string(config);
+    // Initialize the database (check and create the required table if needed)
+    initialize_database(conn);
+    // Start a transaction
+    pqxx::work txn(conn);
+    // Set the transaction isolation level
+    txn.exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
+    txn.exec("SET lock_timeout = '5s';");
 
-        // Get the number of neurons from the configuration
-        int num_neurons = std::stoi(config["num_neurons"]);
-        int num_pixels = std::stoi(config["num_pixels"]);
-        int num_phonels = std::stoi(config["num_phonels"]);
-        int num_scentels = std::stoi(config["num_scentels"]);
-        int num_vocels = std::stoi(config["num_vocels"]);
-        int neuron_points_per_layer = std::stoi(config["neuron_points_per_layer"]);
-        int pixel_points_per_layer = std::stoi(config["pixel_points_per_layer"]);
-        int phonel_points_per_layer = std::stoi(config["phonel_points_per_layer"]);
-        int scentel_points_per_layer = std::stoi(config["scentel_points_per_layer"]);
-        int vocel_points_per_layer = std::stoi(config["vocel_points_per_layer"]);
-        double proximityThreshold = std::stod(config["proximity_threshold"]);
-        bool useDatabase = convertStringToBool(config["use_database"]);
+    // Create a single instance of NeuronParameters to access the database
+    NeuronParameters params;
 
-        // Connect to PostgreSQL
-        pqxx::connection conn(connection_string);
-
-        // Initialize the database (check and create the required table if needed)
-        initialize_database(conn);
-        // Start a transaction
-        pqxx::work txn(conn);
-        // Set the transaction isolation level
-        txn.exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
-        txn.exec("SET lock_timeout = '5s';");
-
-        // Create a single instance of NeuronParameters to access the database
-        NeuronParameters params;
-
-        // Create a list of neurons
-        std::cout << "Creating neurons..." << std::endl;
-        std::vector<std::shared_ptr<Neuron>> neurons;
-        neurons.reserve(num_neurons);
-        double shiftX = 0.0;
-        double shiftY = 0.0;
-        double shiftZ = 0.0;
-        double newPositionX;
-        double newPositionY;
-        double newPositionZ;
-        std::shared_ptr<Neuron> prevNeuron;
-        // Currently the application places neurons in a defined pattern but the pattern is not based on cell growth
-        for (int i = 0; i < num_neurons; ++i) {
-            auto coords = get_coordinates(i, num_neurons, neuron_points_per_layer);
-            if ( i > 0 ) {
-                prevNeuron = neurons.back();
-                shiftX = std::get<0>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
-                shiftY = std::get<1>(coords) + (0.1 * i) + cos((3.14 / 180) * (i * 10)) * 0.1;
-                shiftZ = std::get<2>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
-            }
-
-            // std::cout << "Creating neuron " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
-            neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-            neurons.back()->initialise();
-            // Sparsely associate neurons
-            if (i > 0 && i % 3 == 0) {
-                //std::cout << "Associating neuron " << i << " with neuron " << i - 1 << std::endl;
-                // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
-                PositionPtr prevDendriteBoutonPosition = prevNeuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
-                PositionPtr currentSynapticGapPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
-                newPositionX = prevDendriteBoutonPosition->x + 0.4;
-                newPositionY = prevDendriteBoutonPosition->y + 0.4;
-                newPositionZ = prevDendriteBoutonPosition->z + 0.4;
-                currentSynapticGapPosition->x = newPositionX;
-                currentSynapticGapPosition->y = newPositionY;
-                currentSynapticGapPosition->z = newPositionZ;
-                PositionPtr currentAxonBoutonPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
-                newPositionX = newPositionX + 0.4;
-                newPositionY = newPositionY + 0.4;
-                newPositionZ = newPositionZ + 0.4;
-                currentAxonBoutonPosition->x = newPositionX;
-                currentAxonBoutonPosition->y = newPositionY;
-                currentAxonBoutonPosition->z = newPositionZ;
-                PositionPtr currentAxonPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getPosition();
-                newPositionX = newPositionX + (currentAxonPosition->x - newPositionX) / 2.0;
-                newPositionY = newPositionY + (currentAxonPosition->y - newPositionY) / 2.0;
-                newPositionZ = newPositionZ + (currentAxonPosition->z - newPositionZ) / 2.0;
-                currentAxonPosition->x = newPositionX;
-                currentAxonPosition->y = newPositionY;
-                currentAxonPosition->z = newPositionZ;
-                // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
-                associateSynapticGap(*neurons[i - 1], *neurons[i], proximityThreshold);
-            }
+    // Create a list of neurons
+    std::cout << "Creating neurons..." << std::endl;
+    std::vector<std::shared_ptr<Neuron>> neurons;
+    std::mutex neuron_mutex;
+    std::mutex empty_neuron_mutex;
+    neurons.reserve(num_neurons);
+    double shiftX = 0.0;
+    double shiftY = 0.0;
+    double shiftZ = 0.0;
+    double newPositionX;
+    double newPositionY;
+    double newPositionZ;
+    std::shared_ptr<Neuron> prevNeuron;
+    // Currently the application places neurons in a defined pattern but the pattern is not based on cell growth
+    for (int i = 0; i < num_neurons; ++i) {
+        auto coords = get_coordinates(i, num_neurons, neuron_points_per_layer);
+        if ( i > 0 ) {
+            prevNeuron = neurons.back();
+            shiftX = std::get<0>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
+            shiftY = std::get<1>(coords) + (0.1 * i) + cos((3.14 / 180) * (i * 10)) * 0.1;
+            shiftZ = std::get<2>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
         }
-        std::cout << "Created " << neurons.size() << " neurons." << std::endl;
-        // Create a collection of visual inputs (pair of eyes)
-        std::cout << "Creating visual sensory inputs..." << std::endl;
-        std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> visualInputs(2); // Resize the vector to contain 2 elements        visualInputs[0].reserve(num_pixels / 2);
-        visualInputs[1].reserve(num_pixels / 2);
-        std::shared_ptr<SensoryReceptor> prevReceptor;
+
+        // std::cout << "Creating neuron " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
+        neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+        neurons.back()->initialise();
+        // Sparsely associate neurons
+        if (i > 0 && i % 3 == 0) {
+            //std::cout << "Associating neuron " << i << " with neuron " << i - 1 << std::endl;
+            // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
+            PositionPtr prevDendriteBoutonPosition = prevNeuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+            PositionPtr currentSynapticGapPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
+            newPositionX = prevDendriteBoutonPosition->x + 0.4;
+            newPositionY = prevDendriteBoutonPosition->y + 0.4;
+            newPositionZ = prevDendriteBoutonPosition->z + 0.4;
+            currentSynapticGapPosition->x = newPositionX;
+            currentSynapticGapPosition->y = newPositionY;
+            currentSynapticGapPosition->z = newPositionZ;
+            PositionPtr currentAxonBoutonPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
+            newPositionX = newPositionX + 0.4;
+            newPositionY = newPositionY + 0.4;
+            newPositionZ = newPositionZ + 0.4;
+            currentAxonBoutonPosition->x = newPositionX;
+            currentAxonBoutonPosition->y = newPositionY;
+            currentAxonBoutonPosition->z = newPositionZ;
+            PositionPtr currentAxonPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getPosition();
+            newPositionX = newPositionX + (currentAxonPosition->x - newPositionX) / 2.0;
+            newPositionY = newPositionY + (currentAxonPosition->y - newPositionY) / 2.0;
+            newPositionZ = newPositionZ + (currentAxonPosition->z - newPositionZ) / 2.0;
+            currentAxonPosition->x = newPositionX;
+            currentAxonPosition->y = newPositionY;
+            currentAxonPosition->z = newPositionZ;
+            // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
+            associateSynapticGap(*neurons[i - 1], *neurons[i], proximityThreshold);
+        }
+    }
+    std::cout << "Created " << neurons.size() << " neurons." << std::endl;
+    // Create a collection of visual inputs (pair of eyes)
+    std::cout << "Creating visual sensory inputs..." << std::endl;
+    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> visualInputs(2); // Resize the vector to contain 2 elements        visualInputs[0].reserve(num_pixels / 2);
+    visualInputs[1].reserve(num_pixels / 2);
+    std::shared_ptr<SensoryReceptor> prevReceptor;
 #pragma omp parallel for
-        for (int j = 0; j < 2; ++j) {
-            for (int i = 0; i < (num_pixels / 2); ++i) {
-                auto coords = get_coordinates(i, num_pixels, pixel_points_per_layer);
-                if (i > 0) {
-                    prevReceptor = visualInputs[j].back();
-                    shiftX = std::get<0>(coords) - 100 + (j * 200);
-                    shiftY = std::get<1>(coords);
-                    shiftZ = std::get<2>(coords) - 100;
-                }
-
-                // std::cout << "Creating visual (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
-                visualInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-                visualInputs[j].back()->initialise();
-                // Sparsely associate neurons
-                if (i > 0 && i % 7 == 0) {
-                    // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
-                    PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
-                    PositionPtr currentSynapticGapPosition = visualInputs[j].back()->getSynapticGaps()[0]->getPosition();
-                    newPositionX = currentSynapticGapPosition->x + 0.4;
-                    newPositionY = currentSynapticGapPosition->y + 0.4;
-                    newPositionZ = currentSynapticGapPosition->z + 0.4;
-                    currentDendriteBoutonPosition->x = newPositionX;
-                    currentDendriteBoutonPosition->y = newPositionY;
-                    currentDendriteBoutonPosition->z = newPositionZ;
-                    PositionPtr currentDendritePosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
-                    newPositionX = newPositionX + 0.4;
-                    newPositionY = newPositionY + 0.4;
-                    newPositionZ = newPositionZ + 0.4;
-                    currentDendritePosition->x = newPositionX;
-                    currentDendritePosition->y = newPositionY;
-                    currentDendritePosition->z = newPositionZ;
-                    // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
-                    associateSynapticGap(*visualInputs[j].back(), *neurons[int(i + ((num_pixels / 2) * j))], proximityThreshold);
-                }
-            }
-        }
-        std::cout << "Created " << ( visualInputs[0].size() + visualInputs[1].size()) << " sensory receptors." << std::endl;
-
-        // Create a collection of audio inputs (pair of ears)
-        std::cout << "Creating auditory sensory inputs..." << std::endl;
-        std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> audioInputs(2); // Resize the vector to contain 2 elements
-        audioInputs[0].reserve(num_phonels);
-        audioInputs[1].reserve(num_phonels);
-#pragma omp parallel for
-        for (int j = 0; j < 2; ++j) {
-            for (int i = 0; i < (num_phonels / 2); ++i) {
-                auto coords = get_coordinates(i, num_phonels, phonel_points_per_layer);
-                if (i > 0) {
-                    prevReceptor = audioInputs[j].back();
-                    shiftX = std::get<0>(coords) - 150 + (j * 300);
-                    shiftY = std::get<1>(coords);
-                    shiftZ = std::get<2>(coords);
-                }
-
-                // std::cout << "Creating auditory (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
-                audioInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-                audioInputs[j].back()->initialise();
-                // Sparsely associate neurons
-                if (i > 0 && i % 11 == 0) {
-                    // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
-                    PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_phonels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
-                    PositionPtr currentSynapticGapPosition = audioInputs[j].back()->getSynapticGaps()[0]->getPosition();
-                    newPositionX = currentSynapticGapPosition->x + 0.4;
-                    newPositionY = currentSynapticGapPosition->y + 0.4;
-                    newPositionZ = currentSynapticGapPosition->z + 0.4;
-                    currentDendriteBoutonPosition->x = newPositionX;
-                    currentDendriteBoutonPosition->y = newPositionY;
-                    currentDendriteBoutonPosition->z = newPositionZ;
-                    PositionPtr currentDendritePosition = neurons[int(i + ((num_phonels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
-                    newPositionX = newPositionX + 0.4;
-                    newPositionY = newPositionY + 0.4;
-                    newPositionZ = newPositionZ + 0.4;
-                    currentDendritePosition->x = newPositionX;
-                    currentDendritePosition->y = newPositionY;
-                    currentDendritePosition->z = newPositionZ;
-                    // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
-                    associateSynapticGap(*audioInputs[j].back(), *neurons[int(i + ((num_phonels / 2) * j))], proximityThreshold);
-                }
-            }
-        }
-        std::cout << "Created " << ( audioInputs[0].size() + audioInputs[1].size()) << " sensory receptors." << std::endl;
-
-        // Create a collection of olfactory inputs (pair of nostrils)
-        std::cout << "Creating olfactory sensory inputs..." << std::endl;
-        std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> olfactoryInputs(2); // Resize the vector to contain 2 elements
-        olfactoryInputs[0].reserve(num_scentels);
-        olfactoryInputs[1].reserve(num_scentels);
-#pragma omp parallel for
-        for (int j = 0; j < 2; ++j) {
-            for (int i = 0; i < (num_scentels / 2); ++i) {
-                auto coords = get_coordinates(i, num_scentels, scentel_points_per_layer);
-                if (i > 0) {
-                    prevReceptor = olfactoryInputs[j].back();
-                    shiftX = std::get<0>(coords) - 20 + (j * 40);
-                    shiftY = std::get<1>(coords) - 10;
-                    shiftZ = std::get<2>(coords) - 10;
-                }
-
-                // std::cout << "Creating olfactory (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
-                olfactoryInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-                olfactoryInputs[j].back()->initialise();
-                // Sparsely associate neurons
-                if (i > 0 && i % 13 == 0) {
-                    // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
-                    PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_scentels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
-                    PositionPtr currentSynapticGapPosition = olfactoryInputs[j].back()->getSynapticGaps()[0]->getPosition();
-                    newPositionX = currentSynapticGapPosition->x + 0.4;
-                    newPositionY = currentSynapticGapPosition->y + 0.4;
-                    newPositionZ = currentSynapticGapPosition->z + 0.4;
-                    currentDendriteBoutonPosition->x = newPositionX;
-                    currentDendriteBoutonPosition->y = newPositionY;
-                    currentDendriteBoutonPosition->z = newPositionZ;
-                    PositionPtr currentDendritePosition = neurons[int(i + ((num_scentels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
-                    newPositionX = newPositionX + 0.4;
-                    newPositionY = newPositionY + 0.4;
-                    newPositionZ = newPositionZ + 0.4;
-                    currentDendritePosition->x = newPositionX;
-                    currentDendritePosition->y = newPositionY;
-                    currentDendritePosition->z = newPositionZ;
-                    // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
-                    associateSynapticGap(*olfactoryInputs[j].back(), *neurons[int(i + ((num_scentels / 2) * j))], proximityThreshold);
-                }
-            }
-        }
-        std::cout << "Created " << ( olfactoryInputs[0].size() + olfactoryInputs[1].size()) << " sensory receptors." << std::endl;
-
-        // Create a collection of vocal effector outputs (vocal tract cords/muscle control)
-        std::cout << "Creating vocal effector outputs..." << std::endl;
-        std::vector<std::shared_ptr<Effector>> vocalOutputs;
-        vocalOutputs.reserve(num_vocels);
-        std::shared_ptr<Effector> prevEffector;
-
-        for (int i = 0; i < (num_vocels); ++i) {
-            auto coords = get_coordinates(i, num_vocels, vocel_points_per_layer);
+    for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < (num_pixels / 2); ++i) {
+            auto coords = get_coordinates(i, num_pixels, pixel_points_per_layer);
             if (i > 0) {
-                prevEffector = vocalOutputs.back();
-                shiftX = std::get<0>(coords);
-                shiftY = std::get<1>(coords) - 100;
-                shiftZ = std::get<2>(coords) + 10;
+                prevReceptor = visualInputs[j].back();
+                shiftX = std::get<0>(coords) - 100 + (j * 200);
+                shiftY = std::get<1>(coords);
+                shiftZ = std::get<2>(coords) - 100;
             }
 
-            // std::cout << "Creating vocal output " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
-            vocalOutputs.emplace_back(std::make_shared<Effector>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-            vocalOutputs.back()->initialise();
+            // std::cout << "Creating visual (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
+            visualInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+            visualInputs[j].back()->initialise();
             // Sparsely associate neurons
-            if (i > 0 && i % 17 == 0 && !neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->isAssociated() ) {
+            if (i > 0 && i % 7 == 0) {
                 // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
-                PositionPtr currentSynapticGapPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
-                PositionPtr currentEffectorPosition = vocalOutputs.back()->getPosition();
-                newPositionX = currentEffectorPosition->x - 0.4;
-                newPositionY = currentEffectorPosition->y - 0.4;
-                newPositionZ = currentEffectorPosition->z - 0.4;
-                currentSynapticGapPosition->x = newPositionX;
-                currentSynapticGapPosition->y = newPositionY;
-                currentSynapticGapPosition->z = newPositionZ;
-                PositionPtr currentAxonBoutonPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
+                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+                PositionPtr currentSynapticGapPosition = visualInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                newPositionX = currentSynapticGapPosition->x + 0.4;
+                newPositionY = currentSynapticGapPosition->y + 0.4;
+                newPositionZ = currentSynapticGapPosition->z + 0.4;
+                currentDendriteBoutonPosition->x = newPositionX;
+                currentDendriteBoutonPosition->y = newPositionY;
+                currentDendriteBoutonPosition->z = newPositionZ;
+                PositionPtr currentDendritePosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
                 newPositionX = newPositionX + 0.4;
                 newPositionY = newPositionY + 0.4;
                 newPositionZ = newPositionZ + 0.4;
-                currentAxonBoutonPosition->x = newPositionX;
-                currentAxonBoutonPosition->y = newPositionY;
-                currentAxonBoutonPosition->z = newPositionZ;
-                PositionPtr currentAxonPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getPosition();
-                newPositionX = newPositionX + 0.4;
-                newPositionY = newPositionY + 0.4;
-                newPositionZ = newPositionZ + 0.4;
-                currentAxonPosition->x = newPositionX;
-                currentAxonPosition->y = newPositionY;
-                currentAxonPosition->z = newPositionZ;
+                currentDendritePosition->x = newPositionX;
+                currentDendritePosition->y = newPositionY;
+                currentDendritePosition->z = newPositionZ;
                 // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
-                neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->setAsAssociated();
+                associateSynapticGap(*visualInputs[j].back(), *neurons[int(i + ((num_pixels / 2) * j))], proximityThreshold);
             }
         }
-        std::cout << "Created " << vocalOutputs.size() << " effectors." << std::endl;
+    }
+    std::cout << "Created " << ( visualInputs[0].size() + visualInputs[1].size()) << " sensory receptors." << std::endl;
+
+    // Create a collection of audio inputs (pair of ears)
+    std::cout << "Creating auditory sensory inputs..." << std::endl;
+    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> audioInputs(2); // Resize the vector to contain 2 elements
+    audioInputs[0].reserve(num_phonels);
+    audioInputs[1].reserve(num_phonels);
+#pragma omp parallel for
+    for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < (num_phonels / 2); ++i) {
+            auto coords = get_coordinates(i, num_phonels, phonel_points_per_layer);
+            if (i > 0) {
+                prevReceptor = audioInputs[j].back();
+                shiftX = std::get<0>(coords) - 150 + (j * 300);
+                shiftY = std::get<1>(coords);
+                shiftZ = std::get<2>(coords);
+            }
+
+            // std::cout << "Creating auditory (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
+            audioInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+            audioInputs[j].back()->initialise();
+            // Sparsely associate neurons
+            if (i > 0 && i % 11 == 0) {
+                // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
+                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_phonels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+                PositionPtr currentSynapticGapPosition = audioInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                newPositionX = currentSynapticGapPosition->x + 0.4;
+                newPositionY = currentSynapticGapPosition->y + 0.4;
+                newPositionZ = currentSynapticGapPosition->z + 0.4;
+                currentDendriteBoutonPosition->x = newPositionX;
+                currentDendriteBoutonPosition->y = newPositionY;
+                currentDendriteBoutonPosition->z = newPositionZ;
+                PositionPtr currentDendritePosition = neurons[int(i + ((num_phonels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
+                newPositionX = newPositionX + 0.4;
+                newPositionY = newPositionY + 0.4;
+                newPositionZ = newPositionZ + 0.4;
+                currentDendritePosition->x = newPositionX;
+                currentDendritePosition->y = newPositionY;
+                currentDendritePosition->z = newPositionZ;
+                // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
+                associateSynapticGap(*audioInputs[j].back(), *neurons[int(i + ((num_phonels / 2) * j))], proximityThreshold);
+            }
+        }
+    }
+    std::cout << "Created " << ( audioInputs[0].size() + audioInputs[1].size()) << " sensory receptors." << std::endl;
+
+    // Create a collection of olfactory inputs (pair of nostrils)
+    std::cout << "Creating olfactory sensory inputs..." << std::endl;
+    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> olfactoryInputs(2); // Resize the vector to contain 2 elements
+    olfactoryInputs[0].reserve(num_scentels);
+    olfactoryInputs[1].reserve(num_scentels);
+#pragma omp parallel for
+    for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < (num_scentels / 2); ++i) {
+            auto coords = get_coordinates(i, num_scentels, scentel_points_per_layer);
+            if (i > 0) {
+                prevReceptor = olfactoryInputs[j].back();
+                shiftX = std::get<0>(coords) - 20 + (j * 40);
+                shiftY = std::get<1>(coords) - 10;
+                shiftZ = std::get<2>(coords) - 10;
+            }
+
+            // std::cout << "Creating olfactory (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
+            olfactoryInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+            olfactoryInputs[j].back()->initialise();
+            // Sparsely associate neurons
+            if (i > 0 && i % 13 == 0) {
+                // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
+                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_scentels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+                PositionPtr currentSynapticGapPosition = olfactoryInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                newPositionX = currentSynapticGapPosition->x + 0.4;
+                newPositionY = currentSynapticGapPosition->y + 0.4;
+                newPositionZ = currentSynapticGapPosition->z + 0.4;
+                currentDendriteBoutonPosition->x = newPositionX;
+                currentDendriteBoutonPosition->y = newPositionY;
+                currentDendriteBoutonPosition->z = newPositionZ;
+                PositionPtr currentDendritePosition = neurons[int(i + ((num_scentels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
+                newPositionX = newPositionX + 0.4;
+                newPositionY = newPositionY + 0.4;
+                newPositionZ = newPositionZ + 0.4;
+                currentDendritePosition->x = newPositionX;
+                currentDendritePosition->y = newPositionY;
+                currentDendritePosition->z = newPositionZ;
+                // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
+                associateSynapticGap(*olfactoryInputs[j].back(), *neurons[int(i + ((num_scentels / 2) * j))], proximityThreshold);
+            }
+        }
+    }
+    std::cout << "Created " << ( olfactoryInputs[0].size() + olfactoryInputs[1].size()) << " sensory receptors." << std::endl;
+
+    // Create a collection of vocal effector outputs (vocal tract cords/muscle control)
+    std::cout << "Creating vocal effector outputs..." << std::endl;
+    std::vector<std::shared_ptr<Effector>> vocalOutputs;
+    vocalOutputs.reserve(num_vocels);
+    std::shared_ptr<Effector> prevEffector;
+
+    for (int i = 0; i < (num_vocels); ++i) {
+        auto coords = get_coordinates(i, num_vocels, vocel_points_per_layer);
+        if (i > 0) {
+            prevEffector = vocalOutputs.back();
+            shiftX = std::get<0>(coords);
+            shiftY = std::get<1>(coords) - 100;
+            shiftZ = std::get<2>(coords) + 10;
+        }
+
+        // std::cout << "Creating vocal output " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
+        vocalOutputs.emplace_back(std::make_shared<Effector>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+        vocalOutputs.back()->initialise();
+        // Sparsely associate neurons
+        if (i > 0 && i % 17 == 0 && !neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->isAssociated() ) {
+            // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
+            PositionPtr currentSynapticGapPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
+            PositionPtr currentEffectorPosition = vocalOutputs.back()->getPosition();
+            newPositionX = currentEffectorPosition->x - 0.4;
+            newPositionY = currentEffectorPosition->y - 0.4;
+            newPositionZ = currentEffectorPosition->z - 0.4;
+            currentSynapticGapPosition->x = newPositionX;
+            currentSynapticGapPosition->y = newPositionY;
+            currentSynapticGapPosition->z = newPositionZ;
+            PositionPtr currentAxonBoutonPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
+            newPositionX = newPositionX + 0.4;
+            newPositionY = newPositionY + 0.4;
+            newPositionZ = newPositionZ + 0.4;
+            currentAxonBoutonPosition->x = newPositionX;
+            currentAxonBoutonPosition->y = newPositionY;
+            currentAxonBoutonPosition->z = newPositionZ;
+            PositionPtr currentAxonPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getPosition();
+            newPositionX = newPositionX + 0.4;
+            newPositionY = newPositionY + 0.4;
+            newPositionZ = newPositionZ + 0.4;
+            currentAxonPosition->x = newPositionX;
+            currentAxonPosition->y = newPositionY;
+            currentAxonPosition->z = newPositionZ;
+            // Associate the synaptic gap with the other neuron's dendrite bouton if it is now close enough
+            neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->setAsAssociated();
+        }
+    }
+    std::cout << "Created " << vocalOutputs.size() << " effectors." << std::endl;
 
 // Assuming neurons is a std::vector<Neuron*> or similar container
 // and associateSynapticGap is a function you've defined elsewhere
 
 // Parallelize synaptic association
 #pragma omp parallel for schedule(dynamic)
-        for (size_t i = 0; i < neurons.size(); ++i) {
-            for (size_t j = i + 1; j < neurons.size(); ++j) {
-                associateSynapticGap(*neurons[i], *neurons[j], proximityThreshold);
-            }
+    for (size_t i = 0; i < neurons.size(); ++i) {
+        for (size_t j = i + 1; j < neurons.size(); ++j) {
+            associateSynapticGap(*neurons[i], *neurons[j], proximityThreshold);
         }
+    }
 
 // Use a fixed number of threads
-        const size_t numThreads = std::thread::hardware_concurrency();
+    const size_t numThreads = std::thread::hardware_concurrency();
 
-        std::vector<std::thread> threads;
-        threads.reserve(numThreads);
+    std::vector<std::thread> threads;
+    threads.reserve(numThreads);
 
-        size_t neuronsPerThread = neurons.size() / numThreads;
+    size_t neuronsPerThread = neurons.size() / numThreads;
 
 // Calculate the propagation rate in parallel
-        for (size_t t = 0; t < numThreads; ++t) {
-            size_t start = t * neuronsPerThread;
-            size_t end = (t + 1) * neuronsPerThread;
-            if (t == numThreads - 1) end = neurons.size(); // Handle remainder
+    for (size_t t = 0; t < numThreads; ++t) {
+        size_t start = t * neuronsPerThread;
+        size_t end = (t + 1) * neuronsPerThread;
+        if (t == numThreads - 1) end = neurons.size(); // Handle remainder
 
-            threads.emplace_back([=, &neurons]() {
-                for (size_t i = start; i < end; ++i) {
-                    computePropagationRate(neurons[i]);
-                }
-            });
-        }
+        threads.emplace_back([=, &neurons]() {
+            for (size_t i = start; i < end; ++i) {
+                computePropagationRate(neurons[i]);
+            }
+        });
+    }
 
 // Join the threads
-        for (std::thread& t : threads) {
-            t.join();
-        }
-
-        // Get the total propagation rate
-        double propagationRate = totalPropagationRate.load();
-
-        std::cout << "The propagation rate is " << propagationRate << std::endl;
-
-        int neuron_id = 0;
-        int soma_id = 0;
-        int axon_hillock_id = 0;
-        int axon_id = 0;
-        int axon_bouton_id = 0;
-        int axon_branch_id = 0;
-        int synaptic_gap_id = 0;
-        int dendrite_id = 0;
-        int dendrite_bouton_id = 0;
-        int dendrite_branch_id = 0;
-
-        for (auto& neuron : neurons) {
-            query = "INSERT INTO neurons (neuron_id, x, y, z) VALUES (" + std::to_string(neuron_id) + ", " + std::to_string(neuron->getPosition()->x) + ", " + std::to_string(neuron->getPosition()->y) + ", " + std::to_string(neuron->getPosition()->z) + ")";
-            //std::cout << query << std::endl;
-            txn.exec(query);
-            query = "INSERT INTO somas (soma_id, neuron_id, x, y, z) VALUES (" + std::to_string(soma_id) + ", " + std::to_string(neuron_id) + ", " + std::to_string(neuron->getSoma()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getPosition()->z) + ")";
-            //std::cout << query << std::endl;
-            txn.exec(query);
-            query = "INSERT INTO axonhillocks (axon_hillock_id, soma_id, x, y, z) VALUES (" + std::to_string(axon_hillock_id) + ", " + std::to_string(soma_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->z) + ")";
-            //std::cout << query << std::endl;
-            txn.exec(query);
-            query = "INSERT INTO axons (axon_id, axon_hillock_id, x, y, z) VALUES (" + std::to_string(axon_id) + ", " + std::to_string(axon_hillock_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->z) + ")";
-            //std::cout << query << std::endl;
-            txn.exec(query);
-            query = "INSERT INTO axonboutons (axon_bouton_id, axon_id, x, y, z) VALUES (" + std::to_string(axon_bouton_id) + ", " + std::to_string(axon_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->z) + ")";
-            //std::cout << query << std::endl;
-            txn.exec(query);
-            query = "INSERT INTO synapticgaps (synaptic_gap_id, axon_bouton_id, x, y, z) VALUES (" + std::to_string(synaptic_gap_id) + ", " + std::to_string(axon_bouton_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->z) + ")";
-            //std::cout << query << std::endl;
-            txn.exec(query);
-            axon_bouton_id++;
-            synaptic_gap_id++;
-
-            if (neuron &&
-                neuron->getSoma() &&
-                neuron->getSoma()->getAxonHillock() &&
-                neuron->getSoma()->getAxonHillock()->getAxon() &&
-                !neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches().empty() &&
-                neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()[0] ) {
-
-                for (auto& axonBranch : neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()) {
-                    insertAxonBranches(txn, axonBranch, axon_branch_id, axon_id, axon_bouton_id, synaptic_gap_id, axon_hillock_id);
-                    axon_branch_id++;
-                }
-            }
-
-            for (auto& dendriteBranch : neuron->getSoma()->getDendriteBranches()) {
-                insertDendriteBranches(txn, dendriteBranch, dendrite_branch_id, dendrite_id, dendrite_bouton_id, soma_id);
-            }
-
-            axon_id++;
-            axon_hillock_id++;
-            soma_id++;
-            neuron_id++;
-            dendrite_branch_id++;
-            dendrite_id++;
-            dendrite_bouton_id++;
-        }
-
-        // Add any additional functionality for virtual volume constraint and relaxation here
-        // Save the propagation rate to the database if it's valid (not null)
-        if (propagationRate != 0) {
-            //std::string query = "INSERT INTO neurons (propagation_rate, neuron_type, axon_length) VALUES (" + std::to_string(propagationRate) + ", 0, 0)";
-            //txn.exec(query);
-            txn.commit();
-        } else {
-            throw std::runtime_error("The propagation rate is not valid. Skipping database insertion.");
-        }
-
-        // Iterate over the neurons and add their positions to the vtkPolyData
-        for (const auto& neuron : neurons) {
-            const PositionPtr &neuronPosition = neuron->getPosition();
-
-            // Create a vtkIdList to hold the point indices of the line vertices
-            vtkSmartPointer<vtkIdList> pointIDs = vtkSmartPointer<vtkIdList>::New();
-            pointIDs->InsertNextId(
-                    definePoints->InsertNextPoint(neuronPosition->x, neuronPosition->y, neuronPosition->z));
-
-            const PositionPtr &somaPosition = neuron->getSoma()->getPosition();
-            // Add the sphere centre point to the vtkPolyData
-            vtkSmartPointer<vtkSphereSource> sphere = vtkSmartPointer<vtkSphereSource>::New();
-            sphere->SetRadius(1.0); // Adjust the sphere radius as needed
-            sphere->SetCenter(somaPosition->x, somaPosition->y, somaPosition->z);
-            sphere->SetThetaResolution(32); // Set the sphere resolution
-            sphere->SetPhiResolution(16);
-            sphere->Update();
-
-            // Add the sphere to the renderer
-            vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            sphereMapper->SetInputData(sphere->GetOutput());
-            vtkSmartPointer<vtkActor> sphereActor = vtkSmartPointer<vtkActor>::New();
-            sphereActor->SetMapper(sphereMapper);
-            renderer->AddActor(sphereActor);
-
-            // Iterate over the dendrite branches and add their positions to the vtkPolyData
-            const std::vector<std::shared_ptr<DendriteBranch>> &dendriteBranches = neuron->getSoma()->getDendriteBranches();
-            for (const auto &dendriteBranch: dendriteBranches) {
-                addDendriteBranchPositionsToPolyData(renderer, dendriteBranch, definePoints, pointIDs);
-            }
-
-            // Add the position of the axon hillock to the vtkPoints and vtkPolyData
-            const PositionPtr &axonHillockPosition = neuron->getSoma()->getAxonHillock()->getPosition();
-            pointIDs->InsertNextId(definePoints->InsertNextPoint(axonHillockPosition->x, axonHillockPosition->y,
-                                                                 axonHillockPosition->z));
-
-            // Add the position of the axon to the vtkPoints and vtkPolyData
-            const PositionPtr &axonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getPosition();
-            pointIDs->InsertNextId(definePoints->InsertNextPoint(axonPosition->x, axonPosition->y, axonPosition->z));
-
-            // Add the position of the axon bouton to the vtkPoints and vtkPolyData
-            const PositionPtr &axonBoutonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
-            pointIDs->InsertNextId(definePoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
-                                                                 axonBoutonPosition->z));
-
-            // Add the position of the synaptic gap to the vtkPoints and vtkPolyData
-            addSynapticGapToRenderer(renderer,
-                                     neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap());
-
-            // Iterate over the axon branches and add their positions to the vtkPolyData
-            const std::vector<std::shared_ptr<AxonBranch>> &axonBranches = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches();
-            for (const auto &axonBranch: axonBranches) {
-                addAxonBranchPositionsToPolyData(renderer, axonBranch, definePoints, pointIDs);
-            }
-
-            // Add the line to the cell array
-            lines->InsertNextCell(pointIDs);
-
-
-            // Create a vtkPolyData object and set the points and lines as its data
-            vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-            polyData->SetPoints(definePoints);
-
-            vtkSmartPointer<vtkDelaunay3D> delaunay = vtkSmartPointer<vtkDelaunay3D>::New();
-            delaunay->SetInputData(polyData);
-            delaunay->SetAlpha(0.1); // Adjust for mesh density
-            //delaunay->Update();
-
-            // Extract the surface of the Delaunay output using vtkGeometryFilter
-            //vtkSmartPointer<vtkGeometryFilter> geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
-            //geometryFilter->SetInputConnection(delaunay->GetOutputPort());
-            //geometryFilter->Update();
-
-            // Get the vtkPolyData representing the membrane surface
-            //vtkSmartPointer<vtkPolyData> membranePolyData = geometryFilter->GetOutput();
-
-            // Create a vtkPolyDataMapper and set the input as the extracted surface
-            vtkSmartPointer<vtkPolyDataMapper> membraneMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            //membraneMapper->SetInputData(membranePolyData);
-
-            // Create a vtkActor for the membrane and set its mapper
-            //vtkSmartPointer<vtkActor> membraneActor = vtkSmartPointer<vtkActor>::New();
-            //membraneActor->SetMapper(membraneMapper);
-            //membraneActor->GetProperty()->SetColor(0.7, 0.7, 0.7);  // Set color to gray
-
-            // Add the membrane actor to the renderer
-            // renderer->AddActor(membraneActor);
-
-            polyData->SetLines(lines);
-
-            // Create a mapper and actor for the audio waveforms
-            vtkSmartPointer<vtkPolyDataMapper> nvMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            nvMapper->SetInputData(polyData);
-            vtkSmartPointer<vtkActor> nvActor = vtkSmartPointer<vtkActor>::New();
-            nvActor->SetMapper(nvMapper);
-
-            // Set up the timer callback
-            vtkSmartPointer<nvTimerCallback> nvCB = vtkSmartPointer<nvTimerCallback>::New();
-            nvCB->nvActor = nvActor;
-            nvCB->nvRenderer = renderer;
-            renderWindowInteractor->AddObserver(vtkCommand::TimerEvent, nvCB);
-            int nvTimerId = renderWindowInteractor->CreateRepeatingTimer(500);  // every 500ms
-
-            // Create a mapper and actor for the neuron positions
-            vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            mapper->SetInputData(polyData);
-            vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-            actor->SetMapper(mapper);
-            renderer->AddActor(actor);
-
-
-            double soundByte = 0;
-            double frequency = 0;
-            // Convert the data to frequency data.
-            for (float i : capturedAudio) {
-                soundByte = i;
-                if (!std::isnan(soundByte)) {
-                    frequency = (soundByte * 16000.0) / 32768.0;
-                    frequency_data.push_back(frequency);
-                }
-            }
-            capturedAudio.clear();
-
-            definePoints->Reset();
-            // Plot the frequency data.
-            vtkSmartPointer<vtkPolyData> audioPolyData = vtkSmartPointer<vtkPolyData>::New();
-            for (float i : frequency_data) {
-                definePoints->InsertNextPoint(i, 0.0, 0.0);
-            }
-            audioPolyData->SetPoints(definePoints);
-
-            // Create a mapper and actor for the audio waveforms
-            vtkSmartPointer<vtkPolyDataMapper> audioMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            audioMapper->SetInputData(audioPolyData);
-            vtkSmartPointer<vtkActor> audioActor = vtkSmartPointer<vtkActor>::New();
-            audioActor->SetMapper(audioMapper);
-
-            // Set up the timer callback
-            vtkSmartPointer<avTimerCallback> avCB = vtkSmartPointer<avTimerCallback>::New();
-            avCB->audioActor = audioActor;
-            avCB->audioRenderer = renderer;
-            renderWindowInteractor->AddObserver(vtkCommand::TimerEvent, avCB);
-            int audioTimerId = renderWindowInteractor->CreateRepeatingTimer(100);  // every 100ms
-
-            
-            // Set up the render window and start the interaction
-            renderWindow->Render();
-            renderWindowInteractor->Start();
-
-        }
-        audioThreadRunner.join();
-
-    } catch (const std::exception &e) {
-        logger << "Error: " << e.what() << std::endl;
-        std::cerr << "Error: " << e.what() << std::endl;
-    } catch (...) {
-        logger << "Error: Unknown exception occurred." << std::endl;
-        std::cerr << "Error: Unknown exception occurred." << std::endl;
+    for (std::thread& t : threads) {
+        t.join();
     }
+
+    // Get the total propagation rate
+    double propagationRate = totalPropagationRate.load();
+
+    std::cout << "The propagation rate is " << propagationRate << std::endl;
+
+    int neuron_id = 0;
+    int soma_id = 0;
+    int axon_hillock_id = 0;
+    int axon_id = 0;
+    int axon_bouton_id = 0;
+    int axon_branch_id = 0;
+    int synaptic_gap_id = 0;
+    int dendrite_id = 0;
+    int dendrite_bouton_id = 0;
+    int dendrite_branch_id = 0;
+
+    for (auto& neuron : neurons) {
+        query = "INSERT INTO neurons (neuron_id, x, y, z) VALUES (" + std::to_string(neuron_id) + ", " + std::to_string(neuron->getPosition()->x) + ", " + std::to_string(neuron->getPosition()->y) + ", " + std::to_string(neuron->getPosition()->z) + ")";
+        //std::cout << query << std::endl;
+        txn.exec(query);
+        query = "INSERT INTO somas (soma_id, neuron_id, x, y, z) VALUES (" + std::to_string(soma_id) + ", " + std::to_string(neuron_id) + ", " + std::to_string(neuron->getSoma()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getPosition()->z) + ")";
+        //std::cout << query << std::endl;
+        txn.exec(query);
+        query = "INSERT INTO axonhillocks (axon_hillock_id, soma_id, x, y, z) VALUES (" + std::to_string(axon_hillock_id) + ", " + std::to_string(soma_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getPosition()->z) + ")";
+        //std::cout << query << std::endl;
+        txn.exec(query);
+        query = "INSERT INTO axons (axon_id, axon_hillock_id, x, y, z) VALUES (" + std::to_string(axon_id) + ", " + std::to_string(axon_hillock_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->z) + ")";
+        //std::cout << query << std::endl;
+        txn.exec(query);
+        query = "INSERT INTO axonboutons (axon_bouton_id, axon_id, x, y, z) VALUES (" + std::to_string(axon_bouton_id) + ", " + std::to_string(axon_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->z) + ")";
+        //std::cout << query << std::endl;
+        txn.exec(query);
+        query = "INSERT INTO synapticgaps (synaptic_gap_id, axon_bouton_id, x, y, z) VALUES (" + std::to_string(synaptic_gap_id) + ", " + std::to_string(axon_bouton_id) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->x) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->y) + ", " + std::to_string(neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->z) + ")";
+        //std::cout << query << std::endl;
+        txn.exec(query);
+        axon_bouton_id++;
+        synaptic_gap_id++;
+
+        if (neuron &&
+            neuron->getSoma() &&
+            neuron->getSoma()->getAxonHillock() &&
+            neuron->getSoma()->getAxonHillock()->getAxon() &&
+            !neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches().empty() &&
+            neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()[0] ) {
+
+            for (auto& axonBranch : neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()) {
+                insertAxonBranches(txn, axonBranch, axon_branch_id, axon_id, axon_bouton_id, synaptic_gap_id, axon_hillock_id);
+                axon_branch_id++;
+            }
+        }
+
+        for (auto& dendriteBranch : neuron->getSoma()->getDendriteBranches()) {
+            insertDendriteBranches(txn, dendriteBranch, dendrite_branch_id, dendrite_id, dendrite_bouton_id, soma_id);
+        }
+
+        axon_id++;
+        axon_hillock_id++;
+        soma_id++;
+        neuron_id++;
+        dendrite_branch_id++;
+        dendrite_id++;
+        dendrite_bouton_id++;
+    }
+
+    // Add any additional functionality for virtual volume constraint and relaxation here
+    // Save the propagation rate to the database if it's valid (not null)
+    if (propagationRate != 0) {
+        //std::string query = "INSERT INTO neurons (propagation_rate, neuron_type, axon_length) VALUES (" + std::to_string(propagationRate) + ", 0, 0)";
+        //txn.exec(query);
+        txn.commit();
+    } else {
+        throw std::runtime_error("The propagation rate is not valid. Skipping database insertion.");
+    }
+
+    std::vector<std::shared_ptr<Neuron>> emptyNeurons;
+    // Set up and start the interactors in separate threads
+    std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAudioQueue), 0);
+    std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
+    std::thread inputThread(checkForQuit);
+
+    while(running) {
+        std::cout << "v";
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // sleep for 100 ms
+    }
+
+    // Wait for both threads to finish
+    inputThread.join();
+    nvThread.join();
+    avThread.join();
+    mic->micStop();
+    micThread.join();
 
     return 0;
 }
