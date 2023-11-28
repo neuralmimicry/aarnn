@@ -54,49 +54,40 @@ if(NOT OpenMP_CXX_FOUND)
     message(FATAL_ERROR "OpenMP library not found")
 endif()
 
-# Find PortAudio
-find_package(PortAudio REQUIRED)
-if(NOT PortAudio_FOUND)
+# Use pkg-config to get the necessary flags
+execute_process(
+    COMMAND pkg-config --cflags --libs portaudio-2.0
+    OUTPUT_VARIABLE PORTAUDIO_PKG_CONFIG
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Set PortAudio_LIBRARIES and PORTAUDIO_INCLUDE_DIRS using the pkg-config output
+string(REGEX MATCHALL "-I([^ \t\n]*)"
+    PORTAUDIO_INCLUDE_DIRS ${PORTAUDIO_PKG_CONFIG})
+
+set(PORTAUDIO_LIBRARIES ${PORTAUDIO_PKG_CONFIG})
+message(STATUS "PortAudio Libraries: ${PORTAUDIO_LIBRARIES}")
+
+if(NOT PORTAUDIO_LIBRARIES)
     message(FATAL_ERROR "PortAudio library not found")
 endif()
-message(STATUS "PortAudio Include Dirs: ${PORTAUDIO_INCLUDE_DIRS}")
-message(STATUS "PortAudio Library Dirs: ${PORTAUDIO_LIBRARY_DIRS}")
-message(STATUS "PortAudio Libraries: ${PORTAUDIO_LIBRARIES}")
-message(STATUS "PortAudio CFlags: ${PORTAUDIO_CFLAGS}")
-if(NOT PORTAUDIO_INCLUDE_DIRS)
-    set(PORTAUDIO_INCLUDE_DIRS "/usr/local/include")
-    message(STATUS "Using default PortAudio include dir: ${PORTAUDIO_INCLUDE_DIRS}")
-endif()
-if(NOT PORTAUDIO_LIBRARY_DIRS)
-    set(PORTAUDIO_LIBRARY_DIRS "/usr/local/lib")
-    message(STATUS "Using default PortAudio library dir: ${PORTAUDIO_LIBRARY_DIRS}")
-endif()
-if(NOT PORTAUDIO_LIBRARIES)
-    set(PORTAUDIO_LIBRARIES "-pthread -lportaudio -lm -lpthread -lasound")
-    message(STATUS "Using default PortAudio libraries: ${PORTAUDIO_LIBRARIES}")
-endif()
 
-# Find PulseAudio
-find_package(PulseAudio REQUIRED)
-if(NOT PulseAudio_FOUND)
-    message(FATAL_ERROR "PulseAudio library not found")
-endif()
-message(STATUS "PulseAudio Include Dirs: ${PulseAudio_INCLUDE_DIRS}")
-message(STATUS "PulseAudio Library Dirs: ${PulseAudio_LIBRARY_DIRS}")
-message(STATUS "PulseAudio Libraries: ${PulseAudio_LIBRARIES}")
-message(STATUS "PulseAudio CFlags: ${PulseAudio_CFLAGS}")
-if(NOT PulseAudio_INCLUDE_DIRS)
-    set(PulseAudio_INCLUDE_DIRS "/usr/local/include")
-    message(STATUS "Using default PulseAudio include dir: ${PulseAudio_INCLUDE_DIRS}")
-endif()
-if(NOT PulseAudio_LIBRARY_DIRS)
-    set(PulseAudio_LIBRARY_DIRS "/usr/local/lib")
-    message(STATUS "Using default PulseAudio library dir: ${PulseAudio_LIBRARY_DIRS}")
-endif()
-if(NOT PulseAudio_LIBRARIES)
-    set(PulseAudio_LIBRARIES "-lpulse -lpulse-simple")
-    message(STATUS "Using default PulseAudio libraries: ${PulseAudio_LIBRARIES}")
-endif()
+message(STATUS "PortAudio Include Dirs: ${PORTAUDIO_INCLUDE_DIRS}")
+
+# PulseAudio directories
+set(PULSEAUDIO_INCLUDE_DIRS "/usr/include/pulseaudio")
+set(PULSEAUDIO_LIBRARY_DIRS "/usr/lib/x86_64-linux-gnu")
+
+# PulseAudio libraries
+set(PULSEAUDIO_LIBRARIES "-lpulse -lpulse-simple")
+
+message(STATUS "PulseAudio Include Dirs: ${PULSEAUDIO_INCLUDE_DIRS}")
+message(STATUS "PulseAudio Library Dirs: ${PULSEAUDIO_LIBRARY_DIRS}")
+message(STATUS "PulseAudio Libraries: ${PULSEAUDIO_LIBRARIES}")
+
+
+
+
 # Find FFTW
 #find_package(FFTW3 REQUIRED)
 #if(NOT FFTW3_FOUND)
