@@ -16,7 +16,11 @@ git clone git@github.com:neuralmimicry/aarnn.git
 cd aarnn
 mkdir build
 cd build
+copy db_configuration.conf -> build/db_configuration.conf
+copy simulation.conf -> build/simulation.com
 cmake ..
+make
+
 ```
 
 ## Usage
