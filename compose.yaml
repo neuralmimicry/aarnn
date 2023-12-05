@@ -1,14 +1,28 @@
 services:
   postgres:
-    image: "postgres:latest"
+    build: 
+      dockerfile: Dockerfile.postgres
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4G 
+      restart_policy:
+        condition: on-failure
     ports:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD : "GeneTics99!"  
-  arrnn:
-    build: .
-    ports:
-      - "2999:80"
+  aarnn:
+    build: 
+      dockerfile: Dockerfile.aarnn
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4G 
     volumes:
       - .:/app
     depends_on:
@@ -19,9 +33,3 @@ services:
       POSTGRES_USERNAME : "postgres"
       POSTGRES_PORT: 5342
       POSTGRES_URL: "postgres"
-
-
-networks:
-  default:
-    # Use a custom driver
-    driver: custom-driver-1      
