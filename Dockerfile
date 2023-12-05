@@ -13,13 +13,30 @@ COPY ./build/db_connection.conf /app/db_connection.conf
 #Simulation data
 COPY ./build/simulation.conf /app/simulation.conf 
 
-# Install necessary libraries for running the application
-RUN apt-get update
-RUN apt-get install -y libpqxx-dev
-
 # Make port 80 available to the world outside this container (optional)
 EXPOSE 80
 
+# Install necessary libraries for running the application
+RUN apt-get update
+RUN apt-get install -y libpqxx-dev
+RUN apt-get install -y pulseaudio
+RUN apt-get install -y libfftw3-3
+RUN apt-get install -y libboost-all-dev 
+RUN apt-get install -y libpostproc-dev
+RUN apt-get install -y libavdevice-dev
+RUN apt-get install -y libportaudio2
+RUN apt-get install -y libqt5opengl5
+RUN apt-get install -y iputils-ping
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y libvtk9-dev 
+RUN apt-get install -y python3-vtk9 
+RUN apt-get install -y qtcreator 
+RUN apt-get install -y qtbase5-dev
+
+
+RUN apt-get install -y vtk9
+ENV DEBIAN_FRONTEND=dialog
 
 # Run the application when the container launches
 CMD ["./AARNN"]
