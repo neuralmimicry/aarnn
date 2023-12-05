@@ -8,6 +8,8 @@ Autonomic Asynchronous Recursive Neuromorphic Network (A.A.R.N.N)
 
 AARNN (pronounced like the boy's name Aaron) is the infrastructure to support emergent cognitive behaviour in the form of tiered multi-agent distributed artificial intelligence created by Paul Isaac's under the self-funded project NeuralMimicry.
 
+## Pre
+docker-desktop : Linux : https://docs.docker.com/desktop/install/linux-install/
 
 ## Installation
 
@@ -16,22 +18,27 @@ git clone git@github.com:neuralmimicry/aarnn.git
 cd aarnn
 mkdir build
 cd build
-copy db_configuration.conf -> build/db_configuration.conf
-copy simulation.conf -> build/simulation.com
 cmake ..
 make
 
+copy db_configuration.conf -> build/db_configuration.conf
+copy simulation.conf -> build/simulation.com
+
 ```
 
-## Usage
+## Running Postgres Container
+*** Caution docker-station can user alot of memory to run ***
+Then running the image for the first time, the Host port (Ports) of the container needs to be set, os it will forward it correctly e.g. 5432:5432
+The password needs to be added in the Environments variables e.g. Variable -> POSTGRES_PASSWORD, Value -> 'current password'
 
+## Usage
 Two parts, first creates the neurons and stores in a postgres database.
 Second part visualisers the neurons created in the first part.
 
 ```bash
-./aarnn
+./AARNN
 
-./visualiser
+./Visualiser
 ```
 
 ## Contributing

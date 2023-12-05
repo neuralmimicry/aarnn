@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: "postgres:latest"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD : "GeneTics99!"  
+  arrnn:
+    build: .
+    ports:
+      - "2999:80"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres  
+    environment:
+      POSTGRES_PASSWORD : "GeneTics99!"
+      POSTGRES_DBNAME : "neurons"
+      POSTGRES_USERNAME : "postgres"
+      POSTGRES_PORT: 5342
+      POSTGRES_URL: "postgres"
+
+
+networks:
+  default:
+    # Use a custom driver
+    driver: custom-driver-1      
