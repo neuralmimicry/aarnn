@@ -22,7 +22,7 @@ services:
     network:
       - neuro_network
 
-network:
+networks:
   neuro_network:
     driver: bridge
 
