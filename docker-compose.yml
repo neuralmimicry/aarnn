@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - postgres
+      - aarnn_postgres
     networks:
       - neuro_network
 
