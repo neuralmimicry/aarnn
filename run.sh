@@ -1,5 +1,7 @@
 #!/bin/bash
 
+docker run --name postgres_container -e POSTGRES_PASSWORD=GeneTics99! -d -p 5432:5432 postgres:latest
+
 # Remove existing build directory
 rm -r build
 
@@ -15,11 +17,11 @@ cmake ..
 # Build the project
 cmake --build .
 
-# # Run the Pointers executable (if it was built successfully)
-# if [ -f "../executables/AARNN" ]; then
-#     cd ..
-#     ./executables/Pointers
-# fi
+cp ../db_connection.conf . 
+
+./AARNN
+./Visualiser
+
 
 # # Run valgrind to check memory stuff
 # valgrind --tool=memcheck ./executables/Pointers

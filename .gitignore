@@ -3,4 +3,5 @@ build
 *.o
 .cmake
 CMakeFiles
+run.sh
 
