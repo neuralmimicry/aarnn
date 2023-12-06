@@ -3116,7 +3116,7 @@ int main()
     auto config = read_config(config_filenames);
     std::string connection_string = build_connection_string(config);
 
-    // Get the number of neurons from the configuration
+    // Get the number of neurons from the configuration file
     int num_neurons = std::stoi(config["num_neurons"]);
     std::cout << "num_neurons: " << num_neurons << std::endl;
 
