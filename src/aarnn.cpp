@@ -3150,7 +3150,6 @@ int main()
     double proximityThreshold = std::stod(config["proximity_threshold"]);
     std::cout << "proximityThreshold: " << proximityThreshold << std::endl;
 
-    // NOTE use_database = "true" but useDatabase = false ???????????????????????????????
     bool useDatabase = convertStringToBool(config["use_database"]);
     std::cout << "useDatabase: " << useDatabase << std::endl;
 
@@ -3158,7 +3157,7 @@ int main()
     pqxx::connection conn(connection_string);
 
     // Initialize the database (check and create the required table if needed)
-    initialize_database(conn);
+    initialize_database(conn); 
     // Start a transaction
     pqxx::work txn(conn);
     // Set the transaction isolation level
@@ -3255,7 +3254,7 @@ int main()
             {
                 // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
                 PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
-                PositionPtr currentSynapticGapPosition = visualInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                PositionPtr currentSynapticGapPosition = visualInputs[j].back()->getSynapticGaps()[0]->currentSynapticGapPosition();
                 newPositionX = currentSynapticGapPosition->x + 0.4;
                 newPositionY = currentSynapticGapPosition->y + 0.4;
                 newPositionZ = currentSynapticGapPosition->z + 0.4;
