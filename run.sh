@@ -1,10 +1,10 @@
 #!/bin/bash
 
-POSTGRES_RUNNING=$(docker ps x| grep aarnn-postgres | xargs)
+# POSTGRES_RUNNING=$(docker ps x| grep aarnn-postgres | xargs)
 
-if [ "${POSTGRES_RUNNING}" != "" ] ; then
-    docker run --name postgres_container -e POSTGRES_PASSWORD=GeneTics99! -d -p 5432:5432 postgres:latest
-fi
+# if [ "${POSTGRES_RUNNING}" != "" ] ; then
+#     docker run --name postgres_container -e POSTGRES_PASSWORD=GeneTics99! -d -p 5432:5432 postgres:latest
+# fi
 
 # Remove existing build directory
 rm -r build
@@ -25,7 +25,8 @@ cmake --build .
 
 cp ../db_connection.conf . 
 
-
+./AARNN
+./Visualiser
 
 
 # # Run valgrind to check memory stuff
