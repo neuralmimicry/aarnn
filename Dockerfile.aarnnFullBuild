@@ -1,0 +1,129 @@
+# Use an official C++ runtime as a parent image
+FROM ubuntu:22.04 as build
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Install necessary libraries for running the application
+RUN apt update
+RUN apt install -y wget
+RUN apt install -y curl
+#RUN wget https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz
+#RUN tar -xzvf boost_1_74_0.tar.gz
+#RUN cd boost_1_74_0
+#RUN ./bootstrap.sh --prefix=/usr/local
+#RUN ./b2
+#RUN ./b2 install
+
+#RUN wget https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.gz  
+#RUN tar -xzvf boost_1_84_0.tar.gz  
+#RUN cd boost_1_84_0
+#RUN ./bootstrap.sh --prefix=/usr/local
+#RUN ./b2
+#RUN ./b2 install
+
+
+RUN apt install -y libpqxx-dev
+RUN apt install -y podman
+RUN apt install -y buildah
+RUN apt install -y cmake
+RUN apt install -y build-essential
+RUN apt-get install -y libboost-all-dev
+
+RUN apt install -y libwebsocketpp-dev
+RUN apt install -y libssl-dev
+RUN apt install -y build-essential
+RUN apt install -y xorg-dev
+RUN apt install -y libx11-dev
+RUN apt install -y libglu1-mesa-dev
+RUN apt install -y freeglut3-dev
+RUN apt install -y libglew2.2
+RUN apt install -y libglew-dev
+RUN apt install -y libglu1-mesa
+RUN apt install -y libgl1-mesa-glx
+RUN apt install -y libgl1-mesa-dev
+RUN apt install -y libglfw3-dev
+RUN apt install -y libglfw3
+RUN apt install -y libomp-dev
+RUN apt install -y fftw3-dev
+
+
+RUN apt install -y libpqxx-dev
+RUN apt install -y pulseaudio
+RUN apt install -y libportaudio2
+RUN apt install -y libasound-dev
+RUN apt install -y portaudio19-dev
+RUN apt install -y libpulse-dev
+RUN apt install -y libfftw3-3
+RUN apt install -y libpostproc-dev
+RUN apt install -y libavdevice-dev
+RUN apt install -y libportaudio2
+RUN apt install -y libqt5concurrent5
+RUN apt install -y libqt5opengl5
+RUN apt install -y iputils-ping
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt install -y libvtk9-dev
+RUN apt install -y python3-vtk9
+
+RUN apt install -y qtcreator
+RUN apt install -y qtbase5-dev
+RUN apt install -y qt5-qmake
+
+RUN apt install -y vtk9
+ENV DEBIAN_FRONTEND=dialog
+
+COPY . /app/
+RUN mkdir build
+WORKDIR /app/build
+
+RUN cd /app/build
+RUN cmake ..
+RUN make
+
+# Use an official C++ runtime as a parent image
+FROM ubuntu:22.04
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Copy the compiled executable from your host to the current location in your docker image
+# COPY ./build/AARNN /app/AARNN
+
+#Copy from the build aarnn docker
+#Copy Arran
+COPY --from=build /app/build/AARNN /app/AARNN
+
+#Database configuration connection infromation
+COPY ./db_connection.conf /app/db_connection.conf
+
+#Simulation data
+COPY ./simulation.conf /app/simulation.conf
+
+# Make port 80 available to the world outside this container (optional)
+EXPOSE 80
+
+# Install necessary libraries for running the application
+RUN apt-get update
+RUN apt-get install -y libpqxx-dev
+RUN apt-get install -y pulseaudio
+RUN apt-get install -y libfftw3-3
+RUN apt-get install -y libboost-all-dev
+RUN apt-get install -y libpostproc-dev
+RUN apt-get install -y libavdevice-dev
+RUN apt-get install -y libportaudio2
+RUN apt-get install -y libqt5opengl5
+RUN apt-get install -y iputils-ping
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y libvtk9-dev 
+RUN apt-get install -y python3-vtk9 
+RUN apt-get install -y qtcreator 
+RUN apt-get install -y qtbase5-dev
+
+
+RUN apt-get install -y vtk9
+ENV DEBIAN_FRONTEND=dialog
+
+
+# Run the application when the container launches
+CMD ["/app/AARNN"]

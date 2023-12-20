@@ -1,5 +1,5 @@
 # Use an official C++ runtime as a parent image
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -7,11 +7,15 @@ WORKDIR /app
 # Copy the compiled executable from your host to the current location in your docker image
 COPY ./build/AARNN /app/AARNN
 
+#Copy from the build aarnn docker
+#Copy Arran
+#COPY --from=build /app/build /app
+
 #Database configuration connection infromation
 COPY ./db_connection.conf /app/db_connection.conf 
 
 #Simulation data
-COPY ./build/simulation.conf /app/simulation.conf 
+COPY ./simulation.conf /app/simulation.conf 
 
 # Make port 80 available to the world outside this container (optional)
 EXPOSE 80
@@ -33,8 +37,6 @@ RUN apt-get install -y libvtk9-dev
 RUN apt-get install -y python3-vtk9 
 RUN apt-get install -y qtcreator 
 RUN apt-get install -y qtbase5-dev
-
-
 RUN apt-get install -y vtk9
 ENV DEBIAN_FRONTEND=dialog
 
