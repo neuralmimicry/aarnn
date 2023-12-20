@@ -1,0 +1,61 @@
+# Use an official C++ runtime as a parent image
+FROM FROM ubuntu:22.04 as build
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Install necessary libraries for running the application
+
+RUN apt-get update
+
+RUN apt-get install -y libpqxx-dev
+RUN apt-get install -y podman
+RUN apt-get install -y buildah
+RUN apt-get install -y cmake
+RUN apt-get install -y build-essential
+RUN apt-get install -y libboost-all-dev
+RUN apt-get install -y libwebsocketpp-dev
+RUN apt-get install -y libssl-dev
+RUN apt-get install -y build-essential
+RUN apt-get install -y xorg-dev
+RUN apt-get install -y libx11-dev
+RUN apt-get install -y libglu1-mesa-dev
+RUN apt-get install -y freeglut3-dev
+RUN apt-get install -y libglew2.2
+RUN apt-get install -y libglew-dev
+RUN apt-get install -y libglu1-mesa
+RUN apt-get install -y libgl1-mesa-glx
+RUN apt-get install -y libgl1-mesa-dev
+RUN apt-get install -y libglfw3-dev
+RUN apt-get install -y libglfw3
+RUN apt-get install -y libomp-dev
+RUN apt-get install -y fftw3-dev
+RUN apt-get install -y libpqxx-dev
+RUN apt-get install -y pulseaudio
+RUN apt-get install -y libportaudio2
+RUN apt-get install -y libasound-dev
+RUN apt-get install -y portaudio19-dev
+RUN apt-get install -y libpulse-dev
+RUN apt-get install -y libfftw3-3
+RUN apt-get install -y libpostproc-dev
+RUN apt-get install -y libavdevice-dev
+RUN apt-get install -y libportaudio2
+RUN apt-get install -y libqt5concurrent5
+RUN apt-get install -y libqt5opengl5
+RUN apt-get install -y iputils-ping
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y libvtk9-dev
+RUN apt-get install -y python3-vtk9
+RUN apt-get install -y qtcreator
+RUN apt-get install -y qtbase5-dev
+RUN apt-get install -y qt5-qmake
+RUN apt-get install -y vtk9
+ENV DEBIAN_FRONTEND=dialog
+
+COPY . /app/
+RUN mkdir build
+WORKDIR /app/build
+
+RUN cd /app/build
+RUN cmake ..
+RUN make

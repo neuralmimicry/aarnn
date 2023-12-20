@@ -1935,13 +1935,10 @@ void associateSynapticGap(SensoryReceptor& receptor, Neuron& neuron, double prox
 void initialize_database(pqxx::connection& conn) {
     pqxx::work txn(conn);
 
-    std::cout << "Start Database Generation" << std::endl;
     // Check if the "neurons" table exists
     txn.exec(
             "DROP TABLE IF EXISTS neurons, somas, axonhillocks, axons, axons_hillock, axonboutons, synapticgaps, dendritebranches_soma, dendritebranches, dendrites, dendriteboutons, axonbranches CASCADE; COMMIT;"
     );
-
-    std::cout << "Database" << std::endl;
 
     // Check if the "neurons" table exists
     pqxx::result result = txn.exec(
@@ -2781,14 +2778,13 @@ int main() {
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
 
     std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
-    std::thread micThread(&PulseAudioMic::micRun, mic); 
+    std::thread micThread(&PulseAudioMic::micRun, mic);
 
     // Read the database connection configuration and simulation configuration
     std::vector<std::string> config_filenames = {"db_connection.conf", "simulation.conf"};
     auto config = read_config(config_filenames);
     std::string connection_string = build_connection_string(config);
 
-    std::cout << connection_string << std::endl;
     // Get the number of neurons from the configuration
     int num_neurons = std::stoi(config["num_neurons"]);
     int num_pixels = std::stoi(config["num_pixels"]);

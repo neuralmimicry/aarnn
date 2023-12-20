@@ -45,4 +45,9 @@ Second part visualisers the neurons created in the first part.
 Feel free to contribute. We learn by doing.
 
 ## Sponsorship
-Thanks to [Naska.AI](https://naska.ai) for sponsoring this project through a single-day (12-May-2023) hackathon to get things started.
+
+
+docker network create -d bridge my-bridge-network
+
+docker run -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=GeneTics99! -p 5432:5432 -dit --name postgres --network my-net postgres "docker-entrypoint.sh postgres"
+docker run -dit --name aarnn --network my-net aarnn ./AARNN
