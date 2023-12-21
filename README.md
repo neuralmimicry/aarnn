@@ -47,7 +47,7 @@ Feel free to contribute. We learn by doing.
 ## Sponsorship
 
 
-docker network create -d bridge my-bridge-network
+docker network create -d bridge my_net
 
 docker run -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=GeneTics99! -p 5432:5432 -dit --name postgres --network my-net postgres "docker-entrypoint.sh postgres"
 docker run -dit --name aarnn --network my-net aarnn ./AARNN

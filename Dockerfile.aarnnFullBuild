@@ -13,7 +13,6 @@ RUN apt-get install -y buildah
 RUN apt-get install -y cmake
 RUN apt-get install -y build-essential
 RUN apt-get install -y libboost-all-dev
-
 RUN apt-get install -y libwebsocketpp-dev
 RUN apt-get install -y libssl-dev
 RUN apt-get install -y build-essential
@@ -30,9 +29,6 @@ RUN apt-get install -y libglfw3-dev
 RUN apt-get install -y libglfw3
 RUN apt-get install -y libomp-dev
 RUN apt-get install -y fftw3-dev
-
-
-RUN apt-get install -y libpqxx-dev
 RUN apt-get install -y pulseaudio
 RUN apt-get install -y libportaudio2
 RUN apt-get install -y libasound-dev
@@ -49,11 +45,9 @@ RUN apt-get install -y iputils-ping
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y libvtk9-dev
 RUN apt-get install -y python3-vtk9
-
 RUN apt-get install -y qtcreator
 RUN apt-get install -y qtbase5-dev
 RUN apt-get install -y qt5-qmake
-
 RUN apt-get install -y vtk9
 ENV DEBIAN_FRONTEND=dialog
 
@@ -89,7 +83,6 @@ RUN apt-get install -y iputils-ping
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y libvtk9-dev
-
 RUN apt-get install -y python3-vtk9
 RUN apt-get install -y qtcreator
 RUN apt-get install -y qtbase5-dev
