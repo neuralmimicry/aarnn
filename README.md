@@ -46,8 +46,17 @@ Feel free to contribute. We learn by doing.
 
 ## Sponsorship
 
-
+## Docker ##
+## Create a common network between docker containers
 docker network create -d bridge my_net
 
-docker run -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=GeneTics99! -p 5432:5432 -dit --name postgres --network my-net postgres "docker-entrypoint.sh postgres"
-docker run -dit --name aarnn --network my-net aarnn ./AARNN
+## Build Image and Start Containers
+docker compose up
+
+## Individual build images
+Password and Port are held in the .env file.
+
+docker run -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=<INSET PASSWORD> -p <EXTERNAL PORT>:<INTERNAL PORT> -dit --name postgres --network my_net postgres "docker-entrypoint.sh postgres"
+
+## Create ARRAN image from prebuild AARNN
+docker run -dit --name aarnn --network my_net aarnn ./AARNN
