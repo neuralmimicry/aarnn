@@ -3,4 +3,4 @@ build
 *.o
 .cmake
 CMakeFiles
-
+.env
