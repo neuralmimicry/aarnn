@@ -26,8 +26,6 @@ services:
         limits:
           cpus: "1"
           memory: 4G
-    volumes:
-      - .:/app
     depends_on:
       - postgres
     environment:
@@ -41,4 +39,5 @@ services:
 networks:
   my_net:
     name: my_net
+    external: true
 
