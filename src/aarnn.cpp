@@ -3105,54 +3105,63 @@ int main()
     std::cout << "Base64 Encoded: " << encoded << std::endl;
     std::string query;
 
+    std::cout << "1:Made it to 3108....." << std::endl;
+
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
+    std::cout << "2:Made it to ThreadSafeQueue audioQueue....." << std::endl;
+
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
+    std::cout << "3:Made it to ThreadSafeQueue emptyAudioQueue....." << std::endl;
 
     std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
+    std::cout << "4:Made it to PulseAudioMic audioQueue....." << std::endl;
+
     std::thread micThread(&PulseAudioMic::micRun, mic);
+    std::cout << "5:Made it to micThred....." << std::endl;
 
     // Read the database connection configuration and simulation configuration
     std::vector<std::string> config_filenames = {"db_connection.conf", "simulation.conf"};
     auto config = read_config(config_filenames);
     std::string connection_string = build_connection_string(config);
+    std::cout << "6:DataBase....." << std::endl;
 
     // Get the number of neurons from the configuration
     int num_neurons = std::stoi(config["num_neurons"]);
-    std::cout << "num_neurons: " << num_neurons << std::endl;
+    std::cout << "7:num_neurons: " << num_neurons << std::endl;
 
     int num_pixels = std::stoi(config["num_pixels"]);
-    std::cout << "num_pixels: " << num_pixels << std::endl;
+    std::cout << "8:num_pixels: " << num_pixels << std::endl;
 
     int num_phonels = std::stoi(config["num_phonels"]);
-    std::cout << "num_phonels: " << num_phonels << std::endl;
+    std::cout << "9:num_phonels: " << num_phonels << std::endl;
 
     int num_scentels = std::stoi(config["num_scentels"]);
-    std::cout << "num_scentels: " << num_scentels << std::endl;
+    std::cout << "10:num_scentels: " << num_scentels << std::endl;
 
     int num_vocels = std::stoi(config["num_vocels"]);
-    std::cout << "num_vocels: " << num_vocels << std::endl;
+    std::cout << "11:num_vocels: " << num_vocels << std::endl;
 
     int neuron_points_per_layer = std::stoi(config["neuron_points_per_layer"]);
-    std::cout << "neuron_points_per_layer: " << neuron_points_per_layer << std::endl;
+    std::cout << "12:neuron_points_per_layer: " << neuron_points_per_layer << std::endl;
 
     int pixel_points_per_layer = std::stoi(config["pixel_points_per_layer"]);
-    std::cout << "pixel_points_per_layer: " << pixel_points_per_layer << std::endl;
+    std::cout << "13:pixel_points_per_layer: " << pixel_points_per_layer << std::endl;
 
     int phonel_points_per_layer = std::stoi(config["phonel_points_per_layer"]);
-    std::cout << "phonel_points_per_layer: " << phonel_points_per_layer << std::endl;
+    std::cout << "14:phonel_points_per_layer: " << phonel_points_per_layer << std::endl;
 
     int scentel_points_per_layer = std::stoi(config["scentel_points_per_layer"]);
-    std::cout << "scentel_points_per_layer: " << scentel_points_per_layer << std::endl;
+    std::cout << "15:scentel_points_per_layer: " << scentel_points_per_layer << std::endl;
 
     int vocel_points_per_layer = std::stoi(config["vocel_points_per_layer"]);
-    std::cout << "vocel_points_per_layer: " << vocel_points_per_layer << std::endl;
+    std::cout << "16:vocel_points_per_layer: " << vocel_points_per_layer << std::endl;
 
     double proximityThreshold = std::stod(config["proximity_threshold"]);
-    std::cout << "proximityThreshold: " << proximityThreshold << std::endl;
+    std::cout << "17:proximityThreshold: " << proximityThreshold << std::endl;
 
     // NOTE use_database = "true" but useDatabase = false ???????????????????????????????
     bool useDatabase = convertStringToBool(config["use_database"]);
-    std::cout << "useDatabase: " << useDatabase << std::endl;
+    std::cout << "18:useDatabase: " << useDatabase << std::endl;
 
     // Connect to PostgreSQL
     pqxx::connection conn(connection_string);
@@ -3164,6 +3173,7 @@ int main()
     // Set the transaction isolation level
     txn.exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
     txn.exec("SET lock_timeout = '5s';");
+    std::cout << "19:Set the transaction isolation level" << useDatabase << std::endl;
 
     // Create a single instance of NeuronParameters to access the database
     NeuronParameters params;
@@ -3482,6 +3492,7 @@ int main()
     int dendrite_bouton_id = 0;
     int dendrite_branch_id = 0;
 
+    
     for (auto &neuron : neurons)
     {
         query = "INSERT INTO neurons (neuron_id, x, y, z) VALUES (" + std::to_string(neuron_id) + ", " + std::to_string(neuron->getPosition()->x) + ", " + std::to_string(neuron->getPosition()->y) + ", " + std::to_string(neuron->getPosition()->z) + ")";
@@ -3534,6 +3545,7 @@ int main()
         dendrite_bouton_id++;
     }
 
+    std::cout << "20:>>>>>>>>>>>>>>>>>>>>>" << useDatabase << std::endl;
     // Add any additional functionality for virtual volume constraint and relaxation here
     // Save the propagation rate to the database if it's valid (not null)
     if (propagationRate != 0)
