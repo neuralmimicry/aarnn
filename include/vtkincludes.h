@@ -1,6 +1,10 @@
 /*!
  * The VTK_MODULE_INIT is definitely required. Without it NULL is returned to ::New() type calls
  */
+
+#ifndef VTKINCLUDES_H
+#define VTKINCLUDES_H
+
 #include <vtkAutoInit.h>
 VTK_MODULE_INIT(vtkRenderingOpenGL2); //! VTK was built with vtkRenderingOpenGL2
 VTK_MODULE_INIT(vtkRenderingFreeType); //!
@@ -63,3 +67,5 @@ VTK_MODULE_INIT(vtkInteractionStyle); //!
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <unordered_map>
+
+#endif
