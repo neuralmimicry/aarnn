@@ -1,5 +1,5 @@
 # Use an official C++ runtime as a parent image
-FROM FROM ubuntu:22.04 as build
+FROM ubuntu:22.04
 # Set the working directory in the container to /app
 WORKDIR /app
 

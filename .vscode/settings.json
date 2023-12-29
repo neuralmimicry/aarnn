@@ -74,6 +74,8 @@
         "strstream": "cpp",
         "unordered_set": "cpp",
         "cfenv": "cpp",
-        "valarray": "cpp"
-    }
+        "valarray": "cpp",
+        "syncstream": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
