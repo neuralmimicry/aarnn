@@ -29,6 +29,8 @@ std::shared_ptr<Soma> getSoma()
     return soma;
 }
 
+void Neuron::addSynapticGapDendrite(std::shared_ptr<SynapticGap> synapticGap) { synapticGapsDendrite.emplace_back(std::move(synapticGap)); }
+
 void Neuron::updatePosition(const PositionPtr &newPosition)
 {
     position = newPosition;

@@ -35,6 +35,10 @@ public:
     std::vector<std::shared_ptr<SynapticGap>> synapticGapsAxon;
     std::vector<std::shared_ptr<SynapticGap>> synapticGapsDendrite;
     std::vector<std::shared_ptr<DendriteBouton>> dendriteBoutons;
+    [[nodiscard]] const std::vector<std::shared_ptr<SynapticGap>>& getSynapticGapsAxon() const { return synapticGapsAxon; }
+    [[nodiscard]] const std::vector<std::shared_ptr<DendriteBouton>>& getDendriteBoutons() const { return dendriteBoutons; }
+    void addSynapticGapDendrite(std::shared_ptr<SynapticGap> synapticGap) ;
+
 private:
     bool instanceInitialised = false;
     std::shared_ptr<Soma> soma;
