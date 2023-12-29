@@ -53,6 +53,7 @@ extern "C" {
 #include "../include/NeuronParameters.h"
 #include "../include/Neuron.h"
 #include "../include/Axon.h"
+#include "../include/AxonBouton.h"
 
 #define PA_SAMPLE_TYPE      paFloat32
 
