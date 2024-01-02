@@ -49,6 +49,16 @@ extern "C"
 #include "dendrite.h"
 #include "dendritebranch.h"
 
+// classes i have removed into brain_classes
+#include "shape3d.h"
+#include "neuron-parameters.h"
+// Note: x,y,z are now public not private???
+#include "position.h"
+
+
+
+
+
 std::mt19937 gen(12345); // Always generates the same sequence of numbers
 std::uniform_real_distribution<> distr(-0.15, 1.0 - 0.15);
 
@@ -275,82 +285,6 @@ void logExecutionTime(Func function, const std::string &functionName)
     logFile.close();
 }
 
-class Shape3D
-{
-public:
-    Shape3D() = default;
-    ~Shape3D() = default;
-
-    // Add methods and data members to represent the 3D shape, e.g., vertices, faces, etc.
-    // Use VTK smart pointers for shape representation if needed
-};
-
-// Add a new class to store neuron parameters and access the database
-class NeuronParameters
-{
-public:
-    NeuronParameters()
-    {
-        // Access the database and load neuron parameters
-    }
-
-    /**
-     * @brief Getter function for dendrite propagation rate.
-     * @return The dendrite propagation rate.
-     */
-    // double getDendritePropagationRate() const;
-
-private:
-    /**
-     * @brief Neuron parameter: dendrite propagation rate.
-     */
-    // double dendritePropagationRate;
-};
-
-/**
- * @class Position
- * @brief Class representing (x, y, z) coordinates in 3D space.
- */
-class Position
-{
-public:
-    Position(double x, double y, double z) : x(x), y(y), z(z) {}
-
-    double x, y, z;
-
-    // Function to calculate the Euclidean distance between two positions
-    [[nodiscard]] double distanceTo(Position &other)
-    {
-        double diff[3] = {x - other.x, y - other.y, z - other.z};
-        return vtkMath::Norm(diff);
-    }
-
-    // Function to set the position coordinates
-    void set(double newX, double newY, double newZ)
-    {
-        x = newX;
-        y = newY;
-        z = newZ;
-    }
-
-    double calcPropagationTime(Position &position1, double propagationRate)
-    {
-        double distance = 0;
-        distance = this->distanceTo(position1);
-        return distance / propagationRate;
-    }
-
-    [[nodiscard]] std::array<double, 3> get() const
-    {
-        return {x, y, z};
-    }
-
-    // Comparison operator for Position class
-    bool operator==(const Position &other) const
-    {
-        return (this == &other);
-    }
-};
 
 using PositionPtr = std::shared_ptr<Position>;
 
@@ -983,132 +917,132 @@ private:
 };
 
 /// Synaptic gap class
-class SynapticGap : public std::enable_shared_from_this<SynapticGap>, public BodyComponent<Position>, public BodyShapeComponent
-{
-public:
-    explicit SynapticGap(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
-    {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
-    }
-    ~SynapticGap() override = default;
+// class SynapticGap : public std::enable_shared_from_this<SynapticGap>, public BodyComponent<Position>, public BodyShapeComponent
+// {
+// public:
+//     explicit SynapticGap(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+//     {
+//         // On construction set a default propagation rate
+//         propagationRate = 0.5;
+//     }
+//     ~SynapticGap() override = default;
 
-    void initialise()
-    {
-        if (!instanceInitialised)
-        {
-            instanceInitialised = true;
-        }
-    }
+//     void initialise()
+//     {
+//         if (!instanceInitialised)
+//         {
+//             instanceInitialised = true;
+//         }
+//     }
 
-    void updatePosition(const PositionPtr &newPosition)
-    {
-        position = newPosition;
-    }
+//     void updatePosition(const PositionPtr &newPosition)
+//     {
+//         position = newPosition;
+//     }
 
-    // Method to check if the SynapticGap has been associated
-    bool isAssociated() const
-    {
-        return associated;
-    }
-    // Method to set the SynapticGap as associated
-    void setAsAssociated()
-    {
-        associated = true;
-    }
+//     // Method to check if the SynapticGap has been associated
+//     bool isAssociated() const
+//     {
+//         return associated;
+//     }
+//     // Method to set the SynapticGap as associated
+//     void setAsAssociated()
+//     {
+//         associated = true;
+//     }
 
-    void updateFromSensoryReceptor(std::shared_ptr<SensoryReceptor> parentSensoryReceptorPointer) { parentSensoryReceptor = std::move(parentSensoryReceptorPointer); }
+//     void updateFromSensoryReceptor(std::shared_ptr<SensoryReceptor> parentSensoryReceptorPointer) { parentSensoryReceptor = std::move(parentSensoryReceptorPointer); }
 
-    [[nodiscard]] std::shared_ptr<SensoryReceptor> getParentSensoryReceptor() const { return parentSensoryReceptor; }
+//     [[nodiscard]] std::shared_ptr<SensoryReceptor> getParentSensoryReceptor() const { return parentSensoryReceptor; }
 
-    void updateFromEffector(std::shared_ptr<Effector> &parentEffectorPointer) { parentEffector = std::move(parentEffectorPointer); }
+//     void updateFromEffector(std::shared_ptr<Effector> &parentEffectorPointer) { parentEffector = std::move(parentEffectorPointer); }
 
-    [[nodiscard]] std::shared_ptr<Effector> getParentEffector() const { return parentEffector; }
+//     [[nodiscard]] std::shared_ptr<Effector> getParentEffector() const { return parentEffector; }
 
-    void updateFromAxonBouton(std::shared_ptr<AxonBouton> parentAxonBoutonPointer) { parentAxonBouton = std::move(parentAxonBoutonPointer); }
+//     void updateFromAxonBouton(std::shared_ptr<AxonBouton> parentAxonBoutonPointer) { parentAxonBouton = std::move(parentAxonBoutonPointer); }
 
-    [[nodiscard]] std::shared_ptr<AxonBouton> getParentAxonBouton() const { return parentAxonBouton; }
+//     [[nodiscard]] std::shared_ptr<AxonBouton> getParentAxonBouton() const { return parentAxonBouton; }
 
-    void updateFromDendriteBouton(std::shared_ptr<DendriteBouton> parentDendriteBoutonPointer) { parentDendriteBouton = std::move(parentDendriteBoutonPointer); }
+//     void updateFromDendriteBouton(std::shared_ptr<DendriteBouton> parentDendriteBoutonPointer) { parentDendriteBouton = std::move(parentDendriteBoutonPointer); }
 
-    [[nodiscard]] std::shared_ptr<DendriteBouton> getParentDendriteBouton() const { return parentDendriteBouton; }
+//     [[nodiscard]] std::shared_ptr<DendriteBouton> getParentDendriteBouton() const { return parentDendriteBouton; }
 
-    void updateComponent(double time, double energy)
-    {
-        componentEnergyLevel = calculateEnergy(time, componentEnergyLevel + energy); // Update the component
-        // for (auto& synapticGap_id : synapticGaps) {
-        //     synapticGap_id->updateComponent(time + propagationTime(), componentEnergyLevel);
-        // }
-    }
+//     void updateComponent(double time, double energy)
+//     {
+//         componentEnergyLevel = calculateEnergy(time, componentEnergyLevel + energy); // Update the component
+//         // for (auto& synapticGap_id : synapticGaps) {
+//         //     synapticGap_id->updateComponent(time + propagationTime(), componentEnergyLevel);
+//         // }
+//     }
 
-    double calculateEnergy(double currentTime, double currentEnergyLevel)
-    {
-        double deltaTime = currentTime - previousTime;
-        previousTime = currentTime;
-        energyLevel = currentEnergyLevel;
+//     double calculateEnergy(double currentTime, double currentEnergyLevel)
+//     {
+//         double deltaTime = currentTime - previousTime;
+//         previousTime = currentTime;
+//         energyLevel = currentEnergyLevel;
 
-        if (deltaTime < attack)
-        {
-            return (deltaTime / attack) * calculateWaveform(currentTime);
-        }
-        else if (deltaTime < attack + decay)
-        {
-            double decay_time = deltaTime - attack;
-            return ((1 - decay_time / decay) * (1 - sustain) + sustain) * calculateWaveform(currentTime);
-        }
-        else if (deltaTime < attack + decay + sustain)
-        {
-            return sustain * calculateWaveform(currentTime);
-        }
-        else
-        {
-            double release_time = deltaTime - attack - decay - sustain;
-            return (1 - std::max(0.0, release_time / release)) * calculateWaveform(currentTime);
-        }
-    }
+//         if (deltaTime < attack)
+//         {
+//             return (deltaTime / attack) * calculateWaveform(currentTime);
+//         }
+//         else if (deltaTime < attack + decay)
+//         {
+//             double decay_time = deltaTime - attack;
+//             return ((1 - decay_time / decay) * (1 - sustain) + sustain) * calculateWaveform(currentTime);
+//         }
+//         else if (deltaTime < attack + decay + sustain)
+//         {
+//             return sustain * calculateWaveform(currentTime);
+//         }
+//         else
+//         {
+//             double release_time = deltaTime - attack - decay - sustain;
+//             return (1 - std::max(0.0, release_time / release)) * calculateWaveform(currentTime);
+//         }
+//     }
 
-    double calculateWaveform(double currentTime) const
-    {
-        return energyLevel * sin(2 * M_PI * frequencyResponse * currentTime + phaseShift);
-    }
+//     double calculateWaveform(double currentTime) const
+//     {
+//         return energyLevel * sin(2 * M_PI * frequencyResponse * currentTime + phaseShift);
+//     }
 
-    double propagationTime()
-    {
-        double currentTime = (double)std::clock() / CLOCKS_PER_SEC;
-        callCount++;
-        double timeSinceLastCall = currentTime - lastCallTime;
-        lastCallTime = currentTime;
+//     double propagationTime()
+//     {
+//         double currentTime = (double)std::clock() / CLOCKS_PER_SEC;
+//         callCount++;
+//         double timeSinceLastCall = currentTime - lastCallTime;
+//         lastCallTime = currentTime;
 
-        double x = 1 / (1 + exp(-callCount / timeSinceLastCall));
-        return minPropagationTime + x * (maxPropagationTime - minPropagationTime);
-    }
+//         double x = 1 / (1 + exp(-callCount / timeSinceLastCall));
+//         return minPropagationTime + x * (maxPropagationTime - minPropagationTime);
+//     }
 
-    [[nodiscard]] const PositionPtr &getPosition() const
-    {
-        return position;
-    }
+//     [[nodiscard]] const PositionPtr &getPosition() const
+//     {
+//         return position;
+//     }
 
-private:
-    bool instanceInitialised = false; // Initially, the SynapticGap is not initialised
-    bool associated = false;          // Initially, the SynapticGap is not associated with a DendriteBouton
-    std::shared_ptr<Effector> parentEffector;
-    std::shared_ptr<SensoryReceptor> parentSensoryReceptor;
-    std::shared_ptr<AxonBouton> parentAxonBouton;
-    std::shared_ptr<DendriteBouton> parentDendriteBouton;
-    double attack;
-    double decay;
-    double sustain;
-    double release;
-    double frequencyResponse;
-    double phaseShift;
-    double previousTime;
-    double energyLevel;
-    double componentEnergyLevel;
-    double minPropagationTime;
-    double maxPropagationTime;
-    double lastCallTime;
-    int callCount;
-};
+// private:
+//     bool instanceInitialised = false; // Initially, the SynapticGap is not initialised
+//     bool associated = false;          // Initially, the SynapticGap is not associated with a DendriteBouton
+//     std::shared_ptr<Effector> parentEffector;
+//     std::shared_ptr<SensoryReceptor> parentSensoryReceptor;
+//     std::shared_ptr<AxonBouton> parentAxonBouton;
+//     std::shared_ptr<DendriteBouton> parentDendriteBouton;
+//     double attack;
+//     double decay;
+//     double sustain;
+//     double release;
+//     double frequencyResponse;
+//     double phaseShift;
+//     double previousTime;
+//     double energyLevel;
+//     double componentEnergyLevel;
+//     double minPropagationTime;
+//     double maxPropagationTime;
+//     double lastCallTime;
+//     int callCount;
+// };
 
 // Dendrite Bouton class
 class DendriteBouton : public std::enable_shared_from_this<DendriteBouton>, public BodyComponent<Position>, public BodyShapeComponent

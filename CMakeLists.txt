@@ -127,8 +127,15 @@ link_directories(${PulseAudio_LIBRARY_DIRS})
 link_directories(${FFTW3_LIBRARY_DIRS})
 link_directories(/usr/local/lib64)
 
+# Add all the source files in the brain_classes folder to the project
+file(GLOB BRAIN_CLASSES_SOURCES "brain_classes/*.cpp")
+
+# Define the target for the AARNN executable
+add_executable(AARNN "src/aarnn.cpp" ${BRAIN_CLASSES_SOURCES})
+message(STATUS "BRAIN_CLASSES_SOURCES: ${BRAIN_CLASSES_SOURCES}")
+
 # Define the target for aarnn.cpp
-add_executable(AARNN "src/aarnn.cpp")
+# add_executable(AARNN "src/aarnn.cpp")
 target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PULSEAUDIO_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
 
 
