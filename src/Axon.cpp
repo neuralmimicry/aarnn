@@ -54,7 +54,3 @@ void Axon::updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPoin
 std::shared_ptr<AxonBranch> Axon::getParentAxonBranch() const {
     return parentAxonBranch;
 }
-
-const PositionPtr& Axon::getPosition() const {
-    return position;
-}

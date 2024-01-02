@@ -1,25 +1,11 @@
-#include <iostream>
-#include <mutex>
-#include <queue>
-#include <fftw3.h>
-#include <portaudio.h>
-#include <pulse/pulseaudio.h>
-#include <pulse/simple.h>
-#include <pulse/error.h>
-#include <pulse/proplist.h>
-
 #include "../include/PulseAudioMic.h"
+#include "../include/utils.h"
 
 PulseAudioMic::PulseAudioMic(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &audioQueue)
     : audioQueue(audioQueue), sample_spec({PA_SAMPLE_S16NE, 16000, 2})
 {
     initializeContext();
     initializeCallbacks();
-}
-
-~PulseAudioMic::PulseAudioMic()
-{
-    cleanUp();
 }
 
 void PulseAudioMic::sourceSelection()
@@ -197,11 +183,7 @@ void PulseAudioMic::processStream(const void *inputBuffer, size_t framesPerBuffe
     audioQueue.push(capturedAudio);
 }
 
-static void PulseAudioMic::context_state_callback_static(pa_context *c, void *userdata)
-{
-    PulseAudioMic *self = reinterpret_cast<PulseAudioMic *>(userdata);
-    self->context_state_callback(c);
-}
+
 
 void PulseAudioMic::context_state_callback(pa_context *c)
 {
@@ -228,11 +210,7 @@ void PulseAudioMic::context_state_callback(pa_context *c)
     }
 }
 
-static void PulseAudioMic::source_info_callback_static(pa_context *c, const pa_source_info *i, int eol, void *userdata)
-{
-    PulseAudioMic *self = reinterpret_cast<PulseAudioMic *>(userdata);
-    self->source_info_callback(c, i, eol);
-}
+
 
 void PulseAudioMic::source_info_callback(pa_context *c, const pa_source_info *i, int eol)
 {
@@ -243,12 +221,7 @@ void PulseAudioMic::source_info_callback(pa_context *c, const pa_source_info *i,
     sources.emplace_back(i->name);
 }
 
-static void PulseAudioMic::stream_state_callback_static(pa_stream *s, void *userdata)
-{
-    PulseAudioMic *self = reinterpret_cast<PulseAudioMic *>(userdata);
-    std::cout << "Stream state changed\n";
-    self->stream_state_callback(s);
-}
+
 
 void PulseAudioMic::stream_state_callback(pa_stream *s)
 {
@@ -274,11 +247,4 @@ void PulseAudioMic::stream_state_callback(pa_stream *s)
         std::cerr << "Unknown stream state.\n";
         break;
     }
-}
-
-static void PulseAudioMic::stream_read_callback_static(pa_stream *s, size_t length, void *userdata)
-{
-    PulseAudioMic *self = reinterpret_cast<PulseAudioMic *>(userdata);
-    // std::cout << "O";
-    self->readStream();
 }

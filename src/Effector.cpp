@@ -30,7 +30,3 @@ double Effector::getPropagationRate() {
     // Implement the calculation based on the dendrite bouton properties
     return propagationRate;
 }
-
-const PositionPtr& Effector::getPosition() const {
-    return position;
-}

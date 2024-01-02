@@ -1,17 +1,5 @@
-#include <iostream>
-#include <mutex>
-#include <string_view>
-#include <syncstream>
-#include <thread>
-
 #include "../include/Soma.h"
-
-explicit Soma::Soma(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
-{
-    // On construction set a default propagation rate
-    propagationRate = 0.5;
-}
-~Soma::Soma() override = default;
+#include "../include/utils.h"
 
 void Soma::initialise()
 {

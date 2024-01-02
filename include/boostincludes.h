@@ -1,3 +1,6 @@
+#ifndef BOOST_H
+#define BOOST_H
+
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
@@ -8,3 +11,5 @@
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
+
+#endif //BOOST_H

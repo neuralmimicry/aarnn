@@ -2,12 +2,7 @@
 
 #include "../include/AxonHillock.h"
 
-explicit AxonHillock::AxonHillock(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
-{
-    // On construction set a default propagation rate
-    propagationRate = 0.5;
-}
-~AxonHillock::AxonHillock() override = default;
+
 
 void AxonHillock::initialise()
 {
@@ -28,4 +23,4 @@ void AxonHillock::updatePosition(const PositionPtr &newPosition)
     position = newPosition;
 }
 
-void updateFromSoma(std::shared_ptr<Soma> parentPointer) { parentSoma = std::move(parentPointer); }
+void AxonHillock::updateFromSoma(std::shared_ptr<Soma> parentPointer) { parentSoma = std::move(parentPointer); }

@@ -1,25 +1,31 @@
-#include <iostream>
-#include <mutex>
-#include <queue>
-#include <fftw3.h>
-#include <portaudio.h>
-#include <pulse/pulseaudio.h>
-#include <pulse/simple.h>
-#include <pulse/error.h>
-#include <pulse/proplist.h>
-
 #include "../include/portaudioMicThread.h"
+#include "../include/utils.h"
 
-portaudioMicThread::portaudioMicThread() : stream(nullptr) {}
-~portaudioMicThread::portaudioMicThread()
+static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData)
 {
-    if (stream)
-    {
-        Pa_StopStream(stream);
-        Pa_CloseStream(stream);
+    std::cout << "MicCallBack" << std::endl;
+    // Read data from the stream.
+    const SAMPLE *in = (const SAMPLE *) inputBuffer;
+    SAMPLE *out = (SAMPLE *) outputBuffer;
+    (void) timeInfo; /* Prevent unused variable warnings. */
+    (void) statusFlags;
+    (void) userData;
+
+    if (inputBuffer == nullptr) {
+        for (unsigned int i = 0; i < framesPerBuffer; i++) {
+            *out++ = 0;  /* left - silent */
+            *out++ = 0;  /* right - silent */
+        }
+        gNumNoInputs += 1;
+    } else {
+        for (unsigned int i = 0; i < framesPerBuffer; i++) {
+            // Here you might want to capture audio data
+            //capturedAudio.push_back(in[i]);
+        }
     }
-    Pa_Terminate();
+    return paContinue;
 }
+
 
 int portaudioMicThread::run()
 {
@@ -229,10 +235,11 @@ int portaudioMicThread::run()
     outputParameters[outputDeviceSelected].hostApiSpecificStreamInfo = NULL;
 
     // Open the stream.
-    err = Pa_OpenStream(&stream, &inputParameters[inputDeviceSelected], &outputParameters[outputDeviceSelected], SAMPLE_RATE, FRAMES_PER_BUFFER, paClipOff, portaudioMicCallBack, NULL);
+    err = Pa_OpenStream(&stream, &inputParameters[inputDeviceSelected], &outputParameters[outputDeviceSelected], 
+                        SAMPLE_RATE, FRAMES_PER_BUFFER, paClipOff, portaudioMicCallBack, NULL);
     if (err != paNoError)
     {
-        cout << "Error opening audio device: " << err << endl;
+        std::cout << "Error opening audio device: " << err << std::endl;
         return 1;
     }
 
@@ -240,7 +247,7 @@ int portaudioMicThread::run()
     err = Pa_StartStream(stream);
     if (err != paNoError)
     {
-        cout << "Error starting audio stream: " << err << endl;
+        std::cout << "Error starting audio stream: " << err << std::endl;
         return 1;
     }
     stream_info = *Pa_GetStreamInfo(stream);
