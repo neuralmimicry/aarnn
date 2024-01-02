@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(AARNN)
 
+file(GLOB AARNN_SRC
+"src/*.cpp",
+"src/*.h"
+)
+
 # Set the build type to Debug to include debugging symbols
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
@@ -128,8 +133,9 @@ link_directories(${FFTW3_LIBRARY_DIRS})
 link_directories(/usr/local/lib64)
 
 # Define the target for aarnn.cpp
-add_executable(AARNN "src/aarnn.cpp")
-target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PULSEAUDIO_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
+# add_executable(AARNN "src/aarnn.cpp")
+add_executable(AARNN ${AARNN_SRC} )
+#target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PULSEAUDIO_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
 
 
 # Define the target for visualiser.cpp

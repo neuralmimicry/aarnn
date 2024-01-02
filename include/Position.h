@@ -1,5 +1,5 @@
-#ifndef AARNN_POSITION_H
-#define AARNN_POSITION_H
+#ifndef POSITION_H
+#define POSITION_H
 
 class Position {
 

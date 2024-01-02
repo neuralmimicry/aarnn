@@ -16,18 +16,24 @@ class SynapticGap;
 class DendriteBranch;
 class Neuron;
 
-class Soma : public std::enable_shared_from_this<Soma>, public BodyComponent<Position>, public BodyShapeComponent {
+class Soma : public std::enable_shared_from_this<Soma>, public BodyComponent<Position>, public BodyShapeComponent
+{
 public:
-    explicit Soma(const PositionPtr& position) ;
-    ~Soma() ;
-    void initialise() ;
-    void updatePosition(const PositionPtr& newPosition) ;
+    explicit Soma(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+    {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+    }
+    ~Soma() override = default;
+    void initialise();
+    void updatePosition(const PositionPtr &newPosition);
     [[nodiscard]] std::shared_ptr<AxonHillock> getAxonHillock() const { return onwardAxonHillock; }
-    void addDendriteBranch(std::shared_ptr<DendriteBranch> dendriteBranch) ;
-    [[nodiscard]] const std::vector<std::shared_ptr<DendriteBranch>>& getDendriteBranches() const { return dendriteBranches; }
-    void updateFromNeuron(std::shared_ptr<Neuron> parentPointer) { parentNeuron = std::move(parentPointer); }
+    void addDendriteBranch(std::shared_ptr<DendriteBranch> dendriteBranch);
+    [[nodiscard]] const std::vector<std::shared_ptr<DendriteBranch>> &getDendriteBranches() const { return dendriteBranches; }
+    void updateFromNeuron(std::shared_ptr<Neuron> parentPointer);
     [[nodiscard]] std::shared_ptr<Neuron> getParentNeuron() const { return parentNeuron; }
-    [[nodiscard]] const PositionPtr& getPosition() const { return position; }
+    [[nodiscard]] const PositionPtr &getPosition() const { return position; }
+
 private:
     bool instanceInitialised = false;
     std::vector<std::shared_ptr<SynapticGap>> synapticGaps;

@@ -2215,61 +2215,6 @@ void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_ptr<Synap
     renderer->AddActor(glyphActor);
 }
 
-
-void addDendriteBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch, const vtkSmartPointer<vtkPoints>& definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
-    // Add the position of the dendrite branch to vtkPolyData
-    PositionPtr branchPosition = dendriteBranch->getPosition();
-    pointIDs->InsertNextId(definePoints->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
-
-    // Iterate over the dendrites and add their positions to vtkPolyData
-    const std::vector<std::shared_ptr<Dendrite>>& dendrites = dendriteBranch->getDendrites();
-    for (const auto& dendrite : dendrites) {
-        PositionPtr dendritePosition = dendrite->getPosition();
-        addDendriteBranchToRenderer(renderer, dendriteBranch, dendrite, definePoints, pointIDs);
-
-        // Select the dendrite bouton and add its position to vtkPolyData
-        const std::shared_ptr<DendriteBouton>& bouton = dendrite->getDendriteBouton();
-        PositionPtr boutonPosition = bouton->getPosition();
-        pointIDs->InsertNextId(definePoints->InsertNextPoint(boutonPosition->x, boutonPosition->y,
-                                                               boutonPosition->z));
-
-        // Recursively process child dendrite branches
-        const std::vector<std::shared_ptr<DendriteBranch>>& childBranches = dendrite->getDendriteBranches();
-        for (const auto& childBranch : childBranches) {
-            addDendriteBranchPositionsToPolyData(renderer, childBranch, definePoints, pointIDs);
-        }
-    }
-}
-
-void addAxonBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch, const vtkSmartPointer<vtkPoints>& definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
-    // Add the position of the axon branch to vtkPolyData
-    PositionPtr branchPosition = axonBranch->getPosition();
-    pointIDs->InsertNextId(definePoints->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
-
-    // Iterate over the axons and add their positions to vtkPolyData
-    const std::vector<std::shared_ptr<Axon>>& axons = axonBranch->getAxons();
-    for (const auto& axon : axons) {
-        PositionPtr axonPosition = axon->getPosition();
-        addAxonBranchToRenderer(renderer, axonBranch, axon, definePoints, pointIDs);
-
-        // Select the axon bouton and add its position to vtkPolyData
-        const std::shared_ptr<AxonBouton>& axonBouton = axon->getAxonBouton();
-        PositionPtr axonBoutonPosition = axonBouton->getPosition();
-        pointIDs->InsertNextId(definePoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
-                                                               axonBoutonPosition->z));
-
-        // Select the synaptic gap and add its position to vtkPolyData
-        const std::shared_ptr<SynapticGap>& synapticGap = axonBouton->getSynapticGap();
-        addSynapticGapToRenderer(renderer, synapticGap);
-
-        // Recursively process child axon branches
-        const std::vector<std::shared_ptr<AxonBranch>>& childBranches = axon->getAxonBranches();
-        for (const auto& childBranch : childBranches) {
-            addAxonBranchPositionsToPolyData(renderer, childBranch, definePoints, pointIDs);
-        }
-    }
-}
-
 const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 std::string base64_encode(const unsigned char* data, size_t length) {

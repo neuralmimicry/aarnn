@@ -1,7 +1,5 @@
-// AxonBouton.h
-
-#ifndef AXON_BOUTON_H
-#define AXON_BOUTON_H
+#ifndef AXONBOUTON_H
+#define AXONBOUTON_H
 
 #include <memory>
 #include "Position.h"
@@ -10,6 +8,12 @@
 #include "BodyShapeComponent.h"
 #include "Neuron.h"
 #include "Axon.h"
+
+class Axon;
+class SynapticGap;
+class Position;
+
+class Neuron;
 
 class AxonBouton : public std::enable_shared_from_this<AxonBouton>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
@@ -23,8 +27,9 @@ public:
     void setNeuron(std::weak_ptr<Neuron> parentNeuron);
     void updateFromAxon(std::shared_ptr<Axon> parentAxonPointer);
     [[nodiscard]] std::shared_ptr<Axon> getParentAxon() const;
-    [[nodiscard]] const PositionPtr& getPosition() const;
-
+    [[nodiscard]] const PositionPtr& getPosition() const {
+    return position;
+}
 private:
     bool instanceInitialised = false;
     std::shared_ptr<SynapticGap> onwardSynapticGap;

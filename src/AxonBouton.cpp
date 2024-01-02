@@ -41,7 +41,3 @@ void AxonBouton::updateFromAxon(std::shared_ptr<Axon> parentAxonPointer) {
 std::shared_ptr<Axon> AxonBouton::getParentAxon() const {
     return parentAxon;
 }
-
-const PositionPtr& AxonBouton::getPosition() const {
-    return position;
-}

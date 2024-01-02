@@ -9,8 +9,11 @@
 #include "BodyShapeComponent.h"
 
 class DendriteBouton;
+class DendriteBranch;
 
-class Dendrite : public std::enable_shared_from_this<Dendrite>, public BodyComponent<Position>, public BodyShapeComponent {
+class Dendrite : public std::enable_shared_from_this<Dendrite>, 
+                 public BodyComponent<Position>, 
+                 public BodyShapeComponent {
 private:
     bool instanceInitialised = false;  // Initially, the Dendrite is not initialised
     std::vector<std::shared_ptr<DendriteBranch>> dendriteBranches;
