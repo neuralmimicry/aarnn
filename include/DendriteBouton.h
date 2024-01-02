@@ -10,10 +10,19 @@
 #include "Neuron.h"
 #include "Dendrite.h"
 
+class Dendrite;
+class DendriteBranch;
+class SynapticGap;
+class Neuron;
+
 class DendriteBouton : public std::enable_shared_from_this<DendriteBouton>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit DendriteBouton(const PositionPtr& position) ;
-    ~DendriteBouton() ;
+    explicit DendriteBouton(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+    {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+    }
+    ~DendriteBouton() override = default;
     void initialise() ;
     void connectSynapticGap(std::shared_ptr<SynapticGap> gap);
     void updatePosition(const PositionPtr& newPosition) ;

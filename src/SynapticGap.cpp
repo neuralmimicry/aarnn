@@ -1,16 +1,4 @@
-#include <iostream>
-#include <mutex>
-#include <string_view>
-#include <syncstream>
-#include <thread>
-
 #include "../include/SynapticGap.h"
-
-explicit SynapticGap::SynapticGap(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent(){
-    // On construction set a default propagation rate
-    propagationRate = 0.5;
-}
-~SynapticGap::SynapticGap() override = default;
 
 void SynapticGap::initialise(){
     if (!instanceInitialised)

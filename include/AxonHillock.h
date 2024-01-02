@@ -13,16 +13,22 @@
 class Soma;
 class Axon;
 
-class AxonHillock : public std::enable_shared_from_this<AxonHillock>, public BodyComponent<Position>, public BodyShapeComponent {
+class AxonHillock : public std::enable_shared_from_this<AxonHillock>, public BodyComponent<Position>, public BodyShapeComponent
+{
 public:
-    explicit AxonHillock(const PositionPtr& position) ;
-    ~AxonHillock();
+    explicit AxonHillock(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+    {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+    }
+    ~AxonHillock() override = default;
     void initialise();
-    void updatePosition(const PositionPtr& newPosition) ;
+    void updatePosition(const PositionPtr &newPosition);
     [[nodiscard]] std::shared_ptr<Axon> getAxon() const { return onwardAxon; }
     void updateFromSoma(std::shared_ptr<Soma> parentPointer);
     [[nodiscard]] std::shared_ptr<Soma> getParentSoma() const { return parentSoma; }
-    [[nodiscard]] const PositionPtr& getPosition() const { return position; }
+    [[nodiscard]] const PositionPtr &getPosition() const { return position; }
+
 private:
     bool instanceInitialised = false;
     std::shared_ptr<Axon> onwardAxon;

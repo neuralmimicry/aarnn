@@ -1,14 +1,10 @@
 #include <iostream>
 #include "../include/DendriteBranch.h"
-
+#include "utils.h"
 
 // Dendrite branch class
 
-    explicit DendriteBranch::DendriteBranch(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
-    }
-    ~DendriteBranch::DendriteBranch() override = default;
+
 
     void DendriteBranch::initialise() {
         if (!instanceInitialised) {

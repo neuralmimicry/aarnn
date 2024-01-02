@@ -9,11 +9,16 @@
 #include "Dendrite.h"
 #include "Soma.h"
 
-// Dendrite branch class
+class Soma;
+class Dendrite;
+
 class DendriteBranch : public std::enable_shared_from_this<DendriteBranch>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit DendriteBranch(const PositionPtr& position);
-    ~DendriteBranch();
+    explicit DendriteBranch(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
+        // On construction set a default propagation rate
+        propagationRate = 0.5;
+    }
+    ~DendriteBranch() override = default;
     void initialise() ;
     void updatePosition(const PositionPtr& newPosition) ;
     void connectDendrite(std::shared_ptr<Dendrite> dendrite);

@@ -11,6 +11,10 @@
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
 
+class AxonBouton;
+class AxonHillock;
+class AxonBranch;
+
 class Axon : public std::enable_shared_from_this<Axon>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
     explicit Axon(const PositionPtr& position);
@@ -25,7 +29,7 @@ public:
     [[nodiscard]] std::shared_ptr<AxonHillock> getParentAxonHillock() const;
     void updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer);
     [[nodiscard]] std::shared_ptr<AxonBranch> getParentAxonBranch() const;
-    [[nodiscard]] const PositionPtr& getPosition() const;
+    [[nodiscard]] const PositionPtr& getPosition() const { return position;}
 private:
     bool instanceInitialised = false;
     std::vector<std::shared_ptr<AxonBranch>> axonBranches;

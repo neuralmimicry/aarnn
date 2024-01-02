@@ -1,10 +1,13 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <fstream>
+
 class Logger {
 public:
-    explicit Logger(const std::string &filename) ;
-    ~Logger() ;
+    explicit Logger(const std::string &filename) : log_file(filename, std::ofstream::out | std::ofstream::app) {}
+
+    Logger() {log_file.close();}
     template<typename T>
     Logger &operator<<(const T &msg) {
         log_file << msg;

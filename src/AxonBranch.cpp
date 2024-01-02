@@ -1,12 +1,6 @@
 #include <iostream>
 #include "../include/AxonBranch.h"
-
-explicit AxonBranch::AxonBranch(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
-{
-    // On construction set a default propagation rate
-    propagationRate = 0.5;
-}
-~AxonBranch::AxonBranch() override = default;
+#include "utils.h"
 
 void AxonBranch::initialise()
 {
