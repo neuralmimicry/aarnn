@@ -1,4 +1,1 @@
-
-
 #include "../include/NeuronParameters.h"
-

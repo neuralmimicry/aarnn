@@ -3,8 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(AARNN)
 
 file(GLOB AARNN_SRC
-"src/*.cpp",
-"src/*.h"
+    "src/*.cpp"
 )
 
 # Set the build type to Debug to include debugging symbols
@@ -15,7 +14,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(PostgreSQL_ROOT "/usr/pgsql-15")
+set(PostgreSQL_ROOT "/usr/include/postgresql/14/server")
 
 find_package(PostgreSQL REQUIRED)
 find_library(PQXX_LIB pqxx HINTS /usr/lib64)
@@ -29,7 +28,7 @@ if(NOT OPENGL_FOUND)
     message(FATAL_ERROR "OpenGL library not found")
 endif()
 
-set (VTK_DIR "//home/onidt/Work/vtk")
+#set (VTK_DIR "//home/onidt/Work/vtk")
 message(STATUS "VTK INCLUDE : ${VTK_DIR}")
 find_package(VTK REQUIRED)
 if(NOT VTK_FOUND)
@@ -132,12 +131,5 @@ link_directories(${PulseAudio_LIBRARY_DIRS})
 link_directories(${FFTW3_LIBRARY_DIRS})
 link_directories(/usr/local/lib64)
 
-# Define the target for aarnn.cpp
-# add_executable(AARNN "src/aarnn.cpp")
-add_executable(AARNN ${AARNN_SRC} )
-target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PULSEAUDIO_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
 
-
-# Define the target for visualiser.cpp
-add_executable(Visualiser "src/visualiser.cpp")
-target_link_libraries(Visualiser PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PULSEAUDIO_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  # Link VTK, Boost, OpenSSL, PortAudio, PulseAudio and OpenMP libraries
+add_subdirectory(src ../bin)

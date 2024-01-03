@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "../include/Effector.h"
 
 Effector::Effector(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
