@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "../include/Neuron.h"
 
 std::shared_ptr<Soma> soma;

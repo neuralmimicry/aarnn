@@ -16,10 +16,12 @@ const int FRAMES_PER_BUFFER = 256;
 typedef float SAMPLE;
 static int gNumNoInputs = 0;
 using PositionPtr = std::shared_ptr<Position>;
-std::uniform_real_distribution<> distr(-0.15, 1.0-0.15);
-std::mt19937 gen(12345); // Always generates the same sequence of numbers
+inline std::uniform_real_distribution<> distr(-0.15, 1.0-0.15);
+inline std::mt19937 gen(12345); // Always generates the same sequence of numbers
 
-void addDendriteBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch,
+class AxonBranch;
+
+inline void addDendriteBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch,
                                  const std::shared_ptr<Dendrite>& dendrite,
                                  const vtkSmartPointer<vtkPoints>& points, const vtkSmartPointer<vtkIdList>& pointIds) {
     const PositionPtr& dendriteBranchPosition = dendriteBranch->getPosition();
@@ -72,7 +74,7 @@ void addDendriteBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<De
     renderer->AddActor(coneActor);
 }
 
-void addAxonBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch,
+inline void addAxonBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch,
                              const std::shared_ptr<Axon>& axon,
                              const vtkSmartPointer<vtkPoints>& points, const vtkSmartPointer<vtkIdList>& pointIds) {
     const PositionPtr& axonBranchPosition = axonBranch->getPosition();
@@ -125,7 +127,7 @@ void addAxonBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<AxonBr
     renderer->AddActor(coneActor);
 }
 
-void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_ptr<SynapticGap>& synapticGap) {
+inline void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_ptr<SynapticGap>& synapticGap) {
     const PositionPtr& synapticGapPosition = synapticGap->getPosition();
 
     // Create the sphere source for the glyph
@@ -170,7 +172,7 @@ void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_ptr<Synap
     renderer->AddActor(glyphActor);
 }
 
-void addDendriteBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch, const vtkSmartPointer<vtkPoints>& definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
+inline  void addDendriteBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch, const vtkSmartPointer<vtkPoints>& definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
     // Add the position of the dendrite branch to vtkPolyData
     PositionPtr branchPosition = dendriteBranch->getPosition();
     pointIDs->InsertNextId(definePoints->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
@@ -195,7 +197,7 @@ void addDendriteBranchPositionsToPolyData(vtkRenderer* renderer, const std::shar
     }
 }
 
-void addAxonBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch, const vtkSmartPointer<vtkPoints>& definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
+inline  void addAxonBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch, const vtkSmartPointer<vtkPoints>& definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
     // Add the position of the axon branch to vtkPolyData
     PositionPtr branchPosition = axonBranch->getPosition();
     pointIDs->InsertNextId(definePoints->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
@@ -224,7 +226,7 @@ void addAxonBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_p
     }
 }
 
-std::tuple<double, double, double> get_coordinates(int i, int total_points, int points_per_layer) {
+inline  std::tuple<double, double, double> get_coordinates(int i, int total_points, int points_per_layer) {
     const double golden_angle = M_PI * (3 - std::sqrt(5)); // golden angle in radians
 
     // calculate the layer and index in layer based on i

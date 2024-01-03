@@ -1,5 +1,3 @@
-// Axon.cpp
-
 #include "../include/Axon.h"
 
 Axon::Axon(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {

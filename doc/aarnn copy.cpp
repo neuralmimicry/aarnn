@@ -45,8 +45,6 @@ extern "C" {
 #include "vtkincludes.h"
 
 #include "aarnn.h"
-#include "dendrite.h"
-#include "dendritebranch.h"
 
 std::mt19937 gen(12345); // Always generates the same sequence of numbers
 std::uniform_real_distribution<> distr(-0.15, 1.0-0.15);

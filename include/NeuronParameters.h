@@ -3,7 +3,7 @@
 
 class NeuronParameters {
 public:
-    NeuronParameters() ;
+    NeuronParameters() = default ;
 
 private:
     double dendritePropagationRate;

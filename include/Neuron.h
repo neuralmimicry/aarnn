@@ -30,7 +30,7 @@ class Position;
 class Neuron : public std::enable_shared_from_this<Neuron>, public BodyComponent<Position>, public BodyShapeComponent
 {
 public:
-    Neuron(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent() {}
+    Neuron(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent() {};
     ~Neuron() override = default;
     std::shared_ptr<Soma> getSoma();
     void updatePosition(const PositionPtr &newPosition);

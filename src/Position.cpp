@@ -1,12 +1,4 @@
-#include <iostream>
-#include <mutex>
-#include <string_view>
-#include <syncstream>
-#include <thread>
-
-
 #include "../include/Position.h"
-#include "../include/vtkincludes.h"
 
 Position::Position(double x, double y, double z) : x(x), y(y), z(z) {}
 
