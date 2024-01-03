@@ -1,8 +1,4 @@
-#include <iostream>
-
 #include "../include/AxonHillock.h"
-
-
 
 void AxonHillock::initialise()
 {

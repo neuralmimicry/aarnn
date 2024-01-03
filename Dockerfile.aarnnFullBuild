@@ -91,13 +91,13 @@ ENV DEBIAN_FRONTEND=dialog
 
 #Copy from the build aarnn docker
 #Copy Arran
-COPY --from=builder /app/build .
+COPY --from=builder /app/bin .
 
 #Database configuration connection infromation
-COPY ./db_connection.conf /app/db_connection.conf
+COPY ./configure/db_connection.conf /app/db_connection.conf
 
 #Simulation data
-COPY ./simulation.conf /app/simulation.conf
+COPY ./configure/simulation.conf /app/simulation.conf
 
 # Make port 80 available to the world outside this container (optional)
 EXPOSE 80

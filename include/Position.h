@@ -1,6 +1,8 @@
 #ifndef POSITION_H
 #define POSITION_H
 
+#include "../include/vtkincludes.h"
+
 class Position {
 
 private:

@@ -1,9 +1,4 @@
-#include <iostream>
-#include "../include/vtkincludes.h"
 #include "../include/avTimerCallback.h"
-
-
-
 
 void avTimerCallback::setAudio(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &aQueue)
 {

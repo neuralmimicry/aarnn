@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "../include/Dendrite.h"
 
 // Dendrite class
