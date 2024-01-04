@@ -5,14 +5,14 @@ FROM ubuntu:22.04
 WORKDIR /app
 
 # Copy the compiled executable from your host to the current location in your docker image
-COPY ./build/AARNN /app/AARNN
+COPY ./bin/AARNN /app/AARNN
 
 
 #Database configuration connection infromation
-COPY ./db_connection.conf /app/db_connection.conf 
+COPY ./configure/db_connection.conf /app/db_connection.conf 
 
 #Simulation data
-COPY ./simulation.conf /app/simulation.conf 
+COPY ./configure//simulation.conf /app/simulation.conf 
 
 # Make port 80 available to the world outside this container (optional)
 EXPOSE 80
