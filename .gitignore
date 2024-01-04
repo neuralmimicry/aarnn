@@ -1,5 +1,6 @@
 db_connection.conf
 build
+bin
 *.o
 .cmake
 CMakeFiles
