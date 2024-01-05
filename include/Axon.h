@@ -17,7 +17,13 @@ class AxonBranch;
 
 class Axon : public std::enable_shared_from_this<Axon>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit Axon(const PositionPtr& position);
+    explicit Axon(const PositionPtr &position, double propRate = 0.5)
+    : BodyComponent(position)
+    , BodyShapeComponent()
+    {
+        propagationRate = propRate;
+    }
+    
     ~Axon() override = default;
     void initialise();
     void updatePosition(const PositionPtr& newPosition);

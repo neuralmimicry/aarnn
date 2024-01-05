@@ -54,31 +54,31 @@ public:
     }
 
     void setAttack(double newAttack) {
-        this->attack = newAttack;
+        attack = newAttack;
     }
 
     void setDecay(double newDecay) {
-        this->decay = newDecay;
+        decay = newDecay;
     }
 
     void setSustain(double newSustain) {
-        this->sustain = newSustain;
+        sustain = newSustain;
     }
 
     void setRelease(double newRelease) {
-        this->release = newRelease;
+        release = newRelease;
     }
 
     void setFrequencyResponse(double newFrequencyResponse) {
-        this->frequencyResponse = newFrequencyResponse;
+        frequencyResponse = newFrequencyResponse;
     }
 
     void setPhaseShift(double newPhaseShift) {
-        this->phaseShift = newPhaseShift;
+        phaseShift = newPhaseShift;
     }
 
     void setEnergyLevel(double newEnergyLevel) {
-        this->energyLevel = newEnergyLevel;
+        energyLevel = newEnergyLevel;
     }
 
     double calculateEnergy(double currentTime, double currentEnergyLevel) {

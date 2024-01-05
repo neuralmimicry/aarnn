@@ -1,4 +1,4 @@
-#include "../include/Effector.h"
+#include "Effector.h"
 
 Effector::Effector(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
     // On construction set a default propagation rate

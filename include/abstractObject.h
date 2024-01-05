@@ -1,7 +1,7 @@
 
 
 #include <string.h>
-#include "./ThreadSafeQueue.h"
+#include "ThreadSafeQueue.h"
 
 // Header
 struct AbstractObject;

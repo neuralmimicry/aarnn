@@ -1,5 +1,5 @@
-#include "../include/PulseAudioMic.h"
-#include "../include/utils.h"
+#include "PulseAudioMic.h"
+#include "utils.h"
 
 PulseAudioMic::PulseAudioMic(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &audioQueue)
     : audioQueue(audioQueue), sample_spec({PA_SAMPLE_S16NE, 16000, 2})

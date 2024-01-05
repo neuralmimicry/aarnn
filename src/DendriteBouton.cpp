@@ -1,4 +1,4 @@
-#include "../include/DendriteBouton.h"
+#include "DendriteBouton.h"
 
 void DendriteBouton::initialise()
 {

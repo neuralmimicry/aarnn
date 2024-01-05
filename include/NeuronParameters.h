@@ -6,7 +6,7 @@ public:
     NeuronParameters() = default ;
 
 private:
-    double dendritePropagationRate;
+    double dendritePropagationRate = 0.0;
 };
 
 #endif

@@ -19,11 +19,13 @@ class Neuron;
 class Soma : public std::enable_shared_from_this<Soma>, public BodyComponent<Position>, public BodyShapeComponent
 {
 public:
-    explicit Soma(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+    explicit Soma(const PositionPtr &position, double propRate = 0.5)
+    : BodyComponent(position)
+    , BodyShapeComponent()
     {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
+        propagationRate = propRate;
     }
+
     ~Soma() override = default;
     void initialise();
     void updatePosition(const PositionPtr &newPosition);

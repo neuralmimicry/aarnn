@@ -21,10 +21,13 @@ private:
     std::shared_ptr<DendriteBouton> dendriteBouton;
     std::shared_ptr<DendriteBranch> parentDendriteBranch;
 public:
-    explicit Dendrite(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
+    explicit Dendrite(const PositionPtr &position, double propRate = 0.5)
+    : BodyComponent(position)
+    , BodyShapeComponent()
+    {
+        propagationRate = propRate;
     }
+    
     ~Dendrite() override = default;
     void initialise() ;
     void updatePosition(const PositionPtr& newPosition) { position = newPosition; }

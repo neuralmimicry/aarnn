@@ -1,4 +1,4 @@
-#include "../include/Position.h"
+#include "Position.h"
 
 Position::Position(double x, double y, double z) : x(x), y(y), z(z) {}
 
