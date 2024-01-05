@@ -26,8 +26,9 @@ copy simulation.conf -> build/simulation.com
 
 ```
 
+## Visualises
 ## Running Postgres Container
-*** Caution docker-station can user alot of memory to run ***
+*** Caution docker-station can use a lot of memory to run ***
 Then running the image for the first time, the Host port (Ports) of the container needs to be set, os it will forward it correctly e.g. 5432:5432
 The password needs to be added in the Environments variables e.g. Variable -> POSTGRES_PASSWORD, Value -> 'current password'
 
