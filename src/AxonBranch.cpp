@@ -1,5 +1,5 @@
-#include "../include/AxonBranch.h"
-#include "../include/utils.h"
+#include "AxonBranch.h"
+#include "utils.h"
 
 void AxonBranch::initialise()
 {

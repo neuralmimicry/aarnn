@@ -42,20 +42,20 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 }
 
-#include "../include/vtkincludes.h"
+#include "vtkincludes.h"
 
-#include "../include/DendriteBranch.h"
-#include "../include/AxonHillock.h"
-#include "../include/PulseAudioMic.h"
-#include "../include/Logger.h"
-#include "../include/nvTimerCallback.h"
-#include "../include/avTimerCallback.h"
-#include "../include/NeuronParameters.h"
-#include "../include/Neuron.h"
-#include "../include/Axon.h"
-#include "../include/AxonBouton.h"
-#include "../include/utils.h"
-#include "../include/NeuronParameters.h"
+#include "DendriteBranch.h"
+#include "AxonHillock.h"
+#include "PulseAudioMic.h"
+#include "Logger.h"
+#include "nvTimerCallback.h"
+#include "avTimerCallback.h"
+#include "NeuronParameters.h"
+#include "Neuron.h"
+#include "Axon.h"
+#include "AxonBouton.h"
+#include "utils.h"
+#include "NeuronParameters.h"
 
 #define PA_SAMPLE_TYPE      paFloat32
 

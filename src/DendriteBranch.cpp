@@ -1,5 +1,5 @@
-#include "../include/DendriteBranch.h"
-#include "../include/utils.h"
+#include "DendriteBranch.h"
+#include "utils.h"
 
 void DendriteBranch::initialise()
 {

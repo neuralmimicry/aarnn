@@ -13,15 +13,12 @@ add_executable(AARNN aarnn.cpp
                 Logger.cpp
                 Neuron.cpp
                 NeuronParameters.cpp
-                nvTimerCallback.cpp
                 portaudioMicThread.cpp
                 Position.cpp
                 PulseAudioMic.cpp
                 SensoryReceptor.cpp
-                Shape3D.cpp
                 Soma.cpp
-                SynapticGap.cpp
-                ThreadSafeQueue.cpp)
+                SynapticGap.cpp)
 
 target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES}
                              ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PULSEAUDIO_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  

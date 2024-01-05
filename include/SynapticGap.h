@@ -23,10 +23,11 @@ class SensoryReceptor;
 class SynapticGap : public std::enable_shared_from_this<SynapticGap>, public BodyComponent<Position>, public BodyShapeComponent
 {
 public:
-    explicit SynapticGap(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+    explicit SynapticGap(const PositionPtr &position, double propRate = 0.5)
+    : BodyComponent(position)
+    , BodyShapeComponent()
     {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
+        propagationRate = propRate;
     }
     ~SynapticGap() override = default;
     void initialise();

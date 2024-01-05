@@ -1,4 +1,4 @@
-#include "../include/AxonHillock.h"
+#include "AxonHillock.h"
 
 void AxonHillock::initialise()
 {

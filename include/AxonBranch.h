@@ -14,10 +14,11 @@ class Axon;
 class AxonBranch : public std::enable_shared_from_this<AxonBranch>, public BodyComponent<Position>, public BodyShapeComponent
 {
 public:
-    explicit AxonBranch(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+explicit AxonBranch(const PositionPtr &position, double propRate = 0.5)
+    : BodyComponent(position)
+    , BodyShapeComponent()
     {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
+        propagationRate = propRate;
     }
     ~AxonBranch() override = default;
     void initialise();

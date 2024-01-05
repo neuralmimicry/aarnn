@@ -1,9 +1,4 @@
-#include "../include/Axon.h"
-
-Axon::Axon(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
-    // On construction set a default propagation rate
-    propagationRate = 0.5;
-}
+#include "Axon.h"
 
 void Axon::initialise() {
     if (!instanceInitialised) {

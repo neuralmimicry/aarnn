@@ -1,4 +1,4 @@
-#include "../include/AxonBouton.h"
+#include "AxonBouton.h"
 
 AxonBouton::AxonBouton(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {}
 

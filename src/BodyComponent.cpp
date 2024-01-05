@@ -1,1 +1,1 @@
-#include "../include/BodyComponent.h"
+#include "BodyComponent.h"

@@ -1,4 +1,4 @@
-#include "../include/Neuron.h"
+#include "Neuron.h"
 
 std::shared_ptr<Soma> soma;
 

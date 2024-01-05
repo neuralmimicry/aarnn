@@ -1,4 +1,4 @@
-#include "../include/avTimerCallback.h"
+#include "avTimerCallback.h"
 
 void avTimerCallback::setAudio(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &aQueue)
 {

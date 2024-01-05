@@ -1,4 +1,4 @@
-#include "../include/SynapticGap.h"
+#include "SynapticGap.h"
 
 void SynapticGap::initialise(){
     if (!instanceInitialised)

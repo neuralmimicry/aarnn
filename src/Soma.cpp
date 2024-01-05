@@ -1,5 +1,5 @@
-#include "../include/Soma.h"
-#include "../include/utils.h"
+#include "Soma.h"
+#include "utils.h"
 
 void Soma::initialise()
 {
