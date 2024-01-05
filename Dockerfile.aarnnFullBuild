@@ -30,7 +30,6 @@ RUN apt-get install -y libglfw3
 RUN apt-get install -y libomp-dev
 RUN apt-get install -y fftw3-dev
 RUN apt-get install -y pulseaudio
-RUN apt-get install -y libportaudio2
 RUN apt-get install -y libasound-dev
 RUN apt-get install -y portaudio19-dev
 RUN apt-get install -y libpulse-dev

@@ -129,7 +129,7 @@ link_directories(${PostgreSQL_LIBRARY_DIR})
 link_directories(${PORTAUDIO_LIBRARY_DIR})
 link_directories(${PulseAudio_LIBRARY_DIRS})
 link_directories(${FFTW3_LIBRARY_DIRS})
-link_directories(/usr/local/lib64)
+link_directories(${LOCAL_LIB64})
 
 
 add_subdirectory(src ../bin)

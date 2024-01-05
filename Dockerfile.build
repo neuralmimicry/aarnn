@@ -56,6 +56,5 @@ COPY . /app/
 RUN mkdir build
 WORKDIR /app/build
 
-RUN cd /app/build
 RUN cmake ..
 RUN make

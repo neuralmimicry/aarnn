@@ -1,4 +1,4 @@
-#include "../include/Dendrite.h"
+#include "Dendrite.h"
 
 // Dendrite class
 void Dendrite::initialise()

@@ -1,4 +1,4 @@
-#include "../include/BodyShapeComponent.h"
+#include "BodyShapeComponent.h"
 
 void BodyShapeComponent::setShape(const ShapePtr& newShape) {
     this->shape = newShape;

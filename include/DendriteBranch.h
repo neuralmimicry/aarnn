@@ -14,9 +14,11 @@ class Dendrite;
 
 class DendriteBranch : public std::enable_shared_from_this<DendriteBranch>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit DendriteBranch(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
+    explicit DendriteBranch(const PositionPtr &position, double propRate = 0.5)
+    : BodyComponent(position)
+    , BodyShapeComponent()
+    {
+        propagationRate = propRate;
     }
     ~DendriteBranch() override = default;
     void initialise() ;

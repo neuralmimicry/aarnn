@@ -17,10 +17,11 @@ class Neuron;
 
 class DendriteBouton : public std::enable_shared_from_this<DendriteBouton>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit DendriteBouton(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+    explicit DendriteBouton(const PositionPtr &position, double propRate = 0.5)
+    : BodyComponent(position)
+    , BodyShapeComponent()
     {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
+        propagationRate = propRate;
     }
     ~DendriteBouton() override = default;
     void initialise() ;
