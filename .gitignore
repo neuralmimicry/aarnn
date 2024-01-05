@@ -2,4 +2,6 @@ db_connection.conf
 *.o
 .cmake
 CMakeFiles
-
+build
+bin
+.env
