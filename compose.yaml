@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   postgres:
+    image: aarnn_postgres
     build:
       dockerfile: Dockerfile.postgres
     env_file:
@@ -21,6 +22,7 @@ services:
       - my_net
 
   aarnn:
+    image: aarnn
     build:
       dockerfile: Dockerfile.aarnnFullBuild
     deploy:
