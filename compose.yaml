@@ -3,6 +3,8 @@ services:
   postgres:
     build:
       dockerfile: Dockerfile.postgres
+    env_file:
+      - ./.env
     deploy:
       replicas: 1
       resources:
@@ -14,6 +16,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD : ${POSTGRES_PASSWORD}
+      POSTGRES_USERNAME : ${POSTGRES_USERNAME}
     networks:
       - my_net
 
