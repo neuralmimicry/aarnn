@@ -14,7 +14,13 @@ class Position;
 
 class Effector : public std::enable_shared_from_this<Effector>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit Effector(const PositionPtr& position);
+    explicit Effector(const PositionPtr &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
+    : BodyShapeComponent()
+    , BodyComponent(position, propRate)
+    {
+        instanceInitialised = false;
+    }
+
     ~Effector() override = default;
     void initialise();
     void addSynapticGap(std::shared_ptr<SynapticGap> synapticGap);
