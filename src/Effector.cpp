@@ -1,11 +1,5 @@
 #include "Effector.h"
 
-Effector::Effector(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {
-    // On construction set a default propagation rate
-    propagationRate = 0.5;
-    instanceInitialised = false;
-}
-
 void Effector::initialise() {
     if (!instanceInitialised) {
         instanceInitialised = true;

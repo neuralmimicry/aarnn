@@ -16,8 +16,10 @@
 
 class SensoryReceptor : public std::enable_shared_from_this<SensoryReceptor>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit SensoryReceptor(const PositionPtr& position) : BodyComponent(position),
-                                                       BodyShapeComponent() {
+    explicit SensoryReceptor(const PositionPtr &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
+    : BodyShapeComponent()
+    , BodyComponent(position, propRate)
+    {
     }
     ~SensoryReceptor() override = default;
 

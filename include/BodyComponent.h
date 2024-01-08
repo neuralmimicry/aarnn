@@ -10,7 +10,14 @@ class BodyComponent {
 public:
     using PositionPtr = std::shared_ptr<PositionType>;
 
-    explicit BodyComponent(PositionPtr  position) : position(std::move(position)) {}
+    static constexpr double defaultPropagationRate = 0.5;
+
+    explicit BodyComponent(PositionPtr  position, double proRate) : 
+        position(std::move(position)) 
+    { 
+            propagationRate = proRate;
+    }
+
     virtual ~BodyComponent() = default;
 
     [[nodiscard]] virtual const PositionPtr& getPosition() const {
@@ -31,7 +38,7 @@ public:
 
 protected:
     PositionPtr position;
-    double propagationRate{0.5};
+    double propagationRate{defaultPropagationRate};
 };
 
 #endif // BODY_COMPONENT_H

@@ -17,7 +17,11 @@ class Neuron;
 
 class AxonBouton : public std::enable_shared_from_this<AxonBouton>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit AxonBouton(const PositionPtr& position);
+    explicit AxonBouton(const PositionPtr &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
+    : BodyShapeComponent()
+    , BodyComponent(position, propRate)
+    {
+    }
     ~AxonBouton() override = default;
     void initialise();
     void updatePosition(const PositionPtr& newPosition);

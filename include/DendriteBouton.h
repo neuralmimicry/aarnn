@@ -17,12 +17,12 @@ class Neuron;
 
 class DendriteBouton : public std::enable_shared_from_this<DendriteBouton>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
-    explicit DendriteBouton(const PositionPtr &position, double propRate = 0.5)
-    : BodyComponent(position)
-    , BodyShapeComponent()
+    explicit DendriteBouton(const PositionPtr &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
+    : BodyShapeComponent()
+    , BodyComponent(position, propRate)
     {
-        propagationRate = propRate;
     }
+
     ~DendriteBouton() override = default;
     void initialise() ;
     void connectSynapticGap(std::shared_ptr<SynapticGap> gap);
