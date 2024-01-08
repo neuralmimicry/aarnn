@@ -16,11 +16,12 @@ class Axon;
 class AxonHillock : public std::enable_shared_from_this<AxonHillock>, public BodyComponent<Position>, public BodyShapeComponent
 {
 public:
-    explicit AxonHillock(const PositionPtr &position) : BodyComponent(position), BodyShapeComponent()
+    explicit AxonHillock(const PositionPtr &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
+    : BodyShapeComponent()
+    , BodyComponent(position, propRate)
     {
-        // On construction set a default propagation rate
-        propagationRate = 0.5;
     }
+
     ~AxonHillock() override = default;
     void initialise();
     void updatePosition(const PositionPtr &newPosition);

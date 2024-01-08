@@ -27,8 +27,7 @@ find_package(OpenGL REQUIRED)
 if(NOT OPENGL_FOUND)
     message(FATAL_ERROR "OpenGL library not found")
 endif()
-
-#set (VTK_DIR "//home/onidt/Work/vtk")
+    
 message(STATUS "VTK INCLUDE : ${VTK_DIR}")
 find_package(VTK REQUIRED)
 if(NOT VTK_FOUND)

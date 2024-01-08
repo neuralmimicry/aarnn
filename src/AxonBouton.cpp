@@ -1,7 +1,5 @@
 #include "AxonBouton.h"
 
-AxonBouton::AxonBouton(const PositionPtr& position) : BodyComponent(position), BodyShapeComponent() {}
-
 void AxonBouton::initialise() {
     if (!instanceInitialised) {
         if (!onwardSynapticGap) {
