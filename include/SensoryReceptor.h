@@ -9,10 +9,11 @@
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
 #include "Position.h"
-//#include "SynapticGap.h"
+// #include "SynapticGap.h"
 // #include "Dendrite.h"
 // #include "Soma.h"
-#include "math.h"
+
+class SynapticGap;
 
 class SensoryReceptor : public std::enable_shared_from_this<SensoryReceptor>, public BodyComponent<Position>, public BodyShapeComponent {
 public:
@@ -23,110 +24,31 @@ public:
     }
     ~SensoryReceptor() override = default;
 
-    void initialise() {
-        // if (!instanceInitialised) {
-        //     setAttack((35 - (rand() % 25)) / 100);
-        //     setDecay((35 - (rand() % 25)) / 100);        
-        //     setSustain((35 - (rand() % 25)) / 100);
-        //     setRelease((35 - (rand() % 25)) / 100);
-        //     setFrequencyResponse(rand() % 44100);
-        //     setPhaseShift(rand() % 360);
-        //     lastCallTime = 0.0;
-        //     synapticGap = std::make_shared<SynapticGap>(
-        //             std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
-        //     synapticGap->initialise();
-        //     synapticGap->updateFromSensoryReceptor(shared_from_this());
-        //     addSynapticGap(synapticGap);
-        //     minPropagationRate = (35 - (rand() % 25)) / 100;
-        //     maxPropagationRate = (65 + (rand() % 25)) / 100;
-        //     instanceInitialised = true;
-        //}
-    }
+    void initialise() ;
 
-    void addSynapticGap(std::shared_ptr<SynapticGap> gap) {
-        synapticGaps.emplace_back(std::move(gap));
-    }
+    void addSynapticGap(std::shared_ptr<SynapticGap> gap) ; 
 
-    void updatePosition(const PositionPtr& newPosition) {
-        position = newPosition;
-    }
+    void updatePosition(const PositionPtr& newPosition) ;
 
-    [[nodiscard]] std::vector<std::shared_ptr<SynapticGap>> getSynapticGaps() const {
-        return synapticGaps;
-    }
+    [[nodiscard]] std::vector<std::shared_ptr<SynapticGap>> getSynapticGaps() const ;
 
-    void setAttack(double newAttack) {
-        attack = newAttack;
-    }
+    void setAttack(double newAttack) ;
+    void setDecay(double newDecay) ;
 
-    void setDecay(double newDecay) {
-        decay = newDecay;
-    }
+    void setSustain(double newSustain) ;
+    void setRelease(double newRelease) ;
 
-    void setSustain(double newSustain) {
-        sustain = newSustain;
-    }
+    void setFrequencyResponse(double newFrequencyResponse) ;
 
-    void setRelease(double newRelease) {
-        release = newRelease;
-    }
+    void setPhaseShift(double newPhaseShift) ;
+    void setEnergyLevel(double newEnergyLevel) ;
+    double calculateEnergy(double currentTime, double currentEnergyLevel) ;
 
-    void setFrequencyResponse(double newFrequencyResponse) {
-        frequencyResponse = newFrequencyResponse;
-    }
+    double calculateWaveform(double currentTime) const ;
+    double calcPropagationRate() ;
+    void updateComponent(double time, double energy) ;
 
-    void setPhaseShift(double newPhaseShift) {
-        phaseShift = newPhaseShift;
-    }
-
-    void setEnergyLevel(double newEnergyLevel) {
-        energyLevel = newEnergyLevel;
-    }
-
-    double calculateEnergy(double currentTime, double currentEnergyLevel) {
-        double deltaTime = currentTime - previousTime;
-        previousTime = currentTime;
-        energyLevel = currentEnergyLevel;
-
-        if (deltaTime < attack) {
-            return (deltaTime / attack) * calculateWaveform(currentTime);
-        } else if (deltaTime < attack + decay) {
-            double decay_time = deltaTime - attack;
-            return ((1 - decay_time / decay) * (1 - sustain) + sustain) * calculateWaveform(currentTime);
-        } else if (deltaTime < attack + decay + sustain) {
-            return sustain * calculateWaveform(currentTime);
-        } else {
-            double release_time = deltaTime - attack - decay - sustain;
-            return (1 - std::max(0.0, release_time / release)) * calculateWaveform(currentTime);
-        }
-    }
-
-    double calculateWaveform(double currentTime) const {
-        return energyLevel * sin(2 * M_PI * frequencyResponse * currentTime + phaseShift);
-    }
-
-    double calcPropagationRate() {
-        double currentTime = (double) std::clock() / CLOCKS_PER_SEC;
-        callCount++;
-        double timeSinceLastCall = currentTime - lastCallTime;
-        lastCallTime = currentTime;
-
-        double x = 1 / (1 + exp(-callCount / timeSinceLastCall));
-        return minPropagationRate + x * (maxPropagationRate - minPropagationRate);
-    }
-
-    void updateComponent(double time, double energy) {
-        // componentEnergyLevel = calculateEnergy(time, componentEnergyLevel + energy);// Update the component
-        // propagationRate = calcPropagationRate();
-        // for (auto& synapticGap_id : synapticGaps) {
-        //     synapticGap_id->updateComponent(time + position->calcPropagationTime(*synapticGap_id->getPosition(), propagationRate), componentEnergyLevel);
-        // }
-        // componentEnergyLevel = 0;
-    }
-
-    [[nodiscard]] const PositionPtr& getPosition() const {
-        return position;
-    }
+    [[nodiscard]] const PositionPtr& getPosition() const ;
 
 private:
     bool instanceInitialised = false;

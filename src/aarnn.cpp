@@ -55,7 +55,8 @@ extern "C" {
 #include "Axon.h"
 #include "AxonBouton.h"
 #include "utils.h"
-#include "NeuronParameters.h"
+#include "SensoryReceptor.h"
+#include "SynapticGap.h"
 
 #define PA_SAMPLE_TYPE      paFloat32
 
@@ -204,65 +205,6 @@ void Dendrite::addBranch(std::shared_ptr<DendriteBranch> branch) {
     currentPosition->z = z;
     dendriteBranches.emplace_back(std::move(branch));
 }
-
-// void Axon::addBranch(std::shared_ptr<AxonBranch> branch) {
-//     auto coords = get_coordinates(int (axonBranches.size() + 1), int(axonBranches.size() + 1), int(5));
-//     PositionPtr currentPosition = branch->getPosition();
-//     auto x = double(std::get<0>(coords)) + currentPosition->x;
-//     auto y = double(std::get<1>(coords)) + currentPosition->y;
-//     auto z = double(std::get<2>(coords)) + currentPosition->z;
-//     currentPosition->x = x;
-//     currentPosition->y = y;
-//     currentPosition->z = z;
-//     axonBranches.emplace_back(std::move(branch));
-// }
-
-// double Axon::calcPropagationTime() {
-//     double distance = 0;
-//     PositionPtr positionPointer1;
-//     PositionPtr positionPointer2;
-//     PositionPtr positionPointerCurrent = this->getPosition();
-
-//     if (!positionPointerCurrent) {
-//         std::cerr << "Error: Current position pointer is null." << std::endl;
-//         return 0;
-//     }
-
-//     if (parentAxonHillock) {
-//         positionPointer1 = parentAxonHillock->getPosition();
-//     } else if (parentAxonBranch) {
-//         positionPointer1 = parentAxonBranch->getPosition();
-//     } else {
-//         std::cerr << "Error: Both parentAxonHillock and parentAxonBranch are null." << std::endl;
-//         return 0;
-//     }
-
-//     positionPointer2 = onwardAxonBouton->getPosition();
-
-//     if (!positionPointer1 || !positionPointer2) {
-//         std::cerr << "Error: Either positionPointer1 or positionPointer2 is null." << std::endl;
-//         return 0;
-//     }
-
-//     distance = positionPointer1->distanceTo(*positionPointerCurrent) + positionPointer2->distanceTo(*positionPointerCurrent);
-//     return distance / propagationRate;
-// }
-
-// void AxonBouton::connectSynapticGap(std::shared_ptr<SynapticGap> gap)
-// {
-//     onwardSynapticGap = std::move(gap);
-//     if (auto spt = neuron.lock()) { // has to check if the shared_ptr is still valid
-//         spt->addSynapticGapAxon(onwardSynapticGap);
-//     }
-// }
-
-// void DendriteBouton::connectSynapticGap(std::shared_ptr<SynapticGap> gap)
-// {
-//     onwardSynapticGap = std::move(gap);
-//     if (auto spt = neuron.lock()) { // has to check if the shared_ptr is still valid
-//         spt->addSynapticGapDendrite(onwardSynapticGap);
-//     }
-// }
 
 /**
  * @brief Compute the propagation rate of a neuron.
@@ -796,6 +738,7 @@ int main() {
     // Create a collection of visual inputs (pair of eyes)
     std::cout << "Creating visual sensory inputs..." << std::endl;
     std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> visualInputs(2); // Resize the vector to contain 2 elements        visualInputs[0].reserve(num_pixels / 2);
+    std::cout << "Created visual sensory inputs..." << std::endl;
     visualInputs[1].reserve(num_pixels / 2);
     std::shared_ptr<SensoryReceptor> prevReceptor;
 #pragma omp parallel for
@@ -809,13 +752,14 @@ int main() {
                 shiftZ = std::get<2>(coords) - 100;
             }
 
-            // std::cout << "Creating visual (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
+            std::cout << "Creating visual (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
             visualInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
             visualInputs[j].back()->initialise();
             // Sparsely associate neurons
             if (i > 0 && i % 7 == 0) {
                 // First move the required gap closer to the other neuron's dendrite bouton - also need to adjust other components too
                 PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+                
                 PositionPtr currentSynapticGapPosition = visualInputs[j].back()->getSynapticGaps()[0]->getPosition();
                 newPositionX = currentSynapticGapPosition->x + 0.4;
                 newPositionY = currentSynapticGapPosition->y + 0.4;

@@ -1,4 +1,6 @@
 #include "SynapticGap.h"
+#include "SensoryReceptor.h"
+#include "utils.h"
 
 void SynapticGap::initialise(){
     if (!instanceInitialised)
@@ -73,3 +75,9 @@ double SynapticGap::propagationTime(){
     double x = 1 / (1 + exp(-callCount / timeSinceLastCall));
     return minPropagationTime + x * (maxPropagationTime - minPropagationTime);
 }
+
+    [[nodiscard]] std::shared_ptr<SensoryReceptor> SynapticGap::getParentSensoryReceptor() const { return parentSensoryReceptor; }
+    [[nodiscard]] std::shared_ptr<Effector> SynapticGap::getParentEffector() const { return parentEffector; }
+    [[nodiscard]] std::shared_ptr<AxonBouton> SynapticGap::getParentAxonBouton() const { return parentAxonBouton; }
+    [[nodiscard]] std::shared_ptr<DendriteBouton> SynapticGap::getParentDendriteBouton() const { return parentDendriteBouton; }
+    [[nodiscard]] const PositionPtr &SynapticGap::getPosition() const { return position; }
