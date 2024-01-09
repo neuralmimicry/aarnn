@@ -12,7 +12,7 @@
 #include "DendriteBranch.h"
 #include "Neuron.h"
 #include "AxonHillock.h"
-#include "SensoryReceptor.h"
+//#include "SensoryReceptor.h"
 #include "Effector.h"
 
 class Effector;
@@ -35,19 +35,25 @@ public:
     bool isAssociated() const;
     // Method to set the SynapticGap as associated
     void setAsAssociated();
+
     void updateFromSensoryReceptor(std::shared_ptr<SensoryReceptor> parentSensoryReceptorPointer);
-    [[nodiscard]] std::shared_ptr<SensoryReceptor> getParentSensoryReceptor() const { return parentSensoryReceptor; }
-    void updateFromEffector(std::shared_ptr<Effector> &parentEffectorPointer);
-    [[nodiscard]] std::shared_ptr<Effector> getParentEffector() const { return parentEffector; }
-    void updateFromAxonBouton(std::shared_ptr<AxonBouton> parentAxonBoutonPointer);
-    [[nodiscard]] std::shared_ptr<AxonBouton> getParentAxonBouton() const { return parentAxonBouton; }
+
+    [[nodiscard]] std::shared_ptr<SensoryReceptor> getParentSensoryReceptor() const ;
+    [[nodiscard]] std::shared_ptr<Effector> getParentEffector() const ;
+    [[nodiscard]] std::shared_ptr<AxonBouton> getParentAxonBouton() const ;
+    [[nodiscard]] std::shared_ptr<DendriteBouton> getParentDendriteBouton() const ;
+    [[nodiscard]] const PositionPtr &getPosition() const ;
+
     void updateFromDendriteBouton(std::shared_ptr<DendriteBouton> parentDendriteBoutonPointer);
-    [[nodiscard]] std::shared_ptr<DendriteBouton> getParentDendriteBouton() const { return parentDendriteBouton; }
+    void updateFromAxonBouton(std::shared_ptr<AxonBouton> parentAxonBoutonPointer);
+    void updateFromEffector(std::shared_ptr<Effector> &parentEffectorPointer);
+    
+
     void updateComponent(double time, double energy);
     double calculateEnergy(double currentTime, double currentEnergyLevel);
     double calculateWaveform(double currentTime) const;
     double propagationTime();
-    [[nodiscard]] const PositionPtr &getPosition() const { return position; }
+
 
 private:
     bool instanceInitialised = false; // Initially, the SynapticGap is not initialised
