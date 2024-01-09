@@ -10,8 +10,7 @@ std::shared_ptr<Soma> Neuron::getSoma()
 {
     return soma;
 }
-void Neuron::initialise()
-{
+void Neuron::initialise(){
     if (!instanceInitialised)
     {
         if (!soma)
