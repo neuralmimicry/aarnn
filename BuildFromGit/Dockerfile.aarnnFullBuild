@@ -1,10 +1,20 @@
 # Use an official C++ runtime as a parent image
 FROM ubuntu:22.04 as builder
+#as builder
 # Set the working directory in the container to /app
 WORKDIR /app
 
+ARG GIT_USERNAME
+ARG GIT_PAT
+ARG BRANCH_RELEASE
+
 # Install necessary libraries for running the application
 RUN apt-get update
+
+RUN apt install -y git
+
+RUN git clone -b $BRANCH_RELEASE https://$GIT_USERNAME:$GIT_PAT@gitlab.com/city-plumbing-supplies-limited/pnh/digital/applications/microservices/backend/automation/neuralmimicry/aarnn.git   $WORKDIR
+
 RUN apt-get install -y wget
 RUN apt-get install -y curl
 RUN apt-get install -y libpqxx-dev
@@ -50,11 +60,10 @@ RUN apt-get install -y qt5-qmake
 RUN apt-get install -y vtk9
 ENV DEBIAN_FRONTEND=dialog
 
-COPY . /app/
-RUN mkdir build
-WORKDIR /app/build
+RUN mkdir /app/aarnn/build
+WORKDIR /app/aarnn/build
 
-RUN cd /app/build
+RUN cd $WORKDIR
 RUN cmake ..
 RUN make -j 4
 
@@ -90,13 +99,13 @@ ENV DEBIAN_FRONTEND=dialog
 
 #Copy from the build aarnn docker
 #Copy Arran
-COPY --from=builder /app/bin .
+COPY --from=builder /app/aarnn/bin .
 
 #Database configuration connection infromation
-COPY ./configure/db_connection.conf /app/db_connection.conf
+COPY ../configure/db_connection.conf /app/db_connection.conf
 
 #Simulation data
-COPY ./configure/simulation.conf /app/simulation.conf
+COPY ../configure/simulation.conf /app/simulation.conf
 
 # Make port 80 available to the world outside this container (optional)
 EXPOSE 80

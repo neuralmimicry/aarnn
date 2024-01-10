@@ -33,6 +33,12 @@ services:
     image: aarnn
     build:
       dockerfile: Dockerfile.aarnnFullBuild
+      args:
+        GIT_USERNAME   : pduttonCPS
+        GIT_PAT        : ${GIT_PAT}
+        BRANCH_RELEASE : ${BRANCH_RELEASE}  
+    env_file:
+      - ./.env      
     deploy:
       replicas: 1
       resources:
@@ -43,9 +49,9 @@ services:
         condition: service_healthy
     environment:
       POSTGRES_PASSWORD : ${POSTGRES_PASSWORD}
-      POSTGRES_DBNAME   : ${POSTGRES_DBNAME}
+      POSTGRES_DBNAME : ${POSTGRES_DBNAME}
       POSTGRES_USERNAME : ${POSTGRES_USERNAME}
-      POSTGRES_PORT     : ${POSTGRES_PORT}
+      POSTGRES_PORT : ${POSTGRES_PORT}
     networks:
       - aarnn_net
 
@@ -54,3 +60,4 @@ networks:
     driver: bridge
     name: aarnn_net
     external: false
+
