@@ -1,4 +1,5 @@
 #include "Position.h"
+#include "vtkincludes.h"
 
 Position::Position(double x, double y, double z) : x(x), y(y), z(z) {}
 
@@ -23,3 +24,14 @@ Position::Position(double x, double y, double z) : x(x), y(y), z(z) {}
         return distance / propagationRate;
     }
 
+    bool Position::operator==(const Position& other) const 
+    {
+        bool bSamePosition = false;
+
+        if ((x == other.x) && 
+            (y == other.y) &&
+            (z == other.z)){
+                bSamePosition = true;
+        }
+        return bSamePosition;
+    }
