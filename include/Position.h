@@ -1,10 +1,9 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-#include "vtkincludes.h"
+#include <array>
 
 class Position {
-
 private:
 
 public:
@@ -14,8 +13,9 @@ public:
     double z;
     void set(double newX, double newY, double newZ);
     double calcPropagationTime(Position& position1, double propagationRate) ;
+
     // Comparison operator for Position class
-    bool operator==(const Position& other) const { return (this == &other); }
+    bool operator==(const Position& other) const ;
 
     [[nodiscard]] double distanceTo(Position& other) ;
     
