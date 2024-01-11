@@ -9,9 +9,6 @@
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
 #include "Position.h"
-// #include "SynapticGap.h"
-// #include "Dendrite.h"
-// #include "Soma.h"
 
 class SynapticGap;
 
