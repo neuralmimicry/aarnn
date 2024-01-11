@@ -56,7 +56,7 @@ WORKDIR /app/build
 
 RUN cd /app/build
 RUN cmake ..
-RUN make -j 4
+RUN make -j $(nprocs)
 
 # Use an official C++ runtime as a parent image
 FROM ubuntu:22.04
