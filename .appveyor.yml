@@ -1,7 +1,0 @@
-image: ubuntu
-
-build_script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - cmake --build .
