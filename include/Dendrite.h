@@ -7,6 +7,7 @@
 #include "Position.h"
 
 #include <iostream>
+#include <vector>
 
 class DendriteBouton;
 class DendriteBranch;

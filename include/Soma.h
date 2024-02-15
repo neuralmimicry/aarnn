@@ -10,6 +10,7 @@
 #include "SynapticGap.h"
 
 #include <memory>
+#include <vector>
 
 class AxonHillock;
 class SynapticGap;
