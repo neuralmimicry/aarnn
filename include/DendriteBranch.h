@@ -9,6 +9,7 @@
 #include "SynapticGap.h"
 
 #include <memory>
+#include <vector>
 
 class Soma;
 class Dendrite;
