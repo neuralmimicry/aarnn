@@ -20,12 +20,33 @@ add_executable(AARNN aarnn.cpp
                 Soma.cpp
                 SynapticGap.cpp)
 
-target_link_libraries(AARNN PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES}
-                             ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${PULSEAUDIO_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)  
+target_link_libraries(AARNN PRIVATE
+                        Boost::headers
+                        Boost::system
+                        Boost::filesystem
+                        ${PQXX_LIB}
+                        ${PostgreSQL_LIBRARIES}
+                        ${VTK_LIBRARIES}
+                        ${OpenSSL_LIBRARIES}
+                        ${FFmpeg_LIBRARIES}
+                        ${PORTAUDIO_LIBRARIES}
+                        ${PULSEAUDIO_LIBRARIES}
+                        ${FFTW3_LIBRARIES}
+                        OpenMP::OpenMP_CXX)  
 
 
  # Define the target for visualiser.cpp
 add_executable(Visualiser visualiser.cpp)
-target_link_libraries(Visualiser PRIVATE Boost::headers Boost::system Boost::filesystem ${PQXX_LIB} 
-                            ${PostgreSQL_LIBRARIES} ${VTK_LIBRARIES} ${OpenSSL_LIBRARIES} ${FFmpeg_LIBRARIES} ${PORTAUDIO_LIBRARIES} 
-                            ${PULSEAUDIO_LIBRARIES} ${FFTW3_LIBRARIES} OpenMP::OpenMP_CXX)
+target_link_libraries(Visualiser PRIVATE
+                        Boost::headers
+                        Boost::system
+                        Boost::filesystem
+                        ${PQXX_LIB} 
+                        ${PostgreSQL_LIBRARIES}
+                        ${VTK_LIBRARIES}
+                        ${OpenSSL_LIBRARIES} 
+                        ${FFmpeg_LIBRARIES}
+                        ${PORTAUDIO_LIBRARIES} 
+                        ${PULSEAUDIO_LIBRARIES}
+                        ${FFTW3_LIBRARIES} 
+                        OpenMP::OpenMP_CXX)
