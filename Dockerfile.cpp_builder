@@ -1,0 +1,54 @@
+ARG UBUNTU_VERSION=23.04
+FROM ubuntu:${UBUNTU_VERSION} as builder
+ARG GPP_VERSION=13
+ARG CPP_STANDARD=c++-23
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Install necessary libraries for running the application
+RUN apt-get update
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y \
+    wget \
+    curl \
+    cmake \
+    g++-${GPP_VERSION} \
+    libpqxx-dev \
+    make \
+    libboost-all-dev \
+    libwebsocketpp-dev \
+    libssl-dev \
+    xorg-dev \
+    libx11-dev \
+    libglu1-mesa-dev \
+    freeglut3-dev \
+    libglew2.2 \
+    libglew-dev \
+    libglu1-mesa \
+    libgl1-mesa-glx \
+    libgl1-mesa-dev \
+    libglfw3-dev \
+    libglfw3 \
+    libomp-dev \
+    pulseaudio \
+    libasound-dev \
+    portaudio19-dev \
+    libpulse-dev \
+    libfftw3-dev \
+    libfftw3-quad3 \
+    libpostproc-dev \
+    libavdevice-dev \
+    libportaudio2 \
+    libqt5concurrent5 \
+    libqt5opengl5 \
+    iputils-ping \
+    libvtk9-dev \
+    python3-vtk9 \
+    qtcreator \
+    qtbase5-dev \
+    qt5-qmake \
+    vtk9 \
+    libspdlog-dev
+ENV DEBIAN_FRONTEND=dialog
+

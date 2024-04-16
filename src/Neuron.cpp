@@ -10,10 +10,11 @@ std::shared_ptr<Soma> Neuron::getSoma()
 {
     return soma;
 }
-void Neuron::initialise(){
-    if (!instanceInitialised)
+void Neuron::initialise()
+{
+    if(!instanceInitialised)
     {
-        if (!soma)
+        if(!soma)
         {
             soma = std::make_shared<Soma>(std::make_shared<Position>(position->x, position->y, position->z));
         }
@@ -22,7 +23,10 @@ void Neuron::initialise(){
         instanceInitialised = true;
     }
 }
-void Neuron::addSynapticGapDendrite(std::shared_ptr<SynapticGap> synapticGap) { synapticGapsDendrite.emplace_back(std::move(synapticGap)); }
+void Neuron::addSynapticGapDendrite(std::shared_ptr<SynapticGap> synapticGap)
+{
+    synapticGapsDendrite.emplace_back(std::move(synapticGap));
+}
 
 void Neuron::updatePosition(const PositionPtr &newPosition)
 {
@@ -37,14 +41,14 @@ void Neuron::storeAllSynapticGapsAxon()
 
     // Get the onward axon hillock from the soma
     std::shared_ptr<AxonHillock> onwardAxonHillock = soma->getAxonHillock();
-    if (!onwardAxonHillock)
+    if(!onwardAxonHillock)
     {
         return;
     }
 
     // Get the onward axon from the axon hillock
     std::shared_ptr<Axon> onwardAxon = onwardAxonHillock->getAxon();
-    if (!onwardAxon)
+    if(!onwardAxon)
     {
         return;
     }
@@ -59,7 +63,8 @@ void Neuron::storeAllSynapticGapsDendrite()
     synapticGapsDendrite.clear();
     dendriteBoutons.clear();
 
-    // Recursively traverse the onward dendrite branches, dendrites and their dendrite boutons to store all synaptic gaps
+    // Recursively traverse the onward dendrite branches, dendrites and their dendrite boutons to store all synaptic
+    // gaps
     traverseDendritesForStorage(soma->getDendriteBranches());
 }
 
@@ -73,10 +78,10 @@ std::shared_ptr<SynapticGap> Neuron::traverseAxons(const std::shared_ptr<Axon> &
 {
     // Check if the current axon's bouton has a gap using the same position pointer
     std::shared_ptr<AxonBouton> axonBouton = axon->getAxonBouton();
-    if (axonBouton)
+    if(axonBouton)
     {
         std::shared_ptr<SynapticGap> gap = axonBouton->getSynapticGap();
-        if (gap->getPosition() == positionPtr)
+        if(gap->getPosition() == positionPtr)
         {
             return gap;
         }
@@ -84,13 +89,13 @@ std::shared_ptr<SynapticGap> Neuron::traverseAxons(const std::shared_ptr<Axon> &
 
     // Recursively traverse the axon's branches and onward axons
     const std::vector<std::shared_ptr<AxonBranch>> &branches = axon->getAxonBranches();
-    for (const auto &branch : branches)
+    for(const auto &branch: branches)
     {
         const std::vector<std::shared_ptr<Axon>> &onwardAxons = branch->getAxons();
-        for (const auto &onwardAxon : onwardAxons)
+        for(const auto &onwardAxon: onwardAxons)
         {
             std::shared_ptr<SynapticGap> gap = traverseAxons(onwardAxon, positionPtr);
-            if (gap)
+            if(gap)
             {
                 return gap;
             }
@@ -101,14 +106,15 @@ std::shared_ptr<SynapticGap> Neuron::traverseAxons(const std::shared_ptr<Axon> &
 }
 
 // Helper function to recursively traverse the dendrites and find the synaptic gap
-std::shared_ptr<SynapticGap> Neuron::traverseDendrites(const std::shared_ptr<Dendrite> &dendrite, const PositionPtr &positionPtr)
+std::shared_ptr<SynapticGap> Neuron::traverseDendrites(const std::shared_ptr<Dendrite> &dendrite,
+                                                       const PositionPtr               &positionPtr)
 {
     // Check if the current dendrite's bouton is near the same position pointer
     std::shared_ptr<DendriteBouton> dendriteBouton = dendrite->getDendriteBouton();
-    if (dendriteBouton)
+    if(dendriteBouton)
     {
         std::shared_ptr<SynapticGap> gap = dendriteBouton->getSynapticGap();
-        if (gap->getPosition() == positionPtr)
+        if(gap->getPosition() == positionPtr)
         {
             return gap;
         }
@@ -116,13 +122,13 @@ std::shared_ptr<SynapticGap> Neuron::traverseDendrites(const std::shared_ptr<Den
 
     // Recursively traverse the dendrite's branches and onward dendrites
     const std::vector<std::shared_ptr<DendriteBranch>> &dendriteBranches = dendrite->getDendriteBranches();
-    for (const auto &dendriteBranch : dendriteBranches)
+    for(const auto &dendriteBranch: dendriteBranches)
     {
         const std::vector<std::shared_ptr<Dendrite>> &childDendrites = dendriteBranch->getDendrites();
-        for (const auto &onwardDendrites : childDendrites)
+        for(const auto &onwardDendrites: childDendrites)
         {
             std::shared_ptr<SynapticGap> gap = traverseDendrites(onwardDendrites, positionPtr);
-            if (gap)
+            if(gap)
             {
                 return gap;
             }
@@ -137,7 +143,7 @@ void Neuron::traverseAxonsForStorage(const std::shared_ptr<Axon> &axon)
 {
     // Check if the current axon's bouton has a gap and store it
     std::shared_ptr<AxonBouton> axonBouton = axon->getAxonBouton();
-    if (axonBouton)
+    if(axonBouton)
     {
         std::shared_ptr<SynapticGap> gap = axonBouton->getSynapticGap();
         synapticGapsAxon.emplace_back(std::move(gap));
@@ -145,10 +151,10 @@ void Neuron::traverseAxonsForStorage(const std::shared_ptr<Axon> &axon)
 
     // Recursively traverse the axon's branches and onward axons
     const std::vector<std::shared_ptr<AxonBranch>> &branches = axon->getAxonBranches();
-    for (const auto &branch : branches)
+    for(const auto &branch: branches)
     {
         const std::vector<std::shared_ptr<Axon>> &onwardAxons = branch->getAxons();
-        for (const auto &onwardAxon : onwardAxons)
+        for(const auto &onwardAxon: onwardAxons)
         {
             traverseAxonsForStorage(onwardAxon);
         }
@@ -158,15 +164,15 @@ void Neuron::traverseAxonsForStorage(const std::shared_ptr<Axon> &axon)
 // Helper function to recursively traverse the dendrites and store all dendrite boutons
 void Neuron::traverseDendritesForStorage(const std::vector<std::shared_ptr<DendriteBranch>> &dendriteBranches)
 {
-    for (const auto &branch : dendriteBranches)
+    for(const auto &branch: dendriteBranches)
     {
         const std::vector<std::shared_ptr<Dendrite>> &onwardDendrites = branch->getDendrites();
-        for (const auto &onwardDendrite : onwardDendrites)
+        for(const auto &onwardDendrite: onwardDendrites)
         {
             // Check if the current dendrite's bouton has a gap and store it
             std::shared_ptr<DendriteBouton> dendriteBouton = onwardDendrite->getDendriteBouton();
-            std::shared_ptr<SynapticGap> gap = dendriteBouton->getSynapticGap();
-            if (gap)
+            std::shared_ptr<SynapticGap>    gap            = dendriteBouton->getSynapticGap();
+            if(gap)
             {
                 synapticGapsDendrite.emplace_back(gap);
             }

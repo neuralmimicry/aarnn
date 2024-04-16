@@ -1,18 +1,17 @@
-#ifndef NVTIMERCALLBACK_H
-#define NVTIMERCALLBACK_H
+#ifndef NVTIMERCALLBACK_H_INCLUDED
+#define NVTIMERCALLBACK_H_INCLUDED
+
+#include "BodyComponent.h"
+#include "BodyShapeComponent.h"
+#include "Neuron.h"
+#include "utils.h"
+#include "vtkincludes.h"
 
 #include <iostream>
 #include <mutex>
 #include <string_view>
 #include <syncstream>
 #include <thread>
-
-#include "vtkincludes.h"
-#include "Neuron.h"
-#include "BodyComponent.h"
-#include "BodyShapeComponent.h"
-#include "vtkincludes.h"
-#include "utils.h"
 
 class Neuron;
 class Position;
@@ -21,36 +20,36 @@ class vtkCommand;
 class nvTimerCallback : public vtkCommand
 {
     public:
-
     static nvTimerCallback *New()
     {
-        auto *nvCB = new nvTimerCallback;
+        auto *nvCB         = new nvTimerCallback;
         nvCB->nvTimerCount = 0;
         return nvCB;
     }
 
-    void Execute(vtkObject *vtkNotUsed(caller), unsigned long eventId,
-                 void *vtkNotUsed(callData)) override {
-        if (vtkCommand::TimerEvent == eventId) {
+    void Execute(vtkObject *vtkNotUsed(caller), unsigned long eventId, void *vtkNotUsed(callData)) override
+    {
+        if(vtkCommand::TimerEvent == eventId)
+        {
             ++this->nvTimerCount;
         }
         std::lock_guard<std::mutex> lock(*nvMutex);
         // Iterate over the neurons and add their positions to the vtkPolyData
         nvPoints->Reset();
-        for (const auto &neuron: nvNeurons) {
+        for(const auto &neuron: nvNeurons)
+        {
             const PositionPtr &neuronPosition = neuron->getPosition();
 
             // Create a vtkIdList to hold the point indices of the line vertices
             vtkSmartPointer<vtkIdList> pointIDs = vtkSmartPointer<vtkIdList>::New();
-            pointIDs->InsertNextId(
-                    nvPoints->InsertNextPoint(neuronPosition->x, neuronPosition->y, neuronPosition->z));
+            pointIDs->InsertNextId(nvPoints->InsertNextPoint(neuronPosition->x, neuronPosition->y, neuronPosition->z));
 
             const PositionPtr &somaPosition = neuron->getSoma()->getPosition();
             // Add the sphere centre point to the vtkPolyData
             vtkSmartPointer<vtkSphereSource> sphere = vtkSmartPointer<vtkSphereSource>::New();
-            sphere->SetRadius(1.0); // Adjust the sphere radius as needed
+            sphere->SetRadius(1.0);  // Adjust the sphere radius as needed
             sphere->SetCenter(somaPosition->x, somaPosition->y, somaPosition->z);
-            sphere->SetThetaResolution(32); // Set the sphere resolution
+            sphere->SetThetaResolution(32);  // Set the sphere resolution
             sphere->SetPhiResolution(16);
             sphere->Update();
 
@@ -62,38 +61,42 @@ class nvTimerCallback : public vtkCommand
             nvRenderer->AddActor(sphereActor);
 
             // Iterate over the dendrite branches and add their positions to the vtkPolyData
-            const std::vector<std::shared_ptr<DendriteBranch>> &dendriteBranches = neuron->getSoma()->getDendriteBranches();
-            for (const auto &dendriteBranch: dendriteBranches) {
+            const std::vector<std::shared_ptr<DendriteBranch>> &dendriteBranches =
+             neuron->getSoma()->getDendriteBranches();
+            for(const auto &dendriteBranch: dendriteBranches)
+            {
                 addDendriteBranchPositionsToPolyData(nvRenderer, dendriteBranch, nvPoints, pointIDs);
             }
 
             // Add the position of the axon hillock to the vtkPoints and vtkPolyData
             const PositionPtr &axonHillockPosition = neuron->getSoma()->getAxonHillock()->getPosition();
-            pointIDs->InsertNextId(nvPoints->InsertNextPoint(axonHillockPosition->x, axonHillockPosition->y,
-                                                             axonHillockPosition->z));
+            pointIDs->InsertNextId(
+             nvPoints->InsertNextPoint(axonHillockPosition->x, axonHillockPosition->y, axonHillockPosition->z));
 
             // Add the position of the axon to the vtkPoints and vtkPolyData
             const PositionPtr &axonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getPosition();
             pointIDs->InsertNextId(nvPoints->InsertNextPoint(axonPosition->x, axonPosition->y, axonPosition->z));
 
             // Add the position of the axon bouton to the vtkPoints and vtkPolyData
-            const PositionPtr &axonBoutonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
-            pointIDs->InsertNextId(nvPoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
-                                                             axonBoutonPosition->z));
+            const PositionPtr &axonBoutonPosition =
+             neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
+            pointIDs->InsertNextId(
+             nvPoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y, axonBoutonPosition->z));
 
             // Add the position of the synaptic gap to the vtkPoints and vtkPolyData
             addSynapticGapToRenderer(nvRenderer,
                                      neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap());
 
             // Iterate over the axon branches and add their positions to the vtkPolyData
-            const std::vector<std::shared_ptr<AxonBranch>> &axonBranches = neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches();
-            for (const auto &axonBranch: axonBranches) {
+            const std::vector<std::shared_ptr<AxonBranch>> &axonBranches =
+             neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches();
+            for(const auto &axonBranch: axonBranches)
+            {
                 addAxonBranchPositionsToPolyData(nvRenderer, axonBranch, nvPoints, pointIDs);
             }
 
             // Add the line to the cell array
             nvLines->InsertNextCell(pointIDs);
-
 
             // Create a vtkPolyData object and set the points and lines as its data
 
@@ -101,25 +104,25 @@ class nvTimerCallback : public vtkCommand
 
             vtkSmartPointer<vtkDelaunay3D> delaunay = vtkSmartPointer<vtkDelaunay3D>::New();
             delaunay->SetInputData(nvPolyData);
-            delaunay->SetAlpha(0.1); // Adjust for mesh density
-            //delaunay->Update();
+            delaunay->SetAlpha(0.1);  // Adjust for mesh density
+            // delaunay->Update();
 
             // Extract the surface of the Delaunay output using vtkGeometryFilter
-            //vtkSmartPointer<vtkGeometryFilter> geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
-            //geometryFilter->SetInputConnection(delaunay->GetOutputPort());
-            //geometryFilter->Update();
+            // vtkSmartPointer<vtkGeometryFilter> geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
+            // geometryFilter->SetInputConnection(delaunay->GetOutputPort());
+            // geometryFilter->Update();
 
             // Get the vtkPolyData representing the membrane surface
-            //vtkSmartPointer<vtkPolyData> membranePolyData = geometryFilter->GetOutput();
+            // vtkSmartPointer<vtkPolyData> membranePolyData = geometryFilter->GetOutput();
 
             // Create a vtkPolyDataMapper and set the input as the extracted surface
             vtkSmartPointer<vtkPolyDataMapper> membraneMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            //membraneMapper->SetInputData(membranePolyData);
+            // membraneMapper->SetInputData(membranePolyData);
 
             // Create a vtkActor for the membrane and set its mapper
-            //vtkSmartPointer<vtkActor> membraneActor = vtkSmartPointer<vtkActor>::New();
-            //membraneActor->SetMapper(membraneMapper);
-            //membraneActor->GetProperty()->SetColor(0.7, 0.7, 0.7);  // Set color to gray
+            // vtkSmartPointer<vtkActor> membraneActor = vtkSmartPointer<vtkActor>::New();
+            // membraneActor->SetMapper(membraneMapper);
+            // membraneActor->GetProperty()->SetColor(0.7, 0.7, 0.7);  // Set color to gray
 
             // Add the membrane actor to the renderer
             // renderer->AddActor(membraneActor);
@@ -134,56 +137,61 @@ class nvTimerCallback : public vtkCommand
         }
         nvRenderer->Modified();
     }
-    void setNeurons(const std::vector<std::shared_ptr<Neuron>>& visualiseNeurons) {
+    void setNeurons(const std::vector<std::shared_ptr<Neuron>> &visualiseNeurons)
+    {
         this->nvNeurons = visualiseNeurons;
     }
 
-    void setMutex(std::mutex& mutex) {
+    void setMutex(std::mutex &mutex)
+    {
         this->nvMutex = &mutex;
     }
 
-    void setPoints(const vtkSmartPointer<vtkPoints>& points)
+    void setPoints(const vtkSmartPointer<vtkPoints> &points)
     {
         this->nvPoints = points;
     }
 
-    void setLines(const vtkSmartPointer<vtkCellArray>& lines)
+    void setLines(const vtkSmartPointer<vtkCellArray> &lines)
     {
         this->nvLines = lines;
     }
 
-    void setPolyData(const vtkSmartPointer<vtkPolyData>& polydata)
+    void setPolyData(const vtkSmartPointer<vtkPolyData> &polydata)
     {
         this->nvPolyData = polydata;
     }
 
-    void setActor(const vtkSmartPointer<vtkActor>& actor) {
+    void setActor(const vtkSmartPointer<vtkActor> &actor)
+    {
         this->nvActor = actor;
     }
 
-    void setMapper(const vtkSmartPointer<vtkPolyDataMapper>& mapper) {
+    void setMapper(const vtkSmartPointer<vtkPolyDataMapper> &mapper)
+    {
         this->nvMapper = mapper;
     }
 
-    void setRenderer(const vtkSmartPointer<vtkRenderer>& renderer) {
+    void setRenderer(const vtkSmartPointer<vtkRenderer> &renderer)
+    {
         this->nvRenderer = renderer;
     }
 
-    void setRenderWindow(const vtkSmartPointer<vtkRenderWindow>& renderWindow)
+    void setRenderWindow(const vtkSmartPointer<vtkRenderWindow> &renderWindow)
     {
         this->nvRenderWindow = renderWindow;
     }
 
     std::vector<std::shared_ptr<Neuron>> nvNeurons;
-    int nvTimerCount{};
-    vtkSmartPointer<vtkActor> nvActor = vtkSmartPointer<vtkActor>::New();
-    vtkSmartPointer<vtkPolyDataMapper> nvMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    vtkSmartPointer<vtkRenderer> nvRenderer = vtkSmartPointer<vtkRenderer>::New();
-    vtkSmartPointer<vtkRenderWindow> nvRenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    vtkSmartPointer<vtkPolyData> nvPolyData = vtkSmartPointer<vtkPolyData>::New();
-    vtkSmartPointer<vtkPoints> nvPoints = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkCellArray> nvLines = vtkSmartPointer<vtkCellArray>::New();
-    std::mutex* nvMutex{};
+    int                                  nvTimerCount{};
+    vtkSmartPointer<vtkActor>            nvActor        = vtkSmartPointer<vtkActor>::New();
+    vtkSmartPointer<vtkPolyDataMapper>   nvMapper       = vtkSmartPointer<vtkPolyDataMapper>::New();
+    vtkSmartPointer<vtkRenderer>         nvRenderer     = vtkSmartPointer<vtkRenderer>::New();
+    vtkSmartPointer<vtkRenderWindow>     nvRenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    vtkSmartPointer<vtkPolyData>         nvPolyData     = vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkPoints>           nvPoints       = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkCellArray>        nvLines        = vtkSmartPointer<vtkCellArray>::New();
+    std::mutex                          *nvMutex{};
 };
 
-#endif
+#endif  // NVTIMERCALLBACK_H_INCLUDED

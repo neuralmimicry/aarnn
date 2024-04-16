@@ -8,7 +8,7 @@ Autonomic Asynchronous Recursive Neuromorphic Network (A.A.R.N.N)
 
 AARNN (pronounced like the boy's name Aaron) is the infrastructure to support emergent cognitive behaviour in the form of tiered multi-agent distributed artificial intelligence created by Paul Isaac's under the self-funded project NeuralMimicry.
 
-## Pre
+## Prerequisites
 docker-desktop : Linux : https://docs.docker.com/desktop/install/linux-install/
 
 ## Installation
@@ -19,18 +19,19 @@ cd aarnn
 mkdir build
 cd build
 cmake ..
-make
+make -j $(nproc)
 
-copy db_configuration.conf -> build/db_configuration.conf
+ln -s configur/db_configuration.conf build/db_configuration.conf
 copy simulation.conf -> build/simulation.com
 
 ```
 
-## Visualises
 ## Running Postgres Container
 *** Caution docker-station can use a lot of memory to run ***
-Then running the image for the first time, the Host port (Ports) of the container needs to be set, os it will forward it correctly e.g. 5432:5432
-The password needs to be added in the Environments variables e.g. Variable -> POSTGRES_PASSWORD, Value -> 'current password'
+Then running the image for the first time, the Host port (Ports) of the container needs
+to be set, os it will forward it correctly e.g. 5432:5432
+The password needs to be added in the Environments variables e.g. Variable -> POSTGRES_PASSWORD,
+Value -> 'current password'
 
 ## Usage
 Two parts, first creates the neurons and stores in a postgres database.
@@ -48,16 +49,42 @@ Feel free to contribute. We learn by doing.
 ## Sponsorship
 
 ## Docker ##
-## Create a common network between docker containers
-docker network create -d bridge my_net
+### Preparation
+`visualise` is a GUI program. In order to run it from within a docker container,
+docker containers must be able to share the windows manager with the host.
+```bash
+xhost +local:docker
+```
+Also running GUIs as root (as docker does) is by default disabled. The following
+workaround lets visualiser run.
+```bash
+xhost si:localuser:root
+```
+After the run, the default should be re-applied:
+```bash
+xhost -si:localuser:root
+```
+### Create a common network between docker containers
+```bash
+docker network create -d bridge aarnn_network
+```
+## Build Images and Start Containers
+```bash
+SRC_DIR=$(realpath .) docker compose -f compose-build.yaml build
+SRC_DIR=$(realpath .) docker compose -f compose-build.yaml up
 
-## Build Image and Start Containers
-docker compose up
+SRC_DIR=$(realpath .) docker compose -f compose-run.yaml build
+SRC_DIR=$(realpath .) docker compose -f compose-run.yaml up
+```
 
 ## Individual build images
 Password and Port are held in the .env file.
 
-docker run -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=<INSET PASSWORD> -p <EXTERNAL PORT>:<INTERNAL PORT> -dit --name postgres --network my_net postgres "docker-entrypoint.sh postgres"
+```bash
+docker run -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=<INSET PASSWORD> -p <EXTERNAL PORT>:<INTERNAL PORT> -dit --name postgres --network aarnn_network postgres "docker-entrypoint.sh postgres"
+```
 
 ## Create ARRAN image from prebuild AARNN
-docker run -dit --name aarnn --network my_net aarnn ./AARNN
+```bash
+docker run -dit --name aarnn --network aarnn_network aarnn ./AARNN
+```

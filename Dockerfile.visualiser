@@ -1,5 +1,5 @@
 ARG UBUNTU_VERSION=23.04
-FROM ubuntu:${UBUNTU_VERSION} as builder
+FROM ubuntu:${UBUNTU_VERSION}
 
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -22,17 +22,14 @@ RUN apt-get install -y \
     python3-vtk9 \
     qtcreator \
     qtbase5-dev \
-    python3-vtk9 \
     vtk9 \
     libspdlog-dev
 ENV DEBIAN_FRONTEND=dialog
 
 COPY configure/bash_aliases.template /root/.bash_aliases
-RUN sed -i 's/\[\[CONTAINER_TYPE\]\]/aarnn/g' /root/.bash_aliases
+RUN sed -i 's/\[\[CONTAINER_TYPE\]\]/visualiser/g' /root/.bash_aliases
 
-#Copy from the build aarnn docker
-#Copy Arran
-COPY ./build.docker/src/AARNN .
+COPY ./build.docker/src/Visualiser .
 
 #Database configuration connection infromation
 COPY ./configure/db_connection.conf /app/db_connection.conf
@@ -42,10 +39,9 @@ COPY ./configure/simulation.conf /app/simulation.conf
 
 # Make port 80 available to the world outside this container (optional)
 EXPOSE 80
-RUN echo "exit-idle-time = -1" >> /etc/pulse/daemon.conf
 
-RUN chmod +x AARNN
+RUN chmod +x Visualiser
 
 # Run the application when the container launches
-CMD ["./AARNN"]
+CMD ["./Visualiser"]
 # CMD ["sleep", "3000"]

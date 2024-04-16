@@ -1,10 +1,10 @@
-version: '3.8'
+# version: '3.8'
 services:
   postgres:
     container_name: aarnn_postgres
     image: aarnn_postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -t 5 -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -19,12 +19,16 @@ services:
           memory: 2000M
       restart_policy:
         condition: on-failure
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./pgdata:/var/lib/postgresql/data
     ports:
       - "${POSTGRES_PORT_EXPOSE}:5432"
     environment:
       POSTGRES_PASSWORD    : ${POSTGRES_PASSWORD}
-      POSTGRES_USERNAME    : ${POSTGRES_USERNAME}
+      POSTGRES_USER        : ${POSTGRES_USER}
       POSTGRES_PORT_EXPOSE : ${POSTGRES_PORT_EXPOSE}
+      POSTGRES_HOST        : ${POSTGRES_HOST}
     networks:
       - aarnn_net
 
@@ -32,7 +36,7 @@ services:
     container_name: aarnn
     image: aarnn
     build:
-      dockerfile: Dockerfile.aarnnFullBuild
+      dockerfile: Dockerfile.aarnn
     deploy:
       replicas: 1
       resources:
@@ -42,18 +46,21 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      POSTGRES_PASSWORD : ${POSTGRES_PASSWORD}
-      POSTGRES_DBNAME   : ${POSTGRES_DBNAME}
-      POSTGRES_USERNAME : ${POSTGRES_USERNAME}
-      POSTGRES_PORT     : ${POSTGRES_PORT}
+      DISPLAY           : unix${DISPLAY}
+      PULSE_SERVER      : unix:/run/user/1000/pulse/native
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
     networks:
       - aarnn_net
+    devices:
+      - /dev/snd:/dev/snd
+      - /dev/dri/card0:/dev/dri/card0
 
   visualiser:
     container_name: visualiser
     image: visualiser
     build:
-      dockerfile: Dockerfile visualiserFullBuild
+      dockerfile: Dockerfile.visualiser
     deploy:
       replicas: 1
       resources:
@@ -63,12 +70,16 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      POSTGRES_PASSWORD : ${POSTGRES_PASSWORD}
-      POSTGRES_DBNAME   : ${POSTGRES_DBNAME}
-      POSTGRES_USERNAME : ${POSTGRES_USERNAME}
-      POSTGRES_PORT     : ${POSTGRES_PORT}
+      DISPLAY           : unix${DISPLAY}
+      PULSE_SERVER      : unix:/run/user/1000/pulse/native
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
     networks:
       - aarnn_net
+    devices:
+      - /dev/snd:/dev/snd
+      - /dev/dri/card0:/dev/dri/card0
+
 networks:
   aarnn_net:
     driver: bridge

@@ -1,9 +1,13 @@
 #include "Axon.h"
 
-void Axon::initialise() {
-    if (!instanceInitialised) {
-        if (!onwardAxonBouton) {
-            onwardAxonBouton = std::make_shared<AxonBouton>(std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
+void Axon::initialise()
+{
+    if(!instanceInitialised)
+    {
+        if(!onwardAxonBouton)
+        {
+            onwardAxonBouton = std::make_shared<AxonBouton>(
+             std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
         }
         onwardAxonBouton->initialise();
         onwardAxonBouton->updateFromAxon(shared_from_this());
@@ -11,39 +15,48 @@ void Axon::initialise() {
     }
 }
 
-void Axon::updatePosition(const PositionPtr& newPosition) {
+void Axon::updatePosition(const PositionPtr& newPosition)
+{
     position = newPosition;
 }
 
-void Axon::addBranch(std::shared_ptr<AxonBranch> branch) {
+void Axon::addBranch(std::shared_ptr<AxonBranch> branch)
+{
     axonBranches.push_back(branch);
 }
 
-const std::vector<std::shared_ptr<AxonBranch>>& Axon::getAxonBranches() const {
+const std::vector<std::shared_ptr<AxonBranch>>& Axon::getAxonBranches() const
+{
     return axonBranches;
 }
 
-std::shared_ptr<AxonBouton> Axon::getAxonBouton() const {
+std::shared_ptr<AxonBouton> Axon::getAxonBouton() const
+{
     return onwardAxonBouton;
 }
 
-double Axon::calcPropagationTime() {
+double Axon::calcPropagationTime()
+{
     // Implement the calculation
     return 0.0;
 }
 
-void Axon::updateFromAxonHillock(std::shared_ptr<AxonHillock> parentAxonHillockPointer) {
+void Axon::updateFromAxonHillock(std::shared_ptr<AxonHillock> parentAxonHillockPointer)
+{
     parentAxonHillock = std::move(parentAxonHillockPointer);
 }
 
-std::shared_ptr<AxonHillock> Axon::getParentAxonHillock() const {
+std::shared_ptr<AxonHillock> Axon::getParentAxonHillock() const
+{
     return parentAxonHillock;
 }
 
-void Axon::updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer) {
+void Axon::updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer)
+{
     parentAxonBranch = std::move(parentAxonBranchPointer);
 }
 
-std::shared_ptr<AxonBranch> Axon::getParentAxonBranch() const {
+std::shared_ptr<AxonBranch> Axon::getParentAxonBranch() const
+{
     return parentAxonBranch;
 }

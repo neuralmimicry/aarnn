@@ -112,6 +112,11 @@ if(NOT FFTW3_LIBRARIES)
     message(STATUS "Using default FFTW3 libraries: ${FFTW3_LIBRARIES}")
 endif()
 
+if(NOT TARGET spdlog)
+    # Stand-alone build
+    find_package(spdlog REQUIRED)
+endif()
+
 # Add the src subdirectory to the include paths
 include_directories(src)
 include_directories(include)
@@ -131,4 +136,4 @@ link_directories(${FFTW3_LIBRARY_DIRS})
 link_directories(${LOCAL_LIB64})
 
 
-add_subdirectory(src ../bin)
+add_subdirectory(src)

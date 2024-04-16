@@ -1,34 +1,36 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef UTILS_H_INCLUDED
+#define UTILS_H_INCLUDED
 
-#include <random> 
-
-#include "math.h"
-#include "Position.h"
-#include "vtkincludes.h"
-#include "DendriteBranch.h"
 #include "AxonBranch.h"
+#include "DendriteBranch.h"
+#include "Position.h"
 #include "SynapticGap.h"
+#include "math.h"
+#include "vtkincludes.h"
 
+#include <random>
 
-const int SAMPLE_RATE = 16000;
-const int FRAMES_PER_BUFFER = 256;
+const int     SAMPLE_RATE       = 16000;
+const int     FRAMES_PER_BUFFER = 256;
 typedef float SAMPLE;
-static int gNumNoInputs = 0;
-using PositionPtr = std::shared_ptr<Position>;
-inline std::uniform_real_distribution<> distr(-0.15, 1.0-0.15);
-inline std::mt19937 gen(12345); // Always generates the same sequence of numbers
+static int    gNumNoInputs = 0;
+using PositionPtr          = std::shared_ptr<Position>;
+inline std::uniform_real_distribution<> distr(-0.15, 1.0 - 0.15);
+inline std::mt19937                     gen(12345);  // Always generates the same sequence of numbers
 
 class AxonBranch;
 
-inline void addDendriteBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch,
-                                 const std::shared_ptr<Dendrite>& dendrite,
-                                 const vtkSmartPointer<vtkPoints>& points, const vtkSmartPointer<vtkIdList>& pointIds) {
+inline void addDendriteBranchToRenderer(vtkRenderer*                           renderer,
+                                        const std::shared_ptr<DendriteBranch>& dendriteBranch,
+                                        const std::shared_ptr<Dendrite>&       dendrite,
+                                        const vtkSmartPointer<vtkPoints>&      points,
+                                        const vtkSmartPointer<vtkIdList>&      pointIds)
+{
     const PositionPtr& dendriteBranchPosition = dendriteBranch->getPosition();
-    const PositionPtr& dendritePosition = dendrite->getPosition();
+    const PositionPtr& dendritePosition       = dendrite->getPosition();
 
     // Calculate the radii at each end
-    double radius1 = 0.5;  // Radius at the start point (dendrite branch)
+    double radius1 = 0.5;   // Radius at the start point (dendrite branch)
     double radius2 = 0.25;  // Radius at the end point (dendrite)
 
     // Compute the vector from the start point to the end point
@@ -74,14 +76,17 @@ inline void addDendriteBranchToRenderer(vtkRenderer* renderer, const std::shared
     renderer->AddActor(coneActor);
 }
 
-inline void addAxonBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch,
-                             const std::shared_ptr<Axon>& axon,
-                             const vtkSmartPointer<vtkPoints>& points, const vtkSmartPointer<vtkIdList>& pointIds) {
+inline void addAxonBranchToRenderer(vtkRenderer*                       renderer,
+                                    const std::shared_ptr<AxonBranch>& axonBranch,
+                                    const std::shared_ptr<Axon>&       axon,
+                                    const vtkSmartPointer<vtkPoints>&  points,
+                                    const vtkSmartPointer<vtkIdList>&  pointIds)
+{
     const PositionPtr& axonBranchPosition = axonBranch->getPosition();
-    const PositionPtr& axonPosition = axon->getPosition();
+    const PositionPtr& axonPosition       = axon->getPosition();
 
     // Calculate the radii at each end
-    double radius1 = 0.5;  // Radius at the start point (dendrite branch)
+    double radius1 = 0.5;   // Radius at the start point (dendrite branch)
     double radius2 = 0.25;  // Radius at the end point (dendrite)
 
     // Compute the vector from the start point to the end point
@@ -127,7 +132,8 @@ inline void addAxonBranchToRenderer(vtkRenderer* renderer, const std::shared_ptr
     renderer->AddActor(coneActor);
 }
 
-inline void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_ptr<SynapticGap>& synapticGap) {
+inline void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_ptr<SynapticGap>& synapticGap)
+{
     const PositionPtr& synapticGapPosition = synapticGap->getPosition();
 
     // Create the sphere source for the glyph
@@ -138,7 +144,8 @@ inline void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_pt
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
     // Add multiple points around the synaptic gap position to create a cloud
-    for (int i = 0; i < 8; ++i) {
+    for(int i = 0; i < 8; ++i)
+    {
         double offsetX = distr(gen);
         double offsetY = distr(gen);
         double offsetZ = distr(gen);
@@ -172,47 +179,57 @@ inline void addSynapticGapToRenderer(vtkRenderer* renderer, const std::shared_pt
     renderer->AddActor(glyphActor);
 }
 
-inline  void addDendriteBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<DendriteBranch>& dendriteBranch, const vtkSmartPointer<vtkPoints>& definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
+inline void addDendriteBranchPositionsToPolyData(vtkRenderer*                           renderer,
+                                                 const std::shared_ptr<DendriteBranch>& dendriteBranch,
+                                                 const vtkSmartPointer<vtkPoints>&      definePoints,
+                                                 vtkSmartPointer<vtkIdList>             pointIDs)
+{
     // Add the position of the dendrite branch to vtkPolyData
     PositionPtr branchPosition = dendriteBranch->getPosition();
     pointIDs->InsertNextId(definePoints->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
 
     // Iterate over the dendrites and add their positions to vtkPolyData
     const std::vector<std::shared_ptr<Dendrite>>& dendrites = dendriteBranch->getDendrites();
-    for (const auto& dendrite : dendrites) {
+    for(const auto& dendrite: dendrites)
+    {
         PositionPtr dendritePosition = dendrite->getPosition();
         addDendriteBranchToRenderer(renderer, dendriteBranch, dendrite, definePoints, pointIDs);
 
         // Select the dendrite bouton and add its position to vtkPolyData
-        const std::shared_ptr<DendriteBouton>& bouton = dendrite->getDendriteBouton();
-        PositionPtr boutonPosition = bouton->getPosition();
-        pointIDs->InsertNextId(definePoints->InsertNextPoint(boutonPosition->x, boutonPosition->y,
-                                                               boutonPosition->z));
+        const std::shared_ptr<DendriteBouton>& bouton         = dendrite->getDendriteBouton();
+        PositionPtr                            boutonPosition = bouton->getPosition();
+        pointIDs->InsertNextId(definePoints->InsertNextPoint(boutonPosition->x, boutonPosition->y, boutonPosition->z));
 
         // Recursively process child dendrite branches
         const std::vector<std::shared_ptr<DendriteBranch>>& childBranches = dendrite->getDendriteBranches();
-        for (const auto& childBranch : childBranches) {
+        for(const auto& childBranch: childBranches)
+        {
             addDendriteBranchPositionsToPolyData(renderer, childBranch, definePoints, pointIDs);
         }
     }
 }
 
-inline  void addAxonBranchPositionsToPolyData(vtkRenderer* renderer, const std::shared_ptr<AxonBranch>& axonBranch, const vtkSmartPointer<vtkPoints>& definePoints, vtkSmartPointer<vtkIdList> pointIDs) {
+inline void addAxonBranchPositionsToPolyData(vtkRenderer*                       renderer,
+                                             const std::shared_ptr<AxonBranch>& axonBranch,
+                                             const vtkSmartPointer<vtkPoints>&  definePoints,
+                                             vtkSmartPointer<vtkIdList>         pointIDs)
+{
     // Add the position of the axon branch to vtkPolyData
     PositionPtr branchPosition = axonBranch->getPosition();
     pointIDs->InsertNextId(definePoints->InsertNextPoint(branchPosition->x, branchPosition->y, branchPosition->z));
 
     // Iterate over the axons and add their positions to vtkPolyData
     const std::vector<std::shared_ptr<Axon>>& axons = axonBranch->getAxons();
-    for (const auto& axon : axons) {
+    for(const auto& axon: axons)
+    {
         PositionPtr axonPosition = axon->getPosition();
         addAxonBranchToRenderer(renderer, axonBranch, axon, definePoints, pointIDs);
 
         // Select the axon bouton and add its position to vtkPolyData
-        const std::shared_ptr<AxonBouton>& axonBouton = axon->getAxonBouton();
-        PositionPtr axonBoutonPosition = axonBouton->getPosition();
-        pointIDs->InsertNextId(definePoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y,
-                                                               axonBoutonPosition->z));
+        const std::shared_ptr<AxonBouton>& axonBouton         = axon->getAxonBouton();
+        PositionPtr                        axonBoutonPosition = axonBouton->getPosition();
+        pointIDs->InsertNextId(
+         definePoints->InsertNextPoint(axonBoutonPosition->x, axonBoutonPosition->y, axonBoutonPosition->z));
 
         // Select the synaptic gap and add its position to vtkPolyData
         const std::shared_ptr<SynapticGap>& synapticGap = axonBouton->getSynapticGap();
@@ -220,17 +237,19 @@ inline  void addAxonBranchPositionsToPolyData(vtkRenderer* renderer, const std::
 
         // Recursively process child axon branches
         const std::vector<std::shared_ptr<AxonBranch>>& childBranches = axon->getAxonBranches();
-        for (const auto& childBranch : childBranches) {
+        for(const auto& childBranch: childBranches)
+        {
             addAxonBranchPositionsToPolyData(renderer, childBranch, definePoints, pointIDs);
         }
     }
 }
 
-inline  std::tuple<double, double, double> get_coordinates(int i, int total_points, int points_per_layer) {
-    const double golden_angle = M_PI * (3 - std::sqrt(5)); // golden angle in radians
+inline std::tuple<double, double, double> get_coordinates(int i, int total_points, int points_per_layer)
+{
+    const double golden_angle = M_PI * (3 - std::sqrt(5));  // golden angle in radians
 
     // calculate the layer and index in layer based on i
-    int layer = i / points_per_layer;
+    int layer          = i / points_per_layer;
     int index_in_layer = i % points_per_layer;
 
     // normalize radial distance based on layer number
@@ -243,18 +262,17 @@ inline  std::tuple<double, double, double> get_coordinates(int i, int total_poin
     double y = 1 - (double)(layer) / (double(total_points) / points_per_layer - 1);
 
     // radius at y
-    double radius = std::sqrt(1 - y*y);
+    double radius = std::sqrt(1 - y * y);
 
     // polar angle evenly distributed
     double phi = 2 * M_PI * (double)(index_in_layer) / points_per_layer;
 
     // Convert spherical coordinates to Cartesian coordinates
     double x = r * radius * std::cos(theta);
-    y = r * y;
+    y        = r * y;
     double z = r * radius * std::sin(theta);
 
     return std::make_tuple(x, y, z);
 }
 
-
-#endif //UTILS_H
+#endif  // UTILS_H_INCLUDED

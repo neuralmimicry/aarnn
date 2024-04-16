@@ -1,13 +1,19 @@
 FROM postgres:latest
 
-ARG POSTGRES_USERNAME
+ARG POSTGRES_USER
 ARG POSTGRES_PASSWORD
 ARG POSTGRES_PORT_EXPOSE
 
-ENV POSTGRES_USER=${POSTGRES_USERNAME}
+ENV POSTGRES_USER=${POSTGRES_USER}
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 ENV POSTGRES_DB=neurons
 
-COPY ./configure/init.sql /docker-entrypoint-initdb.d/
+# COPY ./sql/init.sql /docker-entrypoint-initdb.d/
+
+COPY configure/bash_aliases.template /root/.bashrc
+RUN mkdir -p /myapp/script
+COPY sql/run_pg_isready.sh /myapp/script
+RUN chmod +x /myapp/script/run_pg_isready.sh
+RUN sed -i 's/\[\[CONTAINER_TYPE\]\]/aarnn_postgres/g' /root/.bashrc
 
 EXPOSE ${POSTGRES_PORT_EXPOSE}

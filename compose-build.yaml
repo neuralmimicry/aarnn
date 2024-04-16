@@ -1,0 +1,12 @@
+services:
+  builder:
+    container_name: aarnn_cpp_builder
+    image: aarnn_cpp_builder
+    env_file: 
+      - ./configure/db_connection.conf
+    build:
+      dockerfile: Dockerfile.cpp_builder
+    volumes:
+      - ${SRC_DIR}:${SRC_DIR}:rw
+    command: bash -c "cd ${SRC_DIR} && mkdir -p build.docker && cd build.docker && cmake ..  && echo 'Start make' && make && echo 'Finished make'"
+    

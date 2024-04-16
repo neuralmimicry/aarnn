@@ -1,0 +1,66 @@
+FROM aarnn_cpp_builder as builder
+# Set the working directory in the container to /app
+WORKDIR /app
+
+COPY . /app/
+RUN mkdir build
+WORKDIR /app/build
+
+RUN cd /app/build
+RUN cmake ..
+RUN make -j $(nproc)
+
+RUN mkdir /app/aarnn/build
+WORKDIR /app/aarnn/build
+
+RUN cd $WORKDIR
+RUN cmake ..
+RUN make -j $(nprocs)
+
+# Use an official C++ runtime as a parent image
+FROM ubuntu:22.04
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Copy the compiled executable from your host to the current location in your docker image
+# COPY ./build/AARNN /app/AARNN
+
+
+# Install necessary libraries for running the application
+RUN apt-get update
+RUN apt-get install -y libpqxx-dev
+RUN apt-get install -y pulseaudio
+RUN apt-get install -y libfftw3-quad3
+RUN apt-get install -y libboost-all-dev
+RUN apt-get install -y libpostproc-dev
+RUN apt-get install -y libavdevice-dev
+RUN apt-get install -y libportaudio2
+RUN apt-get install -y libqt5opengl5
+RUN apt-get install -y iputils-ping
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y libvtk9-dev
+RUN apt-get install -y python3-vtk9
+RUN apt-get install -y qtcreator
+RUN apt-get install -y qtbase5-dev
+RUN apt-get install -y vtk9
+ENV DEBIAN_FRONTEND=dialog
+
+#Copy from the build aarnn docker
+#Copy Arran
+COPY --from=builder /app/aarnn/bin .
+
+#Database configuration connection infromation
+COPY ../configure/db_connection.conf /app/db_connection.conf
+
+#Simulation data
+COPY ../configure/simulation.conf /app/simulation.conf
+
+# Make port 80 available to the world outside this container (optional)
+EXPOSE 80
+
+RUN chmod +x AARNN
+
+# Run the application when the container launches
+CMD ["./AARNN"]

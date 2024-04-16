@@ -3,5 +3,7 @@ db_connection.conf
 .cmake
 CMakeFiles
 build
+build.docker
 bin
 .env
+pgdata/

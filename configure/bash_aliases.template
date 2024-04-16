@@ -1,0 +1,77 @@
+#!/usr/bin/bash
+[[ "${0}" != "${BASH_SOURCE[0]}" ]] && THIS_FILE="${BASH_SOURCE[0]}" || THIS_FILE="${0}"
+THIS_DIR=$(realpath "$(dirname ${THIS_FILE})")
+
+CURRENT_OS=$(uname)
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
+CURRENT_OS=$(uname)
+echo "OS is '${CURRENT_OS}'"
+
+IS_LINUX=No
+if [[ ${CURRENT_OS} =~ "Linux" ]]; then
+	IS_LINUX=Yes
+fi
+
+alias l="ls -Fax"
+alias ll="ls -Fasl"
+alias v=vim
+alias m=less
+alias cls=clear
+alias findExe="find . -perm -u+x -type f "
+alias h=history
+alias showBranch="git branch -vv"
+alias fetchAll="git fetch --all"
+alias myps="ps -eaf | ${GREP} $(id | cut -f2 -d'(' | cut -f1 -d')')"
+alias cd..="cd .."
+alias cd-="cd -"
+alias hexdump="od -x -A x"
+alias mystat="prstat -s rss -u $(whoami)"
+export GREP_COLORS="ms=01;31:mc=01;31:sl=:cx=:fn=36:ln=32:bn=32:se=36"
+export GREP_OPTIONS=--color
+
+# ANSI color codes
+RS="\[\033[0m\]"    # reset
+HC="\[\033[1m\]"    # hicolor
+UL="\[\033[4m\]"    # underline
+INV="\[\033[7m\]"   # inverse background and foreground
+FBLK="\[\033[30m\]" # foreground black
+FRED="\[\033[31m\]" # foreground red
+FGRN="\[\033[32m\]" # foreground green
+FYEL="\[\033[33m\]" # foreground yellow
+FBLE="\[\033[34m\]" # foreground blue
+FMAG="\[\033[35m\]" # foreground magenta
+FCYN="\[\033[36m\]" # foreground cyan
+FWHT="\[\033[37m\]" # foreground white
+BBLK="\[\033[40m\]" # background black
+BRED="\[\033[41m\]" # background red
+BGRN="\[\033[42m\]" # background green
+BYEL="\[\033[43m\]" # background yellow
+BBLE="\[\033[44m\]" # background blue
+BMAG="\[\033[45m\]" # background magenta
+BCYN="\[\033[46m\]" # background cyan
+BWHT="\[\033[47m\]" # background white
+
+export MY_HOST=$(hostname)
+
+function prompt() {
+	PS1="\u@\h [\t]> "
+
+	if [ "${IS_LINUX}X" = "YesX" ]; then
+		PS1="\$(date +%H:%M:%S) ${FRED}\u${RS}@${FCYN}[[CONTAINER_TYPE]](\H[dkr]) ${FRED}[${FYEL}\w ${FRED}]>${RS} "
+		PS2='continue-> '
+		PS4='$0.$LINENO+ '
+	fi
+}
+prompt
+
+PATH=$PATH:/app/sh:/app/bin

@@ -1,19 +1,23 @@
 // BodyShapeComponent.h
 
-#ifndef BODY_SHAPE_COMPONENT_H
-#define BODY_SHAPE_COMPONENT_H
+#ifndef BODY_SHAPE_COMPONENT_H_INCLUDED
+#define BODY_SHAPE_COMPONENT_H_INCLUDED
+
+#include "Shape3D.h"
 
 #include <memory>
-#include "Shape3D.h"  // Assuming Shape3D is defined in this header
 
-class BodyShapeComponent {
-public:
-    using ShapePtr = std::shared_ptr<Shape3D>;
-    BodyShapeComponent() = default;
+class BodyShapeComponent
+{
+    public:
+    using ShapePtr                = std::shared_ptr<Shape3D>;
+    BodyShapeComponent()          = default;
     virtual ~BodyShapeComponent() = default;
-    virtual void setShape(const ShapePtr& newShape);
+    virtual void                          setShape(const ShapePtr& newShape);
     [[nodiscard]] virtual const ShapePtr& getShape() const;
-private:
+
+    private:
     ShapePtr shape;
 };
-#endif // BODY_SHAPE_COMPONENT_H
+
+#endif  // BODY_SHAPE_COMPONENT_H_INCLUDED

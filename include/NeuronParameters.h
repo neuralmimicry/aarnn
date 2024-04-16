@@ -1,12 +1,13 @@
-#ifndef NEURONPARAMETERS_H
-#define NEURONPARAMETERS_H
+#ifndef NEURONPARAMETERS_H_INCLUDED
+#define NEURONPARAMETERS_H_INCLUDED
 
-class NeuronParameters {
-public:
-    NeuronParameters() = default ;
+class NeuronParameters
+{
+    public:
+    NeuronParameters() = default;
 
-private:
+    private:
     double dendritePropagationRate = 0.0;
 };
 
-#endif
+#endif  // NEURONPARAMETERS_H_INCLUDED
