@@ -6,13 +6,13 @@
  * @date  12-May-2023
  */
 #include <iostream>
-#include <utility>
+// #include <utility>
 #include <vector>
-#include <list>
+// #include <list>
 #include <algorithm>
 #include <thread>
 #include <mutex>
-#include <condition_variable>
+// #include <condition_variable>
 #include <atomic>
 #include <cmath>
 #include <memory>
@@ -26,11 +26,11 @@
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
-#include <random>
+// #include <random>
 #include <fftw3.h>
 #include <portaudio.h>
 #include <pulse/pulseaudio.h>
-#include <pulse/simple.h>
+// #include <pulse/simple.h>
 #include <pulse/error.h>
 #include <pulse/proplist.h>
 #include "boostincludes.h"
@@ -165,16 +165,14 @@ void logExecutionTime(Func function, const std::string& functionName) {
     logFile.close();
 }
 
-
 //using PositionPtr = std::shared_ptr<Position>;
-
 
 static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData)
 {
     std::cout << "MicCallBack" << std::endl;
     // Read data from the stream.
-    const SAMPLE *in = (const SAMPLE *) inputBuffer;
-    SAMPLE *out = (SAMPLE *) outputBuffer;
+    const auto *in = (const SAMPLE *) inputBuffer;
+    auto *out = (SAMPLE *) outputBuffer;
     (void) timeInfo; /* Prevent unused variable warnings. */
     (void) statusFlags;
     (void) userData;
@@ -409,7 +407,7 @@ const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 std::string base64_encode(const unsigned char* data, size_t length) {
     std::string base64;
     int i = 0;
-    int j = 0;
+    int j;
     unsigned char char_array_3[3];
     unsigned char char_array_4[4];
 
@@ -465,6 +463,7 @@ bool convertStringToBool(const std::string& value) {
         return false;
     }
 }
+
 
 void insertDendriteBranches(pqxx::transaction_base& txn, const std::shared_ptr<DendriteBranch>& dendriteBranch, int& dendrite_branch_id, int& dendrite_id, int& dendrite_bouton_id, int& soma_id) {
     std::string query;
@@ -564,7 +563,7 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
     }
 }
 
-void runInteractor(std::vector<std::shared_ptr<Neuron>>& neurons, std::mutex& neuron_mutex, ThreadSafeQueue<std::vector<std::tuple<double, double>>>& audioQueue, int whichCallBack)
+[[noreturn]] void runInteractor(std::vector<std::shared_ptr<Neuron>>& neurons, std::mutex& neuron_mutex, ThreadSafeQueue<std::vector<std::tuple<double, double>>>& audioQueue, int whichCallBack)
 {
     // Initialize VTK
     //vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -639,18 +638,50 @@ int main() {
     std::cout << "Base64 Encoded: " << encoded << std::endl;
     std::string query;
 
+    char* pulse_sink = std::getenv("PULSE_SINK");
+    if(pulse_sink != nullptr) {
+        std::cout << "PULSE_SINK: " << pulse_sink << std::endl;
+    } else {
+        std::cout << "PULSE_SINK not set" << std::endl;
+    }
+
+    char* pulse_source = std::getenv("PULSE_SOURCE");
+    if(pulse_source != nullptr) {
+        std::cout << "PULSE_SOURCE: " << pulse_source << std::endl;
+    } else {
+        std::cout << "PULSE_SOURCE not set" << std::endl;
+    }
+
+    std::cout << "1" << std::endl;
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
+    std::cout << "2" << std::endl;
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
+    std::cout << "3" << std::endl;
 
     std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
+    // std::vector<std::string> availableSources = mic->getSources();
+
+    // if(!availableSources.empty()) {
+    //     std::string desiredSource = availableSources[0];
+    //     mic->setSource(desiredSource);  // Set the source to your desired source
+    // }
+    // else {
+    //     std::cerr << "No audio sources available" << std::endl;
+    //     return 1;
+    // }
+    std::cout << "4" << std::endl;
     std::thread micThread(&PulseAudioMic::micRun, mic);
 
     // Read the database connection configuration and simulation configuration
+    std::cout << "5" << std::endl;
     std::vector<std::string> config_filenames = {"db_connection.conf", "simulation.conf"};
+    std::cout << "6" << std::endl;
     auto config = read_config(config_filenames);
+    std::cout << "7" << std::endl;
     std::string connection_string = build_connection_string(config);
 
     // Get the number of neurons from the configuration
+    std::cout << "8" << std::endl;
     int num_neurons = std::stoi(config["num_neurons"]);
     int num_pixels = std::stoi(config["num_pixels"]);
     int num_phonels = std::stoi(config["num_phonels"]);

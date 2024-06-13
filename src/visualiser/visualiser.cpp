@@ -21,20 +21,14 @@
 #include <random>
 #include "boostincludes.h"
 #include "vtkincludes.h"
-// #include "aarnn.h"
 
-/**
- * @brief Read configuration files and return a map of key-value pairs.
- * @param filenames Vector of filenames to read the configuration from.
- * @return A map containing the key-value pairs from the configuration files.
- */
-std::map<std::string, std::string> read_config(const std::vector<std::string> &filenames) {
+// Configuration and Logger Initialization
+
+std::map<std::string, std::string> read_config(const std::vector<std::string>& filenames) {
     std::map<std::string, std::string> config;
-
-    for (const auto &filename : filenames) {
+    for (const auto& filename : filenames) {
         std::ifstream file(filename);
         std::string line;
-
         while (std::getline(file, line)) {
             std::string key, value;
             std::istringstream line_stream(line);
@@ -43,80 +37,69 @@ std::map<std::string, std::string> read_config(const std::vector<std::string> &f
             config[key] = value;
         }
     }
-
     return config;
 }
 
-/**
- * @brief Build a connection string for the database using the configuration map.
- * @param config A map containing the key-value pairs from the configuration files.
- * @return A connection string containing the configuration for the database.
- */
-std::string build_connection_string(const std::map<std::string, std::string> &config) {
+std::string build_connection_string(const std::map<std::string, std::string>& config) {
     std::string connection_string;
-
-    // List of allowed connection parameters
     std::set<std::string> allowed_params = {"host", "port", "user", "password", "dbname"};
-
-    for (const auto &entry : config) {
+    for (const auto& entry : config) {
         if (allowed_params.count(entry.first) > 0) {
             connection_string += entry.first + "=" + entry.second + " ";
         }
     }
-
     return connection_string;
 }
 
-// Logger class to write log messages to a file
 class Logger {
 public:
-    /**
-     * @brief Construct a new Logger object.
-     * @param filename The name of the file to write log messages to.
-     */
-
-    explicit Logger(const std::string &filename) : log_file(filename, std::ofstream::out | std::ofstream::app) {}
-
-    /**
-     * @brief Destructor. Closes the log file.
-     */
-    ~Logger() {
-        log_file.close();
-    }
-
-    /**
-     * @brief Stream insertion operator to write messages to the log file.
-     * @tparam T Type of the message.
-     * @param msg The message to log.
-     * @return Reference to the Logger object.
-     */
+    explicit Logger(const std::string& filename) : log_file(filename, std::ofstream::out | std::ofstream::app) {}
+    ~Logger() { log_file.close(); }
     template<typename T>
-    Logger &operator<<(const T &msg) {
+    Logger& operator<<(const T& msg) {
         log_file << msg;
         log_file.flush();
         return *this;
     }
-
-    /**
-     * @brief Stream insertion operator overload for std::endl.
-     * @param pf Pointer to the std::endl function.
-     * @return Reference to the Logger object.
-     */
-    Logger &operator<<(std::ostream& (*pf)(std::ostream&)) {
+    Logger& operator<<(std::ostream& (*pf)(std::ostream&)) {
         log_file << pf;
         log_file.flush();
         return *this;
     }
-
 private:
-    /**
-     * @brief Output file stream to write log messages.
-     */
     std::ofstream log_file;
 };
 
-void insertDendriteBranches(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& points, vtkSmartPointer<vtkCellArray>& lines, vtkSmartPointer<vtkPoints>& glyphPoints, vtkNew<vtkFloatArray>& glyphVectors, vtkSmartPointer<vtkUnsignedCharArray>& glyphTypes, int& dendrite_branch_id, int& dendrite_id, int& dendrite_bouton_id, int& soma_id) {
+// VTK Initialization
 
+vtkSmartPointer<vtkRenderer> init_renderer() {
+    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+    return renderer;
+}
+
+vtkSmartPointer<vtkRenderWindow> init_render_window(vtkSmartPointer<vtkRenderer>& renderer) {
+    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    renderWindow->AddRenderer(renderer);
+    return renderWindow;
+}
+
+vtkSmartPointer<vtkRenderWindowInteractor> init_interactor(vtkSmartPointer<vtkRenderWindow>& renderWindow) {
+    vtkSmartPointer<vtkRenderWindowInteractor> interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    interactor->SetRenderWindow(renderWindow);
+    return interactor;
+}
+
+// Database Operations
+
+std::shared_ptr<pqxx::connection> init_db_connection(const std::string& connection_string, Logger& logger) {
+    std::shared_ptr<pqxx::connection> conn = std::make_shared<pqxx::connection>(connection_string);
+    logger << "Connected to PostgreSQL." << std::endl;
+    return conn;
+}
+
+// Insert Dendrite Branches
+
+void insertDendriteBranches(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& points, vtkSmartPointer<vtkCellArray>& lines, vtkSmartPointer<vtkPoints>& glyphPoints, vtkNew<vtkFloatArray>& glyphVectors, vtkSmartPointer<vtkUnsignedCharArray>& glyphTypes, int& dendrite_branch_id, int& dendrite_id, int& dendrite_bouton_id, int& soma_id) {
     int dendriteBranchGlyphType;
     int dendriteGlyphType = 3;
     int dendriteBoutonGlyphType = 2;
@@ -128,27 +111,24 @@ void insertDendriteBranches(pqxx::transaction_base& txn, const vtkSmartPointer<v
     vtkIdType glyphDendriteBoutonAnchor;
     double x, y, z;
     double glyphVectorBlank[3] = {0.0, 0.0, 0.0};
+    static const std::string dendrite_branch_query = "SELECT dendrite_branch_id, dendrite_id, x, y, z FROM dendritebranches WHERE dendrite_id = $1 ORDER BY dendrite_branch_id ASC";
+    static const std::string dendrite_branch_soma_query = "SELECT dendrite_branch_id, soma_id, x, y, z FROM dendritebranches_soma WHERE soma_id = $1 ORDER BY dendrite_branch_id ASC";
+    static const std::string dendrite_query = "SELECT dendrite_id, dendrite_branch_id, x, y, z FROM dendrites WHERE dendrite_branch_id = $1 ORDER BY dendrite_id ASC";
+    static const std::string dendrite_bouton_query = "SELECT dendrite_bouton_id, dendrite_id, x, y, z FROM dendriteboutons WHERE dendrite_id = $1 ORDER BY dendrite_bouton_id ASC";
     pqxx::result dendritebranches;
     pqxx::result innerdendritebranches;
     pqxx::result dendrites;
     pqxx::result dendriteboutons;
     vtkSmartPointer<vtkLine> line;
-    
+
     if (soma_id == -1) {
-        dendritebranches = txn.exec(
-                "SELECT dendrite_branch_id, dendrite_id, x, y, z FROM dendritebranches WHERE dendrite_id = " +
-                std::to_string(dendrite_id) + " ORDER BY dendrite_branch_id ASC");
+        dendritebranches = txn.exec_params(dendrite_branch_query, dendrite_id);
         dendriteBranchGlyphType = 2;
-    }
-    else {
-        dendritebranches = txn.exec(
-                "SELECT dendrite_branch_id, soma_id, x, y, z FROM dendritebranches_soma WHERE soma_id = " +
-                std::to_string(soma_id) + " ORDER BY dendrite_branch_id ASC");
+    } else {
+        dendritebranches = txn.exec_params(dendrite_branch_soma_query, soma_id);
         dendriteBranchGlyphType = 3;
     }
 
-    //std::cout << "Dendrite branches: " << dendritebranches.size() << std::endl;
-    //std::cout << "soma_id: " << soma_id << std::endl;
     for (auto dendritebranch: dendritebranches) {
         dendrite_branch_id = dendritebranch[0].as<int>();
         x = dendritebranch[2].as<double>();
@@ -161,9 +141,7 @@ void insertDendriteBranches(pqxx::transaction_base& txn, const vtkSmartPointer<v
         glyphVectors->InsertNextTuple(glyphVectorBlank);
         glyphTypes->InsertNextValue(0);
 
-        dendrites = txn.exec(
-            "SELECT dendrite_id, dendrite_branch_id, x, y, z FROM dendrites WHERE dendrite_branch_id = " + std::to_string(dendrite_branch_id) + " ORDER BY dendrite_id ASC");
-        //std::cout << "dendrites.size(): " << dendrites.size() << std::endl;
+        dendrites = txn.exec_params(dendrite_query, dendrite_branch_id);
         for (auto dendrite: dendrites) {
             dendrite_id = dendrite[0].as<int>();
             x = dendrite[2].as<double>();
@@ -176,16 +154,15 @@ void insertDendriteBranches(pqxx::transaction_base& txn, const vtkSmartPointer<v
             line = vtkSmartPointer<vtkLine>::New();
             line->GetPointIds()->SetId(0, dendriteBranchAnchor);
             line->GetPointIds()->SetId(1, dendriteAnchor);
-            //std::cout << "dendriteBranchAnchor: " << dendriteBranchAnchor << " dendriteAnchor: " << dendriteAnchor << std::endl;
             lines->InsertNextCell(line);
-            double glyphVector[3] = { glyphPoints->GetPoint(glyphDendriteAnchor)[0] - glyphPoints->GetPoint(glyphDendriteBranchAnchor)[0], glyphPoints->GetPoint(glyphDendriteAnchor)[1] - glyphPoints->GetPoint(glyphDendriteBranchAnchor)[1], glyphPoints->GetPoint(glyphDendriteAnchor)[2] - glyphPoints->GetPoint(glyphDendriteBranchAnchor)[2] };
+            double glyphVector[3] = {
+                    glyphPoints->GetPoint(glyphDendriteAnchor)[0] - glyphPoints->GetPoint(glyphDendriteBranchAnchor)[0],
+                    glyphPoints->GetPoint(glyphDendriteAnchor)[1] - glyphPoints->GetPoint(glyphDendriteBranchAnchor)[1],
+                    glyphPoints->GetPoint(glyphDendriteAnchor)[2] - glyphPoints->GetPoint(glyphDendriteBranchAnchor)[2]};
             glyphVectors->InsertNextTuple(glyphVector);
             glyphTypes->InsertNextValue(dendriteGlyphType);
 
-            dendriteboutons = txn.exec(
-                    "SELECT dendrite_bouton_id, dendrite_id, x, y, z FROM dendriteboutons WHERE dendrite_id = " +
-                    std::to_string(dendrite_id) + " ORDER BY dendrite_bouton_id ASC");
-
+            dendriteboutons = txn.exec_params(dendrite_bouton_query, dendrite_id);
             for (auto dendritebouton: dendriteboutons) {
                 dendrite_bouton_id = dendritebouton[0].as<int>();
                 x = dendritebouton[2].as<double>();
@@ -195,25 +172,26 @@ void insertDendriteBranches(pqxx::transaction_base& txn, const vtkSmartPointer<v
                 dendriteBoutonAnchor = points->GetNumberOfPoints() - 1;
                 glyphPoints->InsertNextPoint(x, y, z);
                 glyphDendriteBoutonAnchor = glyphPoints->GetNumberOfPoints() - 1;
-                double glyphVector[3] = { glyphPoints->GetPoint(glyphDendriteBoutonAnchor)[0] - glyphPoints->GetPoint(glyphDendriteAnchor)[0], glyphPoints->GetPoint(glyphDendriteBoutonAnchor)[1] - glyphPoints->GetPoint(glyphDendriteAnchor)[1], glyphPoints->GetPoint(glyphDendriteBoutonAnchor)[2] - glyphPoints->GetPoint(glyphDendriteAnchor)[2] };
+                double glyphVector[3] = {
+                        glyphPoints->GetPoint(glyphDendriteBoutonAnchor)[0] - glyphPoints->GetPoint(glyphDendriteAnchor)[0],
+                        glyphPoints->GetPoint(glyphDendriteBoutonAnchor)[1] - glyphPoints->GetPoint(glyphDendriteAnchor)[1],
+                        glyphPoints->GetPoint(glyphDendriteBoutonAnchor)[2] - glyphPoints->GetPoint(glyphDendriteAnchor)[2]};
                 glyphVectors->InsertNextTuple(glyphVector);
                 glyphTypes->InsertNextValue(dendriteBoutonGlyphType);
             }
 
-            innerdendritebranches = txn.exec(
-                    "SELECT dendrite_branch_id, dendrite_id, x, y, z FROM dendritebranches WHERE dendrite_id = " +
-                    std::to_string(dendrite_id) + " ORDER BY dendrite_branch_id ASC");
+            innerdendritebranches = txn.exec_params(dendrite_branch_query, dendrite_id);
             soma_id = -1;
             for (auto innerdendritebranch: innerdendritebranches) {
-                insertDendriteBranches(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, dendrite_branch_id, dendrite_id,
-                                       dendrite_bouton_id, soma_id);
+                insertDendriteBranches(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, dendrite_branch_id, dendrite_id, dendrite_bouton_id, soma_id);
             }
         }
     }
 }
 
-void insertAxons(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& points, vtkSmartPointer<vtkCellArray>& lines, vtkSmartPointer<vtkPoints>& glyphPoints, vtkNew<vtkFloatArray>& glyphVectors, vtkSmartPointer<vtkUnsignedCharArray>& glyphTypes, int& axon_branch_id, int& axon_id, int& axon_bouton_id, int& synaptic_gap_id, int& axon_hillock_id, long& glyphAxonBranchAnchor) {
+// Insert Axons
 
+void insertAxons(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& points, vtkSmartPointer<vtkCellArray>& lines, vtkSmartPointer<vtkPoints>& glyphPoints, vtkNew<vtkFloatArray>& glyphVectors, vtkSmartPointer<vtkUnsignedCharArray>& glyphTypes, int& axon_branch_id, int& axon_id, int& axon_bouton_id, int& synaptic_gap_id, int& axon_hillock_id, long& glyphAxonBranchAnchor) {
     int axonBranchGlyphType;
     int axonGlyphType = 8;
     int axonBoutonGlyphType = 9;
@@ -227,6 +205,10 @@ void insertAxons(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& 
     vtkIdType glyphSynapticGapAnchor;
     double x, y, z;
     double glyphVectorBlank[3] = {0.0, 0.0, 0.0};
+    static const std::string axon_branch_query = "SELECT axon_id, axon_branch_id, x, y, z FROM axons WHERE axon_branch_id = $1 ORDER BY axon_id ASC";
+    static const std::string axon_hillock_query = "SELECT axon_id, axon_hillock_id, x, y, z FROM axons WHERE axon_hillock_id = $1 ORDER BY axon_id ASC";
+    static const std::string axon_bouton_query = "SELECT axon_bouton_id, axon_id, x, y, z FROM axonboutons WHERE axon_id = $1 ORDER BY axon_bouton_id ASC";
+    static const std::string synaptic_gap_axon_bouton_query = "SELECT synaptic_gap_id, axon_bouton_id, x, y, z FROM synapticgaps WHERE axon_bouton_id = $1 ORDER BY synaptic_gap_id ASC";
     pqxx::result axonbranches;
     pqxx::result inneraxonbranches;
     pqxx::result axons;
@@ -235,19 +217,15 @@ void insertAxons(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& 
     vtkSmartPointer<vtkLine> line;
 
     if (axon_hillock_id == -1) {
-        axons = txn.exec(
-                "SELECT axon_id, axon_branch_id, x, y, z FROM axons WHERE axon_branch_id = " + std::to_string(axon_branch_id) + " ORDER BY axon_id ASC");
+        axons = txn.exec_params(axon_branch_query, axon_branch_id);
         axonBranchGlyphType = 6;
-    }
-    else {
-        axons = txn.exec(
-                "SELECT axon_id, axon_hillock_id, x, y, z FROM axons WHERE axon_hillock_id = " + std::to_string(axon_hillock_id) + " ORDER BY axon_id ASC");
+    } else {
+        axons = txn.exec_params(axon_hillock_query, axon_hillock_id);
         axonBranchGlyphType = 7;
     }
 
     for (auto axon: axons) {
         axon_id = axon[0].as<int>();
-        //std::cout << "axon_id: " << axon_id << std::endl;
         x = axon[2].as<double>();
         y = axon[3].as<double>();
         z = axon[4].as<double>();
@@ -259,17 +237,16 @@ void insertAxons(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& 
         line->GetPointIds()->SetId(0, axonBranchAnchor);
         line->GetPointIds()->SetId(1, axonAnchor);
         lines->InsertNextCell(line);
-        double glyphVector[3] = { glyphPoints->GetPoint(glyphAxonAnchor)[0] - glyphPoints->GetPoint(glyphAxonBranchAnchor)[0], glyphPoints->GetPoint(glyphAxonAnchor)[1] - glyphPoints->GetPoint(glyphAxonBranchAnchor)[1], glyphPoints->GetPoint(glyphAxonAnchor)[2] - glyphPoints->GetPoint(glyphAxonBranchAnchor)[2] };
+        double glyphVector[3] = {
+                glyphPoints->GetPoint(glyphAxonAnchor)[0] - glyphPoints->GetPoint(glyphAxonBranchAnchor)[0],
+                glyphPoints->GetPoint(glyphAxonAnchor)[1] - glyphPoints->GetPoint(glyphAxonBranchAnchor)[1],
+                glyphPoints->GetPoint(glyphAxonAnchor)[2] - glyphPoints->GetPoint(glyphAxonBranchAnchor)[2]};
         glyphVectors->InsertNextTuple(glyphVector);
         glyphTypes->InsertNextValue(axonGlyphType);
 
-        axonboutons = txn.exec(
-                "SELECT axon_bouton_id, axon_id, x, y, z FROM axonboutons WHERE axon_id = " +
-                std::to_string(axon_id) + " ORDER BY axon_bouton_id ASC");
-
+        axonboutons = txn.exec_params(axon_bouton_query, axon_id);
         for (auto axonbouton: axonboutons) {
             axon_bouton_id = axonbouton[0].as<int>();
-            //std::cout << "axon_bouton_id: " << axon_bouton_id << std::endl;
             x = axonbouton[2].as<double>();
             y = axonbouton[3].as<double>();
             z = axonbouton[4].as<double>();
@@ -281,14 +258,14 @@ void insertAxons(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& 
             line->GetPointIds()->SetId(0, axonAnchor);
             line->GetPointIds()->SetId(1, axonBoutonAnchor);
             lines->InsertNextCell(line);
-            double glyphVector[3] = { glyphPoints->GetPoint(glyphAxonBoutonAnchor)[0] - glyphPoints->GetPoint(glyphAxonAnchor)[0], glyphPoints->GetPoint(glyphAxonBoutonAnchor)[1] - glyphPoints->GetPoint(glyphAxonAnchor)[1], glyphPoints->GetPoint(glyphAxonBoutonAnchor)[2] - glyphPoints->GetPoint(glyphAxonAnchor)[2] };
+            double glyphVector[3] = {
+                    glyphPoints->GetPoint(glyphAxonBoutonAnchor)[0] - glyphPoints->GetPoint(glyphAxonAnchor)[0],
+                    glyphPoints->GetPoint(glyphAxonBoutonAnchor)[1] - glyphPoints->GetPoint(glyphAxonAnchor)[1],
+                    glyphPoints->GetPoint(glyphAxonBoutonAnchor)[2] - glyphPoints->GetPoint(glyphAxonAnchor)[2]};
             glyphVectors->InsertNextTuple(glyphVector);
             glyphTypes->InsertNextValue(axonBoutonGlyphType);
 
-            synapticgaps = txn.exec(
-                    "SELECT synaptic_gap_id, axon_bouton_id, x, y, z FROM synapticgaps WHERE axon_bouton_id = " +
-                    std::to_string(axon_bouton_id) + " ORDER BY synaptic_gap_id ASC");
-
+            synapticgaps = txn.exec_params(synaptic_gap_axon_bouton_query, axon_bouton_id);
             for (auto synapticgap: synapticgaps) {
                 synaptic_gap_id = synapticgap[0].as<int>();
                 x = synapticgap[2].as<double>();
@@ -316,90 +293,49 @@ void insertAxons(pqxx::transaction_base& txn, const vtkSmartPointer<vtkPoints>& 
             line->GetPointIds()->SetId(0, axonAnchor);
             line->GetPointIds()->SetId(1, axonBranchAnchor);
             lines->InsertNextCell(line);
-            double glyphVector[3] = { glyphPoints->GetPoint(glyphAxonBranchAnchor)[0] - glyphPoints->GetPoint(glyphAxonAnchor)[0], glyphPoints->GetPoint(glyphAxonBranchAnchor)[1] - glyphPoints->GetPoint(glyphAxonAnchor)[1], glyphPoints->GetPoint(glyphAxonBranchAnchor)[2] - glyphPoints->GetPoint(glyphAxonAnchor)[2] };
+            double glyphVector[3] = {
+                    glyphPoints->GetPoint(glyphAxonBranchAnchor)[0] - glyphPoints->GetPoint(glyphAxonAnchor)[0],
+                    glyphPoints->GetPoint(glyphAxonBranchAnchor)[1] - glyphPoints->GetPoint(glyphAxonAnchor)[1],
+                    glyphPoints->GetPoint(glyphAxonBranchAnchor)[2] - glyphPoints->GetPoint(glyphAxonAnchor)[2]};
             glyphVectors->InsertNextTuple(glyphVector);
             glyphTypes->InsertNextValue(axonBranchGlyphType);
 
-            inneraxonbranches = txn.exec(
-                    "SELECT axon_branch_id, axon_id, x, y, z FROM axonbranches WHERE axon_id = " +
-                    std::to_string(axon_id) + " ORDER BY axon_branch_id ASC");
+            inneraxonbranches = txn.exec_params(axon_branch_query, axon_id);
             axon_hillock_id = -1;
             for (auto inneraxonbranch: inneraxonbranches) {
-                insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, axon_branch_id, axon_id,
-                            axon_bouton_id, synaptic_gap_id, axon_hillock_id, glyphAxonBranchAnchor);
+                insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, axon_branch_id, axon_id, axon_bouton_id, synaptic_gap_id, axon_hillock_id, glyphAxonBranchAnchor);
             }
         }
     }
 }
 
-class MyErrorObserver : public vtkCommand
-{
+// Error Observer Class
+
+class MyErrorObserver : public vtkCommand {
 public:
     static MyErrorObserver* New() { return new MyErrorObserver; }
-
-    void Execute(vtkObject* vtkNotUsed(caller), unsigned long event, void* calldata) override
-    {
-        if (event == vtkCommand::ErrorEvent || event == vtkCommand::WarningEvent)
-        {
+    void Execute(vtkObject* vtkNotUsed(caller), unsigned long event, void* calldata) override {
+        if (event == vtkCommand::ErrorEvent || event == vtkCommand::WarningEvent) {
             std::cerr << "Error: " << static_cast<char*>(calldata) << std::endl;
         }
     }
 };
 
-int main() {
-    // Initialize logger
-    Logger logger("errors.log");
+// Main Loop Logic
 
-    // Initialize VTK
-    vtkSmartPointer<vtkOutputWindow> myOutputWindow = vtkSmartPointer<vtkOutputWindow>::New();
-    vtkOutputWindow::SetInstance(myOutputWindow);
-
-    vtkSmartPointer<MyErrorObserver> errorObserver = vtkSmartPointer<MyErrorObserver>::New();
-    myOutputWindow->AddObserver(vtkCommand::ErrorEvent, errorObserver);
-    myOutputWindow->AddObserver(vtkCommand::WarningEvent, errorObserver);
-
-    //vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-    //vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    //renderWindow->AddRenderer(renderer);
-    //vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    //renderWindowInteractor->SetRenderWindow(renderWindow);
-    //renderer->SetBackground(0, 0, 0); // Background colour
-    //renderWindow->SetSize(1000, 1000); // Window size
-    //renderWindow->SetWindowName("AARNN Visualiser"); // Window title
-
-    // Create a vtkCellArray object to hold the lines
+void main_loop(std::shared_ptr<pqxx::connection> conn, vtkSmartPointer<vtkRenderer>& renderer, vtkSmartPointer<vtkRenderWindow>& renderWindow, vtkSmartPointer<vtkRenderWindowInteractor>& interactor, Logger& logger) {
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkPoints> glyphPoints = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
-    vtkSmartPointer<vtkUnsignedCharArray> neuronIds = vtkSmartPointer<vtkUnsignedCharArray>::New();
-    neuronIds->SetName("NeuronIds");
-    neuronIds->SetNumberOfComponents(1);
     vtkSmartPointer<vtkUnsignedCharArray> glyphTypes = vtkSmartPointer<vtkUnsignedCharArray>::New();
     glyphTypes->SetName("GlyphType");
     glyphTypes->SetNumberOfComponents(1);
     vtkNew<vtkFloatArray> glyphVectors;
     glyphVectors->SetNumberOfComponents(3);
     glyphVectors->SetName("vectors");
-    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    vtkSmartPointer<vtkRenderWindowInteractor> interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
 
-
-    try {
-        // Read the database connection configuration and simulation configuration
-        std::vector<std::string> config_filenames = {"db_connection.conf", "simulation.conf"};
-        auto config = read_config(config_filenames);
-        std::string connection_string = build_connection_string(config);
-        std::vector<double> propagationRates;
-
-        // Connect to PostgreSQL
-        pqxx::connection conn(connection_string);
-
-        // Start a transaction
-        pqxx::work txn(conn);
-
-        // Continuously update the visualization
-        while (true) {
+    while (true) {
+        try {
             long glyphAxonBranchAnchor = 0;
             double x = 0;
             double y = 0;
@@ -414,17 +350,8 @@ int main() {
             int synaptic_gap_id = 0;
             int axon_bouton_id = 0;
             int dendrite_bouton_id = 0;
-            // Map neuron_id to the index of the point in vtkNeurons
-            std::unordered_map<int, int> neuronIndexMap;
-            // Map soma_id to the index of the point in vtkSomas
-            std::unordered_map<int, int> somaIndexMap;
-            // Map axon_hillock_id to the index of the point in vtkAxonHillocks
-            std::unordered_map<int, int> axonHillockIndexMap;
-            // Map axon_id to the index of the point in vtkAxons
-            std::unordered_map<int, int> axonIndexMap;
-            // Map axon_bouton_id to the index of the point in vtkAxonBoutons
-            std::unordered_map<int, int> axonBoutonIndexMap;
             double glyphVectorBlank[3] = {0.0, 0.0, 0.0};
+
             renderWindow->RemoveRenderer(renderer);
             renderer->RemoveAllViewProps();
             glyphTypes->Reset();
@@ -432,15 +359,12 @@ int main() {
             glyphPoints->Reset();
             lines->Reset();
             points->Reset();
-            // Read data from the database
-            // Select neurons
-            //TODO: LIMIT the amount of neurons displayed
+
+            pqxx::work txn(*conn);
             pqxx::result neurons = txn.exec("SELECT neuron_id, x, y, z FROM neurons ORDER BY neuron_id ASC LIMIT 1500");
 
-            int index = 0;
             for (auto neuron : neurons) {
                 neuron_id = neuron[0].as<int>();
-                //std::cout << "Neuron " << neuron_id << std::endl;
                 x = neuron[1].as<double>();
                 y = neuron[2].as<double>();
                 z = neuron[3].as<double>();
@@ -448,15 +372,9 @@ int main() {
                 glyphVectors->InsertNextTuple(glyphVectorBlank);
                 glyphTypes->InsertNextValue(0);
 
-                // Select somas and create VTK points
-                pqxx::result somas = txn.exec(
-                        "SELECT soma_id, neuron_id, x, y, z FROM somas WHERE neuron_id = " + std::to_string(neuron_id) +
-                        " ORDER BY soma_id ASC");
-
-                // Add the soma points to the points object
+                pqxx::result somas = txn.exec_params("SELECT soma_id, neuron_id, x, y, z FROM somas WHERE neuron_id = $1 ORDER BY soma_id ASC", neuron_id);
                 for (auto soma: somas) {
                     soma_id = soma[0].as<int>();
-                    //std::cout << "Soma " << soma_id << std::endl;
                     x = soma[2].as<double>();
                     y = soma[3].as<double>();
                     z = soma[4].as<double>();
@@ -464,17 +382,11 @@ int main() {
                     glyphVectors->InsertNextTuple(glyphVectorBlank);
                     glyphTypes->InsertNextValue(1);
 
-                    insertDendriteBranches(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, dendrite_branch_id, dendrite_id,
-                                           dendrite_bouton_id, soma_id);
+                    insertDendriteBranches(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, dendrite_branch_id, dendrite_id, dendrite_bouton_id, soma_id);
 
-                    // Add the position of the axon hillock to the vtkPoints and vtkPolyData
-                    //std::cout << "Selecting axon hillocks..." << std::endl;
-                    pqxx::result axonhillocks = txn.exec(
-                            "SELECT axon_hillock_id, soma_id, x, y, z FROM axonhillocks WHERE soma_id = " +
-                            std::to_string(soma_id) + " ORDER BY axon_hillock_id ASC");
+                    pqxx::result axonhillocks = txn.exec_params("SELECT axon_hillock_id, soma_id, x, y, z FROM axonhillocks WHERE soma_id = $1 ORDER BY axon_hillock_id ASC", soma_id);
                     for (auto axonhillock: axonhillocks) {
                         axon_hillock_id = axonhillock[0].as<int>();
-                        //std::cout << "axon_hillock_id: " << axon_hillock_id << std::endl;
                         x = axonhillock[2].as<double>();
                         y = axonhillock[3].as<double>();
                         z = axonhillock[4].as<double>();
@@ -484,58 +396,38 @@ int main() {
                         glyphTypes->InsertNextValue(1);
                         glyphAxonBranchAnchor = glyphPoints->GetNumberOfPoints() - 1;
 
-                        insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, axon_branch_id, axon_id, axon_bouton_id,
-                                    synaptic_gap_id, axon_hillock_id, glyphAxonBranchAnchor);
+                        insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, axon_branch_id, axon_id, axon_bouton_id, synaptic_gap_id, axon_hillock_id, glyphAxonBranchAnchor);
                     }
                 }
             }
-            std::cout << "Number of points: " << points->GetNumberOfPoints() << std::endl;
-            std::cout << "Number of lines: " << lines->GetNumberOfCells() << std::endl;
-            std::cout << "Number of glyph vectors: " << glyphVectors->GetNumberOfTuples() << std::endl;
-            std::cout << "Number of glyph types: " << glyphTypes->GetNumberOfTuples() << std::endl;
 
-            // Create a polydata object
             vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
             polyData->SetPoints(points);
             polyData->SetLines(lines);
             vtkSmartPointer<vtkPolyData> polyPointData = vtkSmartPointer<vtkPolyData>::New();
             polyPointData->SetPoints(points);
 
-            std::cout << "polyData->GetNumberOfPoints(): " << polyData->GetNumberOfPoints() << std::endl;
-            std::cout << "polyData->GetNumberOfLines(): " << polyData->GetNumberOfLines() << std::endl;
-            std::cout << "polyPointData->GetNumberOfPoints(): " << polyPointData->GetNumberOfPoints() << std::endl;
-
-            // Create a glyphPolydata object
             vtkSmartPointer<vtkPolyData> glyphPolyData = vtkSmartPointer<vtkPolyData>::New();
             glyphPolyData->SetPoints(glyphPoints);
             glyphPolyData->GetPointData()->AddArray(glyphVectors);
             glyphPolyData->GetPointData()->SetScalars(glyphTypes);
 
-            std::cout << "glyphPolyData->GetNumberOfPoints(): " << glyphPolyData->GetNumberOfPoints() << std::endl;
-
-            // Create glyph sources
             vtkSmartPointer<vtkPoints> zeroPoints = vtkSmartPointer<vtkPoints>::New();
-            vtkSmartPointer<vtkPolyData> emptySource = vtkSmartPointer<vtkPolyData>::New();  // Dummy source for no glyph
+            vtkSmartPointer<vtkPolyData> emptySource = vtkSmartPointer<vtkPolyData>::New();
             vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
             vtkSmartPointer<vtkCubeSource> cubeSource = vtkSmartPointer<vtkCubeSource>::New();
             vtkSmartPointer<vtkCylinderSource> cylinderSource = vtkSmartPointer<vtkCylinderSource>::New();
 
-            // Update the glyph sources to make sure they have data to draw
             emptySource->SetPoints(zeroPoints);
-
             sphereSource->SetRadius(0.5);
             sphereSource->Update();
-
             cubeSource->SetXLength(0.5);
             cubeSource->SetYLength(0.5);
             cubeSource->SetZLength(0.5);
             cubeSource->Update();
-
             cylinderSource->SetRadius(0.1);
             cylinderSource->Update();
 
-            std::cout << "Debug 1" << std::endl;
-            // Create the Glyph3D filter
             vtkSmartPointer<vtkGlyph3D> glyph3D = vtkSmartPointer<vtkGlyph3D>::New();
             glyph3D->SetOrient(true);
             glyph3D->SetVectorModeToUseVector();
@@ -556,60 +448,74 @@ int main() {
             glyph3D->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, "GlyphType");
             glyph3D->Update();
 
-            std::cout << "glyph3D update finished" << std::endl;
-
-            // Mapper for lines
             vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
             lineMapper->SetInputData(polyData);
-
-            // Actor for lines
             vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
             lineActor->SetMapper(lineMapper);
-            lineActor->GetProperty()->SetColor(1.0, 1.0, 0.0); // Set the colour for the lines
+            lineActor->GetProperty()->SetColor(1.0, 1.0, 0.0);
 
-            // Mapper for glyphs
             vtkSmartPointer<vtkPolyDataMapper> glyphMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
             glyphMapper->SetInputConnection(glyph3D->GetOutputPort());
-
-            // Actor for glyphs
             vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
             glyphActor->SetMapper(glyphMapper);
 
-            // Create Delaunay3D filter
             vtkSmartPointer<vtkDelaunay3D> delaunay = vtkSmartPointer<vtkDelaunay3D>::New();
             delaunay->SetInputData(polyPointData);
-
-            // Convert the unstructured grid to polydata
             vtkSmartPointer<vtkGeometryFilter> geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
             geometryFilter->SetInputConnection(delaunay->GetOutputPort());
             geometryFilter->Update();
 
-            // Mapper for the membrane
             vtkSmartPointer<vtkPolyDataMapper> membraneMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
             membraneMapper->SetInputConnection(geometryFilter->GetOutputPort());
-
-            // Actor for the membrane
             vtkSmartPointer<vtkActor> membraneActor = vtkSmartPointer<vtkActor>::New();
             membraneActor->SetMapper(membraneMapper);
-            membraneActor->GetProperty()->SetColor(0.75, 0.75, 0.75); // Set the colour for the membrane
-            membraneActor->GetProperty()->SetOpacity(0.1); // Set the opacity for the membrane
+            membraneActor->GetProperty()->SetColor(0.75, 0.75, 0.75);
+            membraneActor->GetProperty()->SetOpacity(0.1);
 
-            // Renderer
             renderer->AddActor(lineActor);
             renderer->AddActor(glyphActor);
             renderer->AddActor(membraneActor);
-
-            // Render window
             renderWindow->AddRenderer(renderer);
-
-            // Interactor
             interactor->SetRenderWindow(renderWindow);
-
-            // Start rendering
             interactor->Start();
-        }
 
-    } catch (const std::exception &e) {
+            txn.commit();
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+        } catch (const std::exception& e) {
+            logger << "Error in loop: " << e.what() << std::endl;
+            std::cerr << "Error in loop: " << e.what() << std::endl;
+        } catch (...) {
+            logger << "Unknown error in loop." << std::endl;
+            std::cerr << "Unknown error in loop." << std::endl;
+        }
+    }
+}
+
+// Main Function
+
+int main() {
+    Logger logger("errors.log");
+
+    vtkSmartPointer<vtkOutputWindow> myOutputWindow = vtkSmartPointer<vtkOutputWindow>::New();
+    vtkOutputWindow::SetInstance(myOutputWindow);
+
+    vtkSmartPointer<MyErrorObserver> errorObserver = vtkSmartPointer<MyErrorObserver>::New();
+    myOutputWindow->AddObserver(vtkCommand::ErrorEvent, errorObserver);
+    myOutputWindow->AddObserver(vtkCommand::WarningEvent, errorObserver);
+
+    vtkSmartPointer<vtkRenderer> renderer = init_renderer();
+    vtkSmartPointer<vtkRenderWindow> renderWindow = init_render_window(renderer);
+    vtkSmartPointer<vtkRenderWindowInteractor> interactor = init_interactor(renderWindow);
+
+    try {
+        std::vector<std::string> config_filenames = {"db_connection.conf", "simulation.conf"};
+        auto config = read_config(config_filenames);
+        std::string connection_string = build_connection_string(config);
+
+        auto conn = init_db_connection(connection_string, logger);
+
+        main_loop(conn, renderer, renderWindow, interactor, logger);
+    } catch (const std::exception& e) {
         logger << "Error: " << e.what() << std::endl;
         std::cerr << "Error: " << e.what() << std::endl;
     } catch (...) {
