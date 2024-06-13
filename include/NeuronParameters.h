@@ -1,11 +1,12 @@
 #ifndef NEURONPARAMETERS_H
 #define NEURONPARAMETERS_H
 
-class NeuronParameters {
-public:
-    NeuronParameters() = default ;
+class NeuronParameters
+{
+    public:
+    NeuronParameters() = default;
 
-private:
+    private:
     double dendritePropagationRate = 0.0;
 };
 
