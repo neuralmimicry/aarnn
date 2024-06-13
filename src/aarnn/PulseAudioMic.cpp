@@ -22,8 +22,9 @@ void PulseAudioMic::sourceSelection()
 
     // Select source
     int selected_source;
-    std::cout << "Select a source: ";
-    std::cin >> selected_source;
+    selected_source = 5;
+    std::cout << "Selected source: " << selected_source << "\n";
+    // std::cin >> selected_source;
     this->setSource(sourceList[selected_source]);
 }
 
