@@ -1,0 +1,57 @@
+# Use the official PostgreSQL image from the Docker Hub
+FROM postgres:14
+
+# Set the locale to en_GB.utf8
+RUN localedef -i en_GB -c -f UTF-8 -A /usr/share/locale/locale.alias en_GB.UTF-8
+ENV LANG en_GB.utf8
+
+# Set the base environment variables (DB name, user and password)
+ENV POSTGRES_DB=neurons
+
+# Set environment variables using ARG for better security
+# These variables will automatically be deleted after the building process, protecting sensitive data
+ARG POSTGRES_USERNAME
+ARG POSTGRES_PASSWORD
+ARG POSTGRES_PORT_EXPOSE
+
+# Use the ARG variables to set environment variables used by postgres image
+ENV POSTGRES_USER=${POSTGRES_USERNAME}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+ENV POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}
+
+# Set the timezone to Europe/London
+ENV TZ=Europe/London
+
+# Install the required packages
+RUN apt-get update && apt-get install -y \
+  apt-utils \
+  tzdata \
+  sed
+
+# Preconfigure tzdata package and configure it
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    echo "tzdata tzdata/Areas select Etc" | debconf-set-selections && \
+    echo "tzdata tzdata/Zones/Etc select UTC" | debconf-set-selections && \
+    echo "tzdata tzdata/Areas seen true" | debconf-set-selections && \
+    echo "tzdata tzdata/Zones/Etc seen true" | debconf-set-selections && \
+    DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
+# Copy the initialization file to setup the database schema
+COPY ./configure/init.sql /docker-entrypoint-initdb.d/
+
+# Copy the entrypoint script into the container
+COPY ./configure/entrypoint.sh /usr/local/bin/
+
+# Make the entrypoint script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Expose the Postgres port outside of the Docker container
+EXPOSE ${POSTGRES_PORT_EXPOSE}
+
+# Use the custom entrypoint script
+ENTRYPOINT ["entrypoint.sh"]
+
+# Default command provided by the PostgreSQL image
+CMD ["postgres"]

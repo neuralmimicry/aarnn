@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 project(AARNN)
 
 file(GLOB AARNN_SRC
-    "src/*.cpp"
+    "src/aarnn/*.cpp"
+)
+file(GLOB VISUALISER_SRC
+        "src/visualiser/*.cpp"
 )
 
 # Set the build type to Debug to include debugging symbols
@@ -27,7 +30,7 @@ find_package(OpenGL REQUIRED)
 if(NOT OPENGL_FOUND)
     message(FATAL_ERROR "OpenGL library not found")
 endif()
-    
+
 message(STATUS "VTK INCLUDE : ${VTK_DIR}")
 find_package(VTK REQUIRED)
 if(NOT VTK_FOUND)
@@ -113,8 +116,8 @@ if(NOT FFTW3_LIBRARIES)
 endif()
 
 # Add the src subdirectory to the include paths
-include_directories(src)
 include_directories(include)
+include_directories(src)
 include_directories(${PostgreSQL_INCLUDE_DIR})
 include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
 include_directories(${Boost_INCLUDE_DIRS})  # Add Boost include directories
@@ -130,5 +133,24 @@ link_directories(${PulseAudio_LIBRARY_DIRS})
 link_directories(${FFTW3_LIBRARY_DIRS})
 link_directories(${LOCAL_LIB64})
 
-
-add_subdirectory(src ../bin)
+add_executable(AARNN ${AARNN_SRC})
+target_link_libraries(AARNN PRIVATE
+        ${VTK_LIBRARIES}
+        ${PostgreSQL_LIBRARIES}
+        ${Boost_LIBRARIES}
+        ${OpenSSL_LIBRARIES}
+        ${FFmpeg_LIBRARIES}
+        ${PORTAUDIO_LIBRARIES}
+        ${PULSEAUDIO_LIBRARIES}
+        ${FFTW3_LIBRARIES}
+        ${PQXX_LIB}
+)
+add_executable(Visualiser ${VISUALISER_SRC})
+target_link_libraries(Visualiser PRIVATE
+        ${VTK_LIBRARIES}
+        ${PostgreSQL_LIBRARIES}
+        ${Boost_LIBRARIES}
+        ${OpenSSL_LIBRARIES}
+        ${FFTW3_LIBRARIES}
+        ${PQXX_LIB}
+)
