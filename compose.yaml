@@ -53,7 +53,7 @@ services:
     container_name: visualiser
     image: visualiser
     build:
-      dockerfile: Dockerfile visualiserFullBuild
+      dockerfile: Dockerfile.visualiserFullBuild
     deploy:
       replicas: 1
       resources:

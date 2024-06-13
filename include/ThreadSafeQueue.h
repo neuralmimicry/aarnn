@@ -1,18 +1,18 @@
 #ifndef THREADSAFEQUEUE_H
 #define THREADSAFEQUEUE_H
 
+#include <condition_variable>
 #include <iostream>
 #include <mutex>
+#include <queue>
 #include <string_view>
 #include <syncstream>
 #include <thread>
-#include <queue>
-#include <condition_variable>
 
-template <typename T>
+template<typename T>
 class ThreadSafeQueue
 {
-public:
+    public:
     void push(const T &value)
     {
         std::lock_guard<std::mutex> lock(mutex_);
@@ -22,7 +22,7 @@ public:
     T pop()
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        while (queue_.empty())
+        while(queue_.empty())
         {
             cond_.wait(lock);
         }
@@ -31,9 +31,9 @@ public:
         return val;
     }
 
-private:
-    std::queue<T> queue_;
-    std::mutex mutex_;
+    private:
+    std::queue<T>           queue_;
+    std::mutex              mutex_;
     std::condition_variable cond_;
 };
 

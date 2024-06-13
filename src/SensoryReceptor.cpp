@@ -1,11 +1,13 @@
 #include "SensoryReceptor.h"
+
 #include "SynapticGap.h"
 #include "utils.h"
+
 #include <math.h>
 
 void SensoryReceptor::initialise()
 {
-    if (!instanceInitialised)
+    if(!instanceInitialised)
     {
         setAttack((35 - (rand() % 25)) / 100);
         setDecay((35 - (rand() % 25)) / 100);
@@ -13,14 +15,14 @@ void SensoryReceptor::initialise()
         setRelease((35 - (rand() % 25)) / 100);
         setFrequencyResponse(rand() % 44100);
         setPhaseShift(rand() % 360);
-        lastCallTime = 0.0;
+        lastCallTime            = 0.0;
         PositionPtr positionPtr = std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1);
-        synapticGap = std::make_shared<SynapticGap>(positionPtr);
+        synapticGap             = std::make_shared<SynapticGap>(positionPtr);
         synapticGap->initialise();
         synapticGap->updateFromSensoryReceptor(shared_from_this());
         addSynapticGap(synapticGap);
-        minPropagationRate = (35 - (rand() % 25)) / 100;
-        maxPropagationRate = (65 + (rand() % 25)) / 100;
+        minPropagationRate  = (35 - (rand() % 25)) / 100;
+        maxPropagationRate  = (65 + (rand() % 25)) / 100;
         instanceInitialised = true;
     }
 }
@@ -78,19 +80,19 @@ void SensoryReceptor::setEnergyLevel(double newEnergyLevel)
 double SensoryReceptor::calculateEnergy(double currentTime, double currentEnergyLevel)
 {
     double deltaTime = currentTime - previousTime;
-    previousTime = currentTime;
-    energyLevel = currentEnergyLevel;
+    previousTime     = currentTime;
+    energyLevel      = currentEnergyLevel;
 
-    if (deltaTime < attack)
+    if(deltaTime < attack)
     {
         return (deltaTime / attack) * calculateWaveform(currentTime);
     }
-    else if (deltaTime < attack + decay)
+    else if(deltaTime < attack + decay)
     {
         double decay_time = deltaTime - attack;
         return ((1 - decay_time / decay) * (1 - sustain) + sustain) * calculateWaveform(currentTime);
     }
-    else if (deltaTime < attack + decay + sustain)
+    else if(deltaTime < attack + decay + sustain)
     {
         return sustain * calculateWaveform(currentTime);
     }
@@ -111,7 +113,7 @@ double SensoryReceptor::calcPropagationRate()
     double currentTime = (double)std::clock() / CLOCKS_PER_SEC;
     callCount++;
     double timeSinceLastCall = currentTime - lastCallTime;
-    lastCallTime = currentTime;
+    lastCallTime             = currentTime;
 
     double x = 1 / (1 + exp(-callCount / timeSinceLastCall));
     return minPropagationRate + x * (maxPropagationRate - minPropagationRate);
@@ -122,7 +124,8 @@ void SensoryReceptor::updateComponent(double time, double energy)
     // componentEnergyLevel = calculateEnergy(time, componentEnergyLevel + energy);// Update the component
     // propagationRate = calcPropagationRate();
     // for (auto& synapticGap_id : synapticGaps) {
-    //     synapticGap_id->updateComponent(time + position->calcPropagationTime(*synapticGap_id->getPosition(), propagationRate), componentEnergyLevel);
+    //     synapticGap_id->updateComponent(time + position->calcPropagationTime(*synapticGap_id->getPosition(),
+    //     propagationRate), componentEnergyLevel);
     // }
     // componentEnergyLevel = 0;
 }
