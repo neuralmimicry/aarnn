@@ -1,0 +1,49 @@
+#!/bin/bash
+set -e
+
+# Function to configure PostgreSQL
+configure_postgres() {
+  PG_HBA_CONF="$PGDATA/pg_hba.conf"
+  POSTGRESQL_CONF="$PGDATA/postgresql.conf"
+
+  # Update pg_hba.conf
+  sed -i "s/^local\s*all\s*all\s*peer/local all all trust/" "$PG_HBA_CONF"
+  echo "host all all 0.0.0.0/0 md5" >> "$PG_HBA_CONF"
+
+  # Update postgresql.conf
+  sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" "$POSTGRESQL_CONF"
+  sed -i "s/#port = 5432/port = $POSTGRES_PORT_EXPOSE/" "$POSTGRESQL_CONF"
+  sed -i "s/port = 5433/port = $POSTGRES_PORT_EXPOSE/" "$POSTGRESQL_CONF"
+  sed -i "s/port = 5434/port = $POSTGRES_PORT_EXPOSE/" "$POSTGRESQL_CONF"
+}
+
+# Initialize the database if not already initialized
+if [ ! -s "$PGDATA/PG_VERSION" ]; then
+  # Run the original entrypoint script to initialize the database
+  docker-entrypoint.sh postgres &
+
+  # Wait for PostgreSQL to be ready
+  for i in {1..60}; do
+    if su postgres -c "pg_isready -U ${POSTGRES_USERNAME}" > /dev/null 2>&1; then
+      echo "PostgreSQL is ready."
+      break
+    else
+      echo "Waiting for PostgreSQL to be ready... ($i)"
+      sleep 2
+    fi
+
+    if [ "$i" -eq 60 ]; then
+      echo "PostgreSQL did not become ready in time."
+      exit 1
+    fi
+  done
+
+  # Configure PostgreSQL for remote access
+  configure_postgres
+
+  # Stop the server after initial configuration
+  su postgres -c "pg_ctl -D \"$PGDATA\" -m fast -w stop"
+fi
+
+# Call the original entrypoint script of the postgres image to start the server
+exec docker-entrypoint.sh postgres
