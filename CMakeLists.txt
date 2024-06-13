@@ -1,45 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
 
-if(CMAKE_BUILD_TYPE STREQUAL "")
-        set(CMAKE_BUILD_TYPE RelWithDebInfo)
-endif()
-message("BUILD TYPE " ${CMAKE_BUILD_TYPE})
-set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Debug Release RelWithDebInfo MinSizeRel Coverage")
-set(DISPLAY_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo;MinSizeRel;Coverage" CACHE STRING "Configs" FORCE)
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
-
-execute_process(
-        COMMAND bash -c "printf \"%s\" $(cat /etc/os-release | grep -E \"^ID=[^\\n]*|^VERSION_ID=[^\\n]*\" | cut -f2 -d= | tr -d '\"')"
-        OUTPUT_VARIABLE LINUX_VERSION
-)
-message("Linux version is '${LINUX_VERSION}'")
-
-set(COVERAGE_COMPILER_FLAGS "-g -O0 -fno-default-inline --coverage -fprofile-abs-path -fprofile-arcs -fno-inline -fno-inline-small-functions -ftest-coverage -lgcov" CACHE INTERNAL "")
-
-set(CMAKE_CXX_FLAGS "-rdynamic -Wall -Werror -DBOOST_ALLOW_DEPRECATED_HEADERS -DBOOST_BIND_GLOBAL_PLACEHOLDERS" CACHE STRING "Default C++ compiler flags")
-set(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING "g++ debug flags")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O2" CACHE STRING "g++ rel+gbg flags")
-set(CMAKE_CXX_FLAGS_COVERAGE "${COVERAGE_COMPILER_FLAGS}" CACHE STRING "g++ coverage flags." FORCE )
-set(CMAKE_CXX_FLAGS_RELEASE "-O2" CACHE STRING "g++ release flags")
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-message("Boost_USE_STATIC_LIBS=${Boost_USE_STATIC_LIBS}")
-
-#
-# The Project
-#
 project(AARNN)
 
 file(GLOB AARNN_SRC
-    "src/*.cpp"
+    "src/aarnn/*.cpp"
 )
+file(GLOB VISUALISER_SRC
+        "src/visualiser/*.cpp"
+)
+
+# Set the build type to Debug to include debugging symbols
+set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
@@ -58,18 +30,14 @@ find_package(OpenGL REQUIRED)
 if(NOT OPENGL_FOUND)
     message(FATAL_ERROR "OpenGL library not found")
 endif()
-    
+
 message(STATUS "VTK INCLUDE : ${VTK_DIR}")
 find_package(VTK REQUIRED)
 if(NOT VTK_FOUND)
     message(FATAL_ERROR "VTK library not found")
 endif()
 
-message("Boost_USE_STATIC_LIBS=${Boost_USE_STATIC_LIBS}")
-if(NOT Boost_USE_STATIC_LIBS)
-    set(Boost_USE_STATIC_LIBS OFF)
-endif()
-message("Boost_USE_STATIC_LIBS=${Boost_USE_STATIC_LIBS}")
+set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
@@ -119,14 +87,21 @@ set(PULSEAUDIO_INCLUDE_DIRS "/usr/include/pulseaudio")
 set(PULSEAUDIO_LIBRARY_DIRS "/usr/lib/x86_64-linux-gnu")
 
 # PulseAudio libraries
+#set(PULSEAUDIO_LIBRARIES "-lpulse -lpulse-simple")
 set(PULSEAUDIO_LIBRARIES pulse pulse-simple)
+
+message(STATUS "PulseAudio Include Dirs: ${PULSEAUDIO_INCLUDE_DIRS}")
+message(STATUS "PulseAudio Library Dirs: ${PULSEAUDIO_LIBRARY_DIRS}")
+message(STATUS "PulseAudio Libraries: ${PULSEAUDIO_LIBRARIES}")
 
 # Find FFTW
 #find_package(FFTW3 REQUIRED)
 #if(NOT FFTW3_FOUND)
 #    message(FATAL_ERROR "FFTW3 library not found")
 #endif()
-
+message(STATUS "FFTW3 Include Dirs: ${FFTW3_INCLUDE_DIRS}")
+message(STATUS "FFTW3 Library Dirs: ${FFTW3_LIBRARY_DIRS}")
+message(STATUS "FFTW3 Libraries: ${FFTW3_LIBRARIES}")
 if(NOT FFTW3_INCLUDE_DIRS)
     set(FFTW3_INCLUDE_DIRS "/usr/local/include")
     message(STATUS "Using default FFTW3 include dir: ${FFTW3_INCLUDE_DIRS}")
@@ -141,20 +116,41 @@ if(NOT FFTW3_LIBRARIES)
 endif()
 
 # Add the src subdirectory to the include paths
-include_directories(include AFTER SYSTEM
-    ${PostgreSQL_INCLUDE_DIR} AFTER SYSTEM
-    ${VTK_INCLUDE_DIRS} AFTER SYSTEM
-    ${Boost_INCLUDE_DIRS} AFTER SYSTEM
-    ${OpenSSL_INCLUDE_DIRS} AFTER SYSTEM
-    ${FFmpeg_INCLUDE_DIRS} AFTER SYSTEM
-    ${PORTAUDIO_INCLUDE_DIRS} AFTER SYSTEM
-    ${PulseAudio_INCLUDE_DIRS} AFTER SYSTEM
-    ${FFTW3_INCLUDE_DIRS})
+include_directories(include)
+include_directories(src)
+include_directories(${PostgreSQL_INCLUDE_DIR})
+include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
+include_directories(${Boost_INCLUDE_DIRS})  # Add Boost include directories
+include_directories(${OpenSSL_INCLUDE_DIRS})  # Add OpenSSL include directories
+include_directories(${FFmpeg_INCLUDE_DIRS})  # Add FFmpeg include directories
+include_directories(${PORTAUDIO_INCLUDE_DIRS}) # Add PortAudio include directories
+include_directories(${PulseAudio_INCLUDE_DIRS}) # Add PulseAudio include directories
+include_directories(${FFTW3_INCLUDE_DIRS}) # Add FFTW3 include directories
 
-link_directories(${PostgreSQL_LIBRARY_DIR}
-    ${PORTAUDIO_LIBRARY_DIR}
-    ${PulseAudio_LIBRARY_DIRS}
-    ${FFTW3_LIBRARY_DIRS}
-    ${LOCAL_LIB64})
+link_directories(${PostgreSQL_LIBRARY_DIR})
+link_directories(${PORTAUDIO_LIBRARY_DIR})
+link_directories(${PulseAudio_LIBRARY_DIRS})
+link_directories(${FFTW3_LIBRARY_DIRS})
+link_directories(${LOCAL_LIB64})
 
-add_subdirectory(src)
+add_executable(AARNN ${AARNN_SRC})
+target_link_libraries(AARNN PRIVATE
+        ${VTK_LIBRARIES}
+        ${PostgreSQL_LIBRARIES}
+        ${Boost_LIBRARIES}
+        ${OpenSSL_LIBRARIES}
+        ${FFmpeg_LIBRARIES}
+        ${PORTAUDIO_LIBRARIES}
+        ${PULSEAUDIO_LIBRARIES}
+        ${FFTW3_LIBRARIES}
+        ${PQXX_LIB}
+)
+add_executable(Visualiser ${VISUALISER_SRC})
+target_link_libraries(Visualiser PRIVATE
+        ${VTK_LIBRARIES}
+        ${PostgreSQL_LIBRARIES}
+        ${Boost_LIBRARIES}
+        ${OpenSSL_LIBRARIES}
+        ${FFTW3_LIBRARIES}
+        ${PQXX_LIB}
+)
