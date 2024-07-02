@@ -1,6 +1,7 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef AARNN_LOGGER_H
+#define AARNN_LOGGER_H
 
+#include <chrono>
 #include <fstream>
 
 class Logger

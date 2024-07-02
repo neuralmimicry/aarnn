@@ -33,6 +33,8 @@ RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
 RUN apt-get install -y \
   wget \
   curl \
+  libcurl4 \
+  libcurl4-openssl-dev \
   libpqxx-dev \
   libvtk9-dev \
   python3-vtk9 \

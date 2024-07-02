@@ -1,10 +1,8 @@
 #ifndef AXONBOUTON_H
 #define AXONBOUTON_H
 
-#include "Axon.h"
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
-#include "Neuron.h"
 #include "Position.h"
 #include "SynapticGap.h"
 
@@ -13,7 +11,6 @@
 class Axon;
 class SynapticGap;
 class Position;
-
 class Neuron;
 
 class AxonBouton
@@ -48,4 +45,4 @@ class AxonBouton
     std::shared_ptr<Axon>        parentAxon;
 };
 
-#endif  // AXON_BOUTON_H
+#endif  // AXONBOUTON_H

@@ -1,6 +1,13 @@
 # Use the official PostgreSQL image from the Docker Hub
 FROM postgres:14
 
+# Set environment variable to make apt-get commands non-interactive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install the required packages
+# RUN apt-get update && apt-get install -y \
+#   locales
+
 # Set the locale to en_GB.utf8
 RUN localedef -i en_GB -c -f UTF-8 -A /usr/share/locale/locale.alias en_GB.UTF-8
 ENV LANG en_GB.utf8
@@ -12,11 +19,19 @@ ENV POSTGRES_DB=neurons
 # These variables will automatically be deleted after the building process, protecting sensitive data
 ARG POSTGRES_USERNAME
 ARG POSTGRES_PASSWORD
+ARG POSTGRES_PORT
 ARG POSTGRES_PORT_EXPOSE
+
+# Check if the ARG variables are provided
+RUN test -n "$POSTGRES_USERNAME" || (echo "POSTGRES_USERNAME is not set" && exit 1)
+RUN test -n "$POSTGRES_PASSWORD" || (echo "POSTGRES_PASSWORD is not set" && exit 1)
+RUN test -n "$POSTGRES_PORT" || (echo "POSTGRES_PORT is not set" && exit 1)
+RUN test -n "$POSTGRES_PORT_EXPOSE" || (echo "POSTGRES_PORT_EXPOSE is not set" && exit 1)
 
 # Use the ARG variables to set environment variables used by postgres image
 ENV POSTGRES_USER=${POSTGRES_USERNAME}
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+ENV POSTGRES_PORT=${POSTGRES_PORT}
 ENV POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}
 
 # Set the timezone to Europe/London
@@ -47,6 +62,12 @@ COPY ./configure/entrypoint.sh /usr/local/bin/
 # Make the entrypoint script executable
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Copy the script to amend the entrypoint
+COPY ./configure/amend_entrypoint.sh /usr/local/bin/
+
+# Run the script to amend the entrypoint to add 5 second pause after running init.sql
+RUN chmod +x /usr/local/bin/amend_entrypoint.sh && /usr/local/bin/amend_entrypoint.sh
+
 # Expose the Postgres port outside of the Docker container
 EXPOSE ${POSTGRES_PORT_EXPOSE}
 
@@ -54,4 +75,4 @@ EXPOSE ${POSTGRES_PORT_EXPOSE}
 ENTRYPOINT ["entrypoint.sh"]
 
 # Default command provided by the PostgreSQL image
-CMD ["postgres"]
+# CMD ["postgres"]

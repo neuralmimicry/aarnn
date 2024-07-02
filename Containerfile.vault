@@ -1,0 +1,76 @@
+# Use the official Ubuntu image as a base
+FROM ubuntu:22.04
+
+# Install locales
+RUN apt-get update && apt-get install -y locales
+
+# Set the locale to en_GB.utf8
+RUN localedef -i en_GB -c -f UTF-8 -A /usr/share/locale/locale.alias en_GB.UTF-8
+ENV LANG en_GB.utf8
+
+# Set environment variable to make apt-get commands non-interactive
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ="Europe/London"
+
+RUN apt-get update && apt-get install -y \
+  apt-utils \
+  tzdata
+
+# Preconfigure tzdata package and configure it
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    echo "tzdata tzdata/Areas select Etc" | debconf-set-selections && \
+    echo "tzdata tzdata/Zones/Etc select UTC" | debconf-set-selections && \
+    echo "tzdata tzdata/Areas seen true" | debconf-set-selections && \
+    echo "tzdata tzdata/Zones/Etc seen true" | debconf-set-selections && \
+    DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
+# Define environment variables
+ENV VAULT_VERSION=1.17.0
+ENV VAULT_ADDR='http://0.0.0.0:8200'
+ENV VAULT_API_ADDR='http://aarnn_vault:8200'
+ENV VAULT_DEV_LISTEN_ADDRESS='aarnn_vault:8200'
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip \
+    libcap2-bin \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create necessary directories
+RUN mkdir -p /opt/vault/data /etc/vault.d /opt/vault/logs
+
+# Download and install Vault
+RUN curl -fsSL https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip -o /tmp/vault.zip \
+    && unzip /tmp/vault.zip -d /usr/local/bin/ \
+    && rm /tmp/vault.zip
+
+# Add Vault user and set permissions
+RUN useradd -r -s /bin/bash vault \
+    && mkdir -p /home/vault \
+    && chown -R vault:vault /opt/vault/data /etc/vault.d /opt/vault/logs /home/vault \
+    && chmod +x /usr/local/bin/vault
+
+# Allow the vault user to use sudo without a password
+RUN echo "vault ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vault
+
+# Copy the scripts into the container
+COPY init_vault.sh /usr/local/bin/
+COPY start_vault.sh /usr/local/bin/
+COPY .env /usr/local/bin/
+
+# Set permissions on the scripts
+RUN chmod +x /usr/local/bin/init_vault.sh /usr/local/bin/start_vault.sh
+RUN chown vault:vault /usr/local/bin/init_vault.sh /usr/local/bin/start_vault.sh /usr/local/bin/.env
+
+# Expose the port Vault listens on
+EXPOSE 8200
+
+# Switch to the vault user
+USER vault
+
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/start_vault.sh"]

@@ -152,7 +152,7 @@ void PulseAudioMic::processStream(const void *inputBuffer, size_t framesPerBuffe
 
     capturedAudio.clear();
     // perform FFT
-    fftw_complex *out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * framesPerBuffer);
+    auto *out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * framesPerBuffer);
     for(size_t i = 0; i < framesPerBuffer; ++i)
     {
         out[i][0] = 0.0;

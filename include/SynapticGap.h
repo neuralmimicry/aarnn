@@ -4,14 +4,12 @@
 #include "AxonHillock.h"
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
-#include "DendriteBranch.h"
-#include "Neuron.h"
+#include "DendriteBouton.h"
 #include "Position.h"
-#include "math.h"
-
+#include <cmath>
 #include <memory>
 #include <vector>
-//#include "SensoryReceptor.h"
+#include "SensoryReceptor.h"
 #include "Effector.h"
 
 class Effector;
@@ -44,7 +42,7 @@ class SynapticGap
     [[nodiscard]] std::shared_ptr<Effector>        getParentEffector() const;
     [[nodiscard]] std::shared_ptr<AxonBouton>      getParentAxonBouton() const;
     [[nodiscard]] std::shared_ptr<DendriteBouton>  getParentDendriteBouton() const;
-    [[nodiscard]] const PositionPtr               &getPosition() const;
+    [[nodiscard]] const PositionPtr               &getPosition() const override;
 
     void updateFromDendriteBouton(std::shared_ptr<DendriteBouton> parentDendriteBoutonPointer);
     void updateFromAxonBouton(std::shared_ptr<AxonBouton> parentAxonBoutonPointer);
@@ -63,18 +61,18 @@ class SynapticGap
     std::shared_ptr<SensoryReceptor> parentSensoryReceptor;
     std::shared_ptr<AxonBouton>      parentAxonBouton;
     std::shared_ptr<DendriteBouton>  parentDendriteBouton;
-    double                           attack;
-    double                           decay;
-    double                           sustain;
-    double                           release;
-    double                           frequencyResponse;
-    double                           phaseShift;
-    double                           previousTime;
-    double                           energyLevel;
-    double                           componentEnergyLevel;
-    double                           minPropagationTime;
-    double                           maxPropagationTime;
-    double                           lastCallTime;
-    int                              callCount;
+    double                           attack{};
+    double                           decay{};
+    double                           sustain{};
+    double                           release{};
+    double                           frequencyResponse{};
+    double                           phaseShift{};
+    double                           previousTime{};
+    double                           energyLevel{};
+    double                           componentEnergyLevel{};
+    double                           minPropagationTime{};
+    double                           maxPropagationTime{};
+    double                           lastCallTime{};
+    int                              callCount{};
 };
 #endif  // SYNAPTICGAP_H

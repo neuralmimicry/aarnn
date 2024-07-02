@@ -4,6 +4,7 @@ void Axon::initialise()
 {
     if(!instanceInitialised)
     {
+        std::cout << "Initialising Axon" << std::endl;
         if(!onwardAxonBouton)
         {
             onwardAxonBouton = std::make_shared<AxonBouton>(
@@ -15,7 +16,7 @@ void Axon::initialise()
     }
 }
 
-void Axon::updatePosition(const PositionPtr &newPosition)
+void Axon::updatePosition(const std::shared_ptr<Position> &newPosition)
 {
     position = newPosition;
 }

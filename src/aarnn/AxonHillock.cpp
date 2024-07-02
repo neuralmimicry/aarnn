@@ -4,6 +4,7 @@ void AxonHillock::initialise()
 {
     if(!instanceInitialised)
     {
+        std::cout << "Initialising AxonHillock" << std::endl;
         if(!onwardAxon)
         {
             onwardAxon = std::make_shared<Axon>(

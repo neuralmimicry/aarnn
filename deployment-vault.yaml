@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      containers:
+        - name: vault
+          image: localhost/aarnn_vault:latest
+          ports:
+            - containerPort: 8200
+          env:
+            - name: VAULT_ADDR
+              value: "http://aarnn_vault:8200"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              vault server -dev -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200 &
+              sleep 5;
+              vault kv put secret/database username=postgres password=password;
+      volumes:
+        - name: vault-file
+          emptyDir: {}

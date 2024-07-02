@@ -1,14 +1,14 @@
-#ifndef SENSORYRECENPTOR_H
-    #define SENSORRECEENPTOR_H
+#ifndef SENSORYRECEPTOR_H
+#define SENSORYRECEPTOR_H
 
-    #include "BodyComponent.h"
-    #include "BodyShapeComponent.h"
-    #include "Position.h"
+#include "BodyComponent.h"
+#include "BodyShapeComponent.h"
+#include "Position.h"
 
-    #include <chrono>
-    #include <iostream>
-    #include <memory>
-    #include <vector>
+#include <chrono>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 class SynapticGap;
 
@@ -56,19 +56,19 @@ class SensoryReceptor
     bool                                      instanceInitialised = false;
     std::vector<std::shared_ptr<SynapticGap>> synapticGaps;
     std::shared_ptr<SynapticGap>              synapticGap;
-    double                                    attack;
-    double                                    decay;
-    double                                    sustain;
-    double                                    release;
-    double                                    frequencyResponse;
-    double                                    phaseShift;
-    double                                    previousTime;
-    double                                    energyLevel;
-    double                                    componentEnergyLevel;
-    double                                    minPropagationRate;
-    double                                    maxPropagationRate;
-    double                                    lastCallTime;
-    int                                       callCount;
+    double                                    attack{};
+    double                                    decay{};
+    double                                    sustain{};
+    double                                    release{};
+    double                                    frequencyResponse{};
+    double                                    phaseShift{};
+    double                                    previousTime{};
+    double                                    energyLevel{};
+    double                                    componentEnergyLevel{};
+    double                                    minPropagationRate{};
+    double                                    maxPropagationRate{};
+    double                                    lastCallTime{};
+    int                                       callCount{};
 };
 
-#endif  // SENSORRECEENPTOR_H
+#endif  // SENSORYRECEPTOR_H

@@ -36,6 +36,8 @@ RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
 RUN apt-get install -y \
   wget \
   curl \
+  libcurl4 \
+  libcurl4-openssl-dev \
   libpqxx-dev \
   libvtk9-dev \
   python3-vtk9 \
@@ -106,5 +108,5 @@ RUN apt-get update && apt-get install -y \
   chmod +x /app/launch_aarnn.sh
 
 # Run the application when the container launches
-CMD ["/app/launch_aarnn.sh"]
+ENTRYPOINT ["/app/launch_aarnn.sh"]
 
