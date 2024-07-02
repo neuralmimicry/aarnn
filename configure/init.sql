@@ -1,1 +1,9 @@
-CREATE TABLE IF NOT EXISTS neurons (id SERIAL PRIMARY KEY, propagation_rate REAL NOT NULL, neuron_type INTEGER NOT NULL, axon_length REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS neurons (
+                                       neuron_id SERIAL PRIMARY KEY,
+                                       x REAL NOT NULL,
+                                       y REAL NOT NULL,
+                                       z REAL NOT NULL,
+                                       propagation_rate REAL,
+                                       neuron_type INTEGER,
+                                       axon_length REAL
+);

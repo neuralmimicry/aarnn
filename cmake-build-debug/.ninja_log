@@ -1,0 +1,7 @@
+# ninja log v6
+5	19	1719006132708326473	CMakeFiles/AARNN.dir/src/aarnn/NeuronParameters.cpp.o	4ea66043f7789e
+3	276	1719006132706326470	CMakeFiles/AARNN.dir/src/aarnn/BodyComponent.cpp.o	1a8136349192b72c
+3	317	1719006132706326470	CMakeFiles/AARNN.dir/src/aarnn/BodyShapeComponent.cpp.o	270b1a81fd9eebbd
+4	568	1719006132707326471	CMakeFiles/AARNN.dir/src/aarnn/Logger.cpp.o	9c11807604a64fde
+5	4120	1719006132708326473	CMakeFiles/AARNN.dir/src/aarnn/Position.cpp.o	16b818e009334ed8
+4	5022	1719006132707326471	CMakeFiles/AARNN.dir/src/aarnn/Neuron.cpp.o	b8458d977ecdaffa

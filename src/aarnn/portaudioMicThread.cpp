@@ -11,8 +11,8 @@ static int portaudioMicCallBack(const void                     *inputBuffer,
 {
     std::cout << "MicCallBack" << std::endl;
     // Read data from the stream.
-    [[maybe_unused]] const SAMPLE *in  = (const SAMPLE *)inputBuffer;
-    SAMPLE                        *out = (SAMPLE *)outputBuffer;
+    [[maybe_unused]] const auto *in  = (const SAMPLE *)inputBuffer;
+    auto                        *out = (SAMPLE *)outputBuffer;
     (void)timeInfo; /* Prevent unused variable warnings. */
     (void)statusFlags;
     (void)userData;
@@ -53,7 +53,7 @@ int portaudioMicThread::run()
     std::vector<PaStreamParameters> outputParameters;
     int                             inputDeviceSelected  = -1;
     int                             outputDeviceSelected = -1;
-    PaDeviceIndex                   indexLoop            = 0;
+    PaDeviceIndex                   indexLoop;
 
     int numHostApis = Pa_GetHostApiCount();
     for(int i = 0; i < numHostApis; ++i)
@@ -97,19 +97,19 @@ int portaudioMicThread::run()
         std::cout << std::left << std::setw(5) << i << std::setw(20) << deviceInfo->name << std::setw(20)
                   << Pa_GetHostApiInfo(deviceInfo->hostApi)->name << std::setw(20) << deviceInfo->maxInputChannels;
 
-        std::string sampleRatesStr   = "";
-        std::string sampleFormatsStr = "";
+        std::string sampleRatesStr;
+        std::string sampleFormatsStr;
         indexLoop                    = i;
         inputParameters.emplace_back();
         inputParameters.back().device                    = indexLoop;
         inputParameters.back().channelCount              = deviceInfo->maxInputChannels;
         inputParameters.back().sampleFormat              = paInt16;  // default to paInt16
         inputParameters.back().suggestedLatency          = deviceInfo->defaultLowInputLatency;
-        inputParameters.back().hostApiSpecificStreamInfo = NULL;
+        inputParameters.back().hostApiSpecificStreamInfo = nullptr;
 
         for(double sampleRate: sampleRates)
         {
-            err = Pa_IsFormatSupported(&inputParameters.back(), NULL, sampleRate);
+            err = Pa_IsFormatSupported(&inputParameters.back(), nullptr, sampleRate);
             if(err == paFormatIsSupported)
             {
                 sampleRatesStr += std::to_string((int)sampleRate) + ", ";
@@ -119,7 +119,7 @@ int portaudioMicThread::run()
         for(PaSampleFormat sampleFormat: sampleFormats)
         {
             inputParameters.back().sampleFormat = sampleFormat;
-            err = Pa_IsFormatSupported(&inputParameters.back(), NULL, 44100.0);  // default to 44100.0 Hz
+            err = Pa_IsFormatSupported(&inputParameters.back(), nullptr, 44100.0);  // default to 44100.0 Hz
             if(err == paFormatIsSupported)
             {
                 sampleFormatsStr += std::to_string(sampleFormat) + ", ";
@@ -156,8 +156,8 @@ int portaudioMicThread::run()
         std::cout << std::left << std::setw(5) << i << std::setw(20) << deviceInfo->name << std::setw(20)
                   << Pa_GetHostApiInfo(deviceInfo->hostApi)->name << std::setw(20) << deviceInfo->maxOutputChannels;
 
-        std::string sampleRatesStr   = "";
-        std::string sampleFormatsStr = "";
+        std::string sampleRatesStr;
+        std::string sampleFormatsStr;
 
         indexLoop = i;
         outputParameters.emplace_back();
@@ -165,11 +165,11 @@ int portaudioMicThread::run()
         outputParameters.back().channelCount              = deviceInfo->maxOutputChannels;
         outputParameters.back().sampleFormat              = paInt16;  // default to paInt16
         outputParameters.back().suggestedLatency          = deviceInfo->defaultLowOutputLatency;
-        outputParameters.back().hostApiSpecificStreamInfo = NULL;
+        outputParameters.back().hostApiSpecificStreamInfo = nullptr;
 
         for(double sampleRate: sampleRates)
         {
-            err = Pa_IsFormatSupported(NULL, &outputParameters.back(), sampleRate);
+            err = Pa_IsFormatSupported(nullptr, &outputParameters.back(), sampleRate);
             if(err == paFormatIsSupported)
             {
                 sampleRatesStr += std::to_string((int)sampleRate) + ", ";
@@ -179,7 +179,7 @@ int portaudioMicThread::run()
         for(PaSampleFormat sampleFormat: sampleFormats)
         {
             outputParameters.back().sampleFormat = sampleFormat;
-            err = Pa_IsFormatSupported(NULL, &outputParameters.back(), 44100.0);  // default to 44100.0 Hz
+            err = Pa_IsFormatSupported(nullptr, &outputParameters.back(), 44100.0);  // default to 44100.0 Hz
             if(err == paFormatIsSupported)
             {
                 sampleFormatsStr += std::to_string(sampleFormat) + ", ";
@@ -209,7 +209,7 @@ int portaudioMicThread::run()
     inputParameters[inputDeviceSelected].sampleFormat = paInt16;  // default to paInt16
     inputParameters[inputDeviceSelected].suggestedLatency =
      Pa_GetDeviceInfo(inputDeviceSelected)->defaultLowInputLatency;
-    inputParameters[inputDeviceSelected].hostApiSpecificStreamInfo = NULL;
+    inputParameters[inputDeviceSelected].hostApiSpecificStreamInfo = nullptr;
 
     // Setup output parameters
     outputParameters[outputDeviceSelected].device       = outputDeviceSelected;
@@ -217,7 +217,7 @@ int portaudioMicThread::run()
     outputParameters[outputDeviceSelected].sampleFormat = paInt16;  // default to paInt16
     outputParameters[outputDeviceSelected].suggestedLatency =
      Pa_GetDeviceInfo(outputDeviceSelected)->defaultLowOutputLatency;
-    outputParameters[outputDeviceSelected].hostApiSpecificStreamInfo = NULL;
+    outputParameters[outputDeviceSelected].hostApiSpecificStreamInfo = nullptr;
 
     // Open the stream.
     err = Pa_OpenStream(&stream,
@@ -227,7 +227,7 @@ int portaudioMicThread::run()
                         FRAMES_PER_BUFFER,
                         paClipOff,
                         portaudioMicCallBack,
-                        NULL);
+                        nullptr);
     if(err != paNoError)
     {
         std::cout << "Error opening audio device: " << err << std::endl;

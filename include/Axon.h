@@ -4,7 +4,6 @@
 
 #include "AxonBouton.h"
 #include "AxonBranch.h"
-#include "AxonHillock.h"
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
 #include "Position.h"
@@ -22,7 +21,7 @@ class Axon
 , public BodyShapeComponent
 {
     public:
-    explicit Axon(const PositionPtr &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
+    explicit Axon(const std::shared_ptr<Position> &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
     : BodyComponent<Position>(position, propRate)
     , BodyShapeComponent()
     {
@@ -39,7 +38,7 @@ class Axon
     [[nodiscard]] std::shared_ptr<AxonHillock> getParentAxonHillock() const;
     void                                      updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer);
     [[nodiscard]] std::shared_ptr<AxonBranch> getParentAxonBranch() const;
-    [[nodiscard]] const PositionPtr          &getPosition() const
+    [[nodiscard]] const std::shared_ptr<Position>          &getPosition() const
     {
         return position;
     }

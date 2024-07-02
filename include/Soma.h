@@ -5,9 +5,7 @@
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
 #include "DendriteBranch.h"
-#include "Neuron.h"
 #include "Position.h"
-#include "SynapticGap.h"
 
 #include <memory>
 #include <vector>
@@ -46,7 +44,8 @@ class Soma
     {
         return parentNeuron;
     }
-    [[nodiscard]] const PositionPtr &getPosition() const
+
+    [[nodiscard]] const PositionPtr &getPosition() const override
     {
         return position;
     }

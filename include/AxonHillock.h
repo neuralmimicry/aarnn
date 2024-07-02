@@ -1,14 +1,12 @@
 #ifndef AXONHILLOCK_H
 #define AXONHILLOCK_H
 
-#include "Axon.h"
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
 #include "Position.h"
-#include "Soma.h"
-
 #include <memory>
 #include <vector>
+#include "utils.h"
 
 class Soma;
 class Axon;

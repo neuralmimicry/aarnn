@@ -1,7 +1,6 @@
 #ifndef AXONBRANCH_H
 #define AXONBRANCH_H
 
-#include "Axon.h"
 #include "BodyComponent.h"
 #include "BodyShapeComponent.h"
 #include "Position.h"

@@ -4,6 +4,7 @@ void AxonBouton::initialise()
 {
     if(!instanceInitialised)
     {
+        std::cout << "Initialising AxonBouton" << std::endl;
         if(!onwardSynapticGap)
         {
             onwardSynapticGap = std::make_shared<SynapticGap>(

@@ -1,6 +1,21 @@
 #!/bin/bash
 set -e
 
+required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DBNAME" "POSTGRES_PORT_EXPOSE" "PGDATA")
+for var in "${required_vars[@]}"; do
+  # Remove quotes from the variable value
+  value=$(echo "${!var}" | sed 's/^"//; s/"$//')
+  export "$var"="$value"
+
+  if [ -z "$value" ]; then
+    echo "Error: Environment variable $var is not set."
+    exit 1
+  fi
+done
+
+# Pause for initial startup
+sleep 10
+
 # Function to configure PostgreSQL
 configure_postgres() {
   PG_HBA_CONF="$PGDATA/pg_hba.conf"
@@ -37,6 +52,9 @@ if [ ! -s "$PGDATA/PG_VERSION" ]; then
       exit 1
     fi
   done
+
+  # Enable initial startup to complete uninterrupted (init.sql to run, otherwise no neurons db gets created)
+  sleep 10
 
   # Configure PostgreSQL for remote access
   configure_postgres

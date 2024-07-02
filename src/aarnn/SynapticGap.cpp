@@ -1,8 +1,5 @@
 #include "SynapticGap.h"
 
-#include "SensoryReceptor.h"
-#include "utils.h"
-
 void SynapticGap::initialise()
 {
     if(!instanceInitialised)

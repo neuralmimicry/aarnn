@@ -6,6 +6,7 @@ void AxonBranch::initialise()
 {
     if(!instanceInitialised)
     {
+        std::cout << "Initialising AxonBranch" << std::endl;
         if(onwardAxons.empty())
         {
             connectAxon(std::make_shared<Axon>(

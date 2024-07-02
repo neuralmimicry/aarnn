@@ -1,9 +1,8 @@
 #include "SensoryReceptor.h"
-
 #include "SynapticGap.h"
 #include "utils.h"
 
-#include <math.h>
+#include <cmath>
 
 void SensoryReceptor::initialise()
 {
