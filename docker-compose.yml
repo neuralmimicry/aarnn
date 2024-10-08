@@ -1,0 +1,28 @@
+version: '3.8'
+services: 
+  aarnn_postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: neurons
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: GeneTics99!
+    networks:
+      - neuro_network
+
+  aarnn_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - aarnn_postgres
+    networks:
+      - neuro_network
+
+networks:
+  neuro_network:
+    driver: bridge
+
