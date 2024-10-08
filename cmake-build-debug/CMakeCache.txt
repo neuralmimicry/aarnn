@@ -32,12 +32,12 @@ Boost_DEBUG:BOOL=OFF
 //The directory containing a CMake configuration file for Boost.
 Boost_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Boost-1.83.0
 
-Boost_FILESYSTEM_LIBRARY_RELEASE:STRING=/usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.74.0
+Boost_FILESYSTEM_LIBRARY_RELEASE:STRING=/usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.83.0
 
 //Path to a file.
 Boost_INCLUDE_DIR:PATH=/usr/include
 
-Boost_SYSTEM_LIBRARY_RELEASE:STRING=/usr/lib/x86_64-linux-gnu/libboost_system.so.1.74.0
+Boost_SYSTEM_LIBRARY_RELEASE:STRING=/usr/lib/x86_64-linux-gnu/libboost_system.so.1.83.0
 
 //Link with static Boost libraries
 CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
@@ -52,9 +52,6 @@ CGAL_CTEST_DISPLAY_MEM_AND_TIME:BOOL=OFF
 
 //Activate the CGAL developers mode. See https://github.com/CGAL/cgal/wiki/CGAL_DEV_MODE
 CGAL_DEV_MODE:BOOL=OFF
-
-//The directory containing a CMake configuration file for CGAL.
-CGAL_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/CGAL
 
 //If set, the ctest command will not skip the tests of the draw
 // functions.
@@ -77,25 +74,19 @@ CMAKE_BUILD_TYPE:STRING=Debug
 //Enable colored diagnostics throughout.
 CMAKE_COLOR_DIAGNOSTICS:BOOL=ON
 
-//Configs
-CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release;RelWithDebInfo;MinSizeRel;Coverage
-
 //CXX compiler
 CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_CXX_COMPILER_AR:FILEPATH=/usr/bin/gcc-ar-12
+CMAKE_CXX_COMPILER_AR:FILEPATH=/usr/bin/gcc-ar-13
 
 //A wrapper around 'ranlib' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_CXX_COMPILER_RANLIB:FILEPATH=/usr/bin/gcc-ranlib-12
+CMAKE_CXX_COMPILER_RANLIB:FILEPATH=/usr/bin/gcc-ranlib-13
 
 //Flags used by the CXX compiler during all build types.
 CMAKE_CXX_FLAGS:STRING=
-
-//g++ coverage flags.
-CMAKE_CXX_FLAGS_COVERAGE:STRING=-g -O0 -fno-default-inline --coverage -fprofile-abs-path -fprofile-arcs -fno-inline -fno-inline-small-functions -ftest-coverage -lgcov
 
 //Flags used by the CXX compiler during DEBUG builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
@@ -114,11 +105,11 @@ CMAKE_C_COMPILER:FILEPATH=/usr/bin/cc
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_C_COMPILER_AR:FILEPATH=/usr/bin/gcc-ar-12
+CMAKE_C_COMPILER_AR:FILEPATH=/usr/bin/gcc-ar-13
 
 //A wrapper around 'ranlib' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_C_COMPILER_RANLIB:FILEPATH=/usr/bin/gcc-ranlib-12
+CMAKE_C_COMPILER_RANLIB:FILEPATH=/usr/bin/gcc-ranlib-13
 
 //Flags used by the C compiler during all build types.
 CMAKE_C_FLAGS:STRING=
@@ -302,7 +293,7 @@ FFMPEG_AVCODEC_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFMPEG_AVCODEC_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libavcodec.so
 
 //The avcodec version number.
-FFMPEG_AVCODEC_VERSION:STRING=60.3.100
+FFMPEG_AVCODEC_VERSION:STRING=60.31.102
 
 //The avdevice CFLAGS.
 FFMPEG_AVDEVICE_DEFINITIONS:STRING=
@@ -314,7 +305,7 @@ FFMPEG_AVDEVICE_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFMPEG_AVDEVICE_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libavdevice.so
 
 //The avdevice version number.
-FFMPEG_AVDEVICE_VERSION:STRING=60.1.100
+FFMPEG_AVDEVICE_VERSION:STRING=60.3.100
 
 //The avfilter CFLAGS.
 FFMPEG_AVFILTER_DEFINITIONS:STRING=
@@ -326,7 +317,7 @@ FFMPEG_AVFILTER_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFMPEG_AVFILTER_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libavfilter.so
 
 //The avfilter version number.
-FFMPEG_AVFILTER_VERSION:STRING=9.3.100
+FFMPEG_AVFILTER_VERSION:STRING=9.12.100
 
 //The avformat CFLAGS.
 FFMPEG_AVFORMAT_DEFINITIONS:STRING=
@@ -338,7 +329,7 @@ FFMPEG_AVFORMAT_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFMPEG_AVFORMAT_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libavformat.so
 
 //The avformat version number.
-FFMPEG_AVFORMAT_VERSION:STRING=60.3.100
+FFMPEG_AVFORMAT_VERSION:STRING=60.16.100
 
 //The avutil CFLAGS.
 FFMPEG_AVUTIL_DEFINITIONS:STRING=
@@ -350,7 +341,7 @@ FFMPEG_AVUTIL_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFMPEG_AVUTIL_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libavutil.so
 
 //The avutil version number.
-FFMPEG_AVUTIL_VERSION:STRING=58.2.100
+FFMPEG_AVUTIL_VERSION:STRING=58.29.100
 
 //The FFmpeg cflags.
 FFMPEG_DEFINITIONS:STRING=
@@ -371,7 +362,7 @@ FFMPEG_POSTPROC_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFMPEG_POSTPROC_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libpostproc.so
 
 //The postproc version number.
-FFMPEG_POSTPROC_VERSION:STRING=57.1.100
+FFMPEG_POSTPROC_VERSION:STRING=57.3.100
 
 //The swresample CFLAGS.
 FFMPEG_SWRESAMPLE_DEFINITIONS:STRING=
@@ -383,7 +374,7 @@ FFMPEG_SWRESAMPLE_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFMPEG_SWRESAMPLE_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libswresample.so
 
 //The swresample version number.
-FFMPEG_SWRESAMPLE_VERSION:STRING=4.10.100
+FFMPEG_SWRESAMPLE_VERSION:STRING=4.12.100
 
 //The swscale CFLAGS.
 FFMPEG_SWSCALE_DEFINITIONS:STRING=
@@ -395,7 +386,7 @@ FFMPEG_SWSCALE_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFMPEG_SWSCALE_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libswscale.so
 
 //The swscale version number.
-FFMPEG_SWSCALE_VERSION:STRING=7.1.100
+FFMPEG_SWSCALE_VERSION:STRING=7.5.100
 
 //The overall FFmpeg version.
 FFMPEG_VERSION:STRING=6.1.1-3ubuntu5
@@ -410,7 +401,7 @@ FFmpeg_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 FFmpeg_LIBRARIES:STRING=/usr/lib/x86_64-linux-gnu/libavcodec.so;/usr/lib/x86_64-linux-gnu/libavdevice.so;/usr/lib/x86_64-linux-gnu/libavformat.so;/usr/lib/x86_64-linux-gnu/libavfilter.so;/usr/lib/x86_64-linux-gnu/libavutil.so;/usr/lib/x86_64-linux-gnu/libpostproc.so;/usr/lib/x86_64-linux-gnu/libswscale.so;/usr/lib/x86_64-linux-gnu/libswresample.so
 
 //The overall FFmpeg version.
-FFmpeg_VERSION:STRING=6.0-6ubuntu1.1
+FFmpeg_VERSION:STRING=6.1.1-3ubuntu5
 
 //The avcodec CFLAGS.
 FFmpeg_avcodec_DEFINITIONS:STRING=
@@ -422,7 +413,7 @@ FFmpeg_avcodec_INCLUDE_DIRS:PATH=/usr/include/x86_64-linux-gnu
 FFmpeg_avcodec_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libavcodec.so
 
 //The avcodec version number.
-FFmpeg_avcodec_VERSION:STRING=60.3.100
+FFmpeg_avcodec_VERSION:STRING=60.31.102
 
 //The avdevice CFLAGS.
 FFmpeg_avdevice_DEFINITIONS:STRING=
@@ -434,7 +425,7 @@ FFmpeg_avdevice_INCLUDE_DIRS:PATH=/usr/include/x86_64-linux-gnu
 FFmpeg_avdevice_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libavdevice.so
 
 //The avdevice version number.
-FFmpeg_avdevice_VERSION:STRING=60.1.100
+FFmpeg_avdevice_VERSION:STRING=60.3.100
 
 //The avfilter CFLAGS.
 FFmpeg_avfilter_DEFINITIONS:STRING=
@@ -446,7 +437,7 @@ FFmpeg_avfilter_INCLUDE_DIRS:PATH=/usr/include/x86_64-linux-gnu
 FFmpeg_avfilter_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libavfilter.so
 
 //The avfilter version number.
-FFmpeg_avfilter_VERSION:STRING=9.3.100
+FFmpeg_avfilter_VERSION:STRING=9.12.100
 
 //The avformat CFLAGS.
 FFmpeg_avformat_DEFINITIONS:STRING=
@@ -458,7 +449,7 @@ FFmpeg_avformat_INCLUDE_DIRS:PATH=/usr/include/x86_64-linux-gnu
 FFmpeg_avformat_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libavformat.so
 
 //The avformat version number.
-FFmpeg_avformat_VERSION:STRING=60.3.100
+FFmpeg_avformat_VERSION:STRING=60.16.100
 
 //The avresample CFLAGS.
 FFmpeg_avresample_DEFINITIONS:STRING=
@@ -482,7 +473,7 @@ FFmpeg_avutil_INCLUDE_DIRS:PATH=/usr/include/x86_64-linux-gnu
 FFmpeg_avutil_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libavutil.so
 
 //The avutil version number.
-FFmpeg_avutil_VERSION:STRING=58.2.100
+FFmpeg_avutil_VERSION:STRING=58.29.100
 
 //The postproc CFLAGS.
 FFmpeg_postproc_DEFINITIONS:STRING=
@@ -494,7 +485,7 @@ FFmpeg_postproc_INCLUDE_DIRS:PATH=/usr/include/x86_64-linux-gnu
 FFmpeg_postproc_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libpostproc.so
 
 //The postproc version number.
-FFmpeg_postproc_VERSION:STRING=57.1.100
+FFmpeg_postproc_VERSION:STRING=57.3.100
 
 //The swresample CFLAGS.
 FFmpeg_swresample_DEFINITIONS:STRING=
@@ -506,7 +497,7 @@ FFmpeg_swresample_INCLUDE_DIRS:PATH=/usr/include/x86_64-linux-gnu
 FFmpeg_swresample_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libswresample.so
 
 //The swresample version number.
-FFmpeg_swresample_VERSION:STRING=4.10.100
+FFmpeg_swresample_VERSION:STRING=4.12.100
 
 //The swscale CFLAGS.
 FFmpeg_swscale_DEFINITIONS:STRING=
@@ -518,7 +509,7 @@ FFmpeg_swscale_INCLUDE_DIRS:PATH=/usr/include/x86_64-linux-gnu
 FFmpeg_swscale_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libswscale.so
 
 //The swscale version number.
-FFmpeg_swscale_VERSION:STRING=7.1.100
+FFmpeg_swscale_VERSION:STRING=7.5.100
 
 //Path to a file.
 FREETYPE_INCLUDE_DIR_freetype2:PATH=/usr/include/freetype2
@@ -647,13 +638,13 @@ ICU_INCLUDE_DIR:PATH=/usr/include
 ICU_MAKECONV_EXECUTABLE:FILEPATH=/usr/bin/makeconv
 
 //ICU Makefile.inc data file
-ICU_MAKEFILE_INC:FILEPATH=/usr/lib/x86_64-linux-gnu/icu/72.1/Makefile.inc
+ICU_MAKEFILE_INC:FILEPATH=/usr/lib/x86_64-linux-gnu/icu/74.2/Makefile.inc
 
 //ICU pkgdata executable
 ICU_PKGDATA_EXECUTABLE:FILEPATH=/usr/bin/pkgdata
 
 //ICU pkgdata.inc data file
-ICU_PKGDATA_INC:FILEPATH=/usr/lib/x86_64-linux-gnu/icu/72.1/pkgdata.inc
+ICU_PKGDATA_INC:FILEPATH=/usr/lib/x86_64-linux-gnu/icu/74.2/pkgdata.inc
 
 //ICU uconv executable
 ICU_UCONV_EXECUTABLE:FILEPATH=/usr/bin/uconv
@@ -777,6 +768,9 @@ OPENGL_GLES2_INCLUDE_DIR:PATH=/usr/include
 OPENGL_GLES3_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a file.
+OPENGL_GLU_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a file.
 OPENGL_GLX_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a file.
@@ -825,7 +819,7 @@ OpenMP_C_FLAGS:STRING=-fopenmp
 OpenMP_C_LIB_NAMES:STRING=gomp;pthread
 
 //Path to the gomp library for OpenMP
-OpenMP_gomp_LIBRARY:FILEPATH=/usr/lib/gcc/x86_64-linux-gnu/12/libgomp.so
+OpenMP_gomp_LIBRARY:FILEPATH=/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
 
 //Path to the pthread library for OpenMP
 OpenMP_pthread_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libpthread.a
@@ -911,14 +905,14 @@ TIFF_LIBRARY_DEBUG:FILEPATH=TIFF_LIBRARY_DEBUG-NOTFOUND
 //Path to a library.
 TIFF_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libtiff.so
 
+//The directory containing a CMake configuration file for Tiff.
+Tiff_DIR:PATH=Tiff_DIR-NOTFOUND
+
 //The directory containing a CMake configuration file for VTK.
 VTK_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/vtk-9.1
 
 //Number of processors available to run parallel tests.
 VTK_MPI_NUMPROCS:STRING=2
-
-//The directory containing a CMake configuration file for VTKm.
-VTKm_DIR:PATH=VTKm_DIR-NOTFOUND
 
 //Path to a file.
 X11_ICE_INCLUDE_PATH:PATH=/usr/include
@@ -991,6 +985,9 @@ X11_Xdamage_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a library.
 X11_Xdamage_LIB:FILEPATH=/usr/lib/x86_64-linux-gnu/libXdamage.so
+
+//Path to a file.
+X11_Xdbe_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a file.
 X11_Xdmcp_INCLUDE_PATH:PATH=/usr/include
@@ -1349,12 +1346,6 @@ double-conversion_INCLUDE_DIR:PATH=/usr/include/double-conversion
 //double-conversion library
 double-conversion_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libdouble-conversion.so
 
-//The directory containing a CMake configuration file for freetype.
-freetype_DIR:PATH=freetype_DIR-NOTFOUND
-
-//The directory containing a CMake configuration file for jsoncpp.
-jsoncpp_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/jsoncpp
-
 //The directory containing a CMake configuration file for netCDF.
 netCDF_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/netCDF
 
@@ -1403,9 +1394,6 @@ pkgcfg_lib__OPENSSL_crypto:FILEPATH=/usr/lib/x86_64-linux-gnu/libcrypto.so
 //Path to a library.
 pkgcfg_lib__OPENSSL_ssl:FILEPATH=/usr/lib/x86_64-linux-gnu/libssl.so
 
-//The directory containing a CMake configuration file for tiff.
-tiff_DIR:PATH=tiff_DIR-NOTFOUND
-
 //utf8cpp include directory
 utf8cpp_INCLUDE_DIR:PATH=/usr/include/utf8cpp
 
@@ -1435,9 +1423,9 @@ CMAKE_CACHEFILE_DIR:INTERNAL=/home/pbisaacs/Developer/aarnn/cmake-build-debug
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
-CMAKE_CACHE_MINOR_VERSION:INTERNAL=28
+CMAKE_CACHE_MINOR_VERSION:INTERNAL=29
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=1
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=6
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=/home/pbisaacs/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake
 //Path to cpack program executable.
@@ -1546,7 +1534,7 @@ CMAKE_RANLIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_READELF
 CMAKE_READELF-ADVANCED:INTERNAL=1
 //Path to CMake installation.
-CMAKE_ROOT:INTERNAL=/home/pbisaacs/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.28
+CMAKE_ROOT:INTERNAL=/home/pbisaacs/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.29
 //ADVANCED property for variable: CMAKE_SHARED_LINKER_FLAGS
 CMAKE_SHARED_LINKER_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_SHARED_LINKER_FLAGS_DEBUG
@@ -1579,7 +1567,6 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-COVERAGE_COMPILER_FLAGS:INTERNAL=-g -O0 -fno-default-inline --coverage -fprofile-abs-path -fprofile-arcs -fno-inline -fno-inline-small-functions -ftest-coverage -lgcov
 //ADVANCED property for variable: CURL_DIR
 CURL_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CURL_INCLUDE_DIR
@@ -1793,9 +1780,9 @@ FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenG
 //Details about finding OpenMP
 FIND_PACKAGE_MESSAGE_DETAILS_OpenMP:INTERNAL=[TRUE][TRUE][c ][v4.5()]
 //Details about finding OpenMP_C
-FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_C:INTERNAL=[-fopenmp][/usr/lib/gcc/x86_64-linux-gnu/12/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][v4.5()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_C:INTERNAL=[-fopenmp][/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][v4.5()]
 //Details about finding OpenMP_CXX
-FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_CXX:INTERNAL=[-fopenmp][/usr/lib/gcc/x86_64-linux-gnu/12/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][v4.5()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_CXX:INTERNAL=[-fopenmp][/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][v4.5()]
 //Details about finding OpenSSL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][c ][v3.0.13()]
 //Details about finding PNG
@@ -1876,6 +1863,8 @@ ICU_ICU-CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 ICU_ICUINFO_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ICU_ICUPKG_EXECUTABLE
 ICU_ICUPKG_EXECUTABLE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: ICU_INCLUDE_DIR
+ICU_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ICU_MAKECONV_EXECUTABLE
 ICU_MAKECONV_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ICU_MAKEFILE_INC
@@ -1956,6 +1945,8 @@ OPENGL_EGL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 OPENGL_GLES2_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_GLES3_INCLUDE_DIR
 OPENGL_GLES3_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENGL_GLU_INCLUDE_DIR
+OPENGL_GLU_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_GLX_INCLUDE_DIR
 OPENGL_GLX_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_INCLUDE_DIR
@@ -2056,9 +2047,9 @@ PC_EXPAT_LIBS_OTHER:INTERNAL=
 PC_EXPAT_LIBS_PATHS:INTERNAL=
 PC_EXPAT_MODULE_NAME:INTERNAL=expat
 PC_EXPAT_PREFIX:INTERNAL=/usr
-PC_EXPAT_STATIC_CFLAGS:INTERNAL=-I/usr/include
+PC_EXPAT_STATIC_CFLAGS:INTERNAL=-I/usr/include;-DXML_STATIC
 PC_EXPAT_STATIC_CFLAGS_I:INTERNAL=
-PC_EXPAT_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_EXPAT_STATIC_CFLAGS_OTHER:INTERNAL=-DXML_STATIC
 PC_EXPAT_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
 PC_EXPAT_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lexpat;-lm
 PC_EXPAT_STATIC_LDFLAGS_OTHER:INTERNAL=
@@ -2069,7 +2060,7 @@ PC_EXPAT_STATIC_LIBS:INTERNAL=
 PC_EXPAT_STATIC_LIBS_L:INTERNAL=
 PC_EXPAT_STATIC_LIBS_OTHER:INTERNAL=
 PC_EXPAT_STATIC_LIBS_PATHS:INTERNAL=
-PC_EXPAT_VERSION:INTERNAL=2.5.0
+PC_EXPAT_VERSION:INTERNAL=2.6.1
 PC_EXPAT_expat_INCLUDEDIR:INTERNAL=
 PC_EXPAT_expat_LIBDIR:INTERNAL=
 PC_EXPAT_expat_PREFIX:INTERNAL=
@@ -2130,16 +2121,16 @@ PC_avcodec_STATIC_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
 PC_avcodec_STATIC_CFLAGS_I:INTERNAL=
 PC_avcodec_STATIC_CFLAGS_OTHER:INTERNAL=
 PC_avcodec_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
-PC_avcodec_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-lwebp;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-pthread;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
+PC_avcodec_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
 PC_avcodec_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread
 PC_avcodec_STATIC_LIBDIR:INTERNAL=
-PC_avcodec_STATIC_LIBRARIES:INTERNAL=avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;webp;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
+PC_avcodec_STATIC_LIBRARIES:INTERNAL=avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
 PC_avcodec_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../
 PC_avcodec_STATIC_LIBS:INTERNAL=
 PC_avcodec_STATIC_LIBS_L:INTERNAL=
 PC_avcodec_STATIC_LIBS_OTHER:INTERNAL=
 PC_avcodec_STATIC_LIBS_PATHS:INTERNAL=
-PC_avcodec_VERSION:INTERNAL=60.3.100
+PC_avcodec_VERSION:INTERNAL=60.31.102
 PC_avcodec_libavcodec_INCLUDEDIR:INTERNAL=
 PC_avcodec_libavcodec_LIBDIR:INTERNAL=
 PC_avcodec_libavcodec_PREFIX:INTERNAL=
@@ -2165,16 +2156,16 @@ PC_avdevice_STATIC_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
 PC_avdevice_STATIC_CFLAGS_I:INTERNAL=
 PC_avdevice_STATIC_CFLAGS_OTHER:INTERNAL=
 PC_avdevice_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
-PC_avdevice_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavdevice;-lm;-latomic;-lraw1394;-lavc1394;-lrom1394;-liec61883;-ljack;-ldrm;-lopenal;-lxcb;-lxcb-shm;-lxcb-shape;-lxcb-xfixes;-lcdio_paranoia;-lcdio_cdda;-lcdio;-lm;-ldc1394;-lasound;-lcaca;-lGL;-lpulse;-pthread;-lSDL2;-lXv;-lX11;-lXext;-L/usr/lib/x86_64-linux-gnu;-lavfilter;-pthread;-lm;-latomic;-lpocketsphinx;-lsphinxbase;-lsphinxad;-lbs2b;-llilv-0;-ldl;-lsord-0;-lserd-0;-lsratom-0;-lrubberband;-lfftw3;-lsamplerate;-lstdc++;-lmysofa;-lflite_cmu_time_awb;-lflite_cmu_us_awb;-lflite_cmu_us_kal;-lflite_cmu_us_kal16;-lflite_cmu_us_rms;-lflite_cmu_us_slt;-lflite_usenglish;-lflite_cmulex;-lflite;-lfribidi;-lplacebo;-lass;-lva;-lglslang;-lMachineIndependent;-lOSDependent;-lHLSL;-lOGLCompiler;-lGenericCodeGen;-lSPVRemapper;-lSPIRV;-lSPIRV-Tools-opt;-lSPIRV-Tools;-lpthread;-lstdc++;-lm;-lvidstab;-lm;-lgomp;-lzmq;-lzimg;-lOpenCL;-lfontconfig;-lfreetype;-lfreetype;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lm;-latomic;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-lwebp;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-pthread;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-lwebp;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-pthread;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswscale;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lpostproc;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavformat;-lm;-latomic;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-lwebp;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-pthread;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-lwebp;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-pthread;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
+PC_avdevice_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavdevice;-lm;-latomic;-lraw1394;-lavc1394;-lrom1394;-liec61883;-ljack;-ldrm;-lopenal;-lxcb;-lxcb-shm;-lxcb-shape;-lxcb-xfixes;-lcdio_paranoia;-lcdio_cdda;-lcdio;-lm;-ldc1394;-lasound;-lcaca;-lGL;-lpulse;-pthread;-lSDL2;-lXv;-lX11;-lXext;-L/usr/lib/x86_64-linux-gnu;-lavfilter;-pthread;-lm;-latomic;-lpocketsphinx;-lsphinxbase;-lsphinxad;-lbs2b;-llilv-0;-lrubberband;-lfftw3;-lsamplerate;-lstdc++;-lmysofa;-lflite_cmu_time_awb;-lflite_cmu_us_awb;-lflite_cmu_us_kal;-lflite_cmu_us_kal16;-lflite_cmu_us_rms;-lflite_cmu_us_slt;-lflite_usenglish;-lflite_cmulex;-lflite;-lharfbuzz;-lfribidi;-lplacebo;-lass;-lva;-lvidstab;-lm;-lgomp;-lzmq;-lzimg;-lglslang;-lMachineIndependent;-lGenericCodeGen;-lSPVRemapper;-lSPIRV;-lSPIRV-Tools-opt;-lSPIRV-Tools;-lpthread;-lstdc++;-lm;-lOpenCL;-lfontconfig;-lfreetype;-lfreetype;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lm;-latomic;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswscale;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lpostproc;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavformat;-lm;-latomic;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
 PC_avdevice_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread
 PC_avdevice_STATIC_LIBDIR:INTERNAL=
-PC_avdevice_STATIC_LIBRARIES:INTERNAL=avdevice;m;atomic;raw1394;avc1394;rom1394;iec61883;jack;drm;openal;xcb;xcb-shm;xcb-shape;xcb-xfixes;cdio_paranoia;cdio_cdda;cdio;m;dc1394;asound;caca;GL;pulse;SDL2;Xv;X11;Xext;avfilter;m;atomic;pocketsphinx;sphinxbase;sphinxad;bs2b;lilv-0;dl;sord-0;serd-0;sratom-0;rubberband;fftw3;samplerate;stdc++;mysofa;flite_cmu_time_awb;flite_cmu_us_awb;flite_cmu_us_kal;flite_cmu_us_kal16;flite_cmu_us_rms;flite_cmu_us_slt;flite_usenglish;flite_cmulex;flite;fribidi;placebo;ass;va;glslang;MachineIndependent;OSDependent;HLSL;OGLCompiler;GenericCodeGen;SPVRemapper;SPIRV;SPIRV-Tools-opt;SPIRV-Tools;pthread;stdc++;m;vidstab;m;gomp;zmq;zimg;OpenCL;fontconfig;freetype;freetype;vpl;dl;stdc++;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;m;atomic;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;webp;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;webp;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swscale;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;postproc;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avformat;m;atomic;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;webp;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;webp;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
+PC_avdevice_STATIC_LIBRARIES:INTERNAL=avdevice;m;atomic;raw1394;avc1394;rom1394;iec61883;jack;drm;openal;xcb;xcb-shm;xcb-shape;xcb-xfixes;cdio_paranoia;cdio_cdda;cdio;m;dc1394;asound;caca;GL;pulse;SDL2;Xv;X11;Xext;avfilter;m;atomic;pocketsphinx;sphinxbase;sphinxad;bs2b;lilv-0;rubberband;fftw3;samplerate;stdc++;mysofa;flite_cmu_time_awb;flite_cmu_us_awb;flite_cmu_us_kal;flite_cmu_us_kal16;flite_cmu_us_rms;flite_cmu_us_slt;flite_usenglish;flite_cmulex;flite;harfbuzz;fribidi;placebo;ass;va;vidstab;m;gomp;zmq;zimg;glslang;MachineIndependent;GenericCodeGen;SPVRemapper;SPIRV;SPIRV-Tools-opt;SPIRV-Tools;pthread;stdc++;m;OpenCL;fontconfig;freetype;freetype;vpl;dl;stdc++;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;m;atomic;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swscale;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;postproc;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avformat;m;atomic;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
 PC_avdevice_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../
 PC_avdevice_STATIC_LIBS:INTERNAL=
 PC_avdevice_STATIC_LIBS_L:INTERNAL=
 PC_avdevice_STATIC_LIBS_OTHER:INTERNAL=
 PC_avdevice_STATIC_LIBS_PATHS:INTERNAL=
-PC_avdevice_VERSION:INTERNAL=60.1.100
+PC_avdevice_VERSION:INTERNAL=60.3.100
 PC_avdevice_libavdevice_INCLUDEDIR:INTERNAL=
 PC_avdevice_libavdevice_LIBDIR:INTERNAL=
 PC_avdevice_libavdevice_PREFIX:INTERNAL=
@@ -2200,16 +2191,16 @@ PC_avfilter_STATIC_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
 PC_avfilter_STATIC_CFLAGS_I:INTERNAL=
 PC_avfilter_STATIC_CFLAGS_OTHER:INTERNAL=
 PC_avfilter_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
-PC_avfilter_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavfilter;-pthread;-lm;-latomic;-lpocketsphinx;-lsphinxbase;-lsphinxad;-lbs2b;-llilv-0;-ldl;-lsord-0;-lserd-0;-lsratom-0;-lrubberband;-lfftw3;-lsamplerate;-lstdc++;-lmysofa;-lflite_cmu_time_awb;-lflite_cmu_us_awb;-lflite_cmu_us_kal;-lflite_cmu_us_kal16;-lflite_cmu_us_rms;-lflite_cmu_us_slt;-lflite_usenglish;-lflite_cmulex;-lflite;-lfribidi;-lplacebo;-lass;-lva;-lglslang;-lMachineIndependent;-lOSDependent;-lHLSL;-lOGLCompiler;-lGenericCodeGen;-lSPVRemapper;-lSPIRV;-lSPIRV-Tools-opt;-lSPIRV-Tools;-lpthread;-lstdc++;-lm;-lvidstab;-lm;-lgomp;-lzmq;-lzimg;-lOpenCL;-lfontconfig;-lfreetype;-lfreetype;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lswscale;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lpostproc;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavformat;-lm;-latomic;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-lwebp;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-pthread;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-lwebp;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-pthread;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
+PC_avfilter_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavfilter;-pthread;-lm;-latomic;-lpocketsphinx;-lsphinxbase;-lsphinxad;-lbs2b;-llilv-0;-lrubberband;-lfftw3;-lsamplerate;-lstdc++;-lmysofa;-lflite_cmu_time_awb;-lflite_cmu_us_awb;-lflite_cmu_us_kal;-lflite_cmu_us_kal16;-lflite_cmu_us_rms;-lflite_cmu_us_slt;-lflite_usenglish;-lflite_cmulex;-lflite;-lharfbuzz;-lfribidi;-lplacebo;-lass;-lva;-lvidstab;-lm;-lgomp;-lzmq;-lzimg;-lglslang;-lMachineIndependent;-lGenericCodeGen;-lSPVRemapper;-lSPIRV;-lSPIRV-Tools-opt;-lSPIRV-Tools;-lpthread;-lstdc++;-lm;-lOpenCL;-lfontconfig;-lfreetype;-lfreetype;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lswscale;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lpostproc;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavformat;-lm;-latomic;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
 PC_avfilter_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread
 PC_avfilter_STATIC_LIBDIR:INTERNAL=
-PC_avfilter_STATIC_LIBRARIES:INTERNAL=avfilter;m;atomic;pocketsphinx;sphinxbase;sphinxad;bs2b;lilv-0;dl;sord-0;serd-0;sratom-0;rubberband;fftw3;samplerate;stdc++;mysofa;flite_cmu_time_awb;flite_cmu_us_awb;flite_cmu_us_kal;flite_cmu_us_kal16;flite_cmu_us_rms;flite_cmu_us_slt;flite_usenglish;flite_cmulex;flite;fribidi;placebo;ass;va;glslang;MachineIndependent;OSDependent;HLSL;OGLCompiler;GenericCodeGen;SPVRemapper;SPIRV;SPIRV-Tools-opt;SPIRV-Tools;pthread;stdc++;m;vidstab;m;gomp;zmq;zimg;OpenCL;fontconfig;freetype;freetype;vpl;dl;stdc++;swscale;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;postproc;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avformat;m;atomic;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;webp;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;webp;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
+PC_avfilter_STATIC_LIBRARIES:INTERNAL=avfilter;m;atomic;pocketsphinx;sphinxbase;sphinxad;bs2b;lilv-0;rubberband;fftw3;samplerate;stdc++;mysofa;flite_cmu_time_awb;flite_cmu_us_awb;flite_cmu_us_kal;flite_cmu_us_kal16;flite_cmu_us_rms;flite_cmu_us_slt;flite_usenglish;flite_cmulex;flite;harfbuzz;fribidi;placebo;ass;va;vidstab;m;gomp;zmq;zimg;glslang;MachineIndependent;GenericCodeGen;SPVRemapper;SPIRV;SPIRV-Tools-opt;SPIRV-Tools;pthread;stdc++;m;OpenCL;fontconfig;freetype;freetype;vpl;dl;stdc++;swscale;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;postproc;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avformat;m;atomic;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
 PC_avfilter_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../
 PC_avfilter_STATIC_LIBS:INTERNAL=
 PC_avfilter_STATIC_LIBS_L:INTERNAL=
 PC_avfilter_STATIC_LIBS_OTHER:INTERNAL=
 PC_avfilter_STATIC_LIBS_PATHS:INTERNAL=
-PC_avfilter_VERSION:INTERNAL=9.3.100
+PC_avfilter_VERSION:INTERNAL=9.12.100
 PC_avfilter_libavfilter_INCLUDEDIR:INTERNAL=
 PC_avfilter_libavfilter_LIBDIR:INTERNAL=
 PC_avfilter_libavfilter_PREFIX:INTERNAL=
@@ -2235,16 +2226,16 @@ PC_avformat_STATIC_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
 PC_avformat_STATIC_CFLAGS_I:INTERNAL=
 PC_avformat_STATIC_CFLAGS_OTHER:INTERNAL=
 PC_avformat_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
-PC_avformat_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavformat;-lm;-latomic;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-lwebp;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-pthread;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
+PC_avformat_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavformat;-lm;-latomic;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
 PC_avformat_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-pthread
 PC_avformat_STATIC_LIBDIR:INTERNAL=
-PC_avformat_STATIC_LIBRARIES:INTERNAL=avformat;m;atomic;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;webp;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
+PC_avformat_STATIC_LIBRARIES:INTERNAL=avformat;m;atomic;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
 PC_avformat_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../
 PC_avformat_STATIC_LIBS:INTERNAL=
 PC_avformat_STATIC_LIBS_L:INTERNAL=
 PC_avformat_STATIC_LIBS_OTHER:INTERNAL=
 PC_avformat_STATIC_LIBS_PATHS:INTERNAL=
-PC_avformat_VERSION:INTERNAL=60.3.100
+PC_avformat_VERSION:INTERNAL=60.16.100
 PC_avformat_libavformat_INCLUDEDIR:INTERNAL=
 PC_avformat_libavformat_LIBDIR:INTERNAL=
 PC_avformat_libavformat_PREFIX:INTERNAL=
@@ -2304,7 +2295,7 @@ PC_avutil_STATIC_LIBS:INTERNAL=
 PC_avutil_STATIC_LIBS_L:INTERNAL=
 PC_avutil_STATIC_LIBS_OTHER:INTERNAL=
 PC_avutil_STATIC_LIBS_PATHS:INTERNAL=
-PC_avutil_VERSION:INTERNAL=58.2.100
+PC_avutil_VERSION:INTERNAL=58.29.100
 PC_avutil_libavutil_INCLUDEDIR:INTERNAL=
 PC_avutil_libavutil_LIBDIR:INTERNAL=
 PC_avutil_libavutil_PREFIX:INTERNAL=
@@ -2339,7 +2330,7 @@ PC_postproc_STATIC_LIBS:INTERNAL=
 PC_postproc_STATIC_LIBS_L:INTERNAL=
 PC_postproc_STATIC_LIBS_OTHER:INTERNAL=
 PC_postproc_STATIC_LIBS_PATHS:INTERNAL=
-PC_postproc_VERSION:INTERNAL=57.1.100
+PC_postproc_VERSION:INTERNAL=57.3.100
 PC_postproc_libpostproc_INCLUDEDIR:INTERNAL=
 PC_postproc_libpostproc_LIBDIR:INTERNAL=
 PC_postproc_libpostproc_PREFIX:INTERNAL=
@@ -2374,7 +2365,7 @@ PC_swresample_STATIC_LIBS:INTERNAL=
 PC_swresample_STATIC_LIBS_L:INTERNAL=
 PC_swresample_STATIC_LIBS_OTHER:INTERNAL=
 PC_swresample_STATIC_LIBS_PATHS:INTERNAL=
-PC_swresample_VERSION:INTERNAL=4.10.100
+PC_swresample_VERSION:INTERNAL=4.12.100
 PC_swresample_libswresample_INCLUDEDIR:INTERNAL=
 PC_swresample_libswresample_LIBDIR:INTERNAL=
 PC_swresample_libswresample_PREFIX:INTERNAL=
@@ -2409,7 +2400,7 @@ PC_swscale_STATIC_LIBS:INTERNAL=
 PC_swscale_STATIC_LIBS_L:INTERNAL=
 PC_swscale_STATIC_LIBS_OTHER:INTERNAL=
 PC_swscale_STATIC_LIBS_PATHS:INTERNAL=
-PC_swscale_VERSION:INTERNAL=7.1.100
+PC_swscale_VERSION:INTERNAL=7.5.100
 PC_swscale_libswscale_INCLUDEDIR:INTERNAL=
 PC_swscale_libswscale_LIBDIR:INTERNAL=
 PC_swscale_libswscale_PREFIX:INTERNAL=
@@ -2435,9 +2426,9 @@ PKG_FONTCONFIG_LIBS_OTHER:INTERNAL=
 PKG_FONTCONFIG_LIBS_PATHS:INTERNAL=
 PKG_FONTCONFIG_MODULE_NAME:INTERNAL=fontconfig
 PKG_FONTCONFIG_PREFIX:INTERNAL=/usr
-PKG_FONTCONFIG_STATIC_CFLAGS:INTERNAL=-I/usr/include;-I/usr/include/freetype2;-I/usr/include/libpng16
+PKG_FONTCONFIG_STATIC_CFLAGS:INTERNAL=-I/usr/include;-I/usr/include/freetype2;-I/usr/include/libpng16;-DXML_STATIC
 PKG_FONTCONFIG_STATIC_CFLAGS_I:INTERNAL=
-PKG_FONTCONFIG_STATIC_CFLAGS_OTHER:INTERNAL=
+PKG_FONTCONFIG_STATIC_CFLAGS_OTHER:INTERNAL=-DXML_STATIC
 PKG_FONTCONFIG_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include/freetype2;/usr/include/libpng16
 PKG_FONTCONFIG_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lfontconfig;-lfreetype;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-lpng16;-lm;-lz;-lm;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-lbrotlidec;-L/usr/lib/x86_64-linux-gnu;-lbrotlicommon;-L/usr/lib/x86_64-linux-gnu;-lexpat;-lm
 PKG_FONTCONFIG_STATIC_LDFLAGS_OTHER:INTERNAL=
@@ -2448,7 +2439,7 @@ PKG_FONTCONFIG_STATIC_LIBS:INTERNAL=
 PKG_FONTCONFIG_STATIC_LIBS_L:INTERNAL=
 PKG_FONTCONFIG_STATIC_LIBS_OTHER:INTERNAL=
 PKG_FONTCONFIG_STATIC_LIBS_PATHS:INTERNAL=
-PKG_FONTCONFIG_VERSION:INTERNAL=2.14.2
+PKG_FONTCONFIG_VERSION:INTERNAL=2.15.0
 PKG_FONTCONFIG_fontconfig_INCLUDEDIR:INTERNAL=
 PKG_FONTCONFIG_fontconfig_LIBDIR:INTERNAL=
 PKG_FONTCONFIG_fontconfig_PREFIX:INTERNAL=
@@ -2535,6 +2526,8 @@ X11_Xcursor_LIB-ADVANCED:INTERNAL=1
 X11_Xdamage_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_Xdamage_LIB
 X11_Xdamage_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_Xdbe_INCLUDE_PATH
+X11_Xdbe_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_Xdmcp_INCLUDE_PATH
 X11_Xdmcp_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_Xdmcp_LIB
@@ -2791,7 +2784,7 @@ _OPENSSL_STATIC_LIBS:INTERNAL=
 _OPENSSL_STATIC_LIBS_L:INTERNAL=
 _OPENSSL_STATIC_LIBS_OTHER:INTERNAL=
 _OPENSSL_STATIC_LIBS_PATHS:INTERNAL=
-_OPENSSL_VERSION:INTERNAL=3.0.10
+_OPENSSL_VERSION:INTERNAL=3.0.13
 _OPENSSL_openssl_INCLUDEDIR:INTERNAL=
 _OPENSSL_openssl_LIBDIR:INTERNAL=
 _OPENSSL_openssl_PREFIX:INTERNAL=
@@ -2809,8 +2802,6 @@ _Python3_INCLUDE_DIR:INTERNAL=/usr/include/python3.12
 //Python3 Properties
 _Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;3;64;;cpython-312-x86_64-linux-gnu;abi3;/usr/lib/python3.12;/usr/lib/python3.12;/usr/local/lib/python3.12/dist-packages;/usr/local/lib/python3.12/dist-packages
 _Python3_INTERPRETER_SIGNATURE:INTERNAL=f811b8a062a8994e96ffe87747bf9bfe
-//Interpreter reason failure
-_Python3_Interpreter_REASON_FAILURE:INTERNAL=
 //Path to a library.
 _Python3_LIBRARY_RELEASE:INTERNAL=/usr/lib/x86_64-linux-gnu/libpython3.12.so
 //NumPy reason failure
