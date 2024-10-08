@@ -23,6 +23,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CGAL_DIR "/usr/lib/x86_64-linux-gnu/cmake/CGAL/")
 set(PostgreSQL_ROOT "/usr/include/postgresql/14/server")
 
 find_package(PostgreSQL REQUIRED)
@@ -221,3 +222,4 @@ target_link_libraries(Visualiser PRIVATE
         ${CURL_LIBRARIES}
         ${CGAL_LIBRARIES}
 )
+

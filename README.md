@@ -47,6 +47,21 @@ Feel free to contribute. We learn by doing.
 
 ## Sponsorship
 
+
+##Initial steps
+##Start PulseAudio (To use microphone/speakers for audio stimulation/activation)
+./setup_pulse_audio.sh
+
+
+##Podman##
+## Create a common network between docker containers
+podman network create my_net
+
+## Build Image and Start Containers
+
+
+
+
 ## Docker ##
 ## Create a common network between docker containers
 docker network create -d bridge my_net
