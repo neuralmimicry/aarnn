@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_INJECTED_CODE" value="false" />
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated />
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Release" ENABLED="true" CONFIG_NAME="Release" NO_GENERATOR="true" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="build-for-podman" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2024" />
+    <option name="minorVersion" value="1.1" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2fEaG9TuQ34YmOEZSbez3Foafdy" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "CMake Application.AARNN.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "Shell Script.ComposeContainers.sh.executor": "Run",
+    "Shell Script.RunContainers.executor": "Run",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "CMakeLists-bypass",
+    "last_opened_file_path": "/home/pbisaacs/Developer/aarnn",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "CMakeSettings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/include" />
+      <recent name="$PROJECT_DIR$/src/visualiser" />
+      <recent name="$PROJECT_DIR$/src/aarnn" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Shell Script.ComposeContainers.sh">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ComposeContainers.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/ComposeContainers.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="RunContainers" type="ShConfigurationType">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/managepodman.sh" />
+      <option name="SCRIPT_OPTIONS" value="start" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Shell Script.RunContainers" />
+      <item itemvalue="Shell Script.ComposeContainers.sh" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Shell Script.ComposeContainers.sh" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-PY-241.14494.241" />
+        <option value="bundled-python-sdk-0509580d9d50-28c9f5db9ffe-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.14494.241" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="" />
+      <created>1713368592543</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1713368592543</updated>
+      <workItem from="1713368593491" duration="18000" />
+      <workItem from="1713368670404" duration="8349000" />
+      <workItem from="1713520440869" duration="16806000" />
+      <workItem from="1713773218088" duration="622000" />
+      <workItem from="1714129137505" duration="624000" />
+      <workItem from="1714377635506" duration="612000" />
+      <workItem from="1715854966192" duration="195000" />
+      <workItem from="1716241514654" duration="22800000" />
+      <workItem from="1716890546932" duration="6313000" />
+      <workItem from="1716901875385" duration="1881000" />
+      <workItem from="1716903785007" duration="7113000" />
+      <workItem from="1716977483187" duration="8265000" />
+      <workItem from="1716990380520" duration="20818000" />
+      <workItem from="1717313763355" duration="3200000" />
+      <workItem from="1717418811861" duration="6942000" />
+      <workItem from="1717439651482" duration="7864000" />
+      <workItem from="1717483929163" duration="30543000" />
+      <workItem from="1717578885025" duration="1233000" />
+      <workItem from="1717583620182" duration="3523000" />
+      <workItem from="1717688412583" duration="673000" />
+      <workItem from="1717762499424" duration="15000" />
+      <workItem from="1717762520111" duration="5966000" />
+      <workItem from="1717963718672" duration="605000" />
+      <workItem from="1718010813709" duration="4223000" />
+      <workItem from="1718016708810" duration="6808000" />
+      <workItem from="1718092624243" duration="9640000" />
+      <workItem from="1718116125982" duration="11225000" />
+      <workItem from="1718185111386" duration="21040000" />
+      <workItem from="1718217030109" duration="10739000" />
+      <workItem from="1718267959168" duration="8844000" />
+      <workItem from="1718353229842" duration="848000" />
+      <workItem from="1718354636752" duration="19637000" />
+      <workItem from="1718490521847" duration="3409000" />
+      <workItem from="1718612610634" duration="5986000" />
+      <workItem from="1718631211700" duration="2378000" />
+      <workItem from="1718634314823" duration="1000" />
+      <workItem from="1718634675671" duration="136000" />
+      <workItem from="1718634922129" duration="134000" />
+      <workItem from="1718635124898" duration="1000" />
+      <workItem from="1718635407761" duration="1478000" />
+      <workItem from="1718661691246" duration="2751000" />
+      <workItem from="1718697897625" duration="19948000" />
+      <workItem from="1718740848979" duration="32000" />
+      <workItem from="1718740886827" duration="14988000" />
+      <workItem from="1718805743466" duration="2712000" />
+      <workItem from="1718809009387" duration="15515000" />
+      <workItem from="1718873280250" duration="9792000" />
+      <workItem from="1718907731045" duration="906000" />
+      <workItem from="1718917171781" duration="42121000" />
+      <workItem from="1719223631195" duration="57000" />
+      <workItem from="1719223693089" duration="7403000" />
+      <workItem from="1719261992311" duration="21909000" />
+      <workItem from="1719353595016" duration="34000" />
+      <workItem from="1719391778838" duration="6443000" />
+      <workItem from="1719405251529" duration="4526000" />
+      <workItem from="1719430141488" duration="1219000" />
+      <workItem from="1719492715565" duration="12870000" />
+      <workItem from="1719580885029" duration="33239000" />
+      <workItem from="1719903797048" duration="13829000" />
+      <workItem from="1719927602097" duration="5762000" />
+      <workItem from="1719951729671" duration="623000" />
+      <workItem from="1719999099421" duration="425000" />
+      <workItem from="1720022485400" duration="6678000" />
+      <workItem from="1720425671173" duration="1875000" />
+      <workItem from="1720431508476" duration="1298000" />
+      <workItem from="1720508018896" duration="8814000" />
+      <workItem from="1720688996797" duration="102000" />
+      <workItem from="1720724728700" duration="2405000" />
+      <workItem from="1721208345521" duration="35000" />
+      <workItem from="1721208386810" duration="1810000" />
+      <workItem from="1721895350913" duration="214000" />
+      <workItem from="1721895570884" duration="3944000" />
+      <workItem from="1723105035157" duration="143000" />
+      <workItem from="1723105186377" duration="6769000" />
+      <workItem from="1724070430549" duration="24000" />
+      <workItem from="1724070460781" duration="4387000" />
+      <workItem from="1725359393736" duration="2000" />
+      <workItem from="1725477812685" duration="3255000" />
+      <workItem from="1728385052359" duration="2596000" />
+    </task>
+    <task id="LOCAL-00001" summary="Builds for Podman">
+      <option name="closed" value="true" />
+      <created>1718279835150</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1718279835150</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Builds for Podman" />
+    <option name="LAST_COMMIT_MESSAGE" value="Builds for Podman" />
+  </component>
+</project>
