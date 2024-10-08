@@ -10,6 +10,10 @@ AARNN (pronounced like the boy's name Aaron) is the infrastructure to support em
 
 ## Prerequisites
 docker-desktop : Linux : https://docs.docker.com/desktop/install/linux-install/
+```bash
+sudo apt-get install libgtest-dev
+sudo apt-get install libgmock-dev
+```
 
 ## Installation
 
@@ -35,7 +39,7 @@ Value -> 'current password'
 
 ## Usage
 Two parts, first creates the neurons and stores in a postgres database.
-Second part visualisers the neurons created in the first part.
+Second part visualises the neurons created in the first part.
 
 ```bash
 ./AARNN
