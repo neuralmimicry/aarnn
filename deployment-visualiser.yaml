@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-visualiser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: visualiser
+  template:
+    metadata:
+      labels:
+        app: visualiser
+    spec:
+      containers:
+        - name: visualiser
+          image: localhost/visualiser:latest
+          env:
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DBNAME
+            - name: POSTGRES_HOST
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5460"
+            - name: VAULT_ADDR
+              value: "http://aarnn_vault:8200"
+            - name: VAULT_TOKEN
+              value: "root"

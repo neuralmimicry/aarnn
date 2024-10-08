@@ -1,28 +1,20 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-#include <array>
+#include <tuple>
+#include <iostream>
 
 class Position {
-private:
-
 public:
-    Position(double x, double y, double z) ;
-    double x;
-    double y;
-    double z;
+    double x, y, z;
+
+    Position(double x, double y, double z);
+
+    [[nodiscard]] double distanceTo(const Position &other) const;
     void set(double newX, double newY, double newZ);
-    double calcPropagationTime(Position& position1, double propagationRate) ;
-
-    // Comparison operator for Position class
-    bool operator==(const Position& other) const ;
-
-    [[nodiscard]] double distanceTo(Position& other) ;
-    
-    [[nodiscard]] std::array<double, 3> get() const {
-        return {x, y, z};
-    }
+    double calcPropagationTime(const Position &position1, double propagationRate) const;
+    bool operator==(const Position &other) const;
+    std::tuple<double, double, double> getPosition() const;
 };
 
-
-#endif
+#endif // POSITION_H

@@ -33,9 +33,15 @@ RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
 # Combine installation commands and clean up to reduce layer size
-RUN apt-get install -y \
+RUN apt-get update && \
+        apt-get install -y software-properties-common && \
+        add-apt-repository ppa:ubuntu-toolchain-r/test && \
+        apt-get update && \
+        apt-get install -y \
   wget \
   curl \
+  libcurl4 \
+  libcurl4-openssl-dev \
   libpqxx-dev \
   libvtk9-dev \
   python3-vtk9 \
@@ -45,9 +51,13 @@ RUN apt-get install -y \
   vtk9 \
   build-essential \
   cmake \
+    git \
   libglew-dev \
   libglew2.2 \
   libboost-all-dev \
+  libcgal-dev \
+  libgmp-dev \
+  libmpfr-dev \
   libwebsocketpp-dev \
   libssl-dev \
   libx11-dev \
@@ -106,5 +116,5 @@ RUN apt-get update && apt-get install -y \
   chmod +x /app/launch_aarnn.sh
 
 # Run the application when the container launches
-CMD ["/app/launch_aarnn.sh"]
+ENTRYPOINT ["/app/launch_aarnn.sh"]
 

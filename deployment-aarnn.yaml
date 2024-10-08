@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-aarnn
+spec:
+  replicas: 3  # Run 3 instances for example
+  selector:
+    matchLabels:
+      app: aarnn
+  template:
+    metadata:
+      labels:
+        app: aarnn
+    spec:
+      containers:
+        - name: aarnn
+          image: localhost/aarnn:latest
+          env:
+            - name: VAULT_ADDR
+              value: "http://aarnn_vault:8200"
+            - name: VAULT_TOKEN
+              value: "root"
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DBNAME
+            - name: POSTGRES_HOST
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5460"
+            - name: AARNN_CONTAINER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name

@@ -1,0 +1,958 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <thread>
+#include <mutex>
+#include <atomic>
+#include <cmath>
+#include <memory>
+#include <pqxx/pqxx>
+#include <stdexcept>
+#include <fstream>
+#include <string>
+#include <tuple>
+#include <map>
+#include <set>
+#include <chrono>
+#include <condition_variable>
+#include <unordered_set>
+#include "vclient.h"
+#include <cstdlib>
+#include <cstring>
+#include <fftw3.h>
+#include <portaudio.h>
+#include <pulse/pulseaudio.h>
+#include <pulse/error.h>
+#include <pulse/proplist.h>
+#include "boostincludes.h"
+#include <websocketpp/config/asio_no_tls.hpp>
+#include <websocketpp/server.hpp>
+#include "vtkincludes.h"
+#include "DendriteBranch.h"
+#include "AxonHillock.h"
+#include "PulseAudioMic.h"
+#include "Logger.h"
+#include "nvTimerCallback.h"
+#include "avTimerCallback.h"
+#include "NeuronParameters.h"
+#include "Neuron.h"
+#include "Axon.h"
+#include "AxonBouton.h"
+#include "utils.h"
+#include "SensoryReceptor.h"
+#include "SynapticGap.h"
+
+#define PA_SAMPLE_TYPE paFloat32
+
+std::atomic<double> totalPropagationRate(0.0);
+std::mutex mtx;
+std::unordered_set<std::shared_ptr<Neuron>> changedNeurons;
+std::mutex changedNeuronsMutex;
+std::atomic<bool> running(true);
+std::condition_variable cv;
+std::atomic<bool> dbUpdateReady(false);
+
+// websocketpp typedefs
+typedef websocketpp::server<websocketpp::config::asio> Server;
+typedef websocketpp::connection_hdl ConnectionHandle;
+
+template <typename T>
+std::map<std::string, std::string> read_config(const std::vector<T>& filenames) {
+    std::map<std::string, std::string> config;
+    for (const auto& filename : filenames) {
+        std::ifstream file(filename);
+        std::string line;
+        while (std::getline(file, line)) {
+            std::string key, value;
+            std::istringstream line_stream(line);
+            std::getline(line_stream, key, '=');
+            std::getline(line_stream, value);
+            config[key] = value;
+        }
+    }
+    return config;
+}
+
+void checkForQuit() {
+    struct pollfd fds[1];
+    fds[0].fd = STDIN_FILENO;
+    fds[0].events = POLLIN;
+
+    while (running) {
+        int ret = poll(fds, 1, 1000); // 1000ms timeout
+
+        if (ret > 0) {
+            char key;
+            read(STDIN_FILENO, &key, 1);
+            if (key == 'q') {
+                running = false;
+                dbUpdateReady = true;
+                cv.notify_all();
+                break;
+            }
+        } else if (ret < 0) {
+            // Handle error
+        }
+
+        // Else timeout occurred, just loop back and poll again
+    }
+}
+
+template <typename Func>
+void logExecutionTime(Func function, const std::string& functionName) {
+    auto start = std::chrono::high_resolution_clock::now();
+    function();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    std::ofstream logFile("execution_times.log", std::ios_base::app); // Open the log file in append mode
+    logFile << functionName << " execution time: " << duration.count() << " microseconds\n";
+    logFile.close();
+}
+
+static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData) {
+    std::cout << "MicCallBack" << std::endl;
+    // Read data from the stream.
+    const auto* in = (const SAMPLE*)inputBuffer;
+    auto* out = (SAMPLE*)outputBuffer;
+    (void)timeInfo; /* Prevent unused variable warnings. */
+    (void)statusFlags;
+    (void)userData;
+
+    if (inputBuffer == nullptr) {
+        for (unsigned int i = 0; i < framesPerBuffer; i++) {
+            *out++ = 0;  /* left - silent */
+            *out++ = 0;  /* right - silent */
+        }
+        gNumNoInputs += 1;
+    } else {
+        for (unsigned int i = 0; i < framesPerBuffer; i++) {
+            // Here you might want to capture audio data
+            //capturedAudio.push_back(in[i]);
+        }
+    }
+    return paContinue;
+}
+
+void Dendrite::addBranch(std::shared_ptr<DendriteBranch> branch) {
+    auto coords = get_coordinates(int(dendriteBranches.size() + 1), int(dendriteBranches.size() + 1), int(5));
+    PositionPtr currentPosition = branch->getPosition();
+    auto x = double(std::get<0>(coords)) + currentPosition->x;
+    auto y = double(std::get<1>(coords)) + currentPosition->y;
+    auto z = double(std::get<2>(coords)) + currentPosition->z;
+    currentPosition->x = x;
+    currentPosition->y = y;
+    currentPosition->z = z;
+    dendriteBranches.emplace_back(std::move(branch));
+}
+
+void atomic_add(std::atomic<double>& atomic_val, double value) {
+    double current = atomic_val.load();
+    while (!atomic_val.compare_exchange_weak(current, current + value)) {}
+}
+
+/**
+ * @brief Compute the propagation rate of a neuron.
+ * @param neuron Pointer to the Neuron object for which the propagation rate is to be calculated.
+ */
+void computePropagationRate(const std::shared_ptr<Neuron>& neuron) {
+    if (!neuron) return; // Add check for null neuron
+    auto soma = neuron->getSoma();
+    if (!soma) return; // Add check for null soma
+    double propagationRate = soma->getPropagationRate();
+
+    atomic_add(totalPropagationRate, propagationRate);
+
+    {
+        std::lock_guard<std::mutex> lock(changedNeuronsMutex);
+        changedNeurons.insert(neuron);
+    }
+}
+
+void associateSynapticGap(Neuron& neuron1, Neuron& neuron2, double proximityThreshold) {
+    for (auto& gap : neuron1.getSynapticGapsAxon()) {
+        if (!gap || gap->isAssociated()) continue;
+
+        for (auto& dendriteBouton : neuron2.getDendriteBoutons()) {
+            if (!dendriteBouton) continue;
+            if (gap->getPosition()->distanceTo(*(dendriteBouton->getPosition())) < proximityThreshold) {
+                dendriteBouton->connectSynapticGap(gap);
+                gap->setAsAssociated();
+                break;
+            }
+        }
+    }
+}
+
+void associateSynapticGap(SensoryReceptor& receptor, Neuron& neuron, double proximityThreshold) {
+    for (auto& gap : receptor.getSynapticGaps()) {
+        if (gap && !gap->isAssociated()) {
+            for (auto& dendriteBouton : neuron.getDendriteBoutons()) {
+                std::cout << "Checking gap " << gap->getPosition() << " with dendrite bouton " << dendriteBouton->getPosition() << std::endl;
+
+                if (gap->getPosition()->distanceTo(*(dendriteBouton->getPosition())) < proximityThreshold) {
+                    dendriteBouton->connectSynapticGap(gap);
+                    gap->setAsAssociated();
+                    std::cout << "Associated gap " << gap->getPosition() << " with dendrite bouton " << dendriteBouton->getPosition() << std::endl;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void initialise_database(pqxx::connection& conn) {
+    pqxx::work txn(conn);
+
+    txn.exec("DROP TABLE IF EXISTS neurons, somas, axonhillocks, axons, axons_hillock, axonboutons, synapticgaps, dendritebranches_soma, dendritebranches, dendrites, dendriteboutons, axonbranches CASCADE; COMMIT;");
+
+    pqxx::result result = txn.exec("SELECT EXISTS ("
+                                   "SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'neurons'"
+                                   ");");
+
+    if (!result.empty() && !result[0][0].as<bool>()) {
+        txn.exec(
+                "CREATE TABLE neurons ("
+                "neuron_id SERIAL PRIMARY KEY,"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL,"
+                "propagation_rate REAL,"
+                "neuron_type INTEGER,"
+                "axon_length REAL"
+                ");"
+                "CREATE TABLE somas ("
+                "soma_id SERIAL PRIMARY KEY,"
+                "neuron_id INTEGER REFERENCES neurons(neuron_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "CREATE TABLE axonhillocks ("
+                "axon_hillock_id SERIAL PRIMARY KEY,"
+                "soma_id INTEGER REFERENCES somas(soma_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "CREATE TABLE axons_hillock ("
+                "axon_id SERIAL PRIMARY KEY,"
+                "axon_hillock_id INTEGER,"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "CREATE TABLE axons ("
+                "axon_id SERIAL PRIMARY KEY,"
+                "axon_hillock_id INTEGER REFERENCES axonhillocks(axon_hillock_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "ALTER TABLE axons_hillock "
+                "ADD CONSTRAINT fk_axons_hillock_axon_id "
+                "FOREIGN KEY (axon_id) REFERENCES axons(axon_id);"
+                "CREATE TABLE axonboutons ("
+                "axon_bouton_id SERIAL PRIMARY KEY,"
+                "axon_id INTEGER REFERENCES axons(axon_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "CREATE TABLE synapticgaps ("
+                "synaptic_gap_id SERIAL PRIMARY KEY,"
+                "axon_bouton_id INTEGER REFERENCES axonboutons(axon_bouton_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "CREATE TABLE axonbranches ("
+                "axon_branch_id SERIAL PRIMARY KEY,"
+                "axon_id INTEGER REFERENCES axons(axon_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "CREATE TABLE dendritebranches_soma ("
+                "dendrite_branch_id SERIAL PRIMARY KEY,"
+                "soma_id INTEGER REFERENCES somas(soma_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "CREATE TABLE dendrites ("
+                "dendrite_id SERIAL PRIMARY KEY,"
+                "dendrite_branch_id INTEGER,"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "CREATE TABLE dendritebranches ("
+                "dendrite_branch_id SERIAL PRIMARY KEY,"
+                "dendrite_id INTEGER REFERENCES dendrites(dendrite_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+                "ALTER TABLE dendritebranches "
+                "ADD CONSTRAINT fk_dendritebranches_dendrite_id "
+                "FOREIGN KEY (dendrite_id) REFERENCES dendrites(dendrite_id);"
+                "CREATE TABLE dendriteboutons ("
+                "dendrite_bouton_id SERIAL PRIMARY KEY,"
+                "dendrite_id INTEGER REFERENCES dendrites(dendrite_id),"
+                "x REAL NOT NULL,"
+                "y REAL NOT NULL,"
+                "z REAL NOT NULL"
+                ");"
+        );
+
+        txn.commit();
+        std::cout << "Created table 'neurons'." << std::endl;
+    } else {
+        std::cout << "Table 'neurons' already exists." << std::endl;
+    }
+}
+
+const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+std::string base64_encode(const unsigned char* data, size_t length) {
+    std::string base64;
+    int i = 0;
+    int j;
+    unsigned char char_array_3[3];
+    unsigned char char_array_4[4];
+
+    while (length--) {
+        char_array_3[i++] = *(data++);
+        if (i == 3) {
+            char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+            char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+            char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+            char_array_4[3] = char_array_3[2] & 0x3f;
+
+            for (i = 0; i < 4; i++) {
+                base64 += base64_chars[char_array_4[i]];
+            }
+            i = 0;
+        }
+    }
+
+    if (i) {
+        for (j = i; j < 3; j++) {
+            char_array_3[j] = '\0';
+        }
+
+        char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+        char_array_4[3] = char_array_3[2] & 0x3f;
+
+        for (j = 0; j < i + 1; j++) {
+            base64 += base64_chars[char_array_4[j]];
+        }
+
+        while ((i++ < 3)) {
+            base64 += '=';
+        }
+    }
+
+    return base64;
+}
+
+bool convertStringToBool(const std::string& value) {
+    std::string lowerValue = value;
+    std::transform(lowerValue.begin(), lowerValue.end(), lowerValue.begin(), ::tolower);
+
+    if (lowerValue == "true" || lowerValue == "yes" || lowerValue == "1") {
+        return true;
+    } else if (lowerValue == "false" || lowerValue == "no" || lowerValue == "0") {
+        return false;
+    } else {
+        std::cerr << "Invalid boolean string representation: " << value << std::endl;
+        return false;
+    }
+}
+
+void insertDendriteBranches(pqxx::transaction_base& txn, const std::shared_ptr<DendriteBranch>& dendriteBranch, int& dendrite_branch_id, int& dendrite_id, int& dendrite_bouton_id, int& soma_id) {
+    if (!dendriteBranch) {
+        std::cerr << "dendriteBranch is null!" << std::endl;
+        return;
+    }
+    std::string query;
+
+    if (dendriteBranch->getParentSoma()) {
+        query = "INSERT INTO dendritebranches_soma (dendrite_branch_id, soma_id, x, y, z) VALUES (" +
+                std::to_string(dendrite_branch_id) + ", " + std::to_string(soma_id) + ", " +
+                std::to_string(dendriteBranch->getPosition()->x) + ", " +
+                std::to_string(dendriteBranch->getPosition()->y) + ", " +
+                std::to_string(dendriteBranch->getPosition()->z) + ")";
+        txn.exec(query);
+    } else {
+        query = "INSERT INTO dendritebranches (dendrite_branch_id, dendrite_id, x, y, z) VALUES (" +
+                std::to_string(dendrite_branch_id) + ", " + std::to_string(dendrite_id) + ", " +
+                std::to_string(dendriteBranch->getPosition()->x) + ", " +
+                std::to_string(dendriteBranch->getPosition()->y) + ", " +
+                std::to_string(dendriteBranch->getPosition()->z) + ")";
+        txn.exec(query);
+    }
+
+    for (auto& dendrite : dendriteBranch->getDendrites()) {
+        query = "INSERT INTO dendrites (dendrite_id, dendrite_branch_id, x, y, z) VALUES (" +
+                std::to_string(dendrite_id) + ", " + std::to_string(dendrite_branch_id) + ", " +
+                std::to_string(dendrite->getPosition()->x) + ", " +
+                std::to_string(dendrite->getPosition()->y) + ", " +
+                std::to_string(dendrite->getPosition()->z) + ")";
+        txn.exec(query);
+
+        query = "INSERT INTO dendriteboutons (dendrite_bouton_id, dendrite_id, x, y, z) VALUES (" +
+                std::to_string(dendrite_bouton_id) + ", " + std::to_string(dendrite_id) + ", " +
+                std::to_string(dendrite->getDendriteBouton()->getPosition()->x) + ", " +
+                std::to_string(dendrite->getDendriteBouton()->getPosition()->y) + ", " +
+                std::to_string(dendrite->getDendriteBouton()->getPosition()->z) + ")";
+        txn.exec(query);
+
+        dendrite_id++;
+        dendrite_bouton_id++;
+
+        for (auto& innerDendriteBranch : dendrite->getDendriteBranches()) {
+            dendrite_branch_id++;
+            insertDendriteBranches(txn, innerDendriteBranch, dendrite_branch_id, dendrite_id, dendrite_bouton_id, soma_id);
+        }
+    }
+    dendrite_branch_id++;
+}
+
+void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonBranch>& axonBranch, int& axon_branch_id, int& axon_id, int& axon_bouton_id, int& synaptic_gap_id, int& axon_hillock_id) {
+    if (!axonBranch) {
+        std::cerr << "axonBranch is null!" << std::endl;
+        return;
+    }
+    std::string query;
+
+    query = "INSERT INTO axonbranches (axon_branch_id, axon_id, x, y, z) VALUES (" +
+            std::to_string(axon_branch_id) + ", " + std::to_string(axon_id) + ", " +
+            std::to_string(axonBranch->getPosition()->x) + ", " +
+            std::to_string(axonBranch->getPosition()->y) + ", " +
+            std::to_string(axonBranch->getPosition()->z) + ")";
+    txn.exec(query);
+
+    for (auto& axon : axonBranch->getAxons()) {
+        axon_id++;
+        query = "INSERT INTO axons (axon_id, axon_branch_id, x, y, z) VALUES (" +
+                std::to_string(axon_id) + ", " + std::to_string(axon_branch_id) + ", " +
+                std::to_string(axon->getPosition()->x) + ", " +
+                std::to_string(axon->getPosition()->y) + ", " +
+                std::to_string(axon->getPosition()->z) + ")";
+        txn.exec(query);
+
+        query = "INSERT INTO axonboutons (axon_bouton_id, axon_id, x, y, z) VALUES (" +
+                std::to_string(axon_bouton_id) + ", " + std::to_string(axon_id) + ", " +
+                std::to_string(axon->getAxonBouton()->getPosition()->x) + ", " +
+                std::to_string(axon->getAxonBouton()->getPosition()->y) + ", " +
+                std::to_string(axon->getAxonBouton()->getPosition()->z) + ")";
+        txn.exec(query);
+
+        query = "INSERT INTO synapticgaps (synaptic_gap_id, axon_bouton_id, x, y, z) VALUES (" +
+                std::to_string(synaptic_gap_id) + ", " + std::to_string(axon_bouton_id) + ", " +
+                std::to_string(axon->getAxonBouton()->getSynapticGap()->getPosition()->x) + ", " +
+                std::to_string(axon->getAxonBouton()->getSynapticGap()->getPosition()->y) + ", " +
+                std::to_string(axon->getAxonBouton()->getSynapticGap()->getPosition()->z) + ")";
+        txn.exec(query);
+
+        axon_bouton_id++;
+        synaptic_gap_id++;
+
+        for (auto& innerAxonBranch : axon->getAxonBranches()) {
+            axon_branch_id++;
+            insertAxonBranches(txn, innerAxonBranch, axon_branch_id, axon_id, axon_bouton_id, synaptic_gap_id, axon_hillock_id);
+        }
+    }
+}
+
+[[noreturn]] void runInteractor(std::vector<std::shared_ptr<Neuron>>& neurons, std::mutex& neuron_mutex, ThreadSafeQueue<std::vector<std::tuple<double, double>>>& audioQueue, int whichCallBack) {
+    if (whichCallBack == 0) {
+        vtkSmartPointer<nvTimerCallback> nvCB = vtkSmartPointer<nvTimerCallback>::New();
+        nvCB->setNeurons(neurons);
+        nvCB->setMutex(neuron_mutex);
+        nvCB->nvRenderWindow->AddRenderer(nvCB->nvRenderer);
+
+        while (true) {
+            auto executeFunc = [nvCB]() mutable { nvCB->Execute(nullptr, vtkCommand::TimerEvent, nullptr); };
+            logExecutionTime(executeFunc, "nvCB->Execute");
+            nvCB->nvRenderWindow->Render();
+            std::cout << "x";
+        }
+    }
+    if (whichCallBack == 1) {
+        vtkSmartPointer<avTimerCallback> avCB = vtkSmartPointer<avTimerCallback>::New();
+        avCB->setAudio(audioQueue);
+        avCB->avRenderWindow->AddRenderer(avCB->avRenderer);
+
+        while (true) {
+            auto executeFunc = [avCB]() mutable { avCB->Execute(nullptr, vtkCommand::TimerEvent, nullptr); };
+            logExecutionTime(executeFunc, "avCB->Execute");
+            avCB->avRenderWindow->AddRenderer(avCB->avRenderer);
+            avCB->avRenderWindow->Render();
+            std::cout << "X";
+        }
+    }
+}
+
+void batch_insert_neurons(pqxx::transaction_base& txn, const std::vector<std::shared_ptr<Neuron>>& neurons) {
+    std::ostringstream neuron_insert;
+    std::ostringstream soma_insert;
+    std::ostringstream axon_hillock_insert;
+    std::ostringstream axon_insert;
+    std::ostringstream axon_bouton_insert;
+    std::ostringstream synaptic_gap_insert;
+
+    neuron_insert << "INSERT INTO neurons (neuron_id, x, y, z) VALUES ";
+    soma_insert << "INSERT INTO somas (soma_id, neuron_id, x, y, z) VALUES ";
+    axon_hillock_insert << "INSERT INTO axonhillocks (axon_hillock_id, soma_id, x, y, z) VALUES ";
+    axon_insert << "INSERT INTO axons (axon_id, axon_hillock_id, x, y, z) VALUES ";
+    axon_bouton_insert << "INSERT INTO axonboutons (axon_bouton_id, axon_id, x, y, z) VALUES ";
+    synaptic_gap_insert << "INSERT INTO synapticgaps (synaptic_gap_id, axon_bouton_id, x, y, z) VALUES ";
+
+    bool first = true;
+
+    int neuron_id = 0;
+    int soma_id = 0;
+    int axon_hillock_id = 0;
+    int axon_id = 0;
+    int axon_bouton_id = 0;
+    int axon_branch_id = 0;
+    int synaptic_gap_id = 0;
+    int dendrite_id = 0;
+    int dendrite_bouton_id = 0;
+    int dendrite_branch_id = 0;
+
+    for (auto& neuron : neurons) {
+        if (!first) {
+            neuron_insert << ", ";
+            soma_insert << ", ";
+            axon_hillock_insert << ", ";
+            axon_insert << ", ";
+            axon_bouton_insert << ", ";
+            synaptic_gap_insert << ", ";
+        } else {
+            first = false;
+        }
+
+        neuron_insert << "(" << neuron_id << ", " << neuron->getPosition()->x << ", " << neuron->getPosition()->y << ", " << neuron->getPosition()->z << ")";
+        soma_insert << "(" << soma_id << ", " << neuron_id << ", " << neuron->getSoma()->getPosition()->x << ", " << neuron->getSoma()->getPosition()->y << ", " << neuron->getSoma()->getPosition()->z << ")";
+        axon_hillock_insert << "(" << axon_hillock_id << ", " << soma_id << ", " << neuron->getSoma()->getAxonHillock()->getPosition()->x << ", " << neuron->getSoma()->getAxonHillock()->getPosition()->y << ", " << neuron->getSoma()->getAxonHillock()->getPosition()->z << ")";
+        axon_insert << "(" << axon_id << ", " << axon_hillock_id << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->x << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->y << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->z << ")";
+        axon_bouton_insert << "(" << axon_bouton_id << ", " << axon_id << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->x << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->y << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->z << ")";
+        synaptic_gap_insert << "(" << synaptic_gap_id << ", " << axon_bouton_id << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->x << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->y << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->z << ")";
+
+        axon_bouton_id++;
+        synaptic_gap_id++;
+
+        if (neuron &&
+            neuron->getSoma() &&
+            neuron->getSoma()->getAxonHillock() &&
+            neuron->getSoma()->getAxonHillock()->getAxon() &&
+            !neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches().empty() &&
+            neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()[0]) {
+
+            for (auto& axonBranch : neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()) {
+                insertAxonBranches(txn, axonBranch, axon_branch_id, axon_id, axon_bouton_id, synaptic_gap_id, axon_hillock_id);
+                axon_branch_id++;
+            }
+        }
+
+        for (auto& dendriteBranch : neuron->getSoma()->getDendriteBranches()) {
+            insertDendriteBranches(txn, dendriteBranch, dendrite_branch_id, dendrite_id, dendrite_bouton_id, soma_id);
+        }
+
+        axon_id++;
+        axon_hillock_id++;
+        soma_id++;
+        neuron_id++;
+        dendrite_branch_id++;
+        dendrite_id++;
+        dendrite_bouton_id++;
+    }
+
+    txn.exec(neuron_insert.str());
+    txn.exec(soma_insert.str());
+    txn.exec(axon_hillock_insert.str());
+    txn.exec(axon_insert.str());
+    txn.exec(axon_bouton_insert.str());
+    txn.exec(synaptic_gap_insert.str());
+}
+
+void updateDatabase(pqxx::connection& conn) {
+    while (running) {
+        std::unique_lock<std::mutex> lock(changedNeuronsMutex);
+        cv.wait_for(lock, std::chrono::milliseconds(250), [] { return dbUpdateReady.load(); });
+
+        if (!running && !dbUpdateReady.load()) {
+            break;
+        }
+
+        std::unordered_set<std::shared_ptr<Neuron>> neuronsToUpdate = std::move(changedNeurons);
+        changedNeurons.clear();
+        dbUpdateReady = false;
+        lock.unlock();
+
+        try {
+            pqxx::work txn(conn);
+
+            for (const auto& neuron : neuronsToUpdate) {
+                txn.exec_params(
+                        "UPDATE neurons SET x = $1, y = $2, z = $3, propagation_rate = $4 WHERE neuron_id = $5",
+                        neuron->getPosition()->x, neuron->getPosition()->y, neuron->getPosition()->z,
+                        neuron->getSoma()->getPropagationRate(), neuron->getNeuronId()
+                );
+            }
+
+            txn.commit();
+        } catch (const std::exception& e) {
+            std::cerr << "Database update error: " << e.what() << std::endl;
+        }
+    }
+}
+
+int main() {
+    Logger logger("errors.log");
+
+    std::string input = "Hello, World!";
+    std::string encoded = base64_encode(reinterpret_cast<const unsigned char*>(input.c_str()), input.length());
+
+    std::cout << "Base64 Encoded: " << encoded << std::endl;
+    std::string query;
+
+    char* pulse_sink = std::getenv("PULSE_SINK");
+    if (pulse_sink != nullptr) {
+        std::cout << "PULSE_SINK: " << pulse_sink << std::endl;
+    } else {
+        std::cout << "PULSE_SINK not set" << std::endl;
+    }
+
+    char* pulse_source = std::getenv("PULSE_SOURCE");
+    if (pulse_source != nullptr) {
+        std::cout << "PULSE_SOURCE: " << pulse_source << std::endl;
+    } else {
+        std::cout << "PULSE_SOURCE not set" << std::endl;
+    }
+
+    std::cout << "1" << std::endl;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
+    std::cout << "2" << std::endl;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
+    std::cout << "3" << std::endl;
+
+    std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
+    if (!mic) {
+        std::cerr << "Failed to create PulseAudioMic!" << std::endl;
+        return 1;
+    }
+    std::cout << "4" << std::endl;
+    std::thread micThread(&PulseAudioMic::micRun, mic);
+
+    std::vector<std::string> config_filenames = { "simulation.conf" };
+    auto config = read_config(config_filenames);
+
+    std::string connection_string;
+
+    if (!initialiseDatabaseConnection(connection_string)) {
+        std::cerr << "Failed to initialise database connection." << std::endl;
+        return 1;
+    }
+    int num_neurons = std::stoi(config["num_neurons"]);
+    int num_pixels = std::stoi(config["num_pixels"]);
+    int num_phonels = std::stoi(config["num_phonels"]);
+    int num_scentels = std::stoi(config["num_scentels"]);
+    int num_vocels = std::stoi(config["num_vocels"]);
+    int neuron_points_per_layer = std::stoi(config["neuron_points_per_layer"]);
+    int pixel_points_per_layer = std::stoi(config["pixel_points_per_layer"]);
+    int phonel_points_per_layer = std::stoi(config["phonel_points_per_layer"]);
+    int scentel_points_per_layer = std::stoi(config["scentel_points_per_layer"]);
+    int vocel_points_per_layer = std::stoi(config["vocel_points_per_layer"]);
+    double proximityThreshold = std::stod(config["proximity_threshold"]);
+    bool useDatabase = convertStringToBool(config["use_database"]);
+
+    pqxx::connection conn(connection_string);
+    initialise_database(conn);
+    pqxx::work txn(conn);
+    txn.exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
+    txn.exec("SET lock_timeout = '5s';");
+
+    NeuronParameters params;
+
+    std::vector<std::shared_ptr<Neuron>> neurons;
+    std::mutex neuron_mutex;
+    std::mutex empty_neuron_mutex;
+    neurons.reserve(num_neurons);
+    double shiftX = 0.0;
+    double shiftY = 0.0;
+    double shiftZ = 0.0;
+    double newPositionX;
+    double newPositionY;
+    double newPositionZ;
+    std::shared_ptr<Neuron> prevNeuron;
+    for (int i = 0; i < num_neurons; ++i) {
+        auto coords = get_coordinates(i, num_neurons, neuron_points_per_layer);
+        if (i > 0) {
+            prevNeuron = neurons.back();
+            shiftX = std::get<0>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
+            shiftY = std::get<1>(coords) + (0.1 * i) + cos((3.14 / 180) * (i * 10)) * 0.1;
+            shiftZ = std::get<2>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
+        }
+
+        neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+        neurons.back()->initialise();
+        if (i > 0 && i % 3 == 0) {
+            PositionPtr prevDendriteBoutonPosition = prevNeuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+            PositionPtr currentSynapticGapPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
+            newPositionX = prevDendriteBoutonPosition->x + 0.4;
+            newPositionY = prevDendriteBoutonPosition->y + 0.4;
+            newPositionZ = prevDendriteBoutonPosition->z + 0.4;
+            currentSynapticGapPosition->x = newPositionX;
+            currentSynapticGapPosition->y = newPositionY;
+            currentSynapticGapPosition->z = newPositionZ;
+            PositionPtr currentAxonBoutonPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
+            newPositionX = newPositionX + 0.4;
+            newPositionY = newPositionY + 0.4;
+            newPositionZ = newPositionZ + 0.4;
+            currentAxonBoutonPosition->x = newPositionX;
+            currentAxonBoutonPosition->y = newPositionY;
+            currentAxonBoutonPosition->z = newPositionZ;
+            PositionPtr currentAxonPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getPosition();
+            newPositionX = newPositionX + (currentAxonPosition->x - newPositionX) / 2.0;
+            newPositionY = newPositionY + (currentAxonPosition->y - newPositionY) / 2.0;
+            newPositionZ = newPositionZ + (currentAxonPosition->z - newPositionZ) / 2.0;
+            currentAxonPosition->x = newPositionX;
+            currentAxonPosition->y = newPositionY;
+            currentAxonPosition->z = newPositionZ;
+            associateSynapticGap(*neurons[i - 1], *neurons[i], proximityThreshold);
+        }
+    }
+    std::cout << "Created " << neurons.size() << " neurons." << std::endl;
+
+    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> visualInputs(2);
+    visualInputs[0].reserve(num_pixels / 2);
+    visualInputs[1].reserve(num_pixels / 2);
+    std::shared_ptr<SensoryReceptor> prevReceptor;
+#pragma omp parallel for
+    for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < (num_pixels / 2); ++i) {
+            auto coords = get_coordinates(i, num_pixels, pixel_points_per_layer);
+            if (i > 0) {
+                prevReceptor = visualInputs[j].back();
+                shiftX = std::get<0>(coords) - 100 + (j * 200);
+                shiftY = std::get<1>(coords);
+                shiftZ = std::get<2>(coords) - 100;
+            }
+
+            std::cout << "Creating visual (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
+            visualInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+            if (!visualInputs[j].back()) {
+                std::cerr << "visualInputs[" << j << "].back() is null!" << std::endl;
+                continue;
+            }
+            visualInputs[j].back()->initialise();
+            if (i > 0 && i % 7 == 0) {
+                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+
+                PositionPtr currentSynapticGapPosition = visualInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                newPositionX = currentSynapticGapPosition->x + 0.4;
+                newPositionY = currentSynapticGapPosition->y + 0.4;
+                newPositionZ = currentSynapticGapPosition->z + 0.4;
+                currentDendriteBoutonPosition->x = newPositionX;
+                currentDendriteBoutonPosition->y = newPositionY;
+                currentDendriteBoutonPosition->z = newPositionZ;
+                PositionPtr currentDendritePosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
+                newPositionX = newPositionX + 0.4;
+                newPositionY = newPositionY + 0.4;
+                newPositionZ = newPositionZ + 0.4;
+                currentDendritePosition->x = newPositionX;
+                currentDendritePosition->y = newPositionY;
+                currentDendritePosition->z = newPositionZ;
+                associateSynapticGap(*visualInputs[j].back(), *neurons[int(i + ((num_pixels / 2) * j))], proximityThreshold);
+            }
+        }
+    }
+    std::cout << "Created " << ( visualInputs[0].size() + visualInputs[1].size()) << " sensory receptors." << std::endl;
+
+    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> audioInputs(2);
+    audioInputs[0].reserve(num_phonels);
+    audioInputs[1].reserve(num_phonels);
+#pragma omp parallel for
+    for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < (num_phonels / 2); ++i) {
+            auto coords = get_coordinates(i, num_phonels, phonel_points_per_layer);
+            if (i > 0) {
+                prevReceptor = audioInputs[j].back();
+                shiftX = std::get<0>(coords) - 150 + (j * 300);
+                shiftY = std::get<1>(coords);
+                shiftZ = std::get<2>(coords);
+            }
+
+            audioInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+            audioInputs[j].back()->initialise();
+            if (i > 0 && i % 11 == 0) {
+                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_phonels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+                PositionPtr currentSynapticGapPosition = audioInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                newPositionX = currentSynapticGapPosition->x + 0.4;
+                newPositionY = currentSynapticGapPosition->y + 0.4;
+                newPositionZ = currentSynapticGapPosition->z + 0.4;
+                currentDendriteBoutonPosition->x = newPositionX;
+                currentDendriteBoutonPosition->y = newPositionY;
+                currentDendriteBoutonPosition->z = newPositionZ;
+                PositionPtr currentDendritePosition = neurons[int(i + ((num_phonels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
+                newPositionX = newPositionX + 0.4;
+                newPositionY = newPositionY + 0.4;
+                newPositionZ = newPositionZ + 0.4;
+                currentDendritePosition->x = newPositionX;
+                currentDendritePosition->y = newPositionY;
+                currentDendritePosition->z = newPositionZ;
+                associateSynapticGap(*audioInputs[j].back(), *neurons[int(i + ((num_phonels / 2) * j))], proximityThreshold);
+            }
+        }
+    }
+    std::cout << "Created " << ( audioInputs[0].size() + audioInputs[1].size()) << " sensory receptors." << std::endl;
+
+    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> olfactoryInputs(2);
+    olfactoryInputs[0].reserve(num_scentels);
+    olfactoryInputs[1].reserve(num_scentels);
+#pragma omp parallel for
+    for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < (num_scentels / 2); ++i) {
+            auto coords = get_coordinates(i, num_scentels, scentel_points_per_layer);
+            if (i > 0) {
+                prevReceptor = olfactoryInputs[j].back();
+                shiftX = std::get<0>(coords) - 20 + (j * 40);
+                shiftY = std::get<1>(coords) - 10;
+                shiftZ = std::get<2>(coords) - 10;
+            }
+
+            olfactoryInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+            olfactoryInputs[j].back()->initialise();
+            if (i > 0 && i % 13 == 0) {
+                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_scentels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+                PositionPtr currentSynapticGapPosition = olfactoryInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                newPositionX = currentSynapticGapPosition->x + 0.4;
+                newPositionY = currentSynapticGapPosition->y + 0.4;
+                newPositionZ = currentSynapticGapPosition->z + 0.4;
+                currentDendriteBoutonPosition->x = newPositionX;
+                currentDendriteBoutonPosition->y = newPositionY;
+                currentDendriteBoutonPosition->z = newPositionZ;
+                PositionPtr currentDendritePosition = neurons[int(i + ((num_scentels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
+                newPositionX = newPositionX + 0.4;
+                newPositionY = newPositionY + 0.4;
+                newPositionZ = newPositionZ + 0.4;
+                currentDendritePosition->x = newPositionX;
+                currentDendritePosition->y = newPositionY;
+                currentDendritePosition->z = newPositionZ;
+                associateSynapticGap(*olfactoryInputs[j].back(), *neurons[int(i + ((num_scentels / 2) * j))], proximityThreshold);
+            }
+        }
+    }
+    std::cout << "Created " << ( olfactoryInputs[0].size() + olfactoryInputs[1].size()) << " sensory receptors." << std::endl;
+
+    std::vector<std::shared_ptr<Effector>> vocalOutputs;
+    vocalOutputs.reserve(num_vocels);
+    std::shared_ptr<Effector> prevEffector;
+
+    for (int i = 0; i < (num_vocels); ++i) {
+        auto coords = get_coordinates(i, num_vocels, vocel_points_per_layer);
+        if (i > 0) {
+            prevEffector = vocalOutputs.back();
+            shiftX = std::get<0>(coords);
+            shiftY = std::get<1>(coords) - 100;
+            shiftZ = std::get<2>(coords) + 10;
+        }
+
+        vocalOutputs.emplace_back(std::make_shared<Effector>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
+        vocalOutputs.back()->initialise();
+        if (i > 0 && i % 17 == 0 && !neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->isAssociated()) {
+            PositionPtr currentSynapticGapPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
+            PositionPtr currentEffectorPosition = vocalOutputs.back()->getPosition();
+            newPositionX = currentEffectorPosition->x - 0.4;
+            newPositionY = currentEffectorPosition->y - 0.4;
+            newPositionZ = currentEffectorPosition->z - 0.4;
+            currentSynapticGapPosition->x = newPositionX;
+            currentSynapticGapPosition->y = newPositionY;
+            currentSynapticGapPosition->z = newPositionZ;
+            PositionPtr currentAxonBoutonPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
+            newPositionX = newPositionX + 0.4;
+            newPositionY = newPositionY + 0.4;
+            newPositionZ = newPositionZ + 0.4;
+            currentAxonBoutonPosition->x = newPositionX;
+            currentAxonBoutonPosition->y = newPositionY;
+            currentAxonBoutonPosition->z = newPositionZ;
+            PositionPtr currentAxonPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getPosition();
+            newPositionX = newPositionX + 0.4;
+            newPositionY = newPositionY + 0.4;
+            newPositionZ = newPositionZ + 0.4;
+            currentAxonPosition->x = newPositionX;
+            currentAxonPosition->y = newPositionY;
+            currentAxonPosition->z = newPositionZ;
+            neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->setAsAssociated();
+        }
+    }
+    std::cout << "Created " << vocalOutputs.size() << " effectors." << std::endl;
+
+#pragma omp parallel for schedule(dynamic)
+    for (size_t i = 0; i < neurons.size(); ++i) {
+        for (size_t j = i + 1; j < neurons.size(); ++j) {
+            associateSynapticGap(*neurons[i], *neurons[j], proximityThreshold);
+        }
+    }
+
+    const size_t numThreads = std::thread::hardware_concurrency();
+    std::vector<std::thread> threads(numThreads);
+
+    size_t neuronsPerThread = neurons.size() / numThreads;
+
+    for (size_t t = 0; t < numThreads; ++t) {
+        size_t start = t * neuronsPerThread;
+        size_t end = (t + 1) * neuronsPerThread;
+        if (t == numThreads - 1) end = neurons.size();
+
+        threads[t] = std::thread([start, end, &neurons]() {
+            for (size_t i = start; i < end; ++i) {
+                computePropagationRate(neurons[i]);
+            }
+        });
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    double propagationRate = totalPropagationRate.load();
+    std::cout << "The propagation rate is " << propagationRate << std::endl;
+
+    try {
+        batch_insert_neurons(txn, neurons);
+        if (propagationRate != 0) {
+            txn.commit();
+        } else {
+            throw std::runtime_error("The propagation rate is not valid. Skipping database insertion.");
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Database error: " << e.what() << std::endl;
+        txn.abort();
+    }
+
+    std::vector<std::shared_ptr<Neuron>> emptyNeurons;
+    std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAudioQueue), 0);
+    std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
+    std::thread inputThread(checkForQuit);
+    std::thread dbThread(updateDatabase, std::ref(conn));
+
+    while (running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    inputThread.join();
+    nvThread.join();
+    avThread.join();
+    mic->micStop();
+    micThread.join();
+    dbThread.join();
+
+    return 0;
+}

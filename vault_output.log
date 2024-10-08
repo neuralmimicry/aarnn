@@ -1,0 +1,7 @@
+Error parsing listener configuration.
+Error initializing listener of type tcp: listen tcp 127.0.0.1:8200: bind: address already in use
+2024-06-19T14:02:53.229+0100 [INFO]  proxy environment: http_proxy="" https_proxy="" no_proxy=""
+2024-06-19T14:02:53.230+0100 [INFO]  incrementing seal generation: generation=1
+2024-06-19T14:02:53.230+0100 [WARN]  no `api_addr` value specified in config or in VAULT_API_ADDR; falling back to detection if possible, but this value should be manually set
+2024-06-19T14:02:53.231+0100 [INFO]  core: Initializing version history cache for core
+2024-06-19T14:02:53.231+0100 [INFO]  events: Starting event system

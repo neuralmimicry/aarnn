@@ -13,10 +13,17 @@ file(GLOB VISUALISER_SRC
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
+# Add AddressSanitizer flags
+#set(SANITIZER_FLAGS "-fsanitize=address -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined")
+set(SANITIZER_FLAGS "")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CGAL_DIR "/usr/lib/x86_64-linux-gnu/cmake/CGAL/")
 set(PostgreSQL_ROOT "/usr/include/postgresql/14/server")
 
 find_package(PostgreSQL REQUIRED)
@@ -94,6 +101,18 @@ message(STATUS "PulseAudio Include Dirs: ${PULSEAUDIO_INCLUDE_DIRS}")
 message(STATUS "PulseAudio Library Dirs: ${PULSEAUDIO_LIBRARY_DIRS}")
 message(STATUS "PulseAudio Libraries: ${PULSEAUDIO_LIBRARIES}")
 
+# Find CURL
+find_package(CURL REQUIRED)
+if(NOT CURL_FOUND)
+    message(FATAL_ERROR "CURL library not found")
+endif()
+
+# Find CGAL
+find_package(CGAL REQUIRED)
+if(NOT CGAL_FOUND)
+    message(FATAL_ERROR "CGAL library not found")
+endif()
+
 # Find FFTW
 #find_package(FFTW3 REQUIRED)
 #if(NOT FFTW3_FOUND)
@@ -126,6 +145,8 @@ include_directories(${FFmpeg_INCLUDE_DIRS})  # Add FFmpeg include directories
 include_directories(${PORTAUDIO_INCLUDE_DIRS}) # Add PortAudio include directories
 include_directories(${PulseAudio_INCLUDE_DIRS}) # Add PulseAudio include directories
 include_directories(${FFTW3_INCLUDE_DIRS}) # Add FFTW3 include directories
+include_directories(${CURL_INCLUDE_DIRS}) # Add CURL include directories
+include_directories(${CGAL_INCLUDE_DIRS}) # Add CGAL include directories
 
 link_directories(${PostgreSQL_LIBRARY_DIR})
 link_directories(${PORTAUDIO_LIBRARY_DIR})
@@ -133,7 +154,48 @@ link_directories(${PulseAudio_LIBRARY_DIRS})
 link_directories(${FFTW3_LIBRARY_DIRS})
 link_directories(${LOCAL_LIB64})
 
-add_executable(AARNN ${AARNN_SRC})
+add_executable(AARNN ${AARNN_SRC}
+        include/vclient.h
+        src/shared_libs/vclient.cpp
+        include/Neuron.h
+        include/utils.h
+        include/abstractObject.h
+        include/avTimerCallback.h
+        include/Axon.h
+        include/AxonBouton.h
+        include/AxonBranch.h
+        include/AxonHillock.h
+        include/BodyComponent.h
+        include/BodyShapeComponent.h
+        include/boostincludes.h
+        include/Dendrite.h
+        include/DendriteBouton.h
+        include/DendriteBranch.h
+        include/Effector.h
+        include/Logger.h
+        include/msock.h
+        include/NeuronParameters.h
+        include/nvTimerCallback.h
+        include/portaudioMicThread.h
+        include/Position.h
+        include/PulseAudioMic.h
+        include/SensoryReceptor.h
+        include/Shape3D.h
+        include/Soma.h
+        include/SynapticGap.h
+        include/ThreadSafeQueue.h
+        include/vtkincludes.h
+        src/aarnn/config.cpp
+        include/config.h
+        include/database.h
+        include/audio.h
+        include/timer.h
+        src/aarnn/database.cpp
+        src/aarnn/audio.cpp
+        src/aarnn/timer.cpp
+        src/aarnn/main.cpp
+        src/aarnn/utils.cpp
+        include/globals.h)
 target_link_libraries(AARNN PRIVATE
         ${VTK_LIBRARIES}
         ${PostgreSQL_LIBRARIES}
@@ -144,8 +206,12 @@ target_link_libraries(AARNN PRIVATE
         ${PULSEAUDIO_LIBRARIES}
         ${FFTW3_LIBRARIES}
         ${PQXX_LIB}
+        ${CURL_LIBRARIES}
+        ${CGAL_LIBRARIES}
 )
-add_executable(Visualiser ${VISUALISER_SRC})
+add_executable(Visualiser ${VISUALISER_SRC}
+        include/vclient.h
+        src/shared_libs/vclient.cpp)
 target_link_libraries(Visualiser PRIVATE
         ${VTK_LIBRARIES}
         ${PostgreSQL_LIBRARIES}
@@ -153,4 +219,7 @@ target_link_libraries(Visualiser PRIVATE
         ${OpenSSL_LIBRARIES}
         ${FFTW3_LIBRARIES}
         ${PQXX_LIB}
+        ${CURL_LIBRARIES}
+        ${CGAL_LIBRARIES}
 )
+
