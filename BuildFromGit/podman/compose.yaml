@@ -1,10 +1,10 @@
 version: '3.8'
 services:
-  builder:
-    container_name: builder
-    image: builder
+  vault:
+    container_name: aarnn_vault
+    image: aarnn_vault
     build:
-      dockerfile: Containerfile.compiler
+      dockerfile: ./Containerfile.vault
     deploy:
       replicas: 1
       resources:
@@ -22,7 +22,7 @@ services:
       timeout: 5s
       retries: 5
     build:
-      dockerfile: ../docker/Dockerfile.postgres
+      dockerfile: ./Containerfile.postgres
     env_file:
       - ../../.env
     deploy:
@@ -32,6 +32,8 @@ services:
           memory: 2000M
       restart_policy:
         condition: on-failure
+    depends_on:
+      - vault
     ports:
       - "${POSTGRES_PORT_EXPOSE}:5432"
     environment:
@@ -41,17 +43,34 @@ services:
     networks:
       - aarnn_net
 
-  aarnn:
-    container_name: aarnn
-    image: aarnn
+  builder:
+    container_name: builder
+    image: builder
     build:
-      dockerfile: ../docker/Dockerfile.aarnnFullBuild
+      dockerfile: ./Containerfile.compiler
     deploy:
       replicas: 1
       resources:
         limits:
-          memory: 1000m
+          memory: 2000m
     depends_on:
+      - vault
+    networks:
+      - aarnn_net
+
+  aarnn:
+    container_name: aarnn
+    image: aarnn
+    build:
+      dockerfile: ./Containerfile.aarnn
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 2000m
+    depends_on:
+      builder:
+        condition: service_healthy
       postgres:
         condition: service_healthy
     environment:
@@ -66,13 +85,15 @@ services:
     container_name: visualiser
     image: visualiser
     build:
-      dockerfile: ../docker/Dockerfile.visualiserFullBuild
+      dockerfile: ./Containerfile.visualiser
     deploy:
       replicas: 1
       resources:
         limits:
           memory: 1000m
     depends_on:
+      aarnn:
+        condition: service_healthy
       postgres:
         condition: service_healthy
     environment:

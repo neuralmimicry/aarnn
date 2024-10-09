@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# run003.sh - Build and upload the Containerfile.compiler image using Buildah
+# run003.sh - Build and upload multiple container images using Buildah
 
-echo "Starting run003.sh: Building and uploading container image..."
+echo "Starting run003.sh: Building and uploading container images..."
 
 # Define the path to the .env file
 ENV_FILE="./.env"
@@ -24,45 +24,37 @@ if [ -z "$CLOUD_PROVIDER" ]; then
     exit 1
 fi
 
-# Define the image name and tag
-IMAGE_NAME="compiler-image"
+# Define the image names, tags, containerfile paths, and build args
+IMAGE_NAMES=("vault-image" "postgres-image" "compiler-image" "aarnn-image" "visualiser-image")
+CONTAINERFILE_PATHS=(
+    "./BuildFromGit/podman/Containerfile.vault"
+    "./BuildFromGit/podman/Containerfile.postgres"
+    "./BuildFromGit/podman/Containerfile.compiler"
+    "./BuildFromGit/podman/Containerfile.aarnn"
+    "./BuildFromGit/podman/Containerfile.visualiser"
+)
+BUILD_ARGS=(
+    ""  # vault-image has no build args
+    ""  # postgres-image has no build args
+    "--build-arg REPO_URL=https://github.com/neuralmimicry/aarnn.git"  # compiler-image
+    ""  # aarnn-image has no build args
+    ""  # visualiser-image has no build args
+)
+
 IMAGE_TAG="latest"
-LOCAL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
-
-# Define the path to the Containerfile
-CONTAINERFILE_PATH="./BuildFromGit/podman/Containerfile.compiler"
-
-# For SSH - REPO_URL="git@github.com:neuralmimicry/aarnn.git"
-REPO_URL="https://github.com/neuralmimicry/aarnn.git"
-
-# Check if the Containerfile exists
-if [ ! -f "$CONTAINERFILE_PATH" ]; then
-    echo "Containerfile $CONTAINERFILE_PATH not found!"
-    exit 1
-fi
-
-# Build the image using Buildah
-echo "Building the image using Buildah..."
-buildah bud -f "$CONTAINERFILE_PATH" -t "$LOCAL_IMAGE" --build-arg REPO_URL="$REPO_URL"
-
-if [ $? -ne 0 ]; then
-    echo "Failed to build the image."
-    exit 1
-fi
-
-echo "Image built successfully: $LOCAL_IMAGE"
 
 # Function to push the image to a registry
 push_image() {
-    local registry_image="$1"
-    echo "Tagging image for registry: $registry_image"
-    buildah tag "$LOCAL_IMAGE" "$registry_image"
+    local local_image="$1"
+    local registry_image="$2"
+    echo "Tagging image $local_image for registry: $registry_image"
+    buildah tag "$local_image" "$registry_image"
 
-    echo "Pushing image to registry: $registry_image"
+    echo "Pushing image $registry_image to registry..."
     buildah push "$registry_image"
 
     if [ $? -ne 0 ]; then
-        echo "Failed to push the image to $registry_image."
+        echo "Failed to push the image $registry_image."
         exit 1
     fi
 
@@ -72,10 +64,11 @@ push_image() {
 # Determine actions based on CLOUD_PROVIDER
 case "$CLOUD_PROVIDER" in
     local)
-        echo "CLOUD_PROVIDER is 'local'. No need to push the image to a remote registry."
+        echo "CLOUD_PROVIDER is 'local'. No need to push images to a remote registry."
+        PUSH_IMAGES=false
         ;;
     openstack)
-        echo "CLOUD_PROVIDER is 'openstack'. Pushing image to OpenStack registry..."
+        echo "CLOUD_PROVIDER is 'openstack'. Preparing to push images to OpenStack registry..."
 
         # Check for required OpenStack variables
         if [ -z "$OS_USERNAME" ] || [ -z "$OS_PASSWORD" ] || [ -z "$OS_AUTH_URL" ] || [ -z "$OS_PROJECT_NAME" ]; then
@@ -94,12 +87,10 @@ case "$CLOUD_PROVIDER" in
             exit 1
         fi
 
-        # Push the image
-        REGISTRY_IMAGE="${OS_REGISTRY_URL}/${OS_PROJECT_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
-        push_image "$REGISTRY_IMAGE"
+        PUSH_IMAGES=true
         ;;
     aws)
-        echo "CLOUD_PROVIDER is 'aws'. Pushing image to Amazon ECR..."
+        echo "CLOUD_PROVIDER is 'aws'. Preparing to push images to Amazon ECR..."
 
         # Check for required AWS variables
         if [ -z "$AWS_ACCOUNT_ID" ] || [ -z "$AWS_REGION" ]; then
@@ -116,19 +107,10 @@ case "$CLOUD_PROVIDER" in
             exit 1
         fi
 
-        # Create ECR repository if it doesn't exist
-        aws ecr describe-repositories --repository-names "$IMAGE_NAME" --region "$AWS_REGION" >/dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo "Creating ECR repository: $IMAGE_NAME"
-            aws ecr create-repository --repository-name "$IMAGE_NAME" --region "$AWS_REGION"
-        fi
-
-        # Push the image
-        REGISTRY_IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
-        push_image "$REGISTRY_IMAGE"
+        PUSH_IMAGES=true
         ;;
     gcp)
-        echo "CLOUD_PROVIDER is 'gcp'. Pushing image to Google Container Registry..."
+        echo "CLOUD_PROVIDER is 'gcp'. Preparing to push images to Google Container Registry..."
 
         # Check for required GCP variables
         if [ -z "$GCP_PROJECT_ID" ]; then
@@ -145,12 +127,10 @@ case "$CLOUD_PROVIDER" in
             exit 1
         fi
 
-        # Push the image
-        REGISTRY_IMAGE="gcr.io/${GCP_PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
-        push_image "$REGISTRY_IMAGE"
+        PUSH_IMAGES=true
         ;;
     azure)
-        echo "CLOUD_PROVIDER is 'azure'. Pushing image to Azure Container Registry..."
+        echo "CLOUD_PROVIDER is 'azure'. Preparing to push images to Azure Container Registry..."
 
         # Check for required Azure variables
         if [ -z "$ACR_NAME" ]; then
@@ -167,14 +147,66 @@ case "$CLOUD_PROVIDER" in
             exit 1
         fi
 
-        # Push the image
-        REGISTRY_IMAGE="${ACR_NAME}.azurecr.io/${IMAGE_NAME}:${IMAGE_TAG}"
-        push_image "$REGISTRY_IMAGE"
+        PUSH_IMAGES=true
         ;;
     *)
         echo "Unknown CLOUD_PROVIDER: $CLOUD_PROVIDER"
         exit 1
         ;;
 esac
+
+# Build and push images in order
+NUM_IMAGES=${#IMAGE_NAMES[@]}
+
+for (( i=0; i<$NUM_IMAGES; i++ )); do
+    IMAGE_NAME="${IMAGE_NAMES[$i]}"
+    CONTAINERFILE_PATH="${CONTAINERFILE_PATHS[$i]}"
+    BUILD_ARG="${BUILD_ARGS[$i]}"
+    LOCAL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
+
+    # Check if the Containerfile exists
+    if [ ! -f "$CONTAINERFILE_PATH" ]; then
+        echo "Containerfile $CONTAINERFILE_PATH not found!"
+        exit 1
+    fi
+
+    # Build the image using Buildah
+    echo "Building image $LOCAL_IMAGE using Buildah..."
+    buildah bud -f "$CONTAINERFILE_PATH" -t "$LOCAL_IMAGE" $BUILD_ARG
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to build the image $LOCAL_IMAGE."
+        exit 1
+    fi
+
+    echo "Image built successfully: $LOCAL_IMAGE"
+
+    # Push the image if required
+    if [ "$PUSH_IMAGES" = true ]; then
+        case "$CLOUD_PROVIDER" in
+            openstack)
+                REGISTRY_IMAGE="${OS_REGISTRY_URL}/${OS_PROJECT_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
+                ;;
+            aws)
+                # Create ECR repository if it doesn't exist
+                aws ecr describe-repositories --repository-names "$IMAGE_NAME" --region "$AWS_REGION" >/dev/null 2>&1
+                if [ $? -ne 0 ]; then
+                    echo "Creating ECR repository: $IMAGE_NAME"
+                    aws ecr create-repository --repository-name "$IMAGE_NAME" --region "$AWS_REGION"
+                fi
+                REGISTRY_IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
+                ;;
+            gcp)
+                REGISTRY_IMAGE="gcr.io/${GCP_PROJECT_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
+                ;;
+            azure)
+                REGISTRY_IMAGE="${ACR_NAME}.azurecr.io/${IMAGE_NAME}:${IMAGE_TAG}"
+                ;;
+        esac
+
+        push_image "$LOCAL_IMAGE" "$REGISTRY_IMAGE"
+    fi
+
+done
 
 echo "run003.sh completed successfully."
