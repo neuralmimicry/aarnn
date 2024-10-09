@@ -25,7 +25,7 @@ spec:
             - |
               vault server -dev -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200 &
               sleep 5;
-              vault kv put secret/database username=postgres password=password;
+              vault kv put secret/database username=postgres password=<password>;
       volumes:
         - name: vault-file
           emptyDir: {}
