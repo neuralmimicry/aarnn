@@ -27,16 +27,16 @@ fi
 # Define the image names, tags, containerfile paths, and build args
 IMAGE_NAMES=("vault-image" "postgres-image" "compiler-image" "aarnn-image" "visualiser-image")
 CONTAINERFILE_PATHS=(
+    "./BuildFromGit/podman/Containerfile.compiler"
     "./BuildFromGit/podman/Containerfile.vault"
     "./BuildFromGit/podman/Containerfile.postgres"
-    "./BuildFromGit/podman/Containerfile.compiler"
     "./BuildFromGit/podman/Containerfile.aarnn"
     "./BuildFromGit/podman/Containerfile.visualiser"
 )
 BUILD_ARGS=(
+    "--build-arg REPO_URL=https://github.com/neuralmimicry/aarnn.git"  # compiler-image
     ""  # vault-image has no build args
     ""  # postgres-image has no build args
-    "--build-arg REPO_URL=https://github.com/neuralmimicry/aarnn.git"  # compiler-image
     ""  # aarnn-image has no build args
     ""  # visualiser-image has no build args
 )
