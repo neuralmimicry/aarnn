@@ -52,10 +52,20 @@ if(NOT Boost_FOUND)
     message(FATAL_ERROR "Boost library not found")
 endif()
 
-find_package(FFmpeg REQUIRED)
+# Find FFmpeg using pkg-config
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(FFmpeg REQUIRED libavcodec libavformat libavutil libswscale libswresample)
+
 if(NOT FFmpeg_FOUND)
-    message(FATAL_ERROR "FFmpeg library not found")
+    message(FATAL_ERROR "FFmpeg libraries not found")
 endif()
+
+# Include directories
+include_directories(${FFmpeg_INCLUDE_DIRS})
+
+# Libraries
+set(FFmpeg_LIBRARIES ${FFmpeg_LIBRARIES})
 
 # Find OpenSSL
 find_package(OpenSSL REQUIRED)

@@ -35,44 +35,51 @@ RUN apt-get update && \
         add-apt-repository ppa:ubuntu-toolchain-r/test && \
         apt-get update && \
         apt-get install -y \
-  wget \
-  curl \
-  libcurl4 \
-  libcurl4-openssl-dev \
-  libpqxx-dev \
-  libvtk9-dev \
-  python3-vtk9 \
-  qtcreator \
-  qtbase5-dev \
-  qt5-qmake \
-  vtk9 \
   build-essential \
   cmake \
-    git \
-  libglew-dev \
-  libglew2.2 \
+  curl \
+  freeglut3-dev \
+  git \
+  iputils-ping \
+  libasound2-dev \
+  libavcodec-dev \
+  libavdevice-dev \
+  libavformat-dev \
+  libavutil-dev \
   libboost-all-dev \
   libcgal-dev \
+  libcurl4 \
+  libcurl4-openssl-dev \
+  libfftw3-dev \
+  libgl1-mesa-dev \
+  libglew-dev \
+  libglew2.2 \
+  libglfw3 \
+  libglfw3-dev \
+  libglu1-mesa-dev \
   libgmp-dev \
   libmpfr-dev \
-  libwebsocketpp-dev \
-  libssl-dev \
-  libx11-dev \
-  libglu1-mesa-dev \
-  freeglut3-dev \
-  libglfw3-dev \
-  libglfw3 \
   libomp-dev \
-  pulseaudio \
-  libasound2-dev \
-  portaudio19-dev \
-  libpulse-dev \
-  libfftw3-dev \
-  libpostproc-dev \
-  libavdevice-dev \
   libportaudio2 \
-  iputils-ping \
-  libgl1-mesa-dev \
+  libportaudiocpp0 \
+  libpostproc-dev \
+  libpqxx-dev \
+  libpulse-dev \
+  libssl-dev \
+  libswscale-dev \
+  libswresample-dev \
+  libvtk9-dev \
+  libwebsocketpp-dev \
+  libx11-dev \
+  pkg-config \
+  portaudio19-dev \
+  pulseaudio \
+  python3-vtk9 \
+  qt5-qmake \
+  qtbase5-dev \
+  qtcreator \
+  vtk9 \
+  wget \
   xorg-dev && \
  apt-get clean && \
  rm -rf /var/lib/apt/lists/*
