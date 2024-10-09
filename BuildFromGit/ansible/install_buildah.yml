@@ -1,0 +1,53 @@
+---
+- name: Ensure Buildah is installed
+  hosts: all
+  become: yes
+  tasks:
+    - name: Check if Buildah is installed
+      command: buildah --version
+      register: buildah_installed
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Install Buildah on Debian/Ubuntu
+      apt:
+        name: buildah
+        state: present
+        update_cache: yes
+      when:
+        - ansible_os_family == 'Debian'
+        - buildah_installed.rc != 0
+
+    - name: Install dependencies for Buildah on RHEL/CentOS
+      yum:
+        name: epel-release
+        state: present
+      when:
+        - ansible_os_family == 'RedHat'
+        - buildah_installed.rc != 0
+
+    - name: Install Buildah on RHEL/CentOS
+      yum:
+        name: buildah
+        state: present
+      when:
+        - ansible_os_family == 'RedHat'
+        - buildah_installed.rc != 0
+
+    - name: Install Buildah on Fedora
+      dnf:
+        name: buildah
+        state: present
+        update_cache: yes
+      when:
+        - ansible_distribution == 'Fedora'
+        - buildah_installed.rc != 0
+
+    - name: Verify Buildah installation
+      command: buildah --version
+      register: buildah_verify
+      changed_when: false
+
+    - name: Display Buildah version
+      debug:
+        msg: "Buildah version: {{ buildah_verify.stdout }}"

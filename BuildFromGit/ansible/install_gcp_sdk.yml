@@ -1,0 +1,21 @@
+---
+- name: Install Google Cloud SDK
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Add Google Cloud SDK repository and install
+      apt:
+        deb: https://packages.cloud.google.com/apt cloud-sdk main
+      when: ansible_os_family == 'Debian'
+
+    - name: Install Google Cloud SDK on RHEL/CentOS
+      yum:
+        name: google-cloud-sdk
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install Google Cloud SDK on macOS
+      homebrew:
+        name: google-cloud-sdk
+        state: present
+      when: ansible_os_family == 'Darwin'

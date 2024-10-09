@@ -1,6 +1,9 @@
 db_connection.conf
 *.o
 .cmake
+.devcontainer
+.vscode
+.idea
 CMakeFiles
 build*
 bin

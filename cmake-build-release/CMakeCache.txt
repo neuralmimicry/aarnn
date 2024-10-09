@@ -394,6 +394,9 @@ FFMPEG_VERSION:STRING=6.1.1-3ubuntu5
 //The FFmpeg cflags.
 FFmpeg_DEFINITIONS:STRING=
 
+//The directory containing a CMake configuration file for FFmpeg.
+FFmpeg_DIR:PATH=FFmpeg_DIR-NOTFOUND
+
 //The FFmpeg include directories.
 FFmpeg_INCLUDE_DIRS:STRING=/usr/include/x86_64-linux-gnu
 
@@ -1736,7 +1739,7 @@ FFmpeg_swscale_LIBRARIES-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: FFmpeg_swscale_VERSION
 FFmpeg_swscale_VERSION-ADVANCED:INTERNAL=1
 //Details about finding Boost
-FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/lib/x86_64-linux-gnu/cmake/Boost-1.83.0/BoostConfig.cmake][c ][v1.83.0(1.66)]
+FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/lib/x86_64-linux-gnu/cmake/Boost-1.83.0/BoostConfig.cmake][cfound components: system filesystem ][v1.83.0()]
 //Details about finding CURL
 FIND_PACKAGE_MESSAGE_DETAILS_CURL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcurl.so][/usr/include/x86_64-linux-gnu][c ][v8.5.0()]
 //Details about finding EXPAT

@@ -1,5 +1,18 @@
 version: '3.8'
 services:
+  builder:
+    container_name: builder
+    image: builder
+    build:
+      dockerfile: Containerfile.compiler
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 1000m
+    networks:
+      - aarnn_net
+
   postgres:
     container_name: aarnn_postgres
     image: aarnn_postgres
@@ -9,9 +22,9 @@ services:
       timeout: 5s
       retries: 5
     build:
-      dockerfile: Dockerfile.postgres
+      dockerfile: ../docker/Dockerfile.postgres
     env_file:
-      - ./.env
+      - ../../.env
     deploy:
       replicas: 1
       resources:
@@ -32,7 +45,7 @@ services:
     container_name: aarnn
     image: aarnn
     build:
-      dockerfile: Dockerfile.aarnnFullBuild
+      dockerfile: ../docker/Dockerfile.aarnnFullBuild
     deploy:
       replicas: 1
       resources:
@@ -53,7 +66,7 @@ services:
     container_name: visualiser
     image: visualiser
     build:
-      dockerfile: Dockerfile.visualiserFullBuild
+      dockerfile: ../docker/Dockerfile.visualiserFullBuild
     deploy:
       replicas: 1
       resources:

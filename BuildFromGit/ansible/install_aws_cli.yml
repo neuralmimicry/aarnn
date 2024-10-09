@@ -1,0 +1,22 @@
+---
+- name: Install AWS CLI
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Install AWS CLI on Debian/Ubuntu
+      apt:
+        name: awscli
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Install AWS CLI on RHEL/CentOS
+      yum:
+        name: awscli
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install AWS CLI on macOS
+      homebrew:
+        name: awscli
+        state: present
+      when: ansible_os_family == 'Darwin'

@@ -1,0 +1,67 @@
+---
+- name: Install Podman
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Check if Podman is installed
+      command: podman --version
+      register: podman_installed
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Install Podman on Debian/Ubuntu
+      apt:
+        name: podman
+        state: present
+        update_cache: yes
+      when:
+        - ansible_os_family == 'Debian'
+        - podman_installed.rc != 0
+
+    - name: Install dependencies for Podman on RHEL/CentOS
+      yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+      when:
+        - ansible_os_family == 'RedHat'
+        - podman_installed.rc != 0
+
+    - name: Add Podman repository on RHEL/CentOS
+      yum_repository:
+        name: "devel:kubic:libcontainers:stable"
+        description: "Kubic Project - libcontainers packages"
+        baseurl: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_7/"
+        gpgkey: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_7/repodata/repomd.xml.key"
+        enabled: yes
+      when:
+        - ansible_os_family == 'RedHat'
+        - podman_installed.rc != 0
+
+    - name: Install Podman on RHEL/CentOS
+      yum:
+        name: podman
+        state: present
+      when:
+        - ansible_os_family == 'RedHat'
+        - podman_installed.rc != 0
+
+    - name: Install Podman on Fedora
+      dnf:
+        name: podman
+        state: present
+        update_cache: yes
+      when:
+        - ansible_distribution == 'Fedora'
+        - podman_installed.rc != 0
+
+    - name: Verify Podman installation
+      command: podman --version
+      register: podman_verify
+      changed_when: false
+
+    - name: Display Podman version
+      debug:
+        msg: "Podman version: {{ podman_verify.stdout }}"

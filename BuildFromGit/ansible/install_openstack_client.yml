@@ -1,0 +1,16 @@
+---
+- name: Install OpenStack client
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Install python-openstackclient
+      apt:
+        name: python3-openstackclient
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Install python-openstackclient
+      yum:
+        name: python3-openstackclient
+        state: present
+      when: ansible_os_family == 'RedHat'
