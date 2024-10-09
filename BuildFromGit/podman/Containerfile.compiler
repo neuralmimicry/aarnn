@@ -51,6 +51,7 @@ RUN apt-get update && \
   libcurl4 \
   libcurl4-openssl-dev \
   libfftw3-dev \
+  libfftw3-3 \
   libgl1-mesa-dev \
   libglew-dev \
   libglew2.2 \
@@ -74,6 +75,7 @@ RUN apt-get update && \
   pkg-config \
   portaudio19-dev \
   pulseaudio \
+  pulseaudio-utils \
   python3-vtk9 \
   qt5-qmake \
   qtbase5-dev \
