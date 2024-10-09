@@ -1,5 +1,5 @@
 # Use an official build image with CMake and Git
-FROM ubuntu:24.04 AS builder
+FROM ubuntu:24.04
 
 # Install locales
 RUN apt-get update && apt-get install -y locales

@@ -1,33 +1,5 @@
 # Use an official C++ runtime as a parent image
-FROM ubuntu:22.04 as builder
-
-# Install locales
-RUN apt-get update && apt-get install -y locales
-
-# Set the locale to en_GB.utf8
-RUN localedef -i en_GB -c -f UTF-8 -A /usr/share/locale/locale.alias en_GB.UTF-8
-ENV LANG en_GB.utf8
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Set environment variable to make apt-get commands non-interactive
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ="Europe/London"
-
-RUN apt-get update && apt-get install -y \
-  apt-utils \
-  tzdata
-
-# Preconfigure tzdata package and configure it
-RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone && \
-    echo "tzdata tzdata/Areas select Etc" | debconf-set-selections && \
-    echo "tzdata tzdata/Zones/Etc select UTC" | debconf-set-selections && \
-    echo "tzdata tzdata/Areas seen true" | debconf-set-selections && \
-    echo "tzdata tzdata/Zones/Etc seen true" | debconf-set-selections && \
-    DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
-    dpkg-reconfigure --frontend noninteractive tzdata
+FROM compiler-image
 
 # Combine installation commands and clean up to reduce layer size
 RUN apt-get update && \
@@ -93,12 +65,11 @@ RUN make -j $(nproc) && echo "Make successful" || (echo "Make failed" && exit 1)
 WORKDIR /app
 
 # Copy the compiled executable from your host to the current location in your docker image
-# COPY --from=builder /app/bin .
-# COPY --from=builder /app/bin .
+# COPY --from=compiler-image /app/bin .
 
 # Database configuration connection information and Simulation data
-COPY ./configure/db_connection.conf /app/db_connection.conf
-COPY ./configure/simulation.conf /app/simulation.conf
+COPY --from=compiler-image ./configure/db_connection.conf /app/db_connection.conf
+COPY --from=compiler-image ./configure/simulation.conf /app/simulation.conf
 
 # Install necessary libraries for running the application
 RUN apt-get update && apt-get install -y \

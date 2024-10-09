@@ -1,4 +1,4 @@
-FROM builder
+FROM compiler-image
 
 # Define environment variables
 ENV VAULT_VERSION=1.17.0
@@ -24,9 +24,9 @@ RUN useradd -r -s /bin/bash vault \
 RUN echo "vault ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vault
 
 # Copy the scripts into the container
-COPY from=Builder init_vault.sh /usr/local/bin/
-COPY from=Builder start_vault.sh /usr/local/bin/
-COPY from=Builder .env /usr/local/bin/
+COPY from=compiler-image init_vault.sh /usr/local/bin/
+COPY from=compiler-image start_vault.sh /usr/local/bin/
+COPY from=compiler-image .env /usr/local/bin/
 
 # Set permissions on the scripts
 RUN chmod +x /usr/local/bin/init_vault.sh /usr/local/bin/start_vault.sh
