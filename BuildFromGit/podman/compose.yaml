@@ -1,5 +1,18 @@
 version: '3.8'
 services:
+  builder:
+    container_name: builder
+    image: builder
+    build:
+      dockerfile: ./Containerfile.compiler
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 2000m
+    networks:
+      - aarnn_net
+
   vault:
     container_name: aarnn_vault
     image: aarnn_vault
@@ -10,6 +23,8 @@ services:
       resources:
         limits:
           memory: 1000m
+    depends_on:
+      - builder
     networks:
       - aarnn_net
 
@@ -33,28 +48,14 @@ services:
       restart_policy:
         condition: on-failure
     depends_on:
-      - vault
+      vault:
+        condition: service_healthy
     ports:
       - "${POSTGRES_PORT_EXPOSE}:5432"
     environment:
       POSTGRES_PASSWORD    : ${POSTGRES_PASSWORD}
       POSTGRES_USERNAME    : ${POSTGRES_USERNAME}
       POSTGRES_PORT_EXPOSE : ${POSTGRES_PORT_EXPOSE}
-    networks:
-      - aarnn_net
-
-  builder:
-    container_name: builder
-    image: builder
-    build:
-      dockerfile: ./Containerfile.compiler
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          memory: 2000m
-    depends_on:
-      - vault
     networks:
       - aarnn_net
 
@@ -69,8 +70,6 @@ services:
         limits:
           memory: 2000m
     depends_on:
-      builder:
-        condition: service_healthy
       postgres:
         condition: service_healthy
     environment:

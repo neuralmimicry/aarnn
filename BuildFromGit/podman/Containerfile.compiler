@@ -47,6 +47,7 @@ RUN apt-get update && \
   libavformat-dev \
   libavutil-dev \
   libboost-all-dev \
+  libcap2-bin \
   libcgal-dev \
   libcurl4 \
   libcurl4-openssl-dev \
@@ -80,6 +81,8 @@ RUN apt-get update && \
   qt5-qmake \
   qtbase5-dev \
   qtcreator \
+  sudo \
+  unzip \
   vtk9 \
   wget \
   xorg-dev && \
