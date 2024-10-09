@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y libpqxx-dev podman buildah libvtk9-dev python3-vtk9 qtcreator qtbase5-dev qt5-qmake cmake libboost-all-dev libwebsocketpp-dev libssl-dev build-essential cmake xorg-dev libx11-dev libglu1-mesa-dev freeglut3-dev libglew2.2 libglew-dev libglu1-mesa libgl1-mesa-glx libgl1-mesa-dev libglfw3-dev libglfw3 libomp-dev fftw3-dev
 
+      - name: Configure build environment
+        run: run.sh
+
       - name: Configure CMake with OpenMP
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DOpenMP_CXX_FLAGS="-fopenmp" -DOpenMP_CXX_LIB_NAMES="gomp"
 
