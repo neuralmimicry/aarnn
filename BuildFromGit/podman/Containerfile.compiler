@@ -52,7 +52,7 @@ RUN apt-get update && \
   libcurl4 \
   libcurl4-openssl-dev \
   libfftw3-dev \
-  libfftw3-3 \
+  libfftw3-mpi-dev \
   libgl1-mesa-dev \
   libglew-dev \
   libglew2.2 \
