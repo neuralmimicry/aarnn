@@ -25,7 +25,7 @@ if [ -z "$CLOUD_PROVIDER" ]; then
 fi
 
 # Define the image names, tags, containerfile paths, and build args
-IMAGE_NAMES=("vault-image" "postgres-image" "compiler-image" "aarnn-image" "visualiser-image")
+IMAGE_NAMES=("compiler-image" "vault-image" "postgres-image" "aarnn-image" "visualiser-image")
 CONTAINERFILE_PATHS=(
     "./BuildFromGit/podman/Containerfile.compiler"
     "./BuildFromGit/podman/Containerfile.vault"
