@@ -65,19 +65,19 @@ so for the aarnn db:
 
 ```
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=<password>
+POSTGRES_PASSWORD=password
 ```
 
 We pass these values into the docker build command:
 
 ```bash
-docker build --build-arg POSTGRES_USER=postgres --build-arg POSTGRES_PASSWORD=<password> -t postgres-aarnn -f Dockerfile.postgres .
+docker build --build-arg POSTGRES_USER=postgres --build-arg POSTGRES_PASSWORD=password -t postgres-aarnn -f Dockerfile.postgres .
 
 ```
 
 and then for docker run we use:
 ```bash
-docker run --name postgres-aarnn -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=<password> -e POSTGRES_DB=neurons -d postgres-aarnn
+docker run --name postgres-aarnn -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=neurons -d postgres-aarnn
 ```
 
 ## Audio Sources

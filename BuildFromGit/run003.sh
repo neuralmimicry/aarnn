@@ -36,7 +36,7 @@ CONTAINERFILE_PATHS=(
 BUILD_ARGS=(
     "--build-arg REPO_URL=https://github.com/neuralmimicry/aarnn.git"  # compiler-image
     ""  # vault-image has no build args
-    ""  # postgres-image has no build args
+    "--build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}"  # postgres-image
     ""  # aarnn-image has no build args
     ""  # visualiser-image has no build args
 )
