@@ -1,139 +1,153 @@
-stages:
-  - build
-  - test
-  - docker_build
-  - docker_push
+# .gitlab-ci.yml
+
+# Use the official Ubuntu 22.04 image for all jobs
+image: ubuntu:22.04
 
 variables:
   BUILD_TYPE: "Release"
-  DOCKER_DRIVER: overlay2
+  # Docker variables for Docker-in-Docker setup
+  DOCKER_HOST: tcp://docker:2375/
   DOCKER_TLS_CERTDIR: ""
+  DOCKER_BUILDKIT: 1
 
-# Job: Build the project
-build:
+stages:
+  - build
+  - test
+  - docker
+
+before_script:
+  # Common setup for all jobs (if needed)
+  - apt-get update -y
+
+build_job:
   stage: build
-  image: ubuntu:latest
-  before_script:
-    - sudo apt-get update && \
+  script:
+    # Setup environment
+    - |
+      apt-get install -y locales
+      localedef -i en_GB -c -f UTF-8 -A /usr/share/locale/locale.alias en_GB.UTF-8
+      export LANG=en_GB.utf8
+      export DEBIAN_FRONTEND=noninteractive
+      export TZ="Europe/London"
+      apt-get install -y apt-utils tzdata
+      ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
+      echo $TZ > /etc/timezone
+      echo "tzdata tzdata/Areas select Etc" | debconf-set-selections
+      echo "tzdata tzdata/Zones/Etc select UTC" | debconf-set-selections
+      echo "tzdata tzdata/Areas seen true" | debconf-set-selections
+      echo "tzdata tzdata/Zones/Etc seen true" | debconf-set-selections
+      DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true dpkg-reconfigure --frontend noninteractive tzdata
+    # Install dependencies
+    - |
+      apt-get update && \
       apt-get install -y software-properties-common && \
       add-apt-repository ppa:ubuntu-toolchain-r/test && \
       apt-get update && \
       apt-get install -y \
-      build-essential \
-      cmake \
-      curl \
-      freeglut3-dev \
-      git \
-      iputils-ping \
-      libasound2-dev \
-      libavcodec-dev \
-      libavdevice-dev \
-      libavformat-dev \
-      libavutil-dev \
-      libboost-all-dev \
-      libcap2-bin \
-      libcgal-dev \
-      libcurl4 \
-      libcurl4-openssl-dev \
-      libfftw3-dev \
-      libfftw3-mpi-dev \
-      libgl1-mesa-dev \
-      libglew-dev \
-      libglew2.2 \
-      libglfw3 \
-      libglfw3-dev \
-      libglu1-mesa-dev \
-      libgmp-dev \
-      libmpfr-dev \
-      libomp-dev \
-      libportaudio2 \
-      libportaudiocpp0 \
-      libpostproc-dev \
-      libpqxx-dev \
-      libpulse-dev \
-      libssl-dev \
-      libswscale-dev \
-      libswresample-dev \
-      libvtk9-dev \
-      libwebsocketpp-dev \
-      libx11-dev \
-      pkg-config \
-      portaudio19-dev \
-      pulseaudio \
-      pulseaudio-utils \
-      python3-vtk9 \
-      qt5-qmake \
-      qtbase5-dev \
-      qtcreator \
-      sudo \
-      unzip \
-      vtk9 \
-      wget \
-      xorg-dev
-
-  script:
+        build-essential \
+        cmake \
+        curl \
+        freeglut3-dev \
+        git \
+        iputils-ping \
+        libasound2-dev \
+        libavcodec-dev \
+        libavdevice-dev \
+        libavformat-dev \
+        libavutil-dev \
+        libboost-all-dev \
+        libcap2-bin \
+        libcgal-dev \
+        libcurl4 \
+        libcurl4-openssl-dev \
+        libfftw3-dev \
+        libfftw3-mpi-dev \
+        libgl1-mesa-dev \
+        libglew-dev \
+        libglew2.2 \
+        libglfw3 \
+        libglfw3-dev \
+        libglu1-mesa-dev \
+        libgmp-dev \
+        libmpfr-dev \
+        libomp-dev \
+        libportaudio2 \
+        libportaudiocpp0 \
+        libpostproc-dev \
+        libpqxx-dev \
+        libpulse-dev \
+        libssl-dev \
+        libswscale-dev \
+        libswresample-dev \
+        libvtk9-dev \
+        libwebsocketpp-dev \
+        libx11-dev \
+        pkg-config \
+        portaudio19-dev \
+        pulseaudio \
+        pulseaudio-utils \
+        python3-vtk9 \
+        qt5-qmake \
+        qtbase5-dev \
+        qtcreator \
+        sudo \
+        unzip \
+        vtk9 \
+        wget \
+        xorg-dev
+    # Configure build environment
     - ./run.sh
+    # Configure CMake with OpenMP
     - cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOpenMP_CXX_FLAGS="-fopenmp" -DOpenMP_CXX_LIB_NAMES="gomp"
+    # Build
     - cmake --build build --config $BUILD_TYPE
   artifacts:
     paths:
       - build/
   only:
-    - branches
+    - main
     - merge_requests
 
-# Job: Test the project
-test:
+test_job:
   stage: test
-  image: ubuntu:latest
   dependencies:
-    - build
+    - build_job
   script:
     - cd build
     - ctest -C $BUILD_TYPE
   only:
-    - branches
+    - main
     - merge_requests
 
-# Job: Build Docker images
-docker_build:
-  stage: docker_build
-  image: docker:latest
+docker_build_job:
+  stage: docker
+  image: docker:20.10.16
   services:
-    - docker:dind
+    - docker:20.10.16-dind
   variables:
-    DOCKER_DRIVER: overlay2
+    # Docker variables specific to this job
+    DOCKER_HOST: tcp://docker:2375/
     DOCKER_TLS_CERTDIR: ""
+    DOCKER_BUILDKIT: 1
   before_script:
-    - docker info
-    - echo "$GITLAB_TOKEN" | docker login ghcr.io -u "$GITLAB_USERNAME" --password-stdin
+    # Login to GitHub Container Registry
+    - echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_USERNAME" --password-stdin
   script:
-    - docker build -t ghcr.io/$GITLAB_USERNAME/aarnn:latest --build-arg POSTGRES_USER=$POSTGRES_USER --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD -f Dockerfile .
-    - docker build -t ghcr.io/$GITLAB_USERNAME/aarnn-postgres:latest --build-arg POSTGRES_USER=$POSTGRES_USER --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD -f Dockerfile.postgres .
-  artifacts:
-    paths:
-      - docker_images/
+    # Build and push Docker image
+    - |
+      docker build \
+        --build-arg POSTGRES_USER="$POSTGRES_USER" \
+        --build-arg POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+        -t ghcr.io/$GITHUB_REPOSITORY_OWNER/aarnn:latest \
+        -f ./Dockerfile .
+      docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/aarnn:latest
+    # Build and push Docker image - PostgreSQL
+    - |
+      docker build \
+        --build-arg POSTGRES_USER="$POSTGRES_USER" \
+        --build-arg POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+        -t ghcr.io/$GITHUB_REPOSITORY_OWNER/aarnn-postgres:latest \
+        -f ./Dockerfile.postgres .
+      docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/aarnn-postgres:latest
   only:
     - main
-  needs:
-    - build
-
-# Job: Push Docker images
-docker_push:
-  stage: docker_push
-  image: docker:latest
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
-  before_script:
-    - docker info
-    - echo "$GITLAB_TOKEN" | docker login ghcr.io -u "$GITLAB_USERNAME" --password-stdin
-  script:
-    - docker push ghcr.io/$GITLAB_USERNAME/aarnn:latest
-    - docker push ghcr.io/$GITLAB_USERNAME/aarnn-postgres:latest
-  only:
-    - main
-  needs:
-    - docker_build
