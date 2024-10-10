@@ -39,6 +39,13 @@ case "$CLOUD_PROVIDER" in
             CONTAINER_NAME="${CONTAINER_NAMES[$i]}"
             LOCAL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
 
+            # Check if container exists, and remove it if it does
+            if podman container exists "$CONTAINER_NAME"; then
+                echo "Stopping and removing existing container: $CONTAINER_NAME"
+                podman stop "$CONTAINER_NAME"
+                podman rm "$CONTAINER_NAME"
+            fi
+
             echo "Starting container $CONTAINER_NAME from image $LOCAL_IMAGE..."
             podman run -d --name "$CONTAINER_NAME" "$LOCAL_IMAGE"
             if [ $? -ne 0 ]; then
