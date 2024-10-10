@@ -1,3 +1,7 @@
+# Fails due to docker in docker not being supported on GitHub Actions
+# Ok up to run003.sh of build, then point where a container within a container is attempted
+
+
 name: AARNN
 
 on:
