@@ -1,94 +1,19 @@
 # Use an official C++ runtime as a parent image
 FROM compiler-image
 
-# Combine installation commands and clean up to reduce layer size
-RUN apt-get update && \
-            apt-get install -y software-properties-common && \
-            add-apt-repository ppa:ubuntu-toolchain-r/test && \
-            apt-get update && \
-            apt-get install -y \
-  wget \
-  curl \
-  libcurl4 \
-  libcurl4-openssl-dev \
-  libpqxx-dev \
-  libvtk9-dev \
-  python3-vtk9 \
-  qtcreator \
-  qtbase5-dev \
-  qt5-qmake \
-  vtk9 \
-  build-essential \
-  cmake \
-  libglew-dev \
-  libglew2.2 \
-  libboost-all-dev \
-  libcgal-dev \
-  libgmp-dev \
-  libmpfr-dev \
-  libwebsocketpp-dev \
-  libssl-dev \
-  libx11-dev \
-  libglu1-mesa-dev \
-  freeglut3-dev \
-  libglfw3-dev \
-  libglfw3 \
-  libomp-dev \
-  pulseaudio \
-  libasound2-dev \
-  portaudio19-dev \
-  libpulse-dev \
-  libfftw3-dev \
-  libpostproc-dev \
-  libavdevice-dev \
-  libportaudio2 \
-  iputils-ping \
-  libgl1-mesa-dev \
-  xorg-dev && \
- apt-get clean && \
- rm -rf /var/lib/apt/lists/*
-
-# Copy local files to the docker image
-COPY . /app/
-RUN rm -rf build || echo "Directory didn't exist."
-RUN mkdir build || echo "Directory already exists."
-WORKDIR /app/build
-
-# Build the application
-RUN cmake .. && echo "CMake successful" || (echo "CMake failed" && exit 1)
-RUN make -j $(nproc) && echo "Make successful" || (echo "Make failed" && exit 1)
-
-# Start a new build stage to reduce image size
-# FROM ubuntu:22.04
-
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the compiled executable from your host to the current location in your docker image
-# COPY --from=compiler-image /app/bin .
-
 # Database configuration connection information and Simulation data
-COPY --from=compiler-image ./configure/db_connection.conf /app/db_connection.conf
-COPY --from=compiler-image ./configure/simulation.conf /app/simulation.conf
-
-# Install necessary libraries for running the application
-RUN apt-get update && apt-get install -y \
-  libpqxx-dev \
-  libfftw3-3 \
-  libboost-all-dev \
-  libpostproc-dev \
-  libavdevice-dev \
-  libportaudio2 \
-  libqt5opengl5 \
-  iputils-ping && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+COPY --from=compiler-image /app/source/configure/db_connection.conf /app/db_connection.conf
+COPY --from=compiler-image /app/source/configure/simulation.conf /app/simulation.conf
+COPY --from=compiler-image /app/source/build/Visualiser /app/
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
 
 # Update file permissions
-RUN chmod +x /app/build/Visualiser
+RUN chmod +x /app/Visualiser
 
 # Run the application when the container launches
-CMD ["/app/build/Visualiser"]
+CMD ["/app/Visualiser"]
