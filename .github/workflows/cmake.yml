@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:24.04
+      image: ubuntu:22.04
       options: --user root
     steps:
       - name: Check out repository
