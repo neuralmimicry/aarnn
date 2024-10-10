@@ -26,4 +26,5 @@ jobs:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
           git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/neuralmimicry/aarnn.git
-          git push --mirror gitlab
+          git push gitlab --all
+          git push gitlab --tags
