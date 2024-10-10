@@ -1,7 +1,12 @@
 # .gitlab-ci.yml
+# Fails due to container trying to build a container within the container
+# This is due to the Docker-in-Docker setup
+# This is a known issue with GitLab CI/CD and Docker-in-Docker
+# https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-in-docker-executor
+# https://gitlab.com/gitlab-org/gitlab/-/issues/34929
 
-# Use the official Ubuntu 22.04 image for all jobs
-image: ubuntu:22.04
+# Use the official Ubuntu 24.04 image for all jobs
+image: ubuntu:24.04
 
 variables:
   BUILD_TYPE: "Release"
