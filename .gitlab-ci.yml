@@ -14,8 +14,63 @@ build:
   stage: build
   image: ubuntu:latest
   before_script:
-    - apt-get update
-    - apt-get install -y libpqxx-dev podman buildah libvtk9-dev python3-vtk9 qtcreator qtbase5-dev qt5-qmake cmake libboost-all-dev libwebsocketpp-dev libssl-dev build-essential xorg-dev libx11-dev libglu1-mesa-dev freeglut3-dev libglew2.2 libglew-dev libglu1-mesa libgl1-mesa-glx libgl1-mesa-dev libglfw3-dev libglfw3 libomp-dev fftw3-dev
+    - sudo apt-get update && \
+      apt-get install -y software-properties-common && \
+      add-apt-repository ppa:ubuntu-toolchain-r/test && \
+      apt-get update && \
+      apt-get install -y \
+      build-essential \
+      cmake \
+      curl \
+      freeglut3-dev \
+      git \
+      iputils-ping \
+      libasound2-dev \
+      libavcodec-dev \
+      libavdevice-dev \
+      libavformat-dev \
+      libavutil-dev \
+      libboost-all-dev \
+      libcap2-bin \
+      libcgal-dev \
+      libcurl4 \
+      libcurl4-openssl-dev \
+      libfftw3-dev \
+      libfftw3-mpi-dev \
+      libgl1-mesa-dev \
+      libglew-dev \
+      libglew2.2 \
+      libglfw3 \
+      libglfw3-dev \
+      libglu1-mesa-dev \
+      libgmp-dev \
+      libmpfr-dev \
+      libomp-dev \
+      libportaudio2 \
+      libportaudiocpp0 \
+      libpostproc-dev \
+      libpqxx-dev \
+      libpulse-dev \
+      libssl-dev \
+      libswscale-dev \
+      libswresample-dev \
+      libvtk9-dev \
+      libwebsocketpp-dev \
+      libx11-dev \
+      pkg-config \
+      portaudio19-dev \
+      pulseaudio \
+      pulseaudio-utils \
+      python3-vtk9 \
+      qt5-qmake \
+      qtbase5-dev \
+      qtcreator \
+      sudo \
+      unzip \
+      vtk9 \
+      wget \
+      xorg-dev
+
   script:
     - ./run.sh
     - cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOpenMP_CXX_FLAGS="-fopenmp" -DOpenMP_CXX_LIB_NAMES="gomp"
