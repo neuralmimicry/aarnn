@@ -1,49 +1,84 @@
-# This file is a template, and might need editing before it works on your project.
-# This is a sample GitLab CI/CD configuration file that should run without any modifications.
-# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
-# it uses echo commands to simulate the pipeline execution.
-#
-# A pipeline is composed of independent jobs that run scripts, grouped into stages.
-# Stages run in sequential order, but jobs within stages run in parallel.
-#
-# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
-#
-# You can copy and paste this template into a new `.gitlab-ci.yml` file.
-# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
-#
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
-
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - build
   - test
-  - deploy
+  - docker_build
+  - docker_push
 
-build-job:       # This job runs in the build stage, which runs first.
+variables:
+  BUILD_TYPE: "Release"
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+# Job: Build the project
+build:
   stage: build
+  image: ubuntu:latest
+  before_script:
+    - apt-get update
+    - apt-get install -y libpqxx-dev podman buildah libvtk9-dev python3-vtk9 qtcreator qtbase5-dev qt5-qmake cmake libboost-all-dev libwebsocketpp-dev libssl-dev build-essential xorg-dev libx11-dev libglu1-mesa-dev freeglut3-dev libglew2.2 libglew-dev libglu1-mesa libgl1-mesa-glx libgl1-mesa-dev libglfw3-dev libglfw3 libomp-dev fftw3-dev
   script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
+    - ./run.sh
+    - cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOpenMP_CXX_FLAGS="-fopenmp" -DOpenMP_CXX_LIB_NAMES="gomp"
+    - cmake --build build --config $BUILD_TYPE
+  artifacts:
+    paths:
+      - build/
+  only:
+    - branches
+    - merge_requests
 
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
+# Job: Test the project
+test:
+  stage: test
+  image: ubuntu:latest
+  dependencies:
+    - build
   script:
-    - echo "Running unit tests... This will take about 60 seconds."
-    - sleep 60
-    - echo "Code coverage is 90%"
+    - cd build
+    - ctest -C $BUILD_TYPE
+  only:
+    - branches
+    - merge_requests
 
-lint-test-job:   # This job also runs in the test stage.
-  stage: test    # It can run at the same time as unit-test-job (in parallel).
+# Job: Build Docker images
+docker_build:
+  stage: docker_build
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker info
+    - echo "$GITLAB_TOKEN" | docker login ghcr.io -u "$GITLAB_USERNAME" --password-stdin
   script:
-    - echo "Linting code... This will take about 10 seconds."
-    - sleep 10
-    - echo "No lint issues found."
+    - docker build -t ghcr.io/$GITLAB_USERNAME/aarnn:latest --build-arg POSTGRES_USER=$POSTGRES_USER --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD -f Dockerfile .
+    - docker build -t ghcr.io/$GITLAB_USERNAME/aarnn-postgres:latest --build-arg POSTGRES_USER=$POSTGRES_USER --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD -f Dockerfile.postgres .
+  artifacts:
+    paths:
+      - docker_images/
+  only:
+    - main
+  needs:
+    - build
 
-deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-  environment: production
+# Job: Push Docker images
+docker_push:
+  stage: docker_push
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker info
+    - echo "$GITLAB_TOKEN" | docker login ghcr.io -u "$GITLAB_USERNAME" --password-stdin
   script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+    - docker push ghcr.io/$GITLAB_USERNAME/aarnn:latest
+    - docker push ghcr.io/$GITLAB_USERNAME/aarnn-postgres:latest
+  only:
+    - main
+  needs:
+    - docker_build
