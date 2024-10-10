@@ -1,0 +1,27 @@
+name: Mirror to GitLab
+
+on:
+  push:
+    branches:
+      - main  # Replace with your default branch
+      - 'releases/*'  # Include any other branches you want to mirror
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git configuration
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Mirror push to GitLab
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/neuralmimicry/aarnn.git
+          git push --mirror gitlab
