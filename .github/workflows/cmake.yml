@@ -19,11 +19,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: sudo apt-get update && \
-          sudo apt-get install -y software-properties-common && \
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test && \
-          sudo apt-get update && \
-          sudo apt-get install -y \ 
+        run: |
+          apt-get update && \
+          apt-get install -y software-properties-common && \
+          add-apt-repository ppa:ubuntu-toolchain-r/test && \
+          apt-get update && \
+          apt-get install -y \ 
           build-essential \
           cmake \
           curl \
@@ -107,8 +108,8 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/aarnn:latest
           secrets: |
-            POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
 
       - name: Build and push Docker image - PostgreSQL
         uses: docker/build-push-action@v4
@@ -118,5 +119,5 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/aarnn-postgres:latest
           secrets: |
-            POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
