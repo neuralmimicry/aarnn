@@ -13,7 +13,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    container:
+      image: ubuntu:24.04
+      options: --user root
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
