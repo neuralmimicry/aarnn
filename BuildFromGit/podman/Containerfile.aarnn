@@ -4,17 +4,17 @@ FROM compiler-image
 WORKDIR /app
 
 # Copy the compiled executable from your host to the current location in your docker image
-COPY --from=compiler-image /app/bin .
+COPY --from=compiler-image /app/source/build .
 
 # Database configuration connection information and Simulation data
-COPY --from=compiler-image /configure/* /app/
+COPY --from=compiler-image /app/source/configure .
 
 # Configure necessary libraries for running the application
 RUN mkdir -p /etc/pulse && \
   mv /app/client.conf /etc/pulse/client.conf && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* && \
-  chmod +x /app/build/AARNN && \
+  chmod +x /app/AARNN && \
   chmod +x /app/launch_aarnn.sh
 
 # Run the application when the container launches
