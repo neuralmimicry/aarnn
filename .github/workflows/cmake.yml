@@ -20,6 +20,26 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      - name: Setup environment
+        run: |
+          apt-get update && \
+          apt-get install -y locales && \
+          localedef -i en_GB -c -f UTF-8 -A /usr/share/locale/locale.alias en_GB.UTF-8 && \
+          export LANG=en_GB.utf8 && \
+          export DEBIAN_FRONTEND=noninteractive && \
+          export TZ="Europe/London" && \
+          apt-get update && \
+          apt-get install -y \
+            apt-utils \
+            tzdata && \
+          ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+          echo $TZ > /etc/timezone && \
+          echo "tzdata tzdata/Areas select Etc" | debconf-set-selections && \
+          echo "tzdata tzdata/Zones/Etc select UTC" | debconf-set-selections && \
+          echo "tzdata tzdata/Areas seen true" | debconf-set-selections && \
+          echo "tzdata tzdata/Zones/Etc seen true" | debconf-set-selections && \
+          DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
+          dpkg-reconfigure --frontend noninteractive tzdata
       - name: Install dependencies
         run: |
           apt-get update && \
