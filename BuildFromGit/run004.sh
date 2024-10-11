@@ -31,22 +31,19 @@ CONTAINER_NAMES=("vault" "postgres" "aarnn" "visualiser")
 
 # Function to generate environment variable options for podman run
 generate_env_options_for_podman() {
-    local ENV_OPTIONS=""
+    local ENV_OPTIONS=()
     while IFS='=' read -r VAR VALUE; do
         # Remove leading/trailing whitespace
-        VAR="$(echo -e "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-        VALUE="$(echo -e "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VAR="$(echo "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VALUE="$(echo "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
         # Skip comments and empty lines
         if [[ "$VAR" =~ ^#.* ]] || [[ -z "$VAR" ]]; then
             continue
         fi
-        # Escape special characters in VALUE
-        VALUE="${VALUE//\\/\\\\}"
-        VALUE="${VALUE//\"/\\\"}"
         # Build the --env option
-        ENV_OPTIONS+="--env \"${VAR}=${VALUE}\" "
+        ENV_OPTIONS+=(--env "${VAR}=${VALUE}")
     done < "$ENV_FILE"
-    echo "$ENV_OPTIONS"
+    echo "${ENV_OPTIONS[@]}"
 }
 
 # Function to generate environment variables in JSON format for AWS
@@ -55,8 +52,8 @@ generate_env_vars_json() {
     local first=1
     while IFS='=' read -r VAR VALUE; do
         # Remove leading/trailing whitespace
-        VAR="$(echo -e "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-        VALUE="$(echo -e "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VAR="$(echo "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VALUE="$(echo "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
         # Skip comments and empty lines
         if [[ "$VAR" =~ ^#.* ]] || [[ -z "$VAR" ]]; then
             continue
@@ -80,8 +77,8 @@ generate_env_vars_for_gcloud() {
     local ENV_VARS=""
     while IFS='=' read -r VAR VALUE; do
         # Remove leading/trailing whitespace
-        VAR="$(echo -e "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-        VALUE="$(echo -e "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VAR="$(echo "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VALUE="$(echo "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
         # Skip comments and empty lines
         if [[ "$VAR" =~ ^#.* ]] || [[ -z "$VAR" ]]; then
             continue
@@ -101,8 +98,8 @@ generate_env_vars_for_azure() {
     local ENV_VARS=""
     while IFS='=' read -r VAR VALUE; do
         # Remove leading/trailing whitespace
-        VAR="$(echo -e "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-        VALUE="$(echo -e "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VAR="$(echo "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VALUE="$(echo "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
         # Skip comments and empty lines
         if [[ "$VAR" =~ ^#.* ]] || [[ -z "$VAR" ]]; then
             continue
@@ -118,8 +115,19 @@ generate_env_vars_for_azure() {
 case "$CLOUD_PROVIDER" in
     local)
         echo "CLOUD_PROVIDER is 'local'. Running the images locally using Podman..."
-        # Generate environment variable options
-        ENV_OPTIONS=$(generate_env_options_for_podman)
+
+        # Define network name
+        NETWORK_NAME="aarnn-network"
+
+        # Check if network exists, and create it if it doesn't
+        if ! podman network exists "$NETWORK_NAME"; then
+            echo "Creating network $NETWORK_NAME"
+            podman network create "$NETWORK_NAME"
+        fi
+
+        # Generate environment variable options as an array
+        ENV_OPTIONS=($(generate_env_options_for_podman))
+
         # Run the images using Podman in the specified order
         for i in "${!IMAGES[@]}"; do
             IMAGE_NAME="${IMAGES[$i]}"
@@ -134,7 +142,10 @@ case "$CLOUD_PROVIDER" in
             fi
 
             echo "Starting container $CONTAINER_NAME from image $LOCAL_IMAGE..."
-            podman run -d --name "$CONTAINER_NAME" $ENV_OPTIONS "$LOCAL_IMAGE"
+            podman run -d --name "$CONTAINER_NAME" \
+                --hostname "$CONTAINER_NAME" \
+                --network "$NETWORK_NAME" \
+                "${ENV_OPTIONS[@]}" "$LOCAL_IMAGE"
             if [ $? -ne 0 ]; then
                 echo "Failed to start container $CONTAINER_NAME."
                 exit 1
