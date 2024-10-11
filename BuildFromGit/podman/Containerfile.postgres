@@ -54,25 +54,28 @@ RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
 # Copy the initialization file to setup the database schema
-COPY ./configure/init.sql /docker-entrypoint-initdb.d/
+COPY --from=compiler-image /app/source/configure/init.sql /docker-entrypoint-initdb.d/
 
 # Copy the entrypoint script into the container
-COPY ./configure/entrypoint.sh /usr/local/bin/
+COPY --from=compiler-image /app/source/configure/entrypoint.sh /usr/local/bin/
 
 # Make the entrypoint script executable
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy the script to amend the entrypoint
-COPY ./configure/amend_entrypoint.sh /usr/local/bin/
+COPY --from=compiler-image /app/source/configure/amend_entrypoint.sh /usr/local/bin/
 
 # Run the script to amend the entrypoint to add 5 second pause after running init.sql
 RUN chmod +x /usr/local/bin/amend_entrypoint.sh && /usr/local/bin/amend_entrypoint.sh
+
+# Copy .env
+COPY --from=compiler-image /app/source/configure/.env /app/.env
 
 # Expose the Postgres port outside of the Docker container
 EXPOSE ${POSTGRES_PORT_EXPOSE}
 
 # Use the custom entrypoint script
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["source /app/.env && entrypoint.sh"]
 
 # Default command provided by the PostgreSQL image
 # CMD ["postgres"]
