@@ -12,8 +12,8 @@ if [ -z "$VAULT_TOKEN" ]; then
 fi
 
 # Load .env file
-if [ -f /usr/local/bin/.env ]; then
-    . /usr/local/bin/.env
+if [ -f /.env ]; then
+    . /.env
 else
     echo ".env file not found!"
     exit 1
