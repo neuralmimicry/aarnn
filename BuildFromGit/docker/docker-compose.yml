@@ -1,6 +1,6 @@
 version: '3.8'
 services: 
-  aarnn_postgres:
+  postgres:
     build:
       context: ../..
       dockerfile: Dockerfile.postgres
@@ -18,7 +18,7 @@ services:
       context: ../..
       dockerfile: Dockerfile
     depends_on:
-      - aarnn_postgres
+      - postgres
     networks:
       - neuro_network
 

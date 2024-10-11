@@ -3,8 +3,8 @@ FROM compiler-image
 # Define environment variables
 ENV VAULT_VERSION=1.17.0
 ENV VAULT_ADDR='http://0.0.0.0:8200'
-ENV VAULT_API_ADDR='http://aarnn_vault:8200'
-ENV VAULT_DEV_LISTEN_ADDRESS='aarnn_vault:8200'
+ENV VAULT_API_ADDR='http://vault:8200'
+ENV VAULT_DEV_LISTEN_ADDRESS='vault:8200'
 
 # Create necessary directories
 RUN mkdir -p /opt/vault/data /etc/vault.d /opt/vault/logs

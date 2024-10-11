@@ -50,15 +50,15 @@ start_containers() {
     . ./setup_pulse_audio.sh
 
     echo "Starting Vault container..."
-    podman run --pod aarnn_pod --name aarnn_vault -d \
+    podman run --pod aarnn_pod --name vault -d \
                --network aarnn_network \
                --env-file ./.env \
-               aarnn_vault /bin/bash -c "bash /usr/local/bin/start_vault.sh"
+               vault /bin/bash -c "bash /usr/local/bin/start_vault.sh"
 
     # Wait for the Vault container to initialize and extract the token
     echo "Waiting for Vault to start..."
     sleep 30
-    podman exec aarnn_vault cat /opt/vault/logs/vault_env.sh > vault_env.sh
+    podman exec vault cat /opt/vault/logs/vault_env.sh > vault_env.sh
     chmod +x vault_env.sh
     . ./vault_env.sh
     echo "$VAULT_ADDR"
@@ -68,7 +68,7 @@ start_containers() {
     export XDG_RUNTIME_DIR
 
     echo "Starting PostgreSQL container..."
-    podman run --pod aarnn_pod --name aarnn_postgres -d \
+    podman run --pod aarnn_pod --name postgres -d \
                --network aarnn_network \
                --health-cmd "pg_isready -U ${POSTGRES_USERNAME}" \
                --health-interval 5s \
@@ -78,7 +78,7 @@ start_containers() {
                --env POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
                --env POSTGRES_HOST="${POSTGRES_HOST}" \
                --env POSTGRES_PORT="${POSTGRES_PORT}" \
-               aarnn_postgres
+               postgres
 
     echo "Waiting for PostgreSQL to start..."
     sleep 30

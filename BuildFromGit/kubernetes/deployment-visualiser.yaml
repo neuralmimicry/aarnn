@@ -36,6 +36,6 @@ spec:
             - name: POSTGRES_PORT
               value: "5460"
             - name: VAULT_ADDR
-              value: "http://aarnn_vault:8200"
+              value: "http://vault:8200"
             - name: VAULT_TOKEN
               value: "root"

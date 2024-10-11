@@ -26,7 +26,7 @@ done
 
 # Extract the first matching VAULT_ADDR and truncate if longer than 25 characters
 # VAULT_ADDR=$(grep -m 1 '127.0.0.1' /opt/vault/logs/vault_output.log | grep -o 'http://127.0.0.1:[0-9]*' | cut -c 1-25)
-VAULT_ADDR=http://aarnn_vault:8200
+VAULT_ADDR=http://vault:8200
 VAULT_TOKEN=$(grep 'Root Token' /opt/vault/logs/vault_output.log | awk '{print $3}')
 
 # Export VAULT_ADDR and VAULT_TOKEN as environment variables

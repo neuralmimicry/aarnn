@@ -51,19 +51,19 @@ for var in "${required_vars[@]}"; do
 done
 
 # Build the Vault image
-remove_if_exists aarnn_vault
+remove_if_exists vault
 echo "Building Vault image..."
-podman build -t aarnn_vault -f Containerfile.vault .
+podman build -t vault -f Containerfile.vault .
 
 # Build the PostgreSQL image
-remove_if_exists aarnn_postgres
+remove_if_exists postgres
 echo "Building PostgreSQL image..."
 podman build \
   --build-arg POSTGRES_USERNAME="${POSTGRES_USERNAME}" \
   --build-arg POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
   --build-arg POSTGRES_PORT="${POSTGRES_PORT}" \
   --build-arg POSTGRES_PORT_EXPOSE="${POSTGRES_PORT_EXPOSE}" \
-  -t aarnn_postgres -f Containerfile.postgres .
+  -t postgres -f Containerfile.postgres .
 
 # Build the Aarnn image
 remove_if_exists aarnn

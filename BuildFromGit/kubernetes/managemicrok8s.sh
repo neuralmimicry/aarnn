@@ -213,7 +213,7 @@ list_images() {
 
     # List images used by the deployments
     echo "Detecting images used by the deployments..."
-    apps=("aarnn_vault" "aarnn_postgres" "aarnn" "visualiser")
+    apps=("vault" "postgres" "aarnn" "visualiser")
     all_images_found=true
 
     for app in "${apps[@]}"; do
@@ -238,7 +238,7 @@ list_images() {
 # Function to save images from Podman to tar files
 save_images() {
     echo "Saving images from Podman..."
-    images=("aarnn_vault" "aarnn_postgres" "aarnn" "visualiser")
+    images=("vault" "postgres" "aarnn" "visualiser")
     for image in "${images[@]}"; do
         podman save -o "${image}.tar" "${image}"
     done
@@ -247,7 +247,7 @@ save_images() {
 # Function to load images into MicroK8s
 load_images() {
     echo "Loading images into MicroK8s..."
-    images=("aarnn_vault" "aarnn_postgres" "aarnn" "visualiser")
+    images=("vault" "postgres" "aarnn" "visualiser")
     for image in "${images[@]}"; do
         sudo microk8s ctr image import "${image}.tar"
     done
@@ -257,7 +257,7 @@ load_images() {
 # Function to confirm images are loaded into MicroK8s
 confirm_images_loaded() {
     echo "Confirming images are loaded into MicroK8s..."
-    images=("aarnn_vault" "aarnn_postgres" "aarnn" "visualiser")
+    images=("vault" "postgres" "aarnn" "visualiser")
     all_images_found=true
 
     for image in "${images[@]}"; do
@@ -294,7 +294,7 @@ check_registry_accessible() {
 # Function to tag and push images to local registry
 push_images_to_local_registry() {
     echo "Pushing images to local registry..."
-    images=("aarnn_vault" "aarnn_postgres" "aarnn" "visualiser")
+    images=("vault" "postgres" "aarnn" "visualiser")
     registry="localhost:32000"
 
     for image in "${images[@]}"; do
