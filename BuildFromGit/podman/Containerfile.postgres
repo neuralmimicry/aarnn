@@ -69,7 +69,7 @@ COPY --from=compiler-image /app/source/configure/amend_entrypoint.sh /usr/local/
 RUN chmod +x /usr/local/bin/amend_entrypoint.sh && /usr/local/bin/amend_entrypoint.sh
 
 # Copy .env
-COPY --from=compiler-image /app/source/configure/.env /app/.env
+COPY --from=compiler-image /app/source/.env /app/.env
 
 # Expose the Postgres port outside of the Docker container
 EXPOSE ${POSTGRES_PORT_EXPOSE}
