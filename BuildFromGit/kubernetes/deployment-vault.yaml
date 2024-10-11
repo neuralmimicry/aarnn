@@ -14,12 +14,12 @@ spec:
     spec:
       containers:
         - name: vault
-          image: localhost/aarnn_vault:latest
+          image: localhost/vault:latest
           ports:
             - containerPort: 8200
           env:
             - name: VAULT_ADDR
-              value: "http://aarnn_vault:8200"
+              value: "http://vault:8200"
           command: ["/bin/sh", "-c"]
           args:
             - |

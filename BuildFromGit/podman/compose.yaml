@@ -14,8 +14,8 @@ services:
       - aarnn_net
 
   vault:
-    container_name: aarnn_vault
-    image: aarnn_vault
+    container_name: vault
+    image: vault
     build:
       dockerfile: ./Containerfile.vault
     deploy:
@@ -29,8 +29,8 @@ services:
       - aarnn_net
 
   postgres:
-    container_name: aarnn_postgres
-    image: aarnn_postgres
+    container_name: postgres
+    image: postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s

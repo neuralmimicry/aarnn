@@ -27,7 +27,7 @@ fi
 # Define the image names and tags
 IMAGE_TAG="latest"
 IMAGES=("vault-image" "postgres-image" "aarnn-image" "visualiser-image")
-CONTAINER_NAMES=("aarnn_vault" "aarnn_postgres" "aarnn" "aarnn_visualiser")
+CONTAINER_NAMES=("vault" "postgres" "aarnn" "visualiser")
 
 # Function to generate environment variable options for podman run
 generate_env_options_for_podman() {
