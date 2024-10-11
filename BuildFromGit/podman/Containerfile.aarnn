@@ -9,7 +9,7 @@ COPY --from=compiler-image /app/source/build .
 # Database configuration connection information and Simulation data
 COPY --from=compiler-image /app/source/configure .
 
-COPY --from=compiler-image /app/.env .
+COPY --from=compiler-image /app/source/.env .
 
 # Configure necessary libraries for running the application
 RUN mkdir -p /etc/pulse && \

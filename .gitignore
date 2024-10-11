@@ -1,4 +1,3 @@
-db_connection.conf
 *.o
 .cmake
 .devcontainer
@@ -7,6 +6,5 @@ db_connection.conf
 CMakeFiles
 build*
 bin
-.env
 *.tar
 errors.log
