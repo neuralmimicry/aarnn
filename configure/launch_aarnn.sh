@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /app/.env
+
 # Function to check required environment variables
 check_variables() {
     required_vars=("PULSE_SERVER" "PULSE_COOKIE" "PULSE_SINK" "PULSE_SOURCE" "VAULT_ADDR" "VAULT_TOKEN")
