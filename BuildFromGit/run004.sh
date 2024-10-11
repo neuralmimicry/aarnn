@@ -27,7 +27,7 @@ fi
 # Define the image names and tags
 IMAGE_TAG="latest"
 IMAGES=("vault-image" "postgres-image" "aarnn-image" "visualiser-image")
-CONTAINER_NAMES=("vault" "postgres" "aarnn" "visualiser")
+CONTAINER_NAMES=("aarnn_vault" "aarnn_postgres" "aarnn" "aarnn_visualiser")
 
 # Determine actions based on CLOUD_PROVIDER
 case "$CLOUD_PROVIDER" in
