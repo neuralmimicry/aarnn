@@ -29,10 +29,97 @@ IMAGE_TAG="latest"
 IMAGES=("vault-image" "postgres-image" "aarnn-image" "visualiser-image")
 CONTAINER_NAMES=("aarnn_vault" "aarnn_postgres" "aarnn" "aarnn_visualiser")
 
+# Function to generate environment variable options for podman run
+generate_env_options_for_podman() {
+    local ENV_OPTIONS=""
+    while IFS='=' read -r VAR VALUE; do
+        # Remove leading/trailing whitespace
+        VAR="$(echo -e "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VALUE="$(echo -e "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        # Skip comments and empty lines
+        if [[ "$VAR" =~ ^#.* ]] || [[ -z "$VAR" ]]; then
+            continue
+        fi
+        # Escape special characters in VALUE
+        VALUE="${VALUE//\\/\\\\}"
+        VALUE="${VALUE//\"/\\\"}"
+        # Build the --env option
+        ENV_OPTIONS+="--env \"${VAR}=${VALUE}\" "
+    done < "$ENV_FILE"
+    echo "$ENV_OPTIONS"
+}
+
+# Function to generate environment variables in JSON format for AWS
+generate_env_vars_json() {
+    local ENV_VARS_JSON="["
+    local first=1
+    while IFS='=' read -r VAR VALUE; do
+        # Remove leading/trailing whitespace
+        VAR="$(echo -e "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VALUE="$(echo -e "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        # Skip comments and empty lines
+        if [[ "$VAR" =~ ^#.* ]] || [[ -z "$VAR" ]]; then
+            continue
+        fi
+        # Escape special characters in VALUE
+        VALUE="${VALUE//\\/\\\\}"
+        VALUE="${VALUE//\"/\\\"}"
+        if [ $first -eq 1 ]; then
+            first=0
+        else
+            ENV_VARS_JSON+=","
+        fi
+        ENV_VARS_JSON+="{\"name\":\"${VAR}\",\"value\":\"${VALUE}\"}"
+    done < "$ENV_FILE"
+    ENV_VARS_JSON+="]"
+    echo "$ENV_VARS_JSON"
+}
+
+# Function to generate environment variables for gcloud run deploy
+generate_env_vars_for_gcloud() {
+    local ENV_VARS=""
+    while IFS='=' read -r VAR VALUE; do
+        # Remove leading/trailing whitespace
+        VAR="$(echo -e "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VALUE="$(echo -e "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        # Skip comments and empty lines
+        if [[ "$VAR" =~ ^#.* ]] || [[ -z "$VAR" ]]; then
+            continue
+        fi
+        # Escape commas and equals in VALUE
+        VALUE="${VALUE//,/\\,}"
+        VALUE="${VALUE//=//}"
+        ENV_VARS+="${VAR}=${VALUE},"
+    done < "$ENV_FILE"
+    # Remove trailing comma
+    ENV_VARS="${ENV_VARS%,}"
+    echo "$ENV_VARS"
+}
+
+# Function to generate environment variables for Azure CLI
+generate_env_vars_for_azure() {
+    local ENV_VARS=""
+    while IFS='=' read -r VAR VALUE; do
+        # Remove leading/trailing whitespace
+        VAR="$(echo -e "${VAR}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        VALUE="$(echo -e "${VALUE}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        # Skip comments and empty lines
+        if [[ "$VAR" =~ ^#.* ]] || [[ -z "$VAR" ]]; then
+            continue
+        fi
+        # Escape special characters in VALUE
+        VALUE="${VALUE//\'/\\\'}"
+        ENV_VARS+="--environment-variables ${VAR}='${VALUE}' "
+    done < "$ENV_FILE"
+    echo "$ENV_VARS"
+}
+
 # Determine actions based on CLOUD_PROVIDER
 case "$CLOUD_PROVIDER" in
     local)
         echo "CLOUD_PROVIDER is 'local'. Running the images locally using Podman..."
+        # Generate environment variable options
+        ENV_OPTIONS=$(generate_env_options_for_podman)
         # Run the images using Podman in the specified order
         for i in "${!IMAGES[@]}"; do
             IMAGE_NAME="${IMAGES[$i]}"
@@ -47,7 +134,7 @@ case "$CLOUD_PROVIDER" in
             fi
 
             echo "Starting container $CONTAINER_NAME from image $LOCAL_IMAGE..."
-            podman run -d --name "$CONTAINER_NAME" "$LOCAL_IMAGE"
+            podman run -d --name "$CONTAINER_NAME" $ENV_OPTIONS "$LOCAL_IMAGE"
             if [ $? -ne 0 ]; then
                 echo "Failed to start container $CONTAINER_NAME."
                 exit 1
@@ -79,6 +166,9 @@ case "$CLOUD_PROVIDER" in
         # Define a security group
         SECURITY_GROUP="${OS_SECURITY_GROUP:-default}"
 
+        # Generate environment variable options
+        ENV_OPTIONS=$(generate_env_options_for_podman)
+
         # Create a cloud-init script to run the containers
         echo "Creating cloud-init script to run containers..."
         cat > cloud-init.txt << EOF
@@ -91,7 +181,7 @@ EOF
             IMAGE_NAME="${IMAGES[$i]}"
             CONTAINER_NAME="${CONTAINER_NAMES[$i]}"
             IMAGE_URI="${OS_REGISTRY_URL}/${OS_PROJECT_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
-            echo " - podman run -d --name $CONTAINER_NAME $IMAGE_URI" >> cloud-init.txt
+            echo " - podman run -d --name $CONTAINER_NAME $ENV_OPTIONS $IMAGE_URI" >> cloud-init.txt
         done
 
         # Create the server instance
@@ -129,6 +219,9 @@ EOF
             exit 1
         fi
 
+        # Generate environment variables in JSON format
+        ENV_VARS_JSON=$(generate_env_vars_json)
+
         # Deploy each container as a separate task in the specified order
         for i in "${!IMAGES[@]}"; do
             IMAGE_NAME="${IMAGES[$i]}"
@@ -154,6 +247,7 @@ EOF
             "name": "${CONTAINER_NAME}",
             "image": "${IMAGE_URI}",
             "essential": true,
+            "environment": ${ENV_VARS_JSON},
             "portMappings": [
                 {
                     "containerPort": 80,
@@ -190,6 +284,9 @@ EOF
             exit 1
         fi
 
+        # Generate environment variables for gcloud
+        ENV_VARS=$(generate_env_vars_for_gcloud)
+
         # Deploy each container to Cloud Run in the specified order
         for i in "${!IMAGES[@]}"; do
             IMAGE_NAME="${IMAGES[$i]}"
@@ -201,7 +298,8 @@ EOF
                 --image "$IMAGE_URI" \
                 --platform managed \
                 --region "${GCP_REGION:-us-central1}" \
-                --allow-unauthenticated
+                --allow-unauthenticated \
+                --set-env-vars "$ENV_VARS"
         done
         ;;
     azure)
@@ -219,6 +317,9 @@ EOF
 
         az group create --name "$RESOURCE_GROUP" --location "$LOCATION"
 
+        # Generate environment variables for Azure CLI
+        ENV_VARS=$(generate_env_vars_for_azure)
+
         # Deploy each container instance in the specified order
         for i in "${!IMAGES[@]}"; do
             IMAGE_NAME="${IMAGES[$i]}"
@@ -232,7 +333,8 @@ EOF
                 --image "$IMAGE_URI" \
                 --registry-login-server "${ACR_NAME}.azurecr.io" \
                 --ip-address public \
-                --ports 80
+                --ports 80 \
+                $ENV_VARS
 
             echo "Container instance $CONTAINER_NAME created."
         done
