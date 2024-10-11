@@ -75,7 +75,7 @@ COPY --from=compiler-image /app/source/.env /app/.env
 EXPOSE ${POSTGRES_PORT_EXPOSE}
 
 # Use the custom entrypoint script
-ENTRYPOINT ["source /app/.env && /usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["entrypoint.sh"]
 
 # Default command provided by the PostgreSQL image
 # CMD ["postgres"]

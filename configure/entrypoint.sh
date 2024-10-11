@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+source /app/.env
 
 required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DBNAME" "POSTGRES_PORT_EXPOSE" "PGDATA")
 for var in "${required_vars[@]}"; do
