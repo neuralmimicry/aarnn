@@ -125,4 +125,7 @@ update_env_file "PULSE_SINK" "$PULSE_SINK"
 export PULSE_SOURCE
 update_env_file "PULSE_SOURCE" "$PULSE_SOURCE"
 
+export PULSE_COOKIE=/root/.config/pulse/cookie
+update_env_file "PULSE_COOKIE" "$PULSE_COOKIE"
+
 echo "PulseAudio environment setup complete."
