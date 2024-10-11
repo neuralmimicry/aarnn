@@ -30,7 +30,7 @@ COPY --from=compiler-image /app/source/.env .
 
 # Set permissions on the scripts
 RUN chmod +x /usr/local/bin/init_vault.sh /usr/local/bin/start_vault.sh
-RUN chown vault:vault /usr/local/bin/init_vault.sh /usr/local/bin/start_vault.sh /usr/local/bin/.env
+RUN chown vault:vault /usr/local/bin/init_vault.sh /usr/local/bin/start_vault.sh /.env
 
 # Expose the port Vault listens on
 EXPOSE 8200
