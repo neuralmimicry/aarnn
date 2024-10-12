@@ -29,6 +29,7 @@ configure_postgres() {
   # Update postgresql.conf
   sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" "$POSTGRESQL_CONF"
   sed -i "s/#port = 5432/port = $POSTGRES_PORT_EXPOSE/" "$POSTGRESQL_CONF"
+  sed -i "s/port = 5432/port = $POSTGRES_PORT_EXPOSE/" "$POSTGRESQL_CONF"
   sed -i "s/port = 5433/port = $POSTGRES_PORT_EXPOSE/" "$POSTGRESQL_CONF"
   sed -i "s/port = 5434/port = $POSTGRES_PORT_EXPOSE/" "$POSTGRESQL_CONF"
 }
@@ -63,6 +64,21 @@ if [ ! -s "$PGDATA/PG_VERSION" ]; then
   # Stop the server after initial configuration
   su postgres -c "pg_ctl -D \"$PGDATA\" -m fast -w stop"
 fi
+
+# --- Begin Firewall Configuration ---
+
+# Install iptables if not installed
+if ! command -v iptables >/dev/null 2>&1; then
+  echo "Installing iptables..."
+  apt-get update
+  apt-get install -y iptables
+fi
+
+# Allow incoming traffic on $POSTGRES_PORT_EXPOSE
+echo "Configuring firewall to allow port $POSTGRES_PORT_EXPOSE..."
+iptables -I INPUT -p tcp --dport "$POSTGRES_PORT_EXPOSE" -j ACCEPT
+
+# --- End Firewall Configuration ---
 
 # Call the original entrypoint script of the postgres image to start the server
 exec docker-entrypoint.sh postgres

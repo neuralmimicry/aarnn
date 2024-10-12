@@ -73,6 +73,7 @@ RUN apt-get update && \
   libvtk9-dev \
   libwebsocketpp-dev \
   libx11-dev \
+  net-tools \
   pkg-config \
   portaudio19-dev \
   pulseaudio \
