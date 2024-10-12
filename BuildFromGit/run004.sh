@@ -150,6 +150,16 @@ case "$CLOUD_PROVIDER" in
                 echo "Failed to start container $CONTAINER_NAME."
                 exit 1
             fi
+            # If the container is 'postgres', wait until it's ready
+            if [ "$CONTAINER_NAME" == "postgres" ]; then
+                echo "Waiting for PostgreSQL to be ready..."
+                sleep 30
+                until podman exec "$CONTAINER_NAME" pg_isready -U "$POSTGRES_USERNAME" -h localhost -p "$POSTGRES_PORT_EXPOSE"; do
+                    echo "PostgreSQL is not ready yet..."
+                    sleep 2
+                done
+                echo "PostgreSQL is ready."
+            fi
         done
         ;;
     openstack)
