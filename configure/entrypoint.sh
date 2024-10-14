@@ -71,7 +71,7 @@ fi
 if ! command -v iptables >/dev/null 2>&1; then
   echo "Installing iptables..."
   apt-get update
-  apt-get install -y iptables
+  apt-get install -y iptables sudo
 fi
 
 # Allow incoming traffic on $POSTGRES_PORT_EXPOSE
