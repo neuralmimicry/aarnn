@@ -7,5 +7,5 @@ spec:
     app: postgres
   ports:
     - protocol: TCP
-      port: 5460
-      targetPort: 5460
+      port: 5432
+      targetPort: 5432

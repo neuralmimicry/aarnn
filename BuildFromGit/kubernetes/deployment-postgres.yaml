@@ -16,7 +16,7 @@ spec:
         - name: postgres
           image: localhost/postgres:latest
           ports:
-            - containerPort: 5460
+            - containerPort: 5432
           env:
             - name: POSTGRES_USERNAME
               valueFrom:
@@ -34,7 +34,7 @@ spec:
                   name: postgres-config
                   key: POSTGRES_DBNAME
             - name: POSTGRES_PORT
-              value: "5460"
+              value: "5432"
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
