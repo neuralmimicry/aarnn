@@ -1,7 +1,18 @@
 #!/bin/bash
 
-# Start Vault server in development mode and redirect output to a temporary file
-vault server -dev | tee /opt/vault/logs/vault_output.log 2>&1 &
+# Check if VAULT_DEV_ROOT_TOKEN_ID is set
+if [ -n "$VAULT_DEV_ROOT_TOKEN_ID" ]; then
+    echo "Starting Vault with pre-existing token."
+    export VAULT_DEV_ROOT_TOKEN_ID
+else
+    echo "Starting Vault without a pre-existing token."
+fi
+
+# Start Vault in development mode with the specified or default token
+vault server -dev \
+    -dev-root-token-id="${VAULT_DEV_ROOT_TOKEN_ID:-root}" \
+    -dev-listen-address="${VAULT_DEV_LISTEN_ADDRESS:-0.0.0.0:8200}" \
+    -log-level=info | tee /opt/vault/logs/vault_output.log 2>&1 &
 VAULT_PID=$!
 
 # Wait for a few seconds to allow Vault to initialize

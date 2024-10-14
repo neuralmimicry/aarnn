@@ -4,10 +4,20 @@ FROM compiler-image
 # Set the working directory in the container
 WORKDIR /app
 
+# Set the environment variables
+ARG VAULT_ADDR
+ARG VAULT_TOKEN
+
 # Database configuration connection information and Simulation data
-COPY --from=compiler-image /app/source/configure/db_connection.conf /app/db_connection.conf
-COPY --from=compiler-image /app/source/configure/simulation.conf /app/simulation.conf
+COPY --from=compiler-image /app/source/configure .
 COPY --from=compiler-image /app/source/build/Visualiser /app/
+COPY --from=compiler-image /app/source/.env .
+
+# Use the VAULT_ADDR in your build
+RUN echo "VAULT_ADDR=$VAULT_ADDR" >> /app/.env
+
+# Use the VAULT_TOKEN in your build
+RUN echo "VAULT_TOKEN=$VAULT_TOKEN" >> /app/.env
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
@@ -16,4 +26,4 @@ EXPOSE 80
 RUN chmod +x /app/Visualiser
 
 # Run the application when the container launches
-CMD ["/app/Visualiser"]
+ENTRYPOINT ["/app/launch_visualiser.sh"]
