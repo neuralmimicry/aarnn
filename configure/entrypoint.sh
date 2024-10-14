@@ -65,20 +65,5 @@ if [ ! -s "$PGDATA/PG_VERSION" ]; then
   su postgres -c "pg_ctl -D \"$PGDATA\" -m fast -w stop"
 fi
 
-# --- Begin Firewall Configuration ---
-
-# Install iptables if not installed
-if ! command -v iptables >/dev/null 2>&1; then
-  echo "Installing iptables..."
-  apt-get update
-  apt-get install -y iptables sudo
-fi
-
-# Allow incoming traffic on $POSTGRES_PORT_EXPOSE
-echo "Configuring firewall to allow port $POSTGRES_PORT_EXPOSE..."
-sudo iptables -I INPUT -p tcp --dport "$POSTGRES_PORT_EXPOSE" -j ACCEPT
-
-# --- End Firewall Configuration ---
-
 # Call the original entrypoint script of the postgres image to start the server
 exec docker-entrypoint.sh postgres

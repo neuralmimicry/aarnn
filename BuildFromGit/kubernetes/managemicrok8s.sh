@@ -45,7 +45,7 @@ apply_ufw_rules() {
     sudo ufw allow 16443/tcp
     sudo ufw allow 19001/tcp
     sudo ufw allow 8200/tcp
-    sudo ufw allow 5460/tcp
+    sudo ufw allow 5432/tcp
     sudo ufw allow 30000:32767/tcp
     sudo ufw allow 53/udp
     sudo ufw allow 53/tcp
