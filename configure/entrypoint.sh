@@ -76,7 +76,7 @@ fi
 
 # Allow incoming traffic on $POSTGRES_PORT_EXPOSE
 echo "Configuring firewall to allow port $POSTGRES_PORT_EXPOSE..."
-iptables -I INPUT -p tcp --dport "$POSTGRES_PORT_EXPOSE" -j ACCEPT
+sudo iptables -I INPUT -p tcp --dport "$POSTGRES_PORT_EXPOSE" -j ACCEPT
 
 # --- End Firewall Configuration ---
 
