@@ -37,8 +37,8 @@ BUILD_ARGS=(
     "--build-arg REPO_URL=https://github.com/neuralmimicry/aarnn.git"  # compiler-image
     ""  # vault-image has no build args
     "--build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}"  # postgres-image
-    ""  # aarnn-image has no build args
-    ""  # visualiser-image has no build args
+    ""  # aarnn-image has no build args. Vault token will be added later
+    ""  # visualiser-image has no build args. Vault token will be added later
 )
 
 IMAGE_TAG="latest"
@@ -158,10 +158,10 @@ esac
 # Build and push images in order
 NUM_IMAGES=${#IMAGE_NAMES[@]}
 
-for (( i=0; i<$NUM_IMAGES; i++ )); do
-    IMAGE_NAME="${IMAGE_NAMES[$i]}"
-    CONTAINERFILE_PATH="${CONTAINERFILE_PATHS[$i]}"
-    BUILD_ARG="${BUILD_ARGS[$i]}"
+for (( j=0; j<$NUM_IMAGES; j++ )); do
+    IMAGE_NAME="${IMAGE_NAMES[$j]}"
+    CONTAINERFILE_PATH="${CONTAINERFILE_PATHS[$j]}"
+    BUILD_ARG="${BUILD_ARGS[$j]}"
     LOCAL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
 
     # Check if the Containerfile exists
@@ -207,6 +207,49 @@ for (( i=0; i<$NUM_IMAGES; i++ )); do
         push_image "$LOCAL_IMAGE" "$REGISTRY_IMAGE"
     fi
 
+    if [ "$IMAGE_NAME" == "vault-image" ]; then
+        # Wait for the Vault container to initialize and extract the token
+        # --- Start the Vault Container ---
+        echo "Starting temporary Vault container..."
+        CONTAINER_NAME="temp-vault"
+        podman run -d --name "$CONTAINER_NAME" -p 8200:8200 "$LOCAL_IMAGE"
+
+        # Wait for Vault to be ready
+        echo "Waiting for Vault to be ready..."
+        for i in {1..30}; do
+            if podman exec "$CONTAINER_NAME" vault status >/dev/null 2>&1; then
+                echo "Vault is ready."
+                break
+            else
+                echo "Waiting for Vault to be ready... ($i)"
+                sleep 2
+            fi
+            if [ "$i" -eq 30 ]; then
+                echo "Vault did not become ready in time."
+                podman logs "$CONTAINER_NAME"
+                exit 1
+            fi
+        done
+
+        # --- Retrieve Information from Vault ---
+        echo "Retrieving information from Vault..."
+        # Example: Retrieve a secret or token from Vault
+        # Adjust this section based on what information you need
+        VAULT_TOKEN=$(podman exec "$CONTAINER_NAME" vault print token)
+
+        if [ -z "$VAULT_TOKEN" ]; then
+            echo "Failed to retrieve Vault token."
+            podman logs "$CONTAINER_NAME"
+            exit 1
+        fi
+
+        echo "Vault token retrieved: $VAULT_TOKEN"
+
+        # --- Use Retrieved Information in Build Args ---
+        # Append the VAULT_TOKEN as a build argument for dependent images
+        BUILD_ARGS[3]="--build-arg VAULT_TOKEN=${VAULT_TOKEN}"  # aarnn-image
+        BUILD_ARGS[4]="--build-arg VAULT_TOKEN=${VAULT_TOKEN}"  # visualiser-image
+    fi
 done
 
 echo "run003.sh completed successfully."

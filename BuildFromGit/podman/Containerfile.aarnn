@@ -3,6 +3,10 @@ FROM compiler-image
 # Set the working directory in the container
 WORKDIR /app
 
+# Set the environment variables
+ARG VAULT_ADDR
+ARG VAULT_TOKEN
+
 # Copy the compiled executable from your host to the current location in your docker image
 COPY --from=compiler-image /app/source/build .
 
@@ -10,6 +14,12 @@ COPY --from=compiler-image /app/source/build .
 COPY --from=compiler-image /app/source/configure .
 
 COPY --from=compiler-image /app/source/.env .
+
+# Use the VAULT_ADDR in your build
+RUN echo "VAULT_ADDR=$VAULT_ADDR" >> /app/.env
+
+# Use the VAULT_TOKEN in your build
+RUN echo "VAULT_TOKEN=$VAULT_TOKEN" >> /app/.env
 
 # Configure necessary libraries for running the application
 RUN mkdir -p /etc/pulse && \
