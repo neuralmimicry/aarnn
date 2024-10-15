@@ -211,7 +211,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # Wait for the Vault container to initialize and extract the token
         # --- Start the Vault Container ---
         echo "Starting temporary Vault container..."
-        CONTAINER_NAME="temp-vault"
+        CONTAINER_NAME="vault"
         podman run -d --name "$CONTAINER_NAME" -p 8200:8200 "$LOCAL_IMAGE"
 
         # Wait for Vault to be ready
@@ -249,6 +249,10 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # Append the VAULT_TOKEN as a build argument for dependent images
         BUILD_ARGS[3]="--build-arg VAULT_TOKEN=${VAULT_TOKEN}"  # aarnn-image
         BUILD_ARGS[4]="--build-arg VAULT_TOKEN=${VAULT_TOKEN}"  # visualiser-image
+
+        podman stop "$CONTAINER_NAME"
+        podman rm "$CONTAINER_NAME"
+
     fi
 done
 

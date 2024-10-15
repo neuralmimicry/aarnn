@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /app/.env
+source /.env
 
 # Check if VAULT_DEV_ROOT_TOKEN_ID is set
 if [ -n "$VAULT_DEV_ROOT_TOKEN_ID" ]; then
