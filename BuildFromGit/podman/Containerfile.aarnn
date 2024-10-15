@@ -24,7 +24,13 @@ RUN echo "VAULT_TOKEN=$VAULT_TOKEN" >> /app/.env
 # Debugging
 RUN cat /app/.env
 
-# Allow the vault user to use sudo without a password
+# Create a new user 'aarnn' with a home directory and bash shell
+RUN useradd -m -s /bin/bash aarnn
+
+# Optionally, add the user to the sudo group if administrative privileges are needed
+RUN usermod -aG sudo aarnn
+
+# Allow the aarnn user to use sudo without a password
 RUN echo "aarnn ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/aarnn
 
 RUN chown -R aarnn:aarnn /app

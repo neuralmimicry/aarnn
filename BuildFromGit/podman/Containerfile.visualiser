@@ -22,7 +22,13 @@ RUN echo "VAULT_TOKEN=$VAULT_TOKEN" >> /app/.env
 # Debugging
 RUN cat /app/.env
 
-# Allow the vault user to use sudo without a password
+# Create a new user 'visualiser' with a home directory and bash shell
+RUN useradd -m -s /bin/bash visualiser
+
+# Optionally, add the user to the sudo group if administrative privileges are needed
+RUN usermod -aG sudo visualiser
+
+# Allow the visualiser user to use sudo without a password
 RUN echo "visualiser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/visualiser
 
 RUN chown -R visualiser:visualiser /app
