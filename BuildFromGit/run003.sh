@@ -217,30 +217,29 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # Wait for Vault to be ready
         echo "Waiting for Vault to be ready..."
         for i in {1..30}; do
-            if podman exec "$CONTAINER_NAME" vault status >/dev/null 2>&1; then
-                echo "Vault is ready."
-                break
-            else
-                echo "Waiting for Vault to be ready... ($i)"
-                sleep 2
-            fi
-            if [ "$i" -eq 30 ]; then
-                echo "Vault did not become ready in time."
-                podman logs "$CONTAINER_NAME"
-                exit 1
-            fi
+           if podman exec "$CONTAINER_NAME" vault status -address=http://127.0.0.1:8200 >/dev/null 2>&1; then
+               echo "Vault is ready."
+               break
+           else
+               echo "Waiting for Vault to be ready... ($i)"
+               sleep 2
+           fi
+           if [ "$i" -eq 30 ]; then
+               echo "Vault did not become ready in time."
+               podman logs "$CONTAINER_NAME"
+               exit 1
+           fi
         done
 
         # --- Retrieve Information from Vault ---
         echo "Retrieving information from Vault..."
-        # Example: Retrieve a secret or token from Vault
-        # Adjust this section based on what information you need
-        VAULT_TOKEN=$(podman exec "$CONTAINER_NAME" vault print token)
+        # Retrieve the root token from the .vault-token file
+        VAULT_TOKEN=$(podman exec "$CONTAINER_NAME" cat /home/vault/.vault-token)
 
         if [ -z "$VAULT_TOKEN" ]; then
-            echo "Failed to retrieve Vault token."
-            podman logs "$CONTAINER_NAME"
-            exit 1
+           echo "Failed to retrieve Vault token."
+           podman logs "$CONTAINER_NAME"
+           exit 1
         fi
 
         echo "Vault token retrieved: $VAULT_TOKEN"
