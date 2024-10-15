@@ -19,11 +19,21 @@ RUN echo "VAULT_ADDR=$VAULT_ADDR" >> /app/.env
 # Use the VAULT_TOKEN in your build
 RUN echo "VAULT_TOKEN=$VAULT_TOKEN" >> /app/.env
 
+# Debugging
+RUN cat /app/.env
+
+# Allow the vault user to use sudo without a password
+RUN echo "visualiser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/visualiser
+
+RUN chown -R visualiser:visualiser /app
+
 # Make port 80 available to the world outside this container
 EXPOSE 80
 
 # Update file permissions
 RUN chmod +x /app/Visualiser
+
+USER visualiser
 
 # Run the application when the container launches
 ENTRYPOINT ["/app/launch_visualiser.sh"]

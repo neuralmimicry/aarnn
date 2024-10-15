@@ -21,6 +21,14 @@ RUN echo "VAULT_ADDR=$VAULT_ADDR" >> /app/.env
 # Use the VAULT_TOKEN in your build
 RUN echo "VAULT_TOKEN=$VAULT_TOKEN" >> /app/.env
 
+# Debugging
+RUN cat /app/.env
+
+# Allow the vault user to use sudo without a password
+RUN echo "aarnn ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/aarnn
+
+RUN chown -R aarnn:aarnn /app
+
 # Configure necessary libraries for running the application
 RUN mkdir -p /etc/pulse && \
   mv /app/client.conf /etc/pulse/client.conf && \
@@ -28,6 +36,8 @@ RUN mkdir -p /etc/pulse && \
   rm -rf /var/lib/apt/lists/* && \
   chmod +x /app/AARNN && \
   chmod +x /app/launch_aarnn.sh
+
+USER aarnn
 
 # Run the application when the container launches
 ENTRYPOINT ["/app/launch_aarnn.sh"]
