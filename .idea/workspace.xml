@@ -142,8 +142,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Shell Script.ComposeContainers.sh" />
       <item itemvalue="Shell Script.RunContainers" />
+      <item itemvalue="Shell Script.ComposeContainers.sh" />
     </list>
     <recent_temporary>
       <list>
@@ -246,7 +246,7 @@
       <workItem from="1725359393736" duration="2000" />
       <workItem from="1725477812685" duration="3255000" />
       <workItem from="1728385052359" duration="2596000" />
-      <workItem from="1728979960005" duration="1000" />
+      <workItem from="1728979960005" duration="832000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
