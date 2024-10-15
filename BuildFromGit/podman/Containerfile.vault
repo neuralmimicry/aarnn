@@ -5,7 +5,7 @@ ENV VAULT_VERSION=1.17.0
 ENV VAULT_ADDR='http://0.0.0.0:8200'
 ENV VAULT_API_ADDR='http://vault:8200'
 ENV VAULT_DEV_LISTEN_ADDRESS='vault:8200'
-ENV VAULT_DEV_ROOT_TOKEN_ID='root'
+# ENV VAULT_DEV_ROOT_TOKEN_ID='root'
 
 # Create necessary directories
 RUN mkdir -p /opt/vault/data /etc/vault.d /opt/vault/logs
@@ -28,6 +28,9 @@ RUN echo "vault ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vault
 COPY --from=compiler-image /app/source/BuildFromGit/generic/init_vault.sh /usr/local/bin/
 COPY --from=compiler-image /app/source/BuildFromGit/generic/start_vault.sh /usr/local/bin/
 COPY --from=compiler-image /app/source/.env /
+
+# Debugging
+RUN cat /.env
 
 # Set permissions on the scripts
 RUN chmod +x /usr/local/bin/init_vault.sh /usr/local/bin/start_vault.sh
