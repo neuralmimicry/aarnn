@@ -9,7 +9,7 @@ set +a
 
 # Function to check required environment variables
 check_variables() {
-    required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DBNAME" "POSTGRES_PORT_EXPOSE" "PULSE_SINK" "PULSE_SOURCE" "XDG_RUNTIME_DIR" "POSTGRES_HOST" "POSTGRES_PORT")
+    required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DB" "POSTGRES_PORT_EXPOSE" "PULSE_SINK" "PULSE_SOURCE" "XDG_RUNTIME_DIR" "POSTGRES_HOST" "POSTGRES_PORT")
     for var in "${required_vars[@]}"; do
       # Remove quotes from the variable value
       value=$(echo "${!var}" | sed 's/^"//; s/"$//')
@@ -76,6 +76,7 @@ start_containers() {
                --health-retries 5 \
                --env-file ./.env \
                --env POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+               --env POSTGRES_DB="${POSTGRES_DB}" \
                --env POSTGRES_HOST="${POSTGRES_HOST}" \
                --env POSTGRES_PORT="${POSTGRES_PORT}" \
                postgres
@@ -117,7 +118,7 @@ start_containers() {
         --env DISPLAY=":2" \
         --volume /tmp/.X11-unix:/tmp/.X11-unix \
         --env POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
-        --env POSTGRES_DBNAME="${POSTGRES_DBNAME}" \
+        --env POSTGRES_DB="${POSTGRES_DB}" \
         --env POSTGRES_USERNAME="${POSTGRES_USERNAME}" \
         --env POSTGRES_HOST="${POSTGRES_HOST}" \
         --env POSTGRES_PORT="${POSTGRES_PORT}" \

@@ -9,7 +9,7 @@ set +a
 
 # Function to check required environment variables
 check_variables() {
-    required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DBNAME" "POSTGRES_PORT_EXPOSE" "PULSE_SINK" "PULSE_SOURCE" "XDG_RUNTIME_DIR" "POSTGRES_HOST" "POSTGRES_PORT")
+    required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DB" "POSTGRES_PORT_EXPOSE" "PULSE_SINK" "PULSE_SOURCE" "XDG_RUNTIME_DIR" "POSTGRES_HOST" "POSTGRES_PORT")
     for var in "${required_vars[@]}"; do
         value=$(echo "${!var}" | sed 's/^"//; s/"$//')
         export "$var"="$value"
@@ -129,7 +129,7 @@ check_containers() {
     echo "Verifying PostgreSQL connection..."
     POSTGRES_POD=$(kubectl get pods --selector=app=postgres -o jsonpath='{.items[0].metadata.name}')
     if [ -n "$POSTGRES_POD" ]; then
-        kubectl exec -it "$POSTGRES_POD" -- psql -U "$POSTGRES_USERNAME" -d "$POSTGRES_DBNAME" -c "\l"
+        kubectl exec -it "$POSTGRES_POD" -- psql -U "$POSTGRES_USERNAME" -d "$POSTGRES_DB" -c "\l"
     else
         echo "PostgreSQL pod not found"
     fi

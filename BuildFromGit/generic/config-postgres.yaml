@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: config-postgres
 data:
-  POSTGRES_DBNAME: "neurons"
+  POSTGRES_DB: "neurons"

@@ -56,7 +56,7 @@ bool getPostgresCredentials(const std::string& vault_addr, const std::string& va
         try {
             username = jsonData["data"]["data"]["POSTGRES_USERNAME"].asString();
             password = jsonData["data"]["data"]["POSTGRES_PASSWORD"].asString();
-            database = jsonData["data"]["data"]["POSTGRES_DBNAME"].asString();
+            database = jsonData["data"]["data"]["POSTGRES_DB"].asString();
             database_host = jsonData["data"]["data"]["POSTGRES_HOST"].asString();
             database_port = jsonData["data"]["data"]["POSTGRES_PORT"].asString();
         } catch (const std::exception& e) {
