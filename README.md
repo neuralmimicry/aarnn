@@ -1,3 +1,4 @@
+# aarnn
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/neuralmimicry/aarnn/cmake.yml?branch=master)
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=neuralmimicry&url=https://github.com/neuralmimicry/aarnn&title=AARNN&language=&tags=github&category=software) 
 
@@ -9,7 +10,6 @@ To sponsor A.A.R.N.N development please use the QR code to send Bitcoin (BTC) or
   <img width="150" src="https://neuralmimicry.github.io/BrainHarmonics/neuralmimicrybitcoindonation.png" alt="BTC Wallet - 1LEZYEKKpb2Y3ePxUAAtkjH25mUHB4HdLR">
 </p>
 
-# aarnn
 
 The beginning of a new beginning of a...
 
@@ -117,14 +117,14 @@ Here’s what each option means:
 Feel free to contribute. We learn by doing.
 
 ## Sponsorship
+See - [GitHub Sponsor](https://github.com/sponsors/neuralmimicry)
 
-
-##Initial steps
-##Start PulseAudio (To use microphone/speakers for audio stimulation/activation)
+## Initial steps
+## Start PulseAudio (To use microphone/speakers for audio stimulation/activation)
 ./setup_pulse_audio.sh
 
 
-##Podman##
+## Podman ##
 ## Create a common network between docker containers
 podman network create my_net
 

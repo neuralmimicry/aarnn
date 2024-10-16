@@ -219,6 +219,14 @@ target_link_libraries(AARNN PRIVATE
         ${CURL_LIBRARIES}
         ${CGAL_LIBRARIES}
 )
+
+# Copy simulation.conf into the same directory as the AARNN executable
+add_custom_command(TARGET AARNN POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/configure/simulation.conf"
+        "$<TARGET_FILE_DIR:AARNN>/simulation.conf"
+)
+
 add_executable(Visualiser ${VISUALISER_SRC}
         include/vclient.h
         src/shared_libs/vclient.cpp)

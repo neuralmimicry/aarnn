@@ -31,7 +31,7 @@ echo "VAULT_ADDR: $VAULT_ADDR"
 echo "VAULT_TOKEN: $VAULT_TOKEN"
 
 # Start gdb with the program and capture the backtrace on crash
-#gdb -ex "set pagination off" -ex "run" -ex "bt" -ex "quit" /app/build/AARNN > /app/gdb_backtrace.txt 2>&1
+gdb -ex "set pagination off" -ex "run" -ex "bt" -ex "quit" /app/AARNN > /app/gdb_backtrace.txt 2>&1
 /app/AARNN
 # Print the backtrace to stdout
-#cat /app/gdb_backtrace.txt
+cat /app/gdb_backtrace.txt
