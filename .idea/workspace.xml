@@ -30,7 +30,6 @@
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/client.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configure/client.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -250,7 +249,7 @@
       <workItem from="1725477812685" duration="3255000" />
       <workItem from="1728385052359" duration="2596000" />
       <workItem from="1728979960005" duration="11542000" />
-      <workItem from="1729065550348" duration="4583000" />
+      <workItem from="1729065550348" duration="6821000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
