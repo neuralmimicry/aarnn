@@ -90,12 +90,26 @@ RUN apt-get update && \
  apt-get clean && \
  rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
-WORKDIR /app
-
 # Clone the GitHub repository
 ARG REPO_URL
 RUN git clone $REPO_URL source
+
+ARG POSTGRES_USERNAME
+ARG POSTGRES_PASSWORD
+ARG POSTGRES_HOST
+ARG POSTGRES_PORT
+
+# Check the ARGs are set and update the .env file
+RUN set -eux; \
+    for VAR_NAME in POSTGRES_USERNAME POSTGRES_PASSWORD POSTGRES_HOST POSTGRES_PORT; do \
+        VAR_VALUE="$(eval echo \$$VAR_NAME)"; \
+        if [ -n "$VAR_VALUE" ]; then \
+            # Remove existing variable from .env if it exists
+            sed -i "/^$VAR_NAME=/d" /app/source/.env || true; \
+            # Append the new variable and value to .env
+            printf '%s\n' "$VAR_NAME=$VAR_VALUE" >> /app/source/.env; \
+        fi; \
+    done
 
 # Build the application
 WORKDIR /app/source
