@@ -143,6 +143,9 @@ docker_build_job:
       docker build \
         --build-arg POSTGRES_USER="$POSTGRES_USER" \
         --build-arg POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+        --build-arg POSTGRES_DB="$POSTGRES_DB" \
+        --build-arg POSTGRES_HOST="$POSTGRES_HOST" \
+        --build-arg POSTGRES_PORT="$POSTGRES_PORT" \
         -t ghcr.io/$GITHUB_REPOSITORY_OWNER/aarnn:latest \
         -f ./Dockerfile .
       docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/aarnn:latest
@@ -151,6 +154,9 @@ docker_build_job:
       docker build \
         --build-arg POSTGRES_USER="$POSTGRES_USER" \
         --build-arg POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+        --build-arg POSTGRES_DB="$POSTGRES_DB" \
+        --build-arg POSTGRES_HOST="$POSTGRES_HOST" \
+        --build-arg POSTGRES_PORT="$POSTGRES_PORT" \
         -t ghcr.io/$GITHUB_REPOSITORY_OWNER/aarnn-postgres:latest \
         -f ./Dockerfile.postgres .
       docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/aarnn-postgres:latest

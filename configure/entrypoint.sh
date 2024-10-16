@@ -2,7 +2,7 @@
 set -e
 source /app/.env
 
-required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DBNAME" "POSTGRES_PORT_EXPOSE" "PGDATA")
+required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DB" "POSTGRES_PORT_EXPOSE" "PGDATA")
 for var in "${required_vars[@]}"; do
   # Remove quotes from the variable value
   value=$(echo "${!var}" | sed 's/^"//; s/"$//')

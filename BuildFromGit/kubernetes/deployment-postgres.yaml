@@ -28,11 +28,11 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
-            - name: POSTGRES_DBNAME
+            - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config
-                  key: POSTGRES_DBNAME
+                  key: POSTGRES_DB
             - name: POSTGRES_PORT
               value: "5432"
           volumeMounts:

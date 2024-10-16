@@ -42,7 +42,7 @@ set -a
 set +a
 
 # Check required environment variables
-required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_PORT_EXPOSE")
+required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DB" "POSTGRES_PORT_EXPOSE")
 for var in "${required_vars[@]}"; do
   if [ -z "${!var}" ]; then
     echo "Error: Environment variable $var is not set."
@@ -61,6 +61,7 @@ echo "Building PostgreSQL image..."
 podman build \
   --build-arg POSTGRES_USERNAME="${POSTGRES_USERNAME}" \
   --build-arg POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+  --build-arg POSTGRES_DB="${POSTGRES_DB}" \
   --build-arg POSTGRES_PORT="${POSTGRES_PORT}" \
   --build-arg POSTGRES_PORT_EXPOSE="${POSTGRES_PORT_EXPOSE}" \
   -t postgres -f Containerfile.postgres .

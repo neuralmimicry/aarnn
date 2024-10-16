@@ -29,8 +29,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
+      <change beforePath="$PROJECT_DIR$/.gitlab-ci.yml.disabled" beforeDir="false" afterPath="$PROJECT_DIR$/.gitlab-ci.yml.disabled" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.postgres" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.postgres" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BuildFromGit/run003.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run003.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/configure/launch_aarnn.sh" beforeDir="false" afterPath="$PROJECT_DIR$/configure/launch_aarnn.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/configure/launch_visualiser.sh" beforeDir="false" afterPath="$PROJECT_DIR$/configure/launch_visualiser.sh" afterDir="false" />
@@ -253,7 +255,7 @@
       <workItem from="1725477812685" duration="3255000" />
       <workItem from="1728385052359" duration="2596000" />
       <workItem from="1728979960005" duration="11542000" />
-      <workItem from="1729065550348" duration="713000" />
+      <workItem from="1729065550348" duration="2517000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

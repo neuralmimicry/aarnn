@@ -20,7 +20,7 @@ else
 fi
 
 # Check if required variables are set
-if [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_DBNAME" ] || [ -z "$POSTGRES_USERNAME" ] || [ -z "$POSTGRES_PORT" ] || [ -z "$POSTGRES_HOST" ]; then
+if [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_DB" ] || [ -z "$POSTGRES_USERNAME" ] || [ -z "$POSTGRES_PORT" ] || [ -z "$POSTGRES_HOST" ]; then
     echo "One or more required variables are not set in the .env file!"
     exit 1
 fi
@@ -29,7 +29,7 @@ fi
 vault kv put secret/postgres \
     POSTGRES_HOST="$POSTGRES_HOST" \
     POSTGRES_PORT="$POSTGRES_PORT" \
-    POSTGRES_DBNAME="$POSTGRES_DBNAME" \
+    POSTGRES_DB="$POSTGRES_DB" \
     POSTGRES_USERNAME="$POSTGRES_USERNAME" \
     POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
 

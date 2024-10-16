@@ -96,12 +96,13 @@ RUN git clone $REPO_URL source
 
 ARG POSTGRES_USERNAME
 ARG POSTGRES_PASSWORD
+ARG POSTGRES_DB
 ARG POSTGRES_HOST
 ARG POSTGRES_PORT
 
 # Check the ARGs are set and update the .env file
 RUN set -eux; \
-    for VAR_NAME in POSTGRES_USERNAME POSTGRES_PASSWORD POSTGRES_HOST POSTGRES_PORT; do \
+    for VAR_NAME in POSTGRES_USERNAME POSTGRES_PASSWORD POSTGRES_DB POSTGRES_HOST POSTGRES_PORT; do \
         VAR_VALUE="$(eval echo \$$VAR_NAME)"; \
         if [ -n "$VAR_VALUE" ]; then \
             # Remove existing variable from .env if it exists

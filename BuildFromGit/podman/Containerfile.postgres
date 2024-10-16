@@ -19,18 +19,21 @@ ENV POSTGRES_DB=neurons
 # These variables will automatically be deleted after the building process, protecting sensitive data
 ARG POSTGRES_USERNAME
 ARG POSTGRES_PASSWORD
+ARG POSTGRES_DB
 ARG POSTGRES_PORT
 ARG POSTGRES_PORT_EXPOSE
 
 # Check if the ARG variables are provided
 RUN test -n "$POSTGRES_USERNAME" || (echo "POSTGRES_USERNAME is not set" && exit 1)
 RUN test -n "$POSTGRES_PASSWORD" || (echo "POSTGRES_PASSWORD is not set" && exit 1)
+RUN test -n "$POSTGRES_DB" || (echo "POSTGRES_DB is not set" && exit 1)
 RUN test -n "$POSTGRES_PORT" || (echo "POSTGRES_PORT is not set" && exit 1)
 RUN test -n "$POSTGRES_PORT_EXPOSE" || (echo "POSTGRES_PORT_EXPOSE is not set" && exit 1)
 
 # Use the ARG variables to set environment variables used by postgres image
 ENV POSTGRES_USER=${POSTGRES_USERNAME}
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+ENV POSTGRES_DB=${POSTGRES_DB}
 ENV POSTGRES_PORT=${POSTGRES_PORT}
 ENV POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}
 
