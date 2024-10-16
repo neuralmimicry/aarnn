@@ -34,7 +34,7 @@ CONTAINERFILE_PATHS=(
     "./BuildFromGit/podman/Containerfile.visualiser"
 )
 BUILD_ARGS=(
-    "--build-arg REPO_URL=https://github.com/neuralmimicry/aarnn.git"  # compiler-image
+    "--build-arg REPO_URL=https://github.com/neuralmimicry/aarnn.git --build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_HOST=${POSTGRES_HOST}"  # compiler-image
     ""  # vault-image has no build args
     "--build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}"  # postgres-image
     ""  # aarnn-image has no build args. Vault token will be added later
