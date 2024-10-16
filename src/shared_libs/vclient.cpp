@@ -98,6 +98,31 @@ bool initialiseDatabaseConnection(std::string& connection_string) {
         return false;
     }
 
+    if (username.empty()) {
+        username = std::getenv("POSTGRES_USERNAME");
+    }
+
+    if (password.empty()) {
+        password = std::getenv("POSTGRES_PASSWORD");
+    }
+
+    if (database.empty()) {
+        database = std::getenv("POSTGRES_DB");
+    }
+
+    if (database_host.empty()) {
+        database_host = std::getenv("POSTGRES_HOST");
+    }
+
+    if (database_port.empty()) {
+        database_port = std::getenv("POSTGRES_PORT");
+    }
+
+    if (username.empty() || password.empty() || database.empty() || database_host.empty() || database_port.empty()) {
+        std::cerr << "Postgres credentials not found in Vault or environment variables" << std::endl;
+        return false;
+    }
+
     // Initialize database connection using the retrieved credentials
     connection_string = "dbname=" + database + " user=" + username + " password=" + password + " host=" + database_host + " port=" + database_port;
     return true;
