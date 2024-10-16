@@ -1,5 +1,14 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/neuralmimicry/aarnn/cmake.yml?branch=master)
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=neuralmimicry&url=https://github.com/neuralmimicry/aarnn&title=AARNN&language=&tags=github&category=software) 
+
+<p align="center">
+  <img width="250" src="https://neuralmimicry.github.io/BrainHarmonics/neuralmimicrylogo.png" alt="NeuralMimicry">
+</p>
+To sponsor A.A.R.N.N development please use the QR code to send Bitcoin (BTC) or if you're not a crypto fan then please use this [GitHub Sponsor](https://github.com/sponsors/neuralmimicry) link - Thank you.
+<p align="center">
+  <img width="150" src="https://neuralmimicry.github.io/BrainHarmonics/neuralmimicrybitcoindonation.png" alt="BTC Wallet - 1LEZYEKKpb2Y3ePxUAAtkjH25mUHB4HdLR">
+</p>
+
 # aarnn
 
 The beginning of a new beginning of a...
