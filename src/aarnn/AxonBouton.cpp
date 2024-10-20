@@ -5,13 +5,13 @@ void AxonBouton::initialise()
     if(!instanceInitialised)
     {
         std::cout << "Initialising AxonBouton" << std::endl;
-        if(!onwardSynapticGap)
+        if(!this->onwardSynapticGap)
         {
-            onwardSynapticGap = std::make_shared<SynapticGap>(
+            this->onwardSynapticGap = std::make_shared<SynapticGap>(
              std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
         }
-        onwardSynapticGap->initialise();
-        onwardSynapticGap->updateFromAxonBouton(shared_from_this());
+        this->onwardSynapticGap->initialise();
+        this->onwardSynapticGap->updateFromAxonBouton(shared_from_this());
         instanceInitialised = true;
     }
 }
@@ -43,10 +43,10 @@ void AxonBouton::setNeuron(std::weak_ptr<Neuron> parentNeuron)
 
 void AxonBouton::updateFromAxon(std::shared_ptr<Axon> parentAxonPointer)
 {
-    parentAxon = std::move(parentAxonPointer);
+    this->parentAxon = std::move(parentAxonPointer);
 }
 
 std::shared_ptr<Axon> AxonBouton::getParentAxon() const
 {
-    return parentAxon;
+    return this->parentAxon;
 }

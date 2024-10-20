@@ -29,13 +29,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change afterPath="$PROJECT_DIR$/run_local.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/AudioManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/visualiser.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/AudioManager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp.old" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/debug_database.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.visualiser" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.visualiser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/configure/launch_aarnn.sh" beforeDir="false" afterPath="$PROJECT_DIR$/configure/launch_aarnn.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configure/launch_visualiser.sh" beforeDir="false" afterPath="$PROJECT_DIR$/configure/launch_visualiser.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Axon.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Axon.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Dendrite.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Dendrite.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Logger.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Logger.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Neuron.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Neuron.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Axon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Axon.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonHillock.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonHillock.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Logger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Soma.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Soma.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/database.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +112,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/pbisaacs/Developer/aarnn/configure&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/pbisaacs/Developer/aarnn/src/visualiser&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -107,6 +130,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/visualiser" />
       <recent name="$PROJECT_DIR$/configure" />
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -119,11 +143,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Shell Script.ComposeContainers.sh">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="ComposeContainers.sh" type="ShConfigurationType" temporary="true">
       <option name="SCRIPT_TEXT" value="" />
       <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
@@ -260,7 +279,8 @@
       <workItem from="1725477812685" duration="3255000" />
       <workItem from="1728385052359" duration="2596000" />
       <workItem from="1728979960005" duration="11542000" />
-      <workItem from="1729065550348" duration="20333000" />
+      <workItem from="1729065550348" duration="85674000" />
+      <workItem from="1729416955644" duration="2047000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

@@ -26,22 +26,22 @@ void SynapticGap::setAsAssociated()
 
 void SynapticGap::updateFromSensoryReceptor(std::shared_ptr<SensoryReceptor> parentSensoryReceptorPointer)
 {
-    parentSensoryReceptor = std::move(parentSensoryReceptorPointer);
+    this->parentSensoryReceptor = std::move(parentSensoryReceptorPointer);
 }
 
 void SynapticGap::updateFromEffector(std::shared_ptr<Effector> &parentEffectorPointer)
 {
-    parentEffector = std::move(parentEffectorPointer);
+    this->parentEffector = std::move(parentEffectorPointer);
 }
 
 void SynapticGap::updateFromAxonBouton(std::shared_ptr<AxonBouton> parentAxonBoutonPointer)
 {
-    parentAxonBouton = std::move(parentAxonBoutonPointer);
+    this->parentAxonBouton = std::move(parentAxonBoutonPointer);
 }
 
 void SynapticGap::updateFromDendriteBouton(std::shared_ptr<DendriteBouton> parentDendriteBoutonPointer)
 {
-    parentDendriteBouton = std::move(parentDendriteBoutonPointer);
+    this->parentDendriteBouton = std::move(parentDendriteBoutonPointer);
 }
 
 void SynapticGap::updateComponent(double time, double energy)
@@ -96,19 +96,19 @@ double SynapticGap::propagationTime()
 
 [[nodiscard]] std::shared_ptr<SensoryReceptor> SynapticGap::getParentSensoryReceptor() const
 {
-    return parentSensoryReceptor;
+    return this->parentSensoryReceptor;
 }
 [[nodiscard]] std::shared_ptr<Effector> SynapticGap::getParentEffector() const
 {
-    return parentEffector;
+    return this->parentEffector;
 }
 [[nodiscard]] std::shared_ptr<AxonBouton> SynapticGap::getParentAxonBouton() const
 {
-    return parentAxonBouton;
+    return this->parentAxonBouton;
 }
 [[nodiscard]] std::shared_ptr<DendriteBouton> SynapticGap::getParentDendriteBouton() const
 {
-    return parentDendriteBouton;
+    return this->parentDendriteBouton;
 }
 [[nodiscard]] const PositionPtr &SynapticGap::getPosition() const
 {

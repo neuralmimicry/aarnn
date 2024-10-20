@@ -5,13 +5,13 @@ void Axon::initialise()
     if(!instanceInitialised)
     {
         std::cout << "Initialising Axon" << std::endl;
-        if(!onwardAxonBouton)
+        if(!this->onwardAxonBouton)
         {
-            onwardAxonBouton = std::make_shared<AxonBouton>(
+            this->onwardAxonBouton = std::make_shared<AxonBouton>(
              std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
         }
-        onwardAxonBouton->initialise();
-        onwardAxonBouton->updateFromAxon(shared_from_this());
+        this->onwardAxonBouton->initialise();
+        this->onwardAxonBouton->updateFromAxon(shared_from_this());
         instanceInitialised = true;
     }
 }
@@ -44,20 +44,20 @@ double Axon::calcPropagationTime()
 
 void Axon::updateFromAxonHillock(std::shared_ptr<AxonHillock> parentAxonHillockPointer)
 {
-    parentAxonHillock = std::move(parentAxonHillockPointer);
+    this->parentAxonHillock = std::move(parentAxonHillockPointer);
 }
 
 std::shared_ptr<AxonHillock> Axon::getParentAxonHillock() const
 {
-    return parentAxonHillock;
+    return this->parentAxonHillock;
 }
 
 void Axon::updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer)
 {
-    parentAxonBranch = std::move(parentAxonBranchPointer);
+    this->parentAxonBranch = std::move(parentAxonBranchPointer);
 }
 
 std::shared_ptr<AxonBranch> Axon::getParentAxonBranch() const
 {
-    return parentAxonBranch;
+    return this->parentAxonBranch;
 }

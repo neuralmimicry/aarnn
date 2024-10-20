@@ -8,9 +8,12 @@ WORKDIR /app
 ARG VAULT_ADDR
 ARG VAULT_TOKEN
 
+# Copy the compiled executable from your host to the current location in your docker image
+COPY --from=compiler-image /app/source/build .
+
 # Database configuration connection information and Simulation data
 COPY --from=compiler-image /app/source/configure .
-COPY --from=compiler-image /app/source/build/Visualiser /app/
+
 COPY --from=compiler-image /app/source/.env .
 
 # Use the VAULT_ADDR in your build
@@ -36,8 +39,11 @@ RUN chown -R visualiser:visualiser /app
 # Make port 80 available to the world outside this container
 EXPOSE 80
 
-# Update file permissions
-RUN chmod +x /app/Visualiser
+# Configure necessary libraries for running the application
+RUN apt-get clean && \
+  rm -rf /var/lib/apt/lists/* && \
+  chmod +x /app/Visualiser && \
+  chmod +x /app/launch_visualiser.sh
 
 USER visualiser
 

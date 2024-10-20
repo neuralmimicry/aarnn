@@ -58,6 +58,8 @@ class Dendrite
     {
         return position;
     }
+
+    std::shared_ptr<DendriteBouton> getDendriteBoutons();
 };
 
 #endif  // AARNN_DENDRITE_H

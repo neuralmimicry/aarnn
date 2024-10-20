@@ -202,6 +202,7 @@ add_executable(AARNN ${AARNN_SRC}
         include/timer.h
         src/aarnn/database.cpp
         src/aarnn/audio.cpp
+        src/aarnn/Logger.cpp
         src/aarnn/timer.cpp
         src/aarnn/main.cpp
         src/aarnn/utils.cpp
@@ -229,6 +230,8 @@ add_custom_command(TARGET AARNN POST_BUILD
 
 add_executable(Visualiser ${VISUALISER_SRC}
         include/vclient.h
+        include/Logger.h
+        src/aarnn/Logger.cpp
         src/shared_libs/vclient.cpp)
 target_link_libraries(Visualiser PRIVATE
         ${VTK_LIBRARIES}
@@ -241,3 +244,9 @@ target_link_libraries(Visualiser PRIVATE
         ${CGAL_LIBRARIES}
 )
 
+# Copy simulation.conf into the same directory as the AARNN executable
+add_custom_command(TARGET Visualiser POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/configure/db_connection.conf"
+        "$<TARGET_FILE_DIR:Visualiser>/db_connection.conf"
+)

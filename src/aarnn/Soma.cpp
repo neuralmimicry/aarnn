@@ -7,16 +7,16 @@ void Soma::initialise()
     if(!instanceInitialised)
     {
         std::cout << "Initialising Soma" << std::endl;
-        if(!onwardAxonHillock)
+        if(!this->onwardAxonHillock)
         {
             std::cout << "Creating AxonHillock" << std::endl;
-            onwardAxonHillock = std::make_shared<AxonHillock>(
+            this->onwardAxonHillock = std::make_shared<AxonHillock>(
              std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
         }
         std::cout << "Soma initialising AxonHillock" << std::endl;
-        onwardAxonHillock->initialise();
+        this->onwardAxonHillock->initialise();
         std::cout << "Soma updating from AxonHillock" << std::endl;
-        onwardAxonHillock->updateFromSoma(shared_from_this());
+        this->onwardAxonHillock->updateFromSoma(shared_from_this());
         std::cout << "Creating DendriteBranch" << std::endl;
         addDendriteBranch(std::make_shared<DendriteBranch>(
          std::make_shared<Position>((position->x) - 1, (position->y) - 1, (position->z) - 1)));
@@ -49,5 +49,5 @@ void Soma::addDendriteBranch(std::shared_ptr<DendriteBranch> dendriteBranch)
 
 void Soma::updateFromNeuron(std::shared_ptr<Neuron> parentPointer)
 {
-    parentNeuron = std::move(parentPointer);
+    this->parentNeuron = std::move(parentPointer);
 }
