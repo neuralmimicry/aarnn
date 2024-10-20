@@ -17,7 +17,7 @@ class Axon;
 class Neuron : public std::enable_shared_from_this<Neuron> {
 public:
     explicit Neuron(const std::shared_ptr<Position> &position)
-            : instanceInitialised(false), neuronId(nextNeuronId++) {}
+            : position(position), instanceInitialised(false), neuronId(nextNeuronId++) {}
 
     std::shared_ptr<Soma> getSoma();
     void initialise();
@@ -31,7 +31,12 @@ public:
     std::vector<std::shared_ptr<DendriteBouton>> getDendriteBoutons() const;
 
     std::shared_ptr<Position> getPosition() const;
-    int getNeuronId() const { return neuronId; }
+    int getNeuronId() const;
+    void setNeuronId(int id);
+    void setPropagationRate(double rate);
+    double getPropagationRate() const;
+    void setNeuronType(int type);
+    int getNeuronType() const;
 
 private:
     void traverseAxonsForStorage(const std::shared_ptr<Axon> &axon);
@@ -41,6 +46,7 @@ private:
 
     static int nextNeuronId;
     int neuronId;
+    int neuronType;
     std::shared_ptr<Position> position;
     std::shared_ptr<Soma> soma;
     bool instanceInitialised;
@@ -48,6 +54,7 @@ private:
     std::vector<std::shared_ptr<SynapticGap>> synapticGapsDendrite;
     std::vector<std::shared_ptr<DendriteBouton>> dendriteBoutons;
     std::vector<std::shared_ptr<AxonBouton>> axonBoutons;
+    double propagationRate;
 };
 
 #endif // NEURON_H

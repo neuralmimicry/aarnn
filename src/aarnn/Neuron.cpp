@@ -2,23 +2,23 @@
 
 int Neuron::nextNeuronId = 0;
 
-std::shared_ptr<Soma> soma;
+// std::shared_ptr<Soma> soma;
 
 std::shared_ptr<Soma> Neuron::getSoma() {
-    return soma;
+    return this->soma;
 }
 
 void Neuron::initialise() {
     std::cout << "Initialising Neuron" << std::endl;
     if (!instanceInitialised) {
-        if (!soma) {
+        if (!this->soma) {
             std::cout << "Creating Soma" << std::endl;
-            soma = std::make_shared<Soma>(std::make_shared<Position>(position->x, position->y, position->z));
+            this->soma = std::make_shared<Soma>(std::make_shared<Position>(position->x, position->y, position->z));
         }
         std::cout << "Neuron initialising Soma" << std::endl;
-        soma->initialise();
+        this->soma->initialise();
         std::cout << "Neuron updating Soma" << std::endl;
-        soma->updateFromNeuron(shared_from_this());
+        this->soma->updateFromNeuron(shared_from_this());
         instanceInitialised = true;
     }
     std::cout << "Neuron initialised" << std::endl;
@@ -31,7 +31,7 @@ void Neuron::addSynapticGapDendrite(std::shared_ptr<SynapticGap> synapticGap) {
 void Neuron::storeAllSynapticGapsAxon() {
     synapticGapsAxon.clear();
     axonBoutons.clear();
-    std::shared_ptr<AxonHillock> onwardAxonHillock = soma->getAxonHillock();
+    std::shared_ptr<AxonHillock> onwardAxonHillock = this->soma->getAxonHillock();
     if (!onwardAxonHillock) {
         return;
     }
@@ -45,7 +45,7 @@ void Neuron::storeAllSynapticGapsAxon() {
 void Neuron::storeAllSynapticGapsDendrite() {
     synapticGapsDendrite.clear();
     dendriteBoutons.clear();
-    traverseDendritesForStorage(soma->getDendriteBranches());
+    traverseDendritesForStorage(this->soma->getDendriteBranches());
 }
 
 void Neuron::addSynapticGapAxon(std::shared_ptr<SynapticGap> synapticGap) {
@@ -137,4 +137,28 @@ std::shared_ptr<Position> Neuron::getPosition() const {
 
 void Neuron::updatePosition(std::shared_ptr<Position> &newPosition) {
     position = newPosition;
+}
+
+void Neuron::setPropagationRate(double rate) {
+    propagationRate = rate;
+}
+
+double Neuron::getPropagationRate() const {
+    return propagationRate;
+}
+
+void Neuron::setNeuronId(int id) {
+    neuronId = id;
+}
+
+int Neuron::getNeuronId() const {
+    return neuronId;
+}
+
+void Neuron::setNeuronType(int type) {
+    neuronType = type;
+}
+
+int Neuron::getNeuronType() const {
+    return neuronType;
 }

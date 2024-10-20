@@ -16,10 +16,10 @@ void SensoryReceptor::initialise()
         setPhaseShift(rand() % 360);
         lastCallTime            = 0.0;
         PositionPtr positionPtr = std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1);
-        synapticGap             = std::make_shared<SynapticGap>(positionPtr);
-        synapticGap->initialise();
-        synapticGap->updateFromSensoryReceptor(shared_from_this());
-        addSynapticGap(synapticGap);
+        this->synapticGap             = std::make_shared<SynapticGap>(positionPtr);
+        this->synapticGap->initialise();
+        this->synapticGap->updateFromSensoryReceptor(shared_from_this());
+        addSynapticGap(this->synapticGap);
         minPropagationRate  = (35 - (rand() % 25)) / 100;
         maxPropagationRate  = (65 + (rand() % 25)) / 100;
         instanceInitialised = true;

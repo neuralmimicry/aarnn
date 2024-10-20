@@ -21,8 +21,9 @@ class Axon
 , public BodyShapeComponent
 {
     public:
-    explicit Axon(const std::shared_ptr<Position> &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
-    : BodyComponent<Position>(position, propRate)
+    explicit Axon(const std::shared_ptr<Position>& position, double propRate = BodyComponent<Position>::defaultPropagationRate)
+    : position(position), instanceInitialised(false)
+    , BodyComponent<Position>(position, propRate)
     , BodyShapeComponent()
     {
     }
@@ -44,6 +45,7 @@ class Axon
     }
 
     private:
+    std::shared_ptr<Position>                position;
     bool                                     instanceInitialised = false;
     std::vector<std::shared_ptr<AxonBranch>> axonBranches;
     std::shared_ptr<AxonBouton>              onwardAxonBouton;

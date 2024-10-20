@@ -4,295 +4,396 @@
 #include "database.h"
 
 void initialise_database(pqxx::connection& conn) {
-    pqxx::work txn(conn);
-
-    txn.exec("DROP TABLE IF EXISTS neurons, somas, axonhillocks, axons, axons_hillock, axonboutons, synapticgaps, dendritebranches_soma, dendritebranches, dendrites, dendriteboutons, axonbranches CASCADE; COMMIT;");
-
-    pqxx::result result = txn.exec("SELECT EXISTS ("
-                                   "SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'neurons'"
-                                   ");");
-
-    if (!result.empty() && !result[0][0].as<bool>()) {
-        txn.exec(
-                "CREATE TABLE neurons ("
-                "neuron_id SERIAL PRIMARY KEY,"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL,"
-                "propagation_rate REAL,"
-                "neuron_type INTEGER,"
-                "axon_length REAL"
-                ");"
-                "CREATE TABLE somas ("
-                "soma_id SERIAL PRIMARY KEY,"
-                "neuron_id INTEGER REFERENCES neurons(neuron_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "CREATE TABLE axonhillocks ("
-                "axon_hillock_id SERIAL PRIMARY KEY,"
-                "soma_id INTEGER REFERENCES somas(soma_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "CREATE TABLE axons_hillock ("
-                "axon_id SERIAL PRIMARY KEY,"
-                "axon_hillock_id INTEGER,"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "CREATE TABLE axons ("
-                "axon_id SERIAL PRIMARY KEY,"
-                "axon_hillock_id INTEGER REFERENCES axonhillocks(axon_hillock_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "ALTER TABLE axons_hillock "
-                "ADD CONSTRAINT fk_axons_hillock_axon_id "
-                "FOREIGN KEY (axon_id) REFERENCES axons(axon_id);"
-                "CREATE TABLE axonboutons ("
-                "axon_bouton_id SERIAL PRIMARY KEY,"
-                "axon_id INTEGER REFERENCES axons(axon_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "CREATE TABLE synapticgaps ("
-                "synaptic_gap_id SERIAL PRIMARY KEY,"
-                "axon_bouton_id INTEGER REFERENCES axonboutons(axon_bouton_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "CREATE TABLE axonbranches ("
-                "axon_branch_id SERIAL PRIMARY KEY,"
-                "axon_id INTEGER REFERENCES axons(axon_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "CREATE TABLE dendritebranches_soma ("
-                "dendrite_branch_id SERIAL PRIMARY KEY,"
-                "soma_id INTEGER REFERENCES somas(soma_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "CREATE TABLE dendrites ("
-                "dendrite_id SERIAL PRIMARY KEY,"
-                "dendrite_branch_id INTEGER,"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "CREATE TABLE dendritebranches ("
-                "dendrite_branch_id SERIAL PRIMARY KEY,"
-                "dendrite_id INTEGER REFERENCES dendrites(dendrite_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-                "ALTER TABLE dendritebranches "
-                "ADD CONSTRAINT fk_dendritebranches_dendrite_id "
-                "FOREIGN KEY (dendrite_id) REFERENCES dendrites(dendrite_id);"
-                "CREATE TABLE dendriteboutons ("
-                "dendrite_bouton_id SERIAL PRIMARY KEY,"
-                "dendrite_id INTEGER REFERENCES dendrites(dendrite_id),"
-                "x REAL NOT NULL,"
-                "y REAL NOT NULL,"
-                "z REAL NOT NULL"
-                ");"
-        );
-
+    // Begin a transaction to drop existing tables
+    {
+        pqxx::work txn(conn);
+        txn.exec("DROP TABLE IF EXISTS neurons, somas, axonhillocks, axons, axonboutons, synapticgaps, dendritebranches, dendrites, dendriteboutons, axonbranches CASCADE;");
         txn.commit();
-        std::cout << "Created table 'neurons'." << std::endl;
-    } else {
-        std::cout << "Table 'neurons' already exists." << std::endl;
-    }
-}
-
-void insertDendriteBranches(pqxx::transaction_base& txn, const std::shared_ptr<DendriteBranch>& dendriteBranch, int& dendrite_branch_id, int& dendrite_id, int& dendrite_bouton_id, int& soma_id) {
-    if (!dendriteBranch) {
-        std::cerr << "dendriteBranch is null!" << std::endl;
-        return;
-    }
-    std::string query;
-
-    if (dendriteBranch->getParentSoma()) {
-        query = "INSERT INTO dendritebranches_soma (dendrite_branch_id, soma_id, x, y, z) VALUES (" +
-                std::to_string(dendrite_branch_id) + ", " + std::to_string(soma_id) + ", " +
-                std::to_string(dendriteBranch->getPosition()->x) + ", " +
-                std::to_string(dendriteBranch->getPosition()->y) + ", " +
-                std::to_string(dendriteBranch->getPosition()->z) + ")";
-        txn.exec(query);
-    } else {
-        query = "INSERT INTO dendritebranches (dendrite_branch_id, dendrite_id, x, y, z) VALUES (" +
-                std::to_string(dendrite_branch_id) + ", " + std::to_string(dendrite_id) + ", " +
-                std::to_string(dendriteBranch->getPosition()->x) + ", " +
-                std::to_string(dendriteBranch->getPosition()->y) + ", " +
-                std::to_string(dendriteBranch->getPosition()->z) + ")";
-        txn.exec(query);
     }
 
-    for (auto& dendrite : dendriteBranch->getDendrites()) {
-        query = "INSERT INTO dendrites (dendrite_id, dendrite_branch_id, x, y, z) VALUES (" +
-                std::to_string(dendrite_id) + ", " + std::to_string(dendrite_branch_id) + ", " +
-                std::to_string(dendrite->getPosition()->x) + ", " +
-                std::to_string(dendrite->getPosition()->y) + ", " +
-                std::to_string(dendrite->getPosition()->z) + ")";
-        txn.exec(query);
+    // Begin a new transaction to create tables without foreign key constraints
+    {
+        pqxx::work txn(conn);
+        pqxx::result result = txn.exec("SELECT EXISTS ("
+                                       "SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'neurons'"
+                                       ");");
 
-        query = "INSERT INTO dendriteboutons (dendrite_bouton_id, dendrite_id, x, y, z) VALUES (" +
-                std::to_string(dendrite_bouton_id) + ", " + std::to_string(dendrite_id) + ", " +
-                std::to_string(dendrite->getDendriteBouton()->getPosition()->x) + ", " +
-                std::to_string(dendrite->getDendriteBouton()->getPosition()->y) + ", " +
-                std::to_string(dendrite->getDendriteBouton()->getPosition()->z) + ")";
-        txn.exec(query);
+        if (!result.empty() && !result[0][0].as<bool>()) {
+            // Create tables without foreign key constraints
+            txn.exec(
+                    // Neurons Table
+                    "CREATE TABLE neurons ("
+                    "neuron_id SERIAL PRIMARY KEY,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL,"
+                    "propagation_rate REAL,"
+                    "neuron_type INTEGER"
+                    ");"
+                    // Somas Table
+                    "CREATE TABLE somas ("
+                    "soma_id SERIAL PRIMARY KEY,"
+                    "neuron_id INTEGER,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+                    // Axon Hillocks Table
+                    "CREATE TABLE axonhillocks ("
+                    "axon_hillock_id SERIAL PRIMARY KEY,"
+                    "soma_id INTEGER,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+                    // Axon Branches Table
+                    "CREATE TABLE axonbranches ("
+                    "axon_branch_id SERIAL PRIMARY KEY,"
+                    "parent_axon_id INTEGER,"
+                    "parent_axon_branch_id INTEGER,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+                    // Axons Table
+                    "CREATE TABLE axons ("
+                    "axon_id SERIAL PRIMARY KEY,"
+                    "axon_hillock_id INTEGER,"
+                    "axon_branch_id INTEGER,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+                    // Axon Boutons Table
+                    "CREATE TABLE axonboutons ("
+                    "axon_bouton_id SERIAL PRIMARY KEY,"
+                    "axon_id INTEGER,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+                    // Synaptic Gaps Table
+                    "CREATE TABLE synapticgaps ("
+                    "synaptic_gap_id SERIAL PRIMARY KEY,"
+                    "axon_bouton_id INTEGER,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+                    // Dendrite Branches Table
+                    "CREATE TABLE dendritebranches ("
+                    "dendrite_branch_id SERIAL PRIMARY KEY,"
+                    "soma_id INTEGER,"
+                    "dendrite_id INTEGER,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+                    // Dendrites Table
+                    "CREATE TABLE dendrites ("
+                    "dendrite_id SERIAL PRIMARY KEY,"
+                    "dendrite_branch_id INTEGER,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+                    // Dendrite Boutons Table
+                    "CREATE TABLE dendriteboutons ("
+                    "dendrite_bouton_id SERIAL PRIMARY KEY,"
+                    "dendrite_id INTEGER UNIQUE,"
+                    "x REAL NOT NULL,"
+                    "y REAL NOT NULL,"
+                    "z REAL NOT NULL"
+                    ");"
+            );
 
-        dendrite_id++;
-        dendrite_bouton_id++;
+            // Add foreign key constraints using ALTER TABLE
+            txn.exec(
+                    // Somas Table Foreign Key
+                    "ALTER TABLE somas "
+                    "ADD FOREIGN KEY (neuron_id) REFERENCES neurons(neuron_id);"
+                    // Axon Hillocks Table Foreign Key
+                    "ALTER TABLE axonhillocks "
+                    "ADD FOREIGN KEY (soma_id) REFERENCES somas(soma_id);"
+                    // Axons Table Foreign Keys
+                    "ALTER TABLE axons "
+                    "ADD FOREIGN KEY (axon_hillock_id) REFERENCES axonhillocks(axon_hillock_id), "
+                    "ADD FOREIGN KEY (axon_branch_id) REFERENCES axonbranches(axon_branch_id);"
+                    // Axon Branches Table Foreign Keys
+                    "ALTER TABLE axonbranches "
+                    "ADD FOREIGN KEY (parent_axon_id) REFERENCES axons(axon_id), "
+                    "ADD FOREIGN KEY (parent_axon_branch_id) REFERENCES axonbranches(axon_branch_id);"
+                    // Axon Boutons Table Foreign Key
+                    "ALTER TABLE axonboutons "
+                    "ADD FOREIGN KEY (axon_id) REFERENCES axons(axon_id);"
+                    // Synaptic Gaps Table Foreign Key
+                    "ALTER TABLE synapticgaps "
+                    "ADD FOREIGN KEY (axon_bouton_id) REFERENCES axonboutons(axon_bouton_id);"
+                    // Dendrite Branches Table Foreign Keys
+                    "ALTER TABLE dendritebranches "
+                    "ADD FOREIGN KEY (soma_id) REFERENCES somas(soma_id), "
+                    "ADD FOREIGN KEY (dendrite_id) REFERENCES dendrites(dendrite_id);"
+                    // Dendrites Table Foreign Key
+                    "ALTER TABLE dendrites "
+                    "ADD FOREIGN KEY (dendrite_branch_id) REFERENCES dendritebranches(dendrite_branch_id);"
+                    // Dendrite Boutons Table Foreign Key
+                    "ALTER TABLE dendriteboutons "
+                    "ADD FOREIGN KEY (dendrite_id) REFERENCES dendrites(dendrite_id);"
+            );
 
-        for (auto& innerDendriteBranch : dendrite->getDendriteBranches()) {
-            dendrite_branch_id++;
-            insertDendriteBranches(txn, innerDendriteBranch, dendrite_branch_id, dendrite_id, dendrite_bouton_id, soma_id);
+            txn.commit();
+            std::cout << "Created tables and added foreign key constraints successfully." << std::endl;
+        } else {
+            std::cout << "Table 'neurons' already exists." << std::endl;
         }
     }
-    dendrite_branch_id++;
 }
 
-void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonBranch>& axonBranch, int& axon_branch_id, int& axon_id, int& axon_bouton_id, int& synaptic_gap_id, int& axon_hillock_id) {
-    if (!axonBranch) {
-        std::cerr << "axonBranch is null!" << std::endl;
+void insertDendriteBranches(pqxx::transaction_base& txn, const std::shared_ptr<DendriteBranch>& dendriteBranch, int parent_id, bool parent_is_soma) {
+    if (!dendriteBranch) {
         return;
     }
-    std::string query;
 
-    query = "INSERT INTO axonbranches (axon_branch_id, axon_id, x, y, z) VALUES (" +
-            std::to_string(axon_branch_id) + ", " + std::to_string(axon_id) + ", " +
-            std::to_string(axonBranch->getPosition()->x) + ", " +
-            std::to_string(axonBranch->getPosition()->y) + ", " +
-            std::to_string(axonBranch->getPosition()->z) + ")";
-    txn.exec(query);
+    int dendrite_branch_id;
 
-    for (auto& axon : axonBranch->getAxons()) {
-        axon_id++;
-        query = "INSERT INTO axons (axon_id, axon_branch_id, x, y, z) VALUES (" +
-                std::to_string(axon_id) + ", " + std::to_string(axon_branch_id) + ", " +
-                std::to_string(axon->getPosition()->x) + ", " +
-                std::to_string(axon->getPosition()->y) + ", " +
-                std::to_string(axon->getPosition()->z) + ")";
-        txn.exec(query);
+    if (parent_is_soma) {
+        // Insert Dendrite Branch connected to Soma
+        pqxx::result branch_result = txn.exec_params(
+                "INSERT INTO dendritebranches (soma_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING dendrite_branch_id",
+                parent_id,
+                dendriteBranch->getPosition()->x,
+                dendriteBranch->getPosition()->y,
+                dendriteBranch->getPosition()->z
+        );
+        dendrite_branch_id = branch_result[0][0].as<int>();
+        std::cout << "Inserted Dendrite Branch ID: " << dendrite_branch_id << std::endl;
+    } else {
+        // Insert Dendrite Branch connected to Dendrite
+        pqxx::result branch_result = txn.exec_params(
+                "INSERT INTO dendritebranches (dendrite_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING dendrite_branch_id",
+                parent_id,
+                dendriteBranch->getPosition()->x,
+                dendriteBranch->getPosition()->y,
+                dendriteBranch->getPosition()->z
+        );
+        dendrite_branch_id = branch_result[0][0].as<int>();
+        std::cout << "Inserted Dendrite Branch ID: " << dendrite_branch_id << std::endl;
+    }
 
-        query = "INSERT INTO axonboutons (axon_bouton_id, axon_id, x, y, z) VALUES (" +
-                std::to_string(axon_bouton_id) + ", " + std::to_string(axon_id) + ", " +
-                std::to_string(axon->getAxonBouton()->getPosition()->x) + ", " +
-                std::to_string(axon->getAxonBouton()->getPosition()->y) + ", " +
-                std::to_string(axon->getAxonBouton()->getPosition()->z) + ")";
-        txn.exec(query);
+    // For each Dendrite in the Dendrite Branch
+    for (const auto& dendrite : dendriteBranch->getDendrites()) {
+        // Insert Dendrite and get dendrite_id
+        pqxx::result dendrite_result = txn.exec_params(
+                "INSERT INTO dendrites (dendrite_branch_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING dendrite_id",
+                dendrite_branch_id,
+                dendrite->getPosition()->x,
+                dendrite->getPosition()->y,
+                dendrite->getPosition()->z
+        );
+        int dendrite_id = dendrite_result[0][0].as<int>();
+        std::cout << "Inserted Dendrite ID: " << dendrite_id << std::endl;
 
-        query = "INSERT INTO synapticgaps (synaptic_gap_id, axon_bouton_id, x, y, z) VALUES (" +
-                std::to_string(synaptic_gap_id) + ", " + std::to_string(axon_bouton_id) + ", " +
-                std::to_string(axon->getAxonBouton()->getSynapticGap()->getPosition()->x) + ", " +
-                std::to_string(axon->getAxonBouton()->getSynapticGap()->getPosition()->y) + ", " +
-                std::to_string(axon->getAxonBouton()->getSynapticGap()->getPosition()->z) + ")";
-        txn.exec(query);
+        // Insert Dendrite Bouton and get dendrite_bouton_id
+        pqxx::result bouton_result = txn.exec_params(
+                "INSERT INTO dendriteboutons (dendrite_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING dendrite_bouton_id",
+                dendrite_id,
+                dendrite->getDendriteBouton()->getPosition()->x,
+                dendrite->getDendriteBouton()->getPosition()->y,
+                dendrite->getDendriteBouton()->getPosition()->z
+        );
+        int dendrite_bouton_id = bouton_result[0][0].as<int>();
+        std::cout << "Inserted Dendrite Bouton ID: " << dendrite_bouton_id << std::endl;
 
-        axon_bouton_id++;
-        synaptic_gap_id++;
+        // Recursively insert any further Dendrite Branches stemming from this Dendrite
+        for (const auto& innerDendriteBranch : dendrite->getDendriteBranches()) {
+            insertDendriteBranches(txn, innerDendriteBranch, dendrite_id, false);
+        }
+    }
+}
 
-        for (auto& innerAxonBranch : axon->getAxonBranches()) {
-            axon_branch_id++;
-            insertAxonBranches(txn, innerAxonBranch, axon_branch_id, axon_id, axon_bouton_id, synaptic_gap_id, axon_hillock_id);
+void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonBranch>& axonBranch, int parent_id, bool parent_is_axon_hillock) {
+    if (!axonBranch) {
+        return;
+    }
+
+    int axon_branch_id;
+
+    if (parent_is_axon_hillock) {
+        // Insert Axon Branch connected to Axon Hillock
+        pqxx::result branch_result = txn.exec_params(
+                "INSERT INTO axonbranches (parent_axon_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING axon_branch_id",
+                parent_id,
+                axonBranch->getPosition()->x,
+                axonBranch->getPosition()->y,
+                axonBranch->getPosition()->z
+        );
+        axon_branch_id = branch_result[0][0].as<int>();
+        std::cout << "Inserted Axon Branch ID: " << axon_branch_id << std::endl;
+    } else {
+        // Insert Axon Branch connected to another Axon Branch
+        pqxx::result branch_result = txn.exec_params(
+                "INSERT INTO axonbranches (parent_axon_branch_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING axon_branch_id",
+                parent_id,
+                axonBranch->getPosition()->x,
+                axonBranch->getPosition()->y,
+                axonBranch->getPosition()->z
+        );
+        axon_branch_id = branch_result[0][0].as<int>();
+        std::cout << "Inserted Axon Branch ID: " << axon_branch_id << std::endl;
+    }
+
+    // For each Axon in the Axon Branch
+    for (const auto& axon : axonBranch->getAxons()) {
+        // Insert Axon and get axon_id
+        pqxx::result axon_result = txn.exec_params(
+                "INSERT INTO axons (axon_branch_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING axon_id",
+                axon_branch_id,
+                axon->getPosition()->x,
+                axon->getPosition()->y,
+                axon->getPosition()->z
+        );
+        int axon_id = axon_result[0][0].as<int>();
+        std::cout << "Inserted Axon ID: " << axon_id << std::endl;
+
+        // Insert Axon Bouton and get axon_bouton_id
+        pqxx::result bouton_result = txn.exec_params(
+                "INSERT INTO axonboutons (axon_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING axon_bouton_id",
+                axon_id,
+                axon->getAxonBouton()->getPosition()->x,
+                axon->getAxonBouton()->getPosition()->y,
+                axon->getAxonBouton()->getPosition()->z
+        );
+        int axon_bouton_id = bouton_result[0][0].as<int>();
+        std::cout << "Inserted Axon Bouton ID: " << axon_bouton_id << std::endl;
+
+        // Insert Synaptic Gap
+        txn.exec_params(
+                "INSERT INTO synapticgaps (axon_bouton_id, x, y, z) VALUES ($1, $2, $3, $4)",
+                axon_bouton_id,
+                axon->getAxonBouton()->getSynapticGap()->getPosition()->x,
+                axon->getAxonBouton()->getSynapticGap()->getPosition()->y,
+                axon->getAxonBouton()->getSynapticGap()->getPosition()->z
+        );
+        std::cout << "Inserted Synaptic Gap for Axon Bouton ID: " << axon_bouton_id << std::endl;
+
+        // Recursively insert any further Axon Branches stemming from this Axon
+        for (const auto& childAxonBranch : axon->getAxonBranches()) {
+            insertAxonBranches(txn, childAxonBranch, axon_id, false);
         }
     }
 }
 
 void batch_insert_neurons(pqxx::transaction_base& txn, const std::vector<std::shared_ptr<Neuron>>& neurons) {
-    std::ostringstream neuron_insert;
-    std::ostringstream soma_insert;
-    std::ostringstream axon_hillock_insert;
-    std::ostringstream axon_insert;
-    std::ostringstream axon_bouton_insert;
-    std::ostringstream synaptic_gap_insert;
+    std::cout << "Starting batch insertion of " << neurons.size() << " neurons." << std::endl;
+    int count = 0;
+    for (const auto& neuron : neurons) {
+        count++;
+        try {
+            if (!neuron) {
+                std::cerr << "Neuron " << count << " is null. Skipping insertion." << std::endl;
+                continue;
+            }
+            if (!neuron->getSoma()) {
+                std::cerr << "Neuron " << count << " has a null Soma. Skipping insertion." << std::endl;
+                continue;
+            }
+            if (!neuron->getSoma()->getAxonHillock()) {
+                std::cerr << "Neuron " << count << " has a null AxonHillock. Skipping insertion." << std::endl;
+                continue;
+            }
+            if (!neuron->getSoma()->getAxonHillock()->getAxon()) {
+                std::cerr << "Neuron " << count << " has a null Axon. Skipping insertion." << std::endl;
+                continue;
+            }
+            if (!neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()) {
+                std::cerr << "Neuron " << count << " has a null AxonBouton. Skipping insertion." << std::endl;
+                continue;
+            }
+            if (!neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()) {
+                std::cerr << "Neuron " << count << " has a null SynapticGap. Skipping insertion." << std::endl;
+                continue;
+            }
 
-    neuron_insert << "INSERT INTO neurons (neuron_id, x, y, z) VALUES ";
-    soma_insert << "INSERT INTO somas (soma_id, neuron_id, x, y, z) VALUES ";
-    axon_hillock_insert << "INSERT INTO axonhillocks (axon_hillock_id, soma_id, x, y, z) VALUES ";
-    axon_insert << "INSERT INTO axons (axon_id, axon_hillock_id, x, y, z) VALUES ";
-    axon_bouton_insert << "INSERT INTO axonboutons (axon_bouton_id, axon_id, x, y, z) VALUES ";
-    synaptic_gap_insert << "INSERT INTO synapticgaps (synaptic_gap_id, axon_bouton_id, x, y, z) VALUES ";
+            // Insert Neuron and get neuron_id
+            pqxx::result neuron_result = txn.exec_params(
+                    "INSERT INTO neurons (x, y, z, propagation_rate, neuron_type) VALUES ($1, $2, $3, $4, $5) RETURNING neuron_id",
+                    neuron->getPosition()->x,
+                    neuron->getPosition()->y,
+                    neuron->getPosition()->z,
+                    neuron->getPropagationRate(),
+                    neuron->getNeuronType()
+            );
+            int neuron_id = neuron_result[0][0].as<int>();
+            std::cout << "Inserted Neuron ID: " << neuron_id << std::endl;
 
-    bool first = true;
+            // Insert Soma and get soma_id
+            pqxx::result soma_result = txn.exec_params(
+                    "INSERT INTO somas (neuron_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING soma_id",
+                    neuron_id,
+                    neuron->getSoma()->getPosition()->x,
+                    neuron->getSoma()->getPosition()->y,
+                    neuron->getSoma()->getPosition()->z
+            );
+            int soma_id = soma_result[0][0].as<int>();
+            std::cout << "Inserted Soma ID: " << soma_id << std::endl;
 
-    int neuron_id = 0;
-    int soma_id = 0;
-    int axon_hillock_id = 0;
-    int axon_id = 0;
-    int axon_bouton_id = 0;
-    int axon_branch_id = 0;
-    int synaptic_gap_id = 0;
-    int dendrite_id = 0;
-    int dendrite_bouton_id = 0;
-    int dendrite_branch_id = 0;
+            // Insert Axon Hillock and get axon_hillock_id
+            pqxx::result axon_hillock_result = txn.exec_params(
+                    "INSERT INTO axonhillocks (soma_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING axon_hillock_id",
+                    soma_id,
+                    neuron->getSoma()->getAxonHillock()->getPosition()->x,
+                    neuron->getSoma()->getAxonHillock()->getPosition()->y,
+                    neuron->getSoma()->getAxonHillock()->getPosition()->z
+            );
+            int axon_hillock_id = axon_hillock_result[0][0].as<int>();
+            std::cout << "Inserted Axon Hillock ID: " << axon_hillock_id << std::endl;
 
-    for (auto& neuron : neurons) {
-        if (!first) {
-            neuron_insert << ", ";
-            soma_insert << ", ";
-            axon_hillock_insert << ", ";
-            axon_insert << ", ";
-            axon_bouton_insert << ", ";
-            synaptic_gap_insert << ", ";
-        } else {
-            first = false;
-        }
+            // Insert Axon and get axon_id
+            pqxx::result axon_result = txn.exec_params(
+                    "INSERT INTO axons (axon_hillock_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING axon_id",
+                    axon_hillock_id,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->x,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->y,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->z
+            );
+            int axon_id = axon_result[0][0].as<int>();
+            std::cout << "Inserted Axon ID: " << axon_id << std::endl;
 
-        neuron_insert << "(" << neuron_id << ", " << neuron->getPosition()->x << ", " << neuron->getPosition()->y << ", " << neuron->getPosition()->z << ")";
-        soma_insert << "(" << soma_id << ", " << neuron_id << ", " << neuron->getSoma()->getPosition()->x << ", " << neuron->getSoma()->getPosition()->y << ", " << neuron->getSoma()->getPosition()->z << ")";
-        axon_hillock_insert << "(" << axon_hillock_id << ", " << soma_id << ", " << neuron->getSoma()->getAxonHillock()->getPosition()->x << ", " << neuron->getSoma()->getAxonHillock()->getPosition()->y << ", " << neuron->getSoma()->getAxonHillock()->getPosition()->z << ")";
-        axon_insert << "(" << axon_id << ", " << axon_hillock_id << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->x << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->y << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getPosition()->z << ")";
-        axon_bouton_insert << "(" << axon_bouton_id << ", " << axon_id << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->x << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->y << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->z << ")";
-        synaptic_gap_insert << "(" << synaptic_gap_id << ", " << axon_bouton_id << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->x << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->y << ", " << neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->z << ")";
+            // Insert Axon Bouton and get axon_bouton_id
+            pqxx::result axon_bouton_result = txn.exec_params(
+                    "INSERT INTO axonboutons (axon_id, x, y, z) VALUES ($1, $2, $3, $4) RETURNING axon_bouton_id",
+                    axon_id,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->x,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->y,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition()->z
+            );
+            int axon_bouton_id = axon_bouton_result[0][0].as<int>();
+            std::cout << "Inserted Axon Bouton ID: " << axon_bouton_id << std::endl;
 
-        axon_bouton_id++;
-        synaptic_gap_id++;
+            // Insert Synaptic Gap
+            txn.exec_params(
+                    "INSERT INTO synapticgaps (axon_bouton_id, x, y, z) VALUES ($1, $2, $3, $4)",
+                    axon_bouton_id,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->x,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->y,
+                    neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition()->z
+            );
+            std::cout << "Inserted Synaptic Gap for Axon Bouton ID: " << axon_bouton_id << std::endl;
 
-        if (neuron &&
-            neuron->getSoma() &&
-            neuron->getSoma()->getAxonHillock() &&
-            neuron->getSoma()->getAxonHillock()->getAxon() &&
-            !neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches().empty() &&
-            neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()[0]) {
+            // Insert Axon Branches recursively starting from the Axon Hillock's Axon
+            for (const auto &axonBranch: neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()) {
+                insertAxonBranches(txn, axonBranch, axon_id, false);
+            }
 
-            for (auto& axonBranch : neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBranches()) {
-                insertAxonBranches(txn, axonBranch, axon_branch_id, axon_id, axon_bouton_id, synaptic_gap_id, axon_hillock_id);
-                axon_branch_id++;
+            // Insert Dendrite Branches recursively
+            for (const auto &dendriteBranch: neuron->getSoma()->getDendriteBranches()) {
+                insertDendriteBranches(txn, dendriteBranch, soma_id, true);
             }
         }
-
-        for (auto& dendriteBranch : neuron->getSoma()->getDendriteBranches()) {
-            insertDendriteBranches(txn, dendriteBranch, dendrite_branch_id, dendrite_id, dendrite_bouton_id, soma_id);
+        catch (const std::exception &e) {
+            std::cerr << "Error inserting neuron: " << e.what() << std::endl;
         }
-
-        axon_id++;
-        axon_hillock_id++;
-        soma_id++;
-        neuron_id++;
-        dendrite_branch_id++;
-        dendrite_id++;
-        dendrite_bouton_id++;
     }
-
-    txn.exec(neuron_insert.str());
-    txn.exec(soma_insert.str());
-    txn.exec(axon_hillock_insert.str());
-    txn.exec(axon_insert.str());
-    txn.exec(axon_bouton_insert.str());
-    txn.exec(synaptic_gap_insert.str());
 }
 
 void updateDatabase(pqxx::connection& conn) {

@@ -5,13 +5,20 @@ void Dendrite::initialise()
 {
     if(!instanceInitialised)
     {
-        if(!dendriteBouton)
+        if(!this->dendriteBouton)
         {
-            dendriteBouton = std::make_shared<DendriteBouton>(
+            this->dendriteBouton = std::make_shared<DendriteBouton>(
              std::make_shared<Position>((position->x) - 1, (position->y) - 1, (position->z) - 1));
-            dendriteBouton->initialise();
-            dendriteBouton->updateFromDendrite(shared_from_this());
+            this->dendriteBouton->initialise();
+            this->dendriteBouton->updateFromDendrite(shared_from_this());
         }
         instanceInitialised = true;
     }
 }
+
+// Get the dendrite bouton or multiple dendrite boutons
+std::shared_ptr<DendriteBouton> Dendrite::getDendriteBoutons()
+{
+    return this->dendriteBouton;
+}
+

@@ -8,11 +8,9 @@
 #include <atomic>
 #include <mutex>
 #include <pqxx/pqxx>
-#include "PulseAudioMic.h"
 #include "Logger.h"
 #include "config.h"
 #include "database.h"
-#include "audio.h"
 #include <poll.h>
 #include <unistd.h>
 #include "utils.h"
@@ -27,6 +25,15 @@ std::mutex changedNeuronsMutex;
 std::atomic<bool> running(true);
 std::condition_variable cv;
 std::atomic<bool> dbUpdateReady(false);
+
+// Configuration and Logger Initialization
+
+// Function to simulate logging from multiple threads
+void logMessages(Logger& logger, int thread_id) {
+    for (int i = 0; i < 5; ++i) {
+        logger << "Thread " << thread_id << " logging message " << i << std::endl;
+    }
+}
 
 void checkForQuit() {
     struct pollfd fds[1];
@@ -67,38 +74,19 @@ void computePropagationRate(const std::shared_ptr<Neuron>& neuron) {
     }
 }
 
+
 int main() {
-    Logger logger("errors.log");
+    // Initialize Logger
+    Logger logger("errors_aarnn.log");
+
+    std::thread t1(logMessages, std::ref(logger), 1);
+
 
     std::string input = "Hello, World!";
     std::string encoded = base64_encode(reinterpret_cast<const unsigned char*>(input.c_str()), input.length());
 
     std::cout << "Base64 Encoded: " << encoded << std::endl;
     std::string query;
-
-    char* pulse_sink = std::getenv("PULSE_SINK");
-    if (pulse_sink != nullptr) {
-        std::cout << "PULSE_SINK: " << pulse_sink << std::endl;
-    } else {
-        std::cout << "PULSE_SINK not set" << std::endl;
-    }
-
-    char* pulse_source = std::getenv("PULSE_SOURCE");
-    if (pulse_source != nullptr) {
-        std::cout << "PULSE_SOURCE: " << pulse_source << std::endl;
-    } else {
-        std::cout << "PULSE_SOURCE not set" << std::endl;
-    }
-
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
-
-    std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
-    if (!mic) {
-        std::cerr << "Failed to create PulseAudioMic!" << std::endl;
-        return 1;
-    }
-    std::thread micThread(&PulseAudioMic::micRun, mic);
 
     std::vector<std::string> config_filenames = { "simulation.conf" };
     auto config = read_config(config_filenames);
@@ -162,6 +150,7 @@ int main() {
         std::cout << "9" << std::endl;
         neurons.back()->initialise();
         std::cout << "10" << std::endl;
+        neurons.back()->setPropagationRate(1.0);
         if (i > 0 && i % 3 == 0) {
             PositionPtr prevDendriteBoutonPosition = prevNeuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
             PositionPtr currentSynapticGapPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
@@ -387,19 +376,23 @@ int main() {
 
     try {
         batch_insert_neurons(txn, neurons);
+        std::cout << "Batch insertion completed." << std::endl;
+        std::cout << "Total Propagation Rate: " << propagationRate << std::endl;
         if (propagationRate != 0) {
             txn.commit();
         } else {
+            std::cout << "Propagation rate is zero. Aborting transaction." << std::endl;
             throw std::runtime_error("The propagation rate is not valid. Skipping database insertion.");
         }
     } catch (const std::exception& e) {
         std::cerr << "Database error: " << e.what() << std::endl;
         txn.abort();
+        std::cout << "Transaction aborted." << std::endl;
     }
 
     std::vector<std::shared_ptr<Neuron>> emptyNeurons;
-    std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAudioQueue), 0);
-    std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
+    //std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAudioQueue), 0);
+    //std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
     std::thread inputThread(checkForQuit);
     std::thread dbThread(updateDatabase, std::ref(conn));
 
@@ -408,10 +401,10 @@ int main() {
     }
 
     inputThread.join();
-    nvThread.join();
-    avThread.join();
-    mic->micStop();
-    micThread.join();
+    //nvThread.join();
+    //avThread.join();
+    //mic->micStop();
+    //micThread.join();
     dbThread.join();
 
     return 0;

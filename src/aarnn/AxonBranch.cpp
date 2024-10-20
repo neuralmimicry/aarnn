@@ -7,12 +7,12 @@ void AxonBranch::initialise()
     if(!instanceInitialised)
     {
         std::cout << "Initialising AxonBranch" << std::endl;
-        if(onwardAxons.empty())
+        if(this->onwardAxons.empty())
         {
             connectAxon(std::make_shared<Axon>(
              std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1)));
-            onwardAxons.back()->initialise();
-            onwardAxons.back()->updateFromAxonBranch(shared_from_this());
+            this->onwardAxons.back()->initialise();
+            this->onwardAxons.back()->updateFromAxonBranch(shared_from_this());
         }
         instanceInitialised = true;
     }
@@ -38,5 +38,5 @@ void AxonBranch::connectAxon(std::shared_ptr<Axon> axon)
 
 void AxonBranch::updateFromAxon(std::shared_ptr<Axon> parentPointer)
 {
-    parentAxon = std::move(parentPointer);
+    this->parentAxon = std::move(parentPointer);
 }

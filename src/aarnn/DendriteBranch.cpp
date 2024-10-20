@@ -6,12 +6,12 @@ void DendriteBranch::initialise()
 {
     if(!instanceInitialised)
     {
-        if(onwardDendrites.empty())
+        if(this->onwardDendrites.empty())
         {
             connectDendrite(std::make_shared<Dendrite>(
              std::make_shared<Position>((position->x) - 1, (position->y) - 1, (position->z) - 1)));
-            onwardDendrites.back()->initialise();
-            onwardDendrites.back()->updateFromDendriteBranch(shared_from_this());
+            this->onwardDendrites.back()->initialise();
+            this->onwardDendrites.back()->updateFromDendriteBranch(shared_from_this());
         }
         instanceInitialised = true;
     }
@@ -37,10 +37,10 @@ void DendriteBranch::connectDendrite(std::shared_ptr<Dendrite> dendrite)
 
 void DendriteBranch::updateFromSoma(std::shared_ptr<Soma> parentSomaPointer)
 {
-    parentSoma = std::move(parentSomaPointer);
+    this->parentSoma = std::move(parentSomaPointer);
 }
 
 void DendriteBranch::updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer)
 {
-    parentDendrite = std::move(parentDendritePointer);
+    this->parentDendrite = std::move(parentDendritePointer);
 }
