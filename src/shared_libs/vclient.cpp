@@ -12,21 +12,23 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 }
 
 // Function to retrieve Postgres credentials from Vault
-bool getPostgresCredentials(const std::string& vault_addr, const std::string& vault_token,
+bool getPostgresCredentials(const std::string& vault_api_addr, const std::string& vault_token,
                             const std::string& secret_path, std::string& username,
                             std::string& password, std::string& database, std::string& database_host, std::string& database_port) {
     CURL* curl;
     CURLcode res;
     curl = curl_easy_init();
     if(curl) {
-        std::string url = vault_addr + "/v1/" + secret_path;
+        std::string url = vault_api_addr + "/v1/" + secret_path;
         std::string response_string;
-        std::cout << "Vault URL: " << url << std::endl;
+        std::cout << "Vault API URL: " << url << std::endl;
 
         // Set the URL and headers
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         struct curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("X-Vault-Token: " + vault_token).c_str());
+        std::cout << "Vault Token: " << vault_token << std::endl;
+        std::cout << "Headers: " << headers << std::endl;
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
@@ -73,21 +75,22 @@ bool getPostgresCredentials(const std::string& vault_addr, const std::string& va
 // Function to initialize the database connection
 bool initialiseDatabaseConnection(std::string& connection_string) {
     const char* vault_addr_env = std::getenv("VAULT_ADDR");
+    const char* vault_api_addr_env = std::getenv("VAULT_API_ADDR");
     const char* vault_token_env = std::getenv("VAULT_TOKEN");
 
-    if (!vault_addr_env || !vault_token_env) {
-        std::cerr << "Environment variables VAULT_ADDR and VAULT_TOKEN must be set." << std::endl;
+    if (!vault_api_addr_env || !vault_token_env) {
+        std::cerr << "Environment variables VAULT_API_ADDR and VAULT_TOKEN must be set." << std::endl;
         return false;
     }
 
-    std::string vault_addr = vault_addr_env;
+    std::string vault_api_addr = vault_api_addr_env;
     std::string vault_token = vault_token_env;
-    std::cout << "Vault Address: " << vault_addr << std::endl;
+    std::cout << "Vault API Address: " << vault_api_addr << std::endl;
     std::cout << "Vault Token: " << vault_token << std::endl;
     std::string secret_path = "secret/data/postgres"; // Adjust this path based on your Vault setup
     std::string username, password, database, database_host, database_port;
 
-    if (getPostgresCredentials(vault_addr, vault_token, secret_path, username, password, database, database_host, database_port)) {
+    if (getPostgresCredentials(vault_api_addr, vault_token, secret_path, username, password, database, database_host, database_port)) {
         std::cout << "Postgres Username: " << username << std::endl;
         std::cout << "Postgres Password: " << password << std::endl;
         std::cout << "Postgres Database: " << database << std::endl;
