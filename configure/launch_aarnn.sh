@@ -4,7 +4,7 @@ source /app/.env
 
 # Function to check required environment variables
 check_variables() {
-    required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DB" "POSTGRES_HOST" "POSTGRES_PORT" "PULSE_SERVER" "PULSE_COOKIE" "PULSE_SINK" "PULSE_SOURCE" "VAULT_ADDR" "VAULT_TOKEN")
+    required_vars=("POSTGRES_USERNAME" "POSTGRES_PASSWORD" "POSTGRES_DB" "POSTGRES_HOST" "POSTGRES_PORT" "PULSE_SERVER" "PULSE_COOKIE" "PULSE_SINK" "PULSE_SOURCE" "VAULT_ADDR" "VAULT_API_ADDR" "VAULT_TOKEN")
     for var in "${required_vars[@]}"; do
       # Remove quotes from the variable value
       value=$(echo "${!var}" | sed 's/^"//; s/"$//')
@@ -28,6 +28,7 @@ pactl info
 
 echo "Starting AARNN..."
 echo "VAULT_ADDR: $VAULT_ADDR"
+echo "VAULT_API_ADDR: $VAULT_API_ADDR"
 echo "VAULT_TOKEN: $VAULT_TOKEN"
 
 # Start gdb with the program and capture the backtrace on crash

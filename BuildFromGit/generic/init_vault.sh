@@ -6,6 +6,11 @@ if [ -z "$VAULT_ADDR" ]; then
     exit 1
 fi
 
+if [ -z "$VAULT_API_ADDR" ]; then
+    echo "VAULT_API_ADDR is not set. Please set it and try again."
+    exit 1
+fi
+
 if [ -z "$VAULT_TOKEN" ]; then
     echo "VAULT_TOKEN is not set. Please set it and try again."
     exit 1

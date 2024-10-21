@@ -245,7 +245,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         echo "Vault token retrieved: $VAULT_TOKEN"
 
         # Extract VAULT_ADDR from the vault container
-        VAULT_ADDR=$(podman exec "$CONTAINER_NAME" printenv VAULT_API_ADDR)
+        VAULT_ADDR=$(podman exec "$CONTAINER_NAME" printenv VAULT_ADDR)
 
         if [ -z "$VAULT_ADDR" ]; then
             echo "Failed to retrieve VAULT_ADDR from the vault container. Setting to default."
@@ -254,10 +254,20 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
 
         echo "VAULT_ADDR retrieved: $VAULT_ADDR"
 
+        # Extract VAULT_API_ADDR from the vault container
+        VAULT_API_ADDR=$(podman exec "$CONTAINER_NAME" printenv VAULT_API_ADDR)
+
+        if [ -z "$VAULT_API_ADDR" ]; then
+            echo "Failed to retrieve VAULT_API_ADDR from the vault container. Setting to default."
+            VAULT_API_ADDR="$VAULT_ADDR"
+        fi
+
+        echo "VAULT_API_ADDR retrieved: $VAULT_API_ADDR"
+
         # --- Use Retrieved Information in Build Args ---
         # Append the VAULT_TOKEN as a build argument for dependent images
-        BUILD_ARGS[3]="--build-arg VAULT_TOKEN=${VAULT_TOKEN} --build-arg VAULT_ADDR=${VAULT_ADDR}"  # aarnn-image
-        BUILD_ARGS[4]="--build-arg VAULT_TOKEN=${VAULT_TOKEN} --build-arg VAULT_ADDR=${VAULT_ADDR}"  # visualiser-image
+        BUILD_ARGS[3]="--build-arg VAULT_TOKEN=${VAULT_TOKEN} --build-arg VAULT_API_ADDR=${VAULT_API_ADDR} --build-arg VAULT_ADDR=${VAULT_ADDR}"  # aarnn-image
+        BUILD_ARGS[4]="--build-arg VAULT_TOKEN=${VAULT_TOKEN} --build-arg VAULT_API_ADDR=${VAULT_API_ADDR} --build-arg VAULT_ADDR=${VAULT_ADDR}"  # visualiser-image
 
         podman stop "$CONTAINER_NAME"
         podman rm "$CONTAINER_NAME"

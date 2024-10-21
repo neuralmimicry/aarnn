@@ -62,7 +62,9 @@ start_containers() {
     chmod +x vault_env.sh
     . ./vault_env.sh
     echo "$VAULT_ADDR"
+    echo "$VAULT_API_ADDR"
     echo "$VAULT_TOKEN"
+    export VAULT_API_ADDR
     export VAULT_ADDR
     export VAULT_TOKEN
     export XDG_RUNTIME_DIR
@@ -95,6 +97,7 @@ start_containers() {
             --env DISPLAY=":1" \
             --volume /tmp/.X11-unix:/tmp/.X11-unix \
             --env VAULT_ADDR="${VAULT_ADDR}" \
+            --env VAULT_API_ADDR="${VAULT_API_ADDR}" \
             --env VAULT_TOKEN="${VAULT_TOKEN}" \
             --env PULSE_SERVER=unix:"${XDG_RUNTIME_DIR}"/pulse/native \
             --env PULSE_COOKIE=/root/.config/pulse/cookie \
@@ -123,6 +126,7 @@ start_containers() {
         --env POSTGRES_HOST="${POSTGRES_HOST}" \
         --env POSTGRES_PORT="${POSTGRES_PORT}" \
         --env VAULT_ADDR="${VAULT_ADDR}" \
+        --env VAULT_API_ADDR="${VAULT_API_ADDR}" \
         --env VAULT_TOKEN="${VAULT_TOKEN}" \
         visualiser
 }

@@ -46,18 +46,22 @@ done
 # Extract the first matching VAULT_ADDR and truncate if longer than 25 characters
 # VAULT_ADDR=$(grep -m 1 '127.0.0.1' /opt/vault/logs/vault_output.log | grep -o 'http://127.0.0.1:[0-9]*' | cut -c 1-25)
 VAULT_ADDR=http://vault:8200
+VAULT_API_ADDR=http://vault:8200
 VAULT_TOKEN=$(grep 'Root Token' /opt/vault/logs/vault_output.log | awk '{print $3}')
 
 # Export VAULT_ADDR and VAULT_TOKEN as environment variables
 export VAULT_ADDR
+export VAULT_API_ADDR
 export VAULT_TOKEN
 
 echo "Vault server started with address: $VAULT_ADDR"
+echo "Vault API address: $VAULT_API_ADDR"
 echo "Vault root token: $VAULT_TOKEN"
 
 # Save these variables to a file for later use
 cat <<EOL > /opt/vault/logs/vault_env.sh
 VAULT_ADDR=$VAULT_ADDR
+VAULT_API_ADDR=$VAULT_API_ADDR
 VAULT_TOKEN=$VAULT_TOKEN
 EOL
 
