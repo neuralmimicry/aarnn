@@ -30,10 +30,6 @@
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/run003.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run003.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_local.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run_local.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -271,7 +267,7 @@
       <workItem from="1728979960005" duration="11542000" />
       <workItem from="1729065550348" duration="85674000" />
       <workItem from="1729416955644" duration="6082000" />
-      <workItem from="1729453437817" duration="18559000" />
+      <workItem from="1729453437817" duration="20845000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
