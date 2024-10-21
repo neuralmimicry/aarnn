@@ -37,5 +37,7 @@ spec:
               value: "5432"
             - name: VAULT_ADDR
               value: "http://vault:8200"
+            - name: VAULT_API_ADDR
+              value: "http://vault:8200"
             - name: VAULT_TOKEN
               value: "root"

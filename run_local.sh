@@ -144,9 +144,11 @@ fi
 
 # Set VAULT_ADDR to localhost since we're running the application locally
 VAULT_ADDR="http://localhost:8200"
+VAULT_API_ADDR="http://localhost:8200"
 
 echo "VAULT_TOKEN retrieved: $VAULT_TOKEN"
 echo "VAULT_ADDR set to: $VAULT_ADDR"
+echo "VAULT_API_ADDR set to: $VAULT_API_ADDR"
 
 # Ensure Postgres container is running
 POSTGRES_CONTAINER_NAME="postgres"
@@ -178,6 +180,7 @@ fi
 
 # Set environment variables for the application
 export VAULT_ADDR
+export VAULT_API_ADDR
 export VAULT_TOKEN
 
 # POSTGRES_* variables are already exported from the aarnn_container.env
