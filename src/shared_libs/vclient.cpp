@@ -122,7 +122,7 @@ bool initialiseDatabaseConnection(std::string& connection_string) {
     }
 
     if (username.empty() || password.empty() || database.empty() || database_host.empty() || database_port.empty()) {
-        std::cerr << "Postgres credentials not found in Vault or environment variables" << std::endl;
+        std::cerr << "Postgres credentials not found in Vault nor environment variables" << std::endl;
         return false;
     }
 

@@ -30,7 +30,10 @@
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/generic/init_vault.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/generic/init_vault.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/run003.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run003.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_local.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run_local.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +56,9 @@
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2024" />
@@ -70,36 +76,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;CMake Application.AARNN.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;Shell Script.ComposeContainers.sh.executor&quot;: &quot;Run&quot;,
-    &quot;Shell Script.RunContainers.executor&quot;: &quot;Run&quot;,
-    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/pbisaacs/Developer/aarnn/src/visualiser&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "CMake Application.AARNN.executor": "Run",
+    "Database Script.debug_database.sql.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "Shell Script.ComposeContainers.sh.executor": "Run",
+    "Shell Script.RunContainers.executor": "Run",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/pbisaacs/Developer/aarnn/src/visualiser",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "CMakeSettings",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ],
+    "RunConfigurationTargetLRU": [
+      "baacce9a-d183-41f9-ad6d-ea8cf8c0e36b/database/\"neurons\""
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/visualiser" />
@@ -114,7 +124,13 @@
       <recent name="$PROJECT_DIR$/BuildFromGit" />
     </key>
   </component>
-  <component name="RunManager" selected="Shell Script.ComposeContainers.sh">
+  <component name="RunManager" selected="Database Script.debug_database.sql">
+    <configuration name="debug_database.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/test/debug_database.sql" />
+      <script-mode>FILE</script-mode>
+      <data-source id="baacce9a-d183-41f9-ad6d-ea8cf8c0e36b" namespace="database/&quot;neurons&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="ComposeContainers.sh" type="ShConfigurationType" temporary="true">
       <option name="SCRIPT_TEXT" value="" />
       <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
@@ -146,11 +162,13 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Database Script.debug_database.sql" />
       <item itemvalue="Shell Script.RunContainers" />
       <item itemvalue="Shell Script.ComposeContainers.sh" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Database Script.debug_database.sql" />
         <item itemvalue="Shell Script.ComposeContainers.sh" />
       </list>
     </recent_temporary>
@@ -253,7 +271,7 @@
       <workItem from="1728979960005" duration="11542000" />
       <workItem from="1729065550348" duration="85674000" />
       <workItem from="1729416955644" duration="6082000" />
-      <workItem from="1729453437817" duration="8780000" />
+      <workItem from="1729453437817" duration="18559000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
