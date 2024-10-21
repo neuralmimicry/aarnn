@@ -1,6 +1,7 @@
 // visualiser.cpp
 #include "visualiser.h"
 #include "Logger.h"
+#include "wss.h"
 
 #include <iostream>
 #include <fstream>
@@ -40,6 +41,18 @@
 #include <vtkGeometryFilter.h>
 #include <vtkProperty.h>
 #include <vtkDataObject.h>
+
+// Include WebSocket++ headers
+#include <websocketpp/config/asio_no_tls.hpp>
+#include <websocketpp/server.hpp>
+#include <nlohmann/json.hpp>
+
+// Type definitions
+typedef websocketpp::server<websocketpp::config::asio> server;
+// Shared data structures
+std::vector<nlohmann::json> coordinate_updates;
+std::mutex data_mutex;
+std::condition_variable data_cond_var;
 
 // Utility Functions
 
@@ -96,8 +109,8 @@ public:
 };
 
 // Constructor Implementation
-Visualiser::Visualiser(std::shared_ptr<pqxx::connection> conn, Logger& logger)
-        : conn_(conn), logger_(logger) {}
+Visualiser::Visualiser(std::shared_ptr<pqxx::connection> conn, Logger& logger, WebSocketServer& ws_server)
+        : conn_(conn), logger_(logger), ws_server_(ws_server) {}
 
 // Setup VTK Components
 void Visualiser::setupVTK(vtkSmartPointer<vtkRenderer>& renderer,
@@ -725,8 +738,16 @@ int main() {
         logger << "Successfully connected to the database." << std::endl;
         std::cout << "Connected to PostgreSQL database." << std::endl;
 
+        // Initialize WebSocket server
+        WebSocketServer ws_server;
+
+        // Start the server in a separate thread
+        std::thread ws_thread([&ws_server]() {
+            ws_server.run(9002); // Use port 9002 or any available port
+        });
+
         // Initialize and Run Visualiser
-        Visualiser visualiser(conn, logger);
+        Visualiser visualiser(conn, logger, ws_server);
         visualiser.visualise();
 
     } catch (const pqxx::sql_error& e) {

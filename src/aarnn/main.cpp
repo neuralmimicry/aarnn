@@ -112,16 +112,11 @@ int main() {
 
     pqxx::connection conn(connection_string);
     initialise_database(conn);
-    std::cout << "1" << std::endl;
     pqxx::work txn(conn);
-    std::cout << "2" << std::endl;
     txn.exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
-    std::cout << "3" << std::endl;
     txn.exec("SET lock_timeout = '5s';");
-    std::cout << "4" << std::endl;
 
     NeuronParameters params;
-    std::cout << "5" << std::endl;
 
     std::vector<std::shared_ptr<Neuron>> neurons;
     std::mutex neuron_mutex;
@@ -134,11 +129,8 @@ int main() {
     double newPositionY;
     double newPositionZ;
     std::shared_ptr<Neuron> prevNeuron;
-    std::cout << "6" << std::endl;
     for (int i = 0; i < num_neurons; ++i) {
-        std::cout << "7" << std::endl;
         auto coords = get_coordinates(i, num_neurons, neuron_points_per_layer);
-        std::cout << "8" << std::endl;
         if (i > 0) {
             prevNeuron = neurons.back();
             shiftX = std::get<0>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
@@ -147,9 +139,7 @@ int main() {
         }
 
         neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-        std::cout << "9" << std::endl;
         neurons.back()->initialise();
-        std::cout << "10" << std::endl;
         neurons.back()->setPropagationRate(1.0);
         if (i > 0 && i % 3 == 0) {
             PositionPtr prevDendriteBoutonPosition = prevNeuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
 project(AARNN)
 
@@ -20,7 +20,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
 set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CGAL_DIR "/usr/lib/x86_64-linux-gnu/cmake/CGAL/")
@@ -144,9 +143,15 @@ if(NOT FFTW3_LIBRARIES)
     message(STATUS "Using default FFTW3 libraries: ${FFTW3_LIBRARIES}")
 endif()
 
+include(FetchContent)
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
 # Add the src subdirectory to the include paths
 include_directories(include)
 include_directories(src)
+include_directories(thirdparty/websocketpp)
 include_directories(${PostgreSQL_INCLUDE_DIR})
 include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
 include_directories(${Boost_INCLUDE_DIRS})  # Add Boost include directories
@@ -202,7 +207,7 @@ add_executable(AARNN ${AARNN_SRC}
         include/timer.h
         src/aarnn/database.cpp
         src/aarnn/audio.cpp
-        src/aarnn/Logger.cpp
+        src/shared_libs/Logger.cpp
         src/aarnn/timer.cpp
         src/aarnn/main.cpp
         src/aarnn/utils.cpp
@@ -231,8 +236,9 @@ add_custom_command(TARGET AARNN POST_BUILD
 add_executable(Visualiser ${VISUALISER_SRC}
         include/vclient.h
         include/Logger.h
-        src/aarnn/Logger.cpp
-        src/shared_libs/vclient.cpp)
+        src/shared_libs/Logger.cpp
+        src/shared_libs/vclient.cpp
+        src/visualiser/wss.cpp)
 target_link_libraries(Visualiser PRIVATE
         ${VTK_LIBRARIES}
         ${PostgreSQL_LIBRARIES}
@@ -242,6 +248,7 @@ target_link_libraries(Visualiser PRIVATE
         ${PQXX_LIB}
         ${CURL_LIBRARIES}
         ${CGAL_LIBRARIES}
+        nlohmann_json::nlohmann_json
 )
 
 # Copy simulation.conf into the same directory as the AARNN executable

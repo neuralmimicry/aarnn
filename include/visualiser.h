@@ -15,6 +15,7 @@
 #include <vtkCellArray.h>
 #include <vtkFloatArray.h>
 #include <vtkUnsignedCharArray.h>
+#include "wss.h"
 
 // Forward declaration of Logger class
 class Logger;
@@ -29,7 +30,7 @@ public:
      * @param conn Shared pointer to a pqxx::connection object.
      * @param logger Reference to a Logger object for logging purposes.
      */
-    Visualiser(std::shared_ptr<pqxx::connection> conn, Logger& logger);
+    Visualiser(std::shared_ptr<pqxx::connection> conn, Logger& logger, WebSocketServer& ws_server);
 
     /**
      * @brief Starts the visualization process.
@@ -93,6 +94,7 @@ private:
     // Data Members
     std::shared_ptr<pqxx::connection> conn_; ///< Shared pointer to the PostgreSQL connection.
     Logger& logger_;                          ///< Reference to the Logger object for logging.
+    WebSocketServer& ws_server_;
 };
 
 #endif // AARNN_VISUALISER_H
