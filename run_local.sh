@@ -118,8 +118,11 @@ if podman ps -a --format "{{.Names}}" | grep -q "^$VAULT_CONTAINER_NAME$"; then
     fi
 else
     echo "Starting Vault container..."
-    podman run -d --name "$VAULT_CONTAINER_NAME" -p 8200:8200 \
-        --network slirp4netns:port_handler=slirp4netns \
+#        --network slirp4netns:port_handler=slirp4netns \
+    podman run -d --name "$VAULT_CONTAINER_NAME" \
+        -p 8200:8200 \
+        -e VAULT_DEV_LISTEN_ADDRESS="0.0.0.0:8200" \
+        -e VAULT_API_ADDR="http://127.0.0.1:8200" \
         vault-image:latest
 fi
 

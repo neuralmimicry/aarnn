@@ -4,6 +4,5 @@ CREATE TABLE IF NOT EXISTS neurons (
                                        y REAL NOT NULL,
                                        z REAL NOT NULL,
                                        propagation_rate REAL,
-                                       neuron_type INTEGER,
-                                       axon_length REAL
+                                       neuron_type INTEGER
 );
