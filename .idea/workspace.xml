@@ -29,7 +29,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
+      <change afterPath="$PROJECT_DIR$/include/wss.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/visualiser/wss.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/visualiser.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/visualiser.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/Logger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,14 +124,19 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/shared_libs" />
       <recent name="$PROJECT_DIR$/BuildFromGit/generic" />
       <recent name="$PROJECT_DIR$/BuildFromGit/podman" />
       <recent name="$PROJECT_DIR$/BuildFromGit/docker" />
       <recent name="$PROJECT_DIR$/BuildFromGit/kubernetes" />
-      <recent name="$PROJECT_DIR$/BuildFromGit" />
     </key>
   </component>
   <component name="RunManager" selected="Database Script.debug_database.sql">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="debug_database.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/test/debug_database.sql" />
       <script-mode>FILE</script-mode>
@@ -267,7 +283,7 @@
       <workItem from="1728979960005" duration="11542000" />
       <workItem from="1729065550348" duration="85674000" />
       <workItem from="1729416955644" duration="6082000" />
-      <workItem from="1729453437817" duration="20845000" />
+      <workItem from="1729453437817" duration="34183000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
