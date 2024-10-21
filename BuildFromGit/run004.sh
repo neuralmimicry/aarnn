@@ -117,7 +117,7 @@ case "$CLOUD_PROVIDER" in
         echo "CLOUD_PROVIDER is 'local'. Running the images locally using Podman..."
 
         # Define network name
-        NETWORK_NAME="aarnn-network"
+        NETWORK_NAME="aarnn_network"
 
         # Check if network exists, and create it if it doesn't
         if ! podman network exists "$NETWORK_NAME"; then

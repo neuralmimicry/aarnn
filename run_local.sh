@@ -80,6 +80,16 @@ fi
 # Remove the temporary container
 podman rm "$TEMP_CONTAINER_NAME" >/dev/null
 
+# Define network name
+NETWORK_NAME="aarnn_network"
+export NETWORK_NAME
+
+# Check if network exists, and create it if it doesn't
+if ! podman network exists "$NETWORK_NAME"; then
+    echo "Creating network $NETWORK_NAME"
+    podman network create "$NETWORK_NAME"
+fi
+
 # Extract POSTGRES_ variables from aarnn_container.env
 echo "Extracting POSTGRES_ variables from aarnn_container.env..."
 if [ ! -f "./aarnn_container.env" ]; then
@@ -130,6 +140,7 @@ else
     echo "Starting Vault container..."
 #        --network slirp4netns:port_handler=slirp4netns \
     podman run -d --name "${VAULT_CONTAINER_NAME}" \
+        --network "${NETWORK_NAME}" \
         -p 8200:8200 \
         -e VAULT_DEV_LISTEN_ADDRESS="0.0.0.0:8200" \
         -e VAULT_API_ADDR="${VAULT_API_ADDR}" \
@@ -181,6 +192,7 @@ if podman ps -a --format "{{.Names}}" | grep -q "^$POSTGRES_CONTAINER_NAME$"; th
 else
     echo "Starting Postgres container..."
     podman run -d --name "${POSTGRES_CONTAINER_NAME}" \
+        --network "${NETWORK_NAME}" \
         -e POSTGRES_USER="${POSTGRES_USERNAME}" \
         -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
         -e POSTGRES_DB="${POSTGRES_DB}" \
