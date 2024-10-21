@@ -99,7 +99,7 @@ while IFS= read -r line; do
         export "$line"
         echo "$line"
     fi
-done <<< "$POSTGRES_VARS"
+done <<< "${POSTGRES_VARS}"
 
 # Remove the temporary env file
 rm -f ./aarnn_container.env
@@ -107,34 +107,44 @@ rm -f ./aarnn_container.env
 # Ensure Vault container is running and retrieve VAULT_TOKEN
 VAULT_CONTAINER_NAME="vault"
 
+# Set VAULT_ADDR to localhost since we're running the application locally
+VAULT_ADDR="http://localhost:8200"
+VAULT_API_ADDR="http://vault:8200"
+
+# Set environment variables for the application
+export VAULT_ADDR
+export VAULT_API_ADDR
+echo "VAULT_ADDR set to: ${VAULT_ADDR}"
+echo "VAULT_API_ADDR set to: ${VAULT_API_ADDR}"
+
 # Check if Vault container exists
 if podman ps -a --format "{{.Names}}" | grep -q "^$VAULT_CONTAINER_NAME$"; then
     # Check if the container is running
     if ! podman ps --format "{{.Names}}" | grep -q "^$VAULT_CONTAINER_NAME$"; then
         echo "Starting existing Vault container..."
-        podman start "$VAULT_CONTAINER_NAME"
+        podman start "${VAULT_CONTAINER_NAME}"
     else
         echo "Vault container already running."
     fi
 else
     echo "Starting Vault container..."
 #        --network slirp4netns:port_handler=slirp4netns \
-    podman run -d --name "$VAULT_CONTAINER_NAME" \
+    podman run -d --name "${VAULT_CONTAINER_NAME}" \
         -p 8200:8200 \
         -e VAULT_DEV_LISTEN_ADDRESS="0.0.0.0:8200" \
-        -e VAULT_API_ADDR="http://127.0.0.1:8200" \
+        -e VAULT_API_ADDR="${VAULT_API_ADDR}" \
         vault-image:latest
 fi
 
 # Wait for Vault to be ready
-VAULT_CHECK_COMMAND="podman exec \"$VAULT_CONTAINER_NAME\" vault status >/dev/null 2>&1"
-if ! wait_for_container "Vault" "$VAULT_CHECK_COMMAND"; then
+VAULT_CHECK_COMMAND="podman exec \"${VAULT_CONTAINER_NAME}\" vault status >/dev/null 2>&1"
+if ! wait_for_container "Vault" "${VAULT_CHECK_COMMAND}"; then
     podman logs "$VAULT_CONTAINER_NAME"
     exit 1
 fi
 
 # Retrieve VAULT_TOKEN and set VAULT_ADDR to localhost
-VAULT_TOKEN=$(podman exec "$VAULT_CONTAINER_NAME" cat /home/vault/.vault-token)
+VAULT_TOKEN=$(podman exec "${VAULT_CONTAINER_NAME}" cat /home/vault/.vault-token)
 
 if [ -z "$VAULT_TOKEN" ]; then
     echo "Failed to retrieve Vault token."
@@ -142,32 +152,39 @@ if [ -z "$VAULT_TOKEN" ]; then
     exit 1
 fi
 
-# Set VAULT_ADDR to localhost since we're running the application locally
-VAULT_ADDR="http://localhost:8200"
-VAULT_API_ADDR="http://localhost:8200"
+export VAULT_TOKEN
 
-echo "VAULT_TOKEN retrieved: $VAULT_TOKEN"
-echo "VAULT_ADDR set to: $VAULT_ADDR"
-echo "VAULT_API_ADDR set to: $VAULT_API_ADDR"
+echo "VAULT_TOKEN retrieved: ${VAULT_TOKEN}"
 
 # Ensure Postgres container is running
 POSTGRES_CONTAINER_NAME="postgres"
+# POSTGRES_* variables are already exported from the aarnn_container.env
+
+# Ensure POSTGRES_HOST and POSTGRES_PORT are set
+export POSTGRES_HOST="${POSTGRES_HOST:-postgres}"
+export POSTGRES_PORT="${POSTGRES_PORT:-5432}"
+
+echo "POSTGRES_USERNAME: ${POSTGRES_USERNAME}"
+echo "POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}"
+echo "POSTGRES_DB: ${POSTGRES_DB}"
+echo "POSTGRES_HOST: ${POSTGRES_HOST}"
+echo "POSTGRES_PORT: ${POSTGRES_PORT}"
 
 if podman ps -a --format "{{.Names}}" | grep -q "^$POSTGRES_CONTAINER_NAME$"; then
     # Check if the container is running
     if ! podman ps --format "{{.Names}}" | grep -q "^$POSTGRES_CONTAINER_NAME$"; then
         echo "Starting existing Postgres container..."
-        podman start "$POSTGRES_CONTAINER_NAME"
+        podman start "${POSTGRES_CONTAINER_NAME}"
     else
         echo "Postgres container already running."
     fi
 else
     echo "Starting Postgres container..."
-    podman run -d --name "$POSTGRES_CONTAINER_NAME" \
+    podman run -d --name "${POSTGRES_CONTAINER_NAME}" \
         -e POSTGRES_USER="${POSTGRES_USERNAME}" \
         -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
         -e POSTGRES_DB="${POSTGRES_DB}" \
-        -p ${POSTGRES_PORT}:${POSTGRES_PORT_EXPOSE} \
+        -p "${POSTGRES_PORT}":"${POSTGRES_PORT_EXPOSE}" \
         postgres-image:latest
 fi
 
@@ -178,24 +195,6 @@ if ! wait_for_container "Postgres" "$POSTGRES_CHECK_COMMAND"; then
     exit 1
 fi
 
-# Set environment variables for the application
-export VAULT_ADDR
-export VAULT_API_ADDR
-export VAULT_TOKEN
-
-# POSTGRES_* variables are already exported from the aarnn_container.env
-
-# Ensure POSTGRES_HOST and POSTGRES_PORT are set
-export POSTGRES_HOST="${POSTGRES_HOST:-localhost}"
-export POSTGRES_HOST="localhost"
-export POSTGRES_PORT="${POSTGRES_PORT:-5432}"
-
-echo "POSTGRES_USERNAME: ${POSTGRES_USERNAME}"
-echo "POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}"
-echo "POSTGRES_DB: ${POSTGRES_DB}"
-echo "POSTGRES_HOST: ${POSTGRES_HOST}"
-echo "POSTGRES_PORT: ${POSTGRES_PORT}"
-
 # Run the specified application
 case "$APP_NAME" in
     aarnn)
@@ -205,6 +204,7 @@ case "$APP_NAME" in
             echo "AARNN executable not found! Building AARNN..."
             # Build the AARNN application
             cd "$PROJECT_DIR" || exit 1
+            rmdir -rf build || true
             mkdir -p build && cd build || exit 1
             cmake ..
             make
@@ -225,6 +225,7 @@ case "$APP_NAME" in
             echo "Visualiser executable not found! Building Visualiser..."
             # Build the Visualiser application
             cd "$PROJECT_DIR" || exit 1
+            rmdir -rf build || true
             mkdir -p build && cd build || exit 1
             cmake ..
             make

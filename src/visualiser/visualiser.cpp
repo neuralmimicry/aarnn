@@ -122,7 +122,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
     try {
         pqxx::result dendritebranches;
         int dendriteBranchGlyphType = 3; // Glyph type for dendrite branch connected to soma
-        if (parent_dendrite_id != -1) {
+        if (parent_dendrite_id) {
             dendritebranches = txn.exec_params(
                     "SELECT dendrite_branch_id, dendrite_id, x, y, z FROM dendritebranches "
                     "WHERE dendrite_id = $1 ORDER BY dendrite_branch_id ASC",
@@ -400,7 +400,7 @@ void Visualiser::visualise() {
 
             // Retrieve neurons with additional fields
             pqxx::result neurons = txn.exec(
-                    "SELECT neuron_id, x, y, z, propagation_rate, neuron_type, axon_length "
+                    "SELECT neuron_id, x, y, z, propagation_rate, neuron_type "
                     "FROM neurons ORDER BY neuron_id ASC LIMIT 1500"
             );
 

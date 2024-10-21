@@ -217,7 +217,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # Wait for Vault to be ready
         echo "Waiting for Vault to be ready..."
         for i in {1..30}; do
-           if podman exec "$CONTAINER_NAME" vault status -address=http://127.0.0.1:8200 >/dev/null 2>&1; then
+           if podman exec "$CONTAINER_NAME" vault status -address=http://vault:8200 >/dev/null 2>&1; then
                echo "Vault is ready."
                break
            else
