@@ -130,6 +130,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                                         vtkSmartPointer<vtkPoints>& glyphPoints,
                                         vtkSmartPointer<vtkFloatArray>& glyphVectors,
                                         vtkSmartPointer<vtkUnsignedCharArray>& glyphTypes,
+                                        vtkSmartPointer<vtkUnsignedCharArray>& glyphColors,
                                         int parent_soma_id,
                                         int parent_dendrite_id) {
     try {
@@ -137,14 +138,14 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
         int dendriteBranchGlyphType = 3; // Glyph type for dendrite branch connected to soma
         if (parent_dendrite_id) {
             dendritebranches = txn.exec_params(
-                    "SELECT dendrite_branch_id, dendrite_id, x, y, z FROM dendritebranches "
+                    "SELECT dendrite_branch_id, dendrite_id, x, y, z, energy_level FROM dendritebranches "
                     "WHERE dendrite_id = $1 ORDER BY dendrite_branch_id ASC",
                     parent_dendrite_id
             );
             dendriteBranchGlyphType = 2; // Glyph type for dendrite branch connected to dendrite
         } else {
             dendritebranches = txn.exec_params(
-                    "SELECT dendrite_branch_id, dendrite_id, x, y, z FROM dendritebranches "
+                    "SELECT dendrite_branch_id, dendrite_id, x, y, z, energy_level FROM dendritebranches "
                     "WHERE soma_id = $1 ORDER BY dendrite_branch_id ASC",
                     parent_soma_id
             );
@@ -157,6 +158,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
             double x = branch[2].as<double>();
             double y = branch[3].as<double>();
             double z = branch[4].as<double>();
+            double energy_level = branch[5].as<double>();
 
             // Insert branch point
             points->InsertNextPoint(x, y, z);
@@ -167,9 +169,16 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
             glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for branch glyph
             glyphTypes->InsertNextValue(dendriteBranchGlyphType);
 
+            // Compute color based on energy level
+            unsigned char R = static_cast<unsigned char>((energy_level / 100.0) * 255);
+            unsigned char G = 0;
+            unsigned char B = static_cast<unsigned char>((1 - energy_level / 100.0) * 255);
+            unsigned char color[3] = {R, G, B};
+            glyphColors->InsertNextTypedTuple(color);
+
             // Retrieve dendrites under this branch
             pqxx::result dendrites = txn.exec_params(
-                    "SELECT dendrite_id, x, y, z FROM dendrites "
+                    "SELECT dendrite_id, x, y, z, energy_level FROM dendrites "
                     "WHERE dendrite_branch_id = $1 ORDER BY dendrite_id ASC",
                     dendrite_branch_id
             );
@@ -179,6 +188,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                 double dx = dendrite[1].as<double>();
                 double dy = dendrite[2].as<double>();
                 double dz = dendrite[3].as<double>();
+                double denergy_level = dendrite[4].as<double>();
 
                 // Insert dendrite point
                 points->InsertNextPoint(dx, dy, dz);
@@ -195,9 +205,16 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                 glyphVectors->InsertNextTuple3(dx - x, dy - y, dz - z); // Vector from branch to dendrite
                 glyphTypes->InsertNextValue(3); // Glyph type for dendrite
 
+                // Compute color based on energy level
+                unsigned char R_d = static_cast<unsigned char>((denergy_level / 100.0) * 255);
+                unsigned char G_d = 0;
+                unsigned char B_d = static_cast<unsigned char>((1 - denergy_level / 100.0) * 255);
+                unsigned char color_d[3] = {R_d, G_d, B_d};
+                glyphColors->InsertNextTypedTuple(color_d);
+
                 // Retrieve dendrite boutons
                 pqxx::result dendriteboutons = txn.exec_params(
-                        "SELECT dendrite_bouton_id, x, y, z FROM dendriteboutons "
+                        "SELECT dendrite_bouton_id, x, y, z, energy_level FROM dendriteboutons "
                         "WHERE dendrite_id = $1 ORDER BY dendrite_bouton_id ASC",
                         dendrite_id_new
                 );
@@ -207,6 +224,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                     double bx = bouton[1].as<double>();
                     double by = bouton[2].as<double>();
                     double bz = bouton[3].as<double>();
+                    double benergy_level = bouton[4].as<double>();
 
                     // Insert bouton point
                     points->InsertNextPoint(bx, by, bz);
@@ -222,10 +240,17 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                     glyphPoints->InsertNextPoint(bx, by, bz);
                     glyphVectors->InsertNextTuple3(bx - dx, by - dy, bz - dz); // Vector from dendrite to bouton
                     glyphTypes->InsertNextValue(2); // Glyph type for bouton
+
+                    // Compute color based on energy level
+                    unsigned char R_b = static_cast<unsigned char>((benergy_level / 100.0) * 255);
+                    unsigned char G_b = 0;
+                    unsigned char B_b = static_cast<unsigned char>((1 - benergy_level / 100.0) * 255);
+                    unsigned char color_b[3] = {R_b, G_b, B_b};
+                    glyphColors->InsertNextTypedTuple(color_b);
                 }
 
                 // Recursively insert inner dendrite branches
-                insertDendriteBranches(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, -1, dendrite_id_new);
+                insertDendriteBranches(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, glyphColors, -1, dendrite_id_new);
             }
         }
     } catch (const std::exception& e) {
@@ -242,6 +267,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                              vtkSmartPointer<vtkPoints>& glyphPoints,
                              vtkSmartPointer<vtkFloatArray>& glyphVectors,
                              vtkSmartPointer<vtkUnsignedCharArray>& glyphTypes,
+                             vtkSmartPointer<vtkUnsignedCharArray>& glyphColors,
                              int parent_axon_id,
                              int parent_axon_branch_id,
                              int parent_axon_hillock_id) {
@@ -252,7 +278,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
         if (parent_axon_branch_id != -1) {
             // Branch connected to another axon branch
             axonbranches = txn.exec_params(
-                    "SELECT axon_branch_id, x, y, z FROM axonbranches "
+                    "SELECT axon_branch_id, x, y, z, energy_level FROM axonbranches "
                     "WHERE parent_axon_branch_id = $1 ORDER BY axon_branch_id ASC",
                     parent_axon_branch_id
             );
@@ -260,7 +286,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
         } else {
             // Branch connected to axon hillock
             axonbranches = txn.exec_params(
-                    "SELECT axon_branch_id, x, y, z FROM axonbranches "
+                    "SELECT axon_branch_id, x, y, z, energy_level FROM axonbranches "
                     "WHERE parent_axon_id = $1 ORDER BY axon_branch_id ASC",
                     parent_axon_id
             );
@@ -272,6 +298,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
             double x = branch[1].as<double>();
             double y = branch[2].as<double>();
             double z = branch[3].as<double>();
+            double energy_level = branch[4].as<double>();
 
             // Insert branch point
             points->InsertNextPoint(x, y, z);
@@ -282,9 +309,16 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
             glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for branch glyph
             glyphTypes->InsertNextValue(axonBranchGlyphType);
 
+            // Compute color based on energy level
+            unsigned char R = static_cast<unsigned char>((energy_level / 100.0) * 255);
+            unsigned char G = 0;
+            unsigned char B = static_cast<unsigned char>((1 - energy_level / 100.0) * 255);
+            unsigned char color[3] = {R, G, B};
+            glyphColors->InsertNextTypedTuple(color);
+
             // Retrieve axons under this branch
             pqxx::result axons = txn.exec_params(
-                    "SELECT axon_id, x, y, z FROM axons "
+                    "SELECT axon_id, x, y, z, energy_level FROM axons "
                     "WHERE axon_branch_id = $1 ORDER BY axon_id ASC",
                     axon_branch_id
             );
@@ -294,6 +328,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                 double ax = axon[1].as<double>();
                 double ay = axon[2].as<double>();
                 double az = axon[3].as<double>();
+                double aenergy_level = axon[4].as<double>();
 
                 // Insert axon point
                 points->InsertNextPoint(ax, ay, az);
@@ -310,9 +345,16 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                 glyphVectors->InsertNextTuple3(ax - x, ay - y, az - z); // Vector from branch to axon
                 glyphTypes->InsertNextValue(8); // Glyph type for axon
 
+                // Compute color based on energy level
+                unsigned char R_a = static_cast<unsigned char>((aenergy_level / 100.0) * 255);
+                unsigned char G_a = 0;
+                unsigned char B_a = static_cast<unsigned char>((1 - aenergy_level / 100.0) * 255);
+                unsigned char color_a[3] = {R_a, G_a, B_a};
+                glyphColors->InsertNextTypedTuple(color_a);
+
                 // Retrieve axon boutons
                 pqxx::result axonboutons = txn.exec_params(
-                        "SELECT axon_bouton_id, x, y, z FROM axonboutons "
+                        "SELECT axon_bouton_id, x, y, z, energy_level FROM axonboutons "
                         "WHERE axon_id = $1 ORDER BY axon_bouton_id ASC",
                         axon_id_new
                 );
@@ -322,6 +364,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                     double bx = bouton[1].as<double>();
                     double by = bouton[2].as<double>();
                     double bz = bouton[3].as<double>();
+                    double benergy_level = bouton[4].as<double>();
 
                     // Insert bouton point
                     points->InsertNextPoint(bx, by, bz);
@@ -338,9 +381,16 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                     glyphVectors->InsertNextTuple3(bx - ax, by - ay, bz - az); // Vector from axon to bouton
                     glyphTypes->InsertNextValue(9); // Glyph type for bouton
 
+                    // Compute color based on energy level
+                    unsigned char R_b = static_cast<unsigned char>((benergy_level / 100.0) * 255);
+                    unsigned char G_b = 0;
+                    unsigned char B_b = static_cast<unsigned char>((1 - benergy_level / 100.0) * 255);
+                    unsigned char color_b[3] = {R_b, G_b, B_b};
+                    glyphColors->InsertNextTypedTuple(color_b);
+
                     // Retrieve synaptic gaps
                     pqxx::result synapticgaps = txn.exec_params(
-                            "SELECT synaptic_gap_id, x, y, z FROM synapticgaps "
+                            "SELECT synaptic_gap_id, x, y, z, energy_level FROM synapticgaps "
                             "WHERE axon_bouton_id = $1 ORDER BY synaptic_gap_id ASC",
                             axon_bouton_id
                     );
@@ -350,6 +400,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                         double gx = gap[1].as<double>();
                         double gy = gap[2].as<double>();
                         double gz = gap[3].as<double>();
+                        double genergy_level = gap[4].as<double>();
 
                         // Insert synaptic gap point
                         points->InsertNextPoint(gx, gy, gz);
@@ -365,11 +416,18 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                         glyphPoints->InsertNextPoint(gx, gy, gz);
                         glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for synaptic gap glyph
                         glyphTypes->InsertNextValue(10); // Glyph type for synaptic gap
+
+                        // Compute color based on energy level
+                        unsigned char R_g = static_cast<unsigned char>((genergy_level / 100.0) * 255);
+                        unsigned char G_g = 0;
+                        unsigned char B_g = static_cast<unsigned char>((1 - genergy_level / 100.0) * 255);
+                        unsigned char color_g[3] = {R_g, G_g, B_g};
+                        glyphColors->InsertNextTypedTuple(color_g);
                     }
                 }
 
                 // Recursively insert axon branches
-                insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, axon_id_new, axon_branch_id, parent_axon_hillock_id);
+                insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, glyphColors, axon_id_new, axon_branch_id, parent_axon_hillock_id);
             }
         }
     } catch (const std::exception& e) {
@@ -407,23 +465,27 @@ void Visualiser::visualise() {
             vtkSmartPointer<vtkUnsignedCharArray> glyphTypes = vtkSmartPointer<vtkUnsignedCharArray>::New();
             glyphTypes->SetName("GlyphType");
             glyphTypes->SetNumberOfComponents(1);
+            // Create glyphColors array
+            vtkSmartPointer<vtkUnsignedCharArray> glyphColors = vtkSmartPointer<vtkUnsignedCharArray>::New();
+            glyphColors->SetName("Colors");
+            glyphColors->SetNumberOfComponents(3); // RGB components
 
             // Start database transaction
             pqxx::work txn(*conn_);
 
             // Retrieve neurons with additional fields
             pqxx::result neurons = txn.exec(
-                    "SELECT neuron_id, x, y, z, propagation_rate, neuron_type "
+                    "SELECT neuron_id, x, y, z, propagation_rate, neuron_type, energy_level "
                     "FROM neurons ORDER BY neuron_id ASC LIMIT 1500"
             );
 
             for (const auto& neuron : neurons) {
-                if (neuron.size() != 6) {
+                if (neuron.size() != 7) {
                     std:cout << "Neuron has incorrect number of fields." << std::endl;
                     continue;
                 }
                 if (neuron[0].is_null() || neuron[1].is_null() || neuron[2].is_null() || neuron[3].is_null() ||
-                    neuron[4].is_null() || neuron[5].is_null()) {
+                    neuron[4].is_null() || neuron[5].is_null() || neuron[6].is_null()) {
                     std::cout << "Neuron has NULL fields." << std::endl;
                     continue;
                 }
@@ -433,25 +495,33 @@ void Visualiser::visualise() {
                 double nz = neuron[3].as<double>();
                 double propagation_rate = neuron[4].as<double>();
                 int neuron_type = neuron[5].as<int>();
+                double nenergy_level = neuron[6].as<double>();
 
                 // Insert neuron glyph
                 glyphPoints->InsertNextPoint(nx, ny, nz);
                 glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for neuron glyph
                 glyphTypes->InsertNextValue(1); // Glyph type for neuron
 
+                // Compute color based on energy level
+                unsigned char R = static_cast<unsigned char>((nenergy_level / 100.0) * 255);
+                unsigned char G = 0;
+                unsigned char B = static_cast<unsigned char>((1 - nenergy_level / 100.0) * 255);
+                unsigned char color[3] = {R, G, B};
+                glyphColors->InsertNextTypedTuple(color);
+
                 // Retrieve somas for this neuron
                 pqxx::result somas = txn.exec_params(
-                        "SELECT soma_id, x, y, z FROM somas "
+                        "SELECT soma_id, x, y, z, energy_level FROM somas "
                         "WHERE neuron_id = $1 ORDER BY soma_id ASC",
                         neuron_id
                 );
 
                 for (const auto& soma : somas) {
-                    if (soma.size() != 4) {
+                    if (soma.size() != 5) {
                         std::cout << "Soma has incorrect number of fields." << std::endl;
                         continue;
                     }
-                    if (soma[0].is_null() || soma[1].is_null() || soma[2].is_null() || soma[3].is_null()) {
+                    if (soma[0].is_null() || soma[1].is_null() || soma[2].is_null() || soma[3].is_null() || soma[4].is_null()) {
                         std::cout << "Soma has NULL fields." << std::endl;
                         continue;
                     }
@@ -459,28 +529,36 @@ void Visualiser::visualise() {
                     double sx = soma[1].as<double>();
                     double sy = soma[2].as<double>();
                     double sz = soma[3].as<double>();
+                    double senergy_level = soma[4].as<double>();
 
                     // Insert soma glyph
                     glyphPoints->InsertNextPoint(sx, sy, sz);
                     glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for soma glyph
                     glyphTypes->InsertNextValue(4); // Glyph type for soma
 
+                    // Compute color based on energy level
+                    unsigned char R_s = static_cast<unsigned char>((senergy_level / 100.0) * 255);
+                    unsigned char G_s = 0;
+                    unsigned char B_s = static_cast<unsigned char>((1 - senergy_level / 100.0) * 255);
+                    unsigned char color_s[3] = {R_s, G_s, B_s};
+                    glyphColors->InsertNextTypedTuple(color_s);
+
                     // Insert dendrite branches
-                    insertDendriteBranches(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, soma_id);
+                    insertDendriteBranches(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, glyphColors, soma_id);
 
                     // Retrieve axon hillocks for this soma
                     pqxx::result axonhillocks = txn.exec_params(
-                            "SELECT axon_hillock_id, x, y, z FROM axonhillocks "
+                            "SELECT axon_hillock_id, x, y, z, energy_level FROM axonhillocks "
                             "WHERE soma_id = $1 ORDER BY axon_hillock_id ASC",
                             soma_id
                     );
 
                     for (const auto& hillock : axonhillocks) {
-                        if (hillock.size() != 4) {
+                        if (hillock.size() != 5) {
                             std::cout << "Axon hillock has incorrect number of fields." << std::endl;
                             continue;
                         }
-                        if (hillock[0].is_null() || hillock[1].is_null() || hillock[2].is_null() || hillock[3].is_null()) {
+                        if (hillock[0].is_null() || hillock[1].is_null() || hillock[2].is_null() || hillock[3].is_null() || hillock[4].is_null()) {
                             std::cout << "Axon hillock has NULL fields." << std::endl;
                             continue;
                         }
@@ -488,6 +566,7 @@ void Visualiser::visualise() {
                         double ahx = hillock[1].as<double>();
                         double ahy = hillock[2].as<double>();
                         double ahz = hillock[3].as<double>();
+                        double ahenergy_level = hillock[4].as<double>();
 
                         // Insert axon hillock glyph
                         points->InsertNextPoint(ahx, ahy, ahz);
@@ -497,19 +576,26 @@ void Visualiser::visualise() {
                         glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for hillock glyph
                         glyphTypes->InsertNextValue(5); // Glyph type for axon hillock
 
+                        // Compute color based on energy level
+                        unsigned char R_ah = static_cast<unsigned char>((ahenergy_level / 100.0) * 255);
+                        unsigned char G_ah = 0;
+                        unsigned char B_ah = static_cast<unsigned char>((1 - ahenergy_level / 100.0) * 255);
+                        unsigned char color_ah[3] = {R_ah, G_ah, B_ah};
+                        glyphColors->InsertNextTypedTuple(color_ah);
+
                         // Retrieve axons connected to this hillock
                         pqxx::result axons = txn.exec_params(
-                                "SELECT axon_id, x, y, z FROM axons "
+                                "SELECT axon_id, x, y, z, energy_level FROM axons "
                                 "WHERE axon_hillock_id = $1 ORDER BY axon_id ASC",
                                 axon_hillock_id
                         );
 
                         for (const auto& axon : axons) {
-                            if (axon.size() != 4) {
+                            if (axon.size() != 5) {
                                 std::cout << "Axon has incorrect number of fields." << std::endl;
                                 continue;
                             }
-                            if (axon[0].is_null() || axon[1].is_null() || axon[2].is_null() || axon[3].is_null()) {
+                            if (axon[0].is_null() || axon[1].is_null() || axon[2].is_null() || axon[3].is_null() || axon[4].is_null()) {
                                 std::cout << "Axon has NULL fields." << std::endl;
                                 continue;
                             }
@@ -517,6 +603,7 @@ void Visualiser::visualise() {
                             double ax = axon[1].as<double>();
                             double ay = axon[2].as<double>();
                             double az = axon[3].as<double>();
+                            double aenergy_level = axon[4].as<double>();
 
                             // Insert axon point
                             points->InsertNextPoint(ax, ay, az);
@@ -533,19 +620,26 @@ void Visualiser::visualise() {
                             glyphVectors->InsertNextTuple3(ax - ahx, ay - ahy, az - ahz); // Vector from hillock to axon
                             glyphTypes->InsertNextValue(8); // Glyph type for axon
 
+                            // Compute color based on energy level
+                            unsigned char R_a = static_cast<unsigned char>((aenergy_level / 100.0) * 255);
+                            unsigned char G_a = 0;
+                            unsigned char B_a = static_cast<unsigned char>((1 - aenergy_level / 100.0) * 255);
+                            unsigned char color_a[3] = {R_a, G_a, B_a};
+                            glyphColors->InsertNextTypedTuple(color_a);
+
                             // Insert axon boutons and synaptic gaps
                             pqxx::result axonboutons = txn.exec_params(
-                                    "SELECT axon_bouton_id, x, y, z FROM axonboutons "
+                                    "SELECT axon_bouton_id, x, y, z, energy_level FROM axonboutons "
                                     "WHERE axon_id = $1 ORDER BY axon_bouton_id ASC",
                                     axon_id
                             );
 
                             for (const auto& bouton : axonboutons) {
-                                if (bouton.size() != 4) {
+                                if (bouton.size() != 5) {
                                     std::cout << "Axon bouton has incorrect number of fields." << std::endl;
                                     continue;
                                 }
-                                if (bouton[0].is_null() || bouton[1].is_null() || bouton[2].is_null() || bouton[3].is_null()) {
+                                if (bouton[0].is_null() || bouton[1].is_null() || bouton[2].is_null() || bouton[3].is_null() || bouton[4].is_null()) {
                                     std::cout << "Axon bouton has NULL fields." << std::endl;
                                     continue;
                                 }
@@ -553,6 +647,7 @@ void Visualiser::visualise() {
                                 double bx = bouton[1].as<double>();
                                 double by = bouton[2].as<double>();
                                 double bz = bouton[3].as<double>();
+                                double benergy_level = bouton[4].as<double>();
 
                                 // Insert bouton point
                                 points->InsertNextPoint(bx, by, bz);
@@ -569,19 +664,26 @@ void Visualiser::visualise() {
                                 glyphVectors->InsertNextTuple3(bx - ax, by - ay, bz - az); // Vector from axon to bouton
                                 glyphTypes->InsertNextValue(9); // Glyph type for bouton
 
+                                // Compute color based on energy level
+                                unsigned char R_b = static_cast<unsigned char>((benergy_level / 100.0) * 255);
+                                unsigned char G_b = 0;
+                                unsigned char B_b = static_cast<unsigned char>((1 - benergy_level / 100.0) * 255);
+                                unsigned char color_b[3] = {R_b, G_b, B_b};
+                                glyphColors->InsertNextTypedTuple(color_b);
+
                                 // Retrieve synaptic gaps
                                 pqxx::result synapticgaps = txn.exec_params(
-                                        "SELECT synaptic_gap_id, x, y, z FROM synapticgaps "
+                                        "SELECT synaptic_gap_id, x, y, z, energy_level FROM synapticgaps "
                                         "WHERE axon_bouton_id = $1 ORDER BY synaptic_gap_id ASC",
                                         axon_bouton_id
                                 );
 
                                 for (const auto& gap : synapticgaps) {
-                                    if (gap.size() != 4) {
+                                    if (gap.size() != 5) {
                                         std::cout << "Synaptic gap has incorrect number of fields." << std::endl;
                                         continue;
                                     }
-                                    if (gap[0].is_null() || gap[1].is_null() || gap[2].is_null() || gap[3].is_null()) {
+                                    if (gap[0].is_null() || gap[1].is_null() || gap[2].is_null() || gap[3].is_null() || gap[4].is_null()) {
                                         std::cout << "Synaptic gap has NULL fields." << std::endl;
                                         continue;
                                     }
@@ -589,6 +691,7 @@ void Visualiser::visualise() {
                                     double gx = gap[1].as<double>();
                                     double gy = gap[2].as<double>();
                                     double gz = gap[3].as<double>();
+                                    double genergy_level = gap[4].as<double>();
 
                                     // Insert synaptic gap point
                                     points->InsertNextPoint(gx, gy, gz);
@@ -604,11 +707,18 @@ void Visualiser::visualise() {
                                     glyphPoints->InsertNextPoint(gx, gy, gz);
                                     glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for synaptic gap glyph
                                     glyphTypes->InsertNextValue(10); // Glyph type for synaptic gap
+
+                                    // Compute color based on energy level
+                                    unsigned char R_g = static_cast<unsigned char>((genergy_level / 100.0) * 255);
+                                    unsigned char G_g = 0;
+                                    unsigned char B_g = static_cast<unsigned char>((1 - genergy_level / 100.0) * 255);
+                                    unsigned char color_g[3] = {R_g, G_g, B_g};
+                                    glyphColors->InsertNextTypedTuple(color_g);
                                 }
                             }
 
                             // Recursively insert axon branches
-                            insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, axon_id, -1, axon_hillock_id);
+                            insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, glyphColors, axon_id, -1, axon_hillock_id);
                         }
                     }
                 }
@@ -625,7 +735,9 @@ void Visualiser::visualise() {
             vtkSmartPointer<vtkPolyData> glyphPolyData = vtkSmartPointer<vtkPolyData>::New();
             glyphPolyData->SetPoints(glyphPoints);
             glyphPolyData->GetPointData()->AddArray(glyphVectors);
-            glyphPolyData->GetPointData()->SetScalars(glyphTypes);
+            glyphPolyData->GetPointData()->AddArray(glyphTypes);
+            glyphPolyData->GetPointData()->AddArray(glyphColors);
+            glyphPolyData->GetPointData()->SetActiveScalars("Colors");
 
             // Setup Glyph Sources
             vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
@@ -666,18 +778,21 @@ void Visualiser::visualise() {
             glyph3D->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, "GlyphType");
             glyph3D->Update();
 
+            // Setup Glyph Mapper and Actor
+            vtkSmartPointer<vtkPolyDataMapper> glyphMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+            glyphMapper->SetInputConnection(glyph3D->GetOutputPort());
+            glyphMapper->ScalarVisibilityOn();
+            glyphMapper->SetScalarModeToUsePointData();
+            glyphMapper->SelectColorArray("Colors");
+            vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
+            glyphActor->SetMapper(glyphMapper);
+
             // Setup Line Mapper and Actor
             vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
             lineMapper->SetInputData(polyData);
             vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
             lineActor->SetMapper(lineMapper);
             lineActor->GetProperty()->SetColor(1.0, 1.0, 0.0); // Yellow lines
-
-            // Setup Glyph Mapper and Actor
-            vtkSmartPointer<vtkPolyDataMapper> glyphMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            glyphMapper->SetInputConnection(glyph3D->GetOutputPort());
-            vtkSmartPointer<vtkActor> glyphActor = vtkSmartPointer<vtkActor>::New();
-            glyphActor->SetMapper(glyphMapper);
 
             // Setup Membrane (Delaunay Triangulation)
             vtkSmartPointer<vtkDelaunay3D> delaunay = vtkSmartPointer<vtkDelaunay3D>::New();

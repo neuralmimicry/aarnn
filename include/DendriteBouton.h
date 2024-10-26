@@ -1,8 +1,7 @@
 #ifndef DENDRITEBOUTON_H
 #define DENDRITEBOUTON_H
 
-#include "BodyComponent.h"
-#include "BodyShapeComponent.h"
+#include "NeuronalComponent.h"
 #include "Dendrite.h"
 #include "Neuron.h"
 #include "Position.h"
@@ -15,50 +14,28 @@ class DendriteBranch;
 class SynapticGap;
 class Neuron;
 
-class DendriteBouton
-: public std::enable_shared_from_this<DendriteBouton>
-, public BodyComponent<Position>
-, public BodyShapeComponent
+class DendriteBouton : public NeuronalComponent
 {
-    public:
-    explicit DendriteBouton(const PositionPtr &position,
-                            double             propRate = BodyComponent<Position>::defaultPropagationRate)
-    : BodyComponent<Position>(position, propRate)
-    , BodyShapeComponent()
-    {
-    }
+public:
+    explicit DendriteBouton(const std::shared_ptr<Position>& position);
 
     ~DendriteBouton() override = default;
-    void                                       initialise();
-    void                                       connectSynapticGap(std::shared_ptr<SynapticGap> gap);
-    void                                       updatePosition(const PositionPtr &newPosition);
-    [[nodiscard]] std::shared_ptr<SynapticGap> getSynapticGap() const
-    {
-        return onwardSynapticGap;
-    }
-    double getPropagationRate() override
-    {
-        return propagationRate;
-    }
-    void setNeuron(std::weak_ptr<Neuron> parentNeuron);
-    void updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer)
-    {
-        parentDendrite = std::move(parentDendritePointer);
-    }
-    [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const
-    {
-        return parentDendrite;
-    }
-    [[nodiscard]] const PositionPtr &getPosition() const
-    {
-        return position;
-    }
 
-    private:
-    bool                         instanceInitialised = false;  // Initially, the DendriteBouton is not initialised
+    void initialise() override;
+    void connectSynapticGap(std::shared_ptr<SynapticGap> gap);
+    [[nodiscard]] std::shared_ptr<SynapticGap> getSynapticGap() const;
+
+    void setNeuron(std::weak_ptr<Neuron> parentNeuron);
+    void updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer);
+    [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const;
+    void update(double deltaTime);
+
+
+private:
+    bool instanceInitialised = false;  // Initially, the DendriteBouton is not initialized
     std::shared_ptr<SynapticGap> onwardSynapticGap;
-    std::weak_ptr<Neuron>        neuron;
-    std::shared_ptr<Dendrite>    parentDendrite;
+    std::weak_ptr<Neuron> neuron;
+    std::shared_ptr<Dendrite> parentDendrite;
 };
 
-#endif
+#endif // DENDRITEBOUTON_H

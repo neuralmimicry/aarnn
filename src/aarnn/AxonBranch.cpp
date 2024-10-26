@@ -1,42 +1,74 @@
 #include "AxonBranch.h"
-
+#include "Axon.h"
 #include "utils.h"
+#include <iostream>
+
+AxonBranch::AxonBranch(const std::shared_ptr<Position>& position)
+        : NeuronalComponent(position)
+{
+    // Additional initialization if needed
+}
 
 void AxonBranch::initialise()
 {
-    if(!instanceInitialised)
+    NeuronalComponent::initialise(); // Call base class initialise
+
+    if (!instanceInitialised)
     {
         std::cout << "Initialising AxonBranch" << std::endl;
-        if(this->onwardAxons.empty())
+
+        if (onwardAxons.empty())
         {
-            connectAxon(std::make_shared<Axon>(
-             std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1)));
-            this->onwardAxons.back()->initialise();
-            this->onwardAxons.back()->updateFromAxonBranch(shared_from_this());
+            // Create a new Axon and connect it
+            auto newAxonPosition = std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1);
+            auto newAxon = std::make_shared<Axon>(newAxonPosition);
+            connectAxon(newAxon);
+
+            // Initialise the new Axon
+            onwardAxons.back()->initialise();
+            onwardAxons.back()->updateFromAxonBranch(std::static_pointer_cast<AxonBranch>(shared_from_this()));
         }
+
         instanceInitialised = true;
     }
 }
 
-void AxonBranch::updatePosition(const PositionPtr &newPosition)
+void AxonBranch::update(double deltaTime)
 {
-    position = newPosition;
+    // Update energy levels
+    updateEnergy(deltaTime);
+
+    // Update onward Axons
+    for (auto& axon : onwardAxons)
+    {
+        axon->update(deltaTime);
+    }
+
+    // Additional updates if necessary
 }
 
 void AxonBranch::connectAxon(std::shared_ptr<Axon> axon)
 {
-    auto        coords          = get_coordinates(int(onwardAxons.size() + 1), int(onwardAxons.size() + 1), int(5));
-    PositionPtr currentPosition = axon->getPosition();
-    auto        x               = double(std::get<0>(coords)) + currentPosition->x;
-    auto        y               = double(std::get<1>(coords)) + currentPosition->y;
-    auto        z               = double(std::get<2>(coords)) + currentPosition->z;
-    currentPosition->x          = x;
-    currentPosition->y          = y;
-    currentPosition->z          = z;
+    auto coords = get_coordinates(static_cast<int>(onwardAxons.size() + 1),
+                                  static_cast<int>(onwardAxons.size() + 1), 5);
+    auto currentPosition = axon->getPosition();
+    currentPosition->x += static_cast<double>(std::get<0>(coords));
+    currentPosition->y += static_cast<double>(std::get<1>(coords));
+    currentPosition->z += static_cast<double>(std::get<2>(coords));
     onwardAxons.emplace_back(std::move(axon));
+}
+
+const std::vector<std::shared_ptr<Axon>>& AxonBranch::getAxons() const
+{
+    return onwardAxons;
 }
 
 void AxonBranch::updateFromAxon(std::shared_ptr<Axon> parentPointer)
 {
-    this->parentAxon = std::move(parentPointer);
+    parentAxon = std::move(parentPointer);
+}
+
+std::shared_ptr<Axon> AxonBranch::getParentAxon() const
+{
+    return parentAxon;
 }

@@ -1,9 +1,21 @@
 #include "DendriteBouton.h"
+#include "SynapticGap.h"
+#include "Neuron.h"
+#include <utility>
+
+DendriteBouton::DendriteBouton(const std::shared_ptr<Position>& position)
+        : NeuronalComponent(position)
+{
+    // Additional initialization if needed
+}
 
 void DendriteBouton::initialise()
 {
-    if(!instanceInitialised)
+    NeuronalComponent::initialise(); // Call base class initialise
+
+    if (!instanceInitialised)
     {
+        // Additional initialization logic if needed
         instanceInitialised = true;
     }
 }
@@ -11,18 +23,33 @@ void DendriteBouton::initialise()
 void DendriteBouton::connectSynapticGap(std::shared_ptr<SynapticGap> gap)
 {
     onwardSynapticGap = std::move(gap);
-    if(auto spt = neuron.lock())
-    {  // has to check if the shared_ptr is still valid
-        spt->addSynapticGapDendrite(onwardSynapticGap);
+    if (auto neuronPtr = neuron.lock())
+    {
+        neuronPtr->addSynapticGapDendrite(onwardSynapticGap);
     }
-}
-
-void DendriteBouton::updatePosition(const PositionPtr &newPosition)
-{
-    position = newPosition;
 }
 
 void DendriteBouton::setNeuron(std::weak_ptr<Neuron> parentNeuron)
 {
-    this->neuron = std::move(parentNeuron);
+    neuron = std::move(parentNeuron);
+}
+
+void DendriteBouton::updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer)
+{
+    parentDendrite = std::move(parentDendritePointer);
+}
+
+std::shared_ptr<Dendrite> DendriteBouton::getParentDendrite() const
+{
+    return parentDendrite;
+}
+
+std::shared_ptr<SynapticGap> DendriteBouton::getSynapticGap() const
+{
+    return onwardSynapticGap;
+}
+
+void DendriteBouton::update(double deltaTime)
+{
+    // Update logic
 }

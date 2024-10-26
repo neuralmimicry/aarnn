@@ -18,7 +18,7 @@
 
 void initialise_database(pqxx::connection& conn);
 
-void batch_insert_neurons(pqxx::transaction_base& txn, const std::vector<std::shared_ptr<Neuron>>& neurons);
+void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::shared_ptr<Cluster>>& clusters);
 
 void updateDatabase(pqxx::connection& conn);
 

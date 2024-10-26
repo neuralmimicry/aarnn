@@ -1,34 +1,57 @@
 #include "AxonBouton.h"
+#include "SynapticGap.h"
+#include "Axon.h"
+#include "Neuron.h"
+#include <iostream>
+
+AxonBouton::AxonBouton(const std::shared_ptr<Position>& position)
+        : NeuronalComponent(position)
+{
+    // Additional initialization if needed
+}
 
 void AxonBouton::initialise()
 {
-    if(!instanceInitialised)
+    NeuronalComponent::initialise(); // Call base class initialise
+
+    if (!instanceInitialised)
     {
         std::cout << "Initialising AxonBouton" << std::endl;
-        if(!this->onwardSynapticGap)
+
+        if (!onwardSynapticGap)
         {
-            this->onwardSynapticGap = std::make_shared<SynapticGap>(
-             std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
+            onwardSynapticGap = std::make_shared<SynapticGap>(
+                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1));
         }
-        this->onwardSynapticGap->initialise();
-        this->onwardSynapticGap->updateFromAxonBouton(shared_from_this());
+        onwardSynapticGap->initialise();
+        onwardSynapticGap->updateFromAxonBouton(std::static_pointer_cast<AxonBouton>(shared_from_this()));
+
         instanceInitialised = true;
     }
 }
 
-void AxonBouton::updatePosition(const PositionPtr &newPosition)
+void AxonBouton::update(double deltaTime)
 {
-    position = newPosition;
+    // Update energy levels
+    updateEnergy(deltaTime);
+
+    // Additional updates if necessary
+    if (onwardSynapticGap)
+    {
+        onwardSynapticGap->update(deltaTime);
+    }
 }
 
-void AxonBouton::addSynapticGap(const std::shared_ptr<SynapticGap> &gap)
+void AxonBouton::addSynapticGap(const std::shared_ptr<SynapticGap>& gap)
 {
-    gap->updateFromAxonBouton(shared_from_this());
+    gap->updateFromAxonBouton(std::static_pointer_cast<AxonBouton>(shared_from_this()));
 }
 
 void AxonBouton::connectSynapticGap(std::shared_ptr<SynapticGap> gap)
 {
     // Implement the connection logic
+    onwardSynapticGap = std::move(gap);
+    onwardSynapticGap->updateFromAxonBouton(std::static_pointer_cast<AxonBouton>(shared_from_this()));
 }
 
 std::shared_ptr<SynapticGap> AxonBouton::getSynapticGap() const
@@ -38,15 +61,15 @@ std::shared_ptr<SynapticGap> AxonBouton::getSynapticGap() const
 
 void AxonBouton::setNeuron(std::weak_ptr<Neuron> parentNeuron)
 {
-    this->neuron = std::move(parentNeuron);
+    neuron = std::move(parentNeuron);
 }
 
 void AxonBouton::updateFromAxon(std::shared_ptr<Axon> parentAxonPointer)
 {
-    this->parentAxon = std::move(parentAxonPointer);
+    parentAxon = std::move(parentAxonPointer);
 }
 
 std::shared_ptr<Axon> AxonBouton::getParentAxon() const
 {
-    return this->parentAxon;
+    return parentAxon;
 }

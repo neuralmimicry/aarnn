@@ -1,53 +1,97 @@
 #include "Soma.h"
-
+#include "AxonHillock.h"
+#include "DendriteBranch.h"
+#include "Neuron.h"
 #include "utils.h"
+#include <iostream>
+
+Soma::Soma(const std::shared_ptr<Position>& position)
+        : NeuronalComponent(position)
+{
+    // Additional initialization if needed
+}
 
 void Soma::initialise()
 {
-    if(!instanceInitialised)
+    NeuronalComponent::initialise(); // Call base class initialise
+
+    if (!instanceInitialised)
     {
         std::cout << "Initialising Soma" << std::endl;
-        if(!this->onwardAxonHillock)
+
+        if (!onwardAxonHillock)
         {
             std::cout << "Creating AxonHillock" << std::endl;
-            this->onwardAxonHillock = std::make_shared<AxonHillock>(
-             std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
+            onwardAxonHillock = std::make_shared<AxonHillock>(
+                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1));
         }
         std::cout << "Soma initialising AxonHillock" << std::endl;
-        this->onwardAxonHillock->initialise();
+        onwardAxonHillock->initialise();
         std::cout << "Soma updating from AxonHillock" << std::endl;
-        this->onwardAxonHillock->updateFromSoma(shared_from_this());
+        onwardAxonHillock->updateFromSoma(std::static_pointer_cast<Soma>(shared_from_this()));
+
         std::cout << "Creating DendriteBranch" << std::endl;
-        addDendriteBranch(std::make_shared<DendriteBranch>(
-         std::make_shared<Position>((position->x) - 1, (position->y) - 1, (position->z) - 1)));
+        auto dendriteBranch = std::make_shared<DendriteBranch>(
+                std::make_shared<Position>(position->x - 1, position->y - 1, position->z - 1));
+        addDendriteBranch(dendriteBranch);
+
         std::cout << "Soma initialising DendriteBranch" << std::endl;
         dendriteBranches.back()->initialise();
         std::cout << "Soma updating from DendriteBranch" << std::endl;
-        dendriteBranches.back()->updateFromSoma(shared_from_this());
+        dendriteBranches.back()->updateFromSoma(std::static_pointer_cast<Soma>(shared_from_this()));
+
         instanceInitialised = true;
     }
     std::cout << "Soma initialised" << std::endl;
 }
 
-void Soma::updatePosition(const PositionPtr &newPosition)
+void Soma::update(double deltaTime)
 {
-    position = newPosition;
+    // Update energy levels
+    updateEnergy(deltaTime);
+
+    // Update the axon hillock
+    if (onwardAxonHillock)
+    {
+        onwardAxonHillock->update(deltaTime);
+    }
+
+    // Update dendrite branches
+    for (auto& onwardDendriteBranch : dendriteBranches)
+    {
+        onwardDendriteBranch->update(deltaTime);
+    }
+
+    // Additional updates if necessary
+}
+
+std::shared_ptr<AxonHillock> Soma::getAxonHillock() const
+{
+    return onwardAxonHillock;
 }
 
 void Soma::addDendriteBranch(std::shared_ptr<DendriteBranch> dendriteBranch)
 {
-    auto        coords = get_coordinates(int(dendriteBranches.size() + 1), int(dendriteBranches.size() + 1), int(5));
-    PositionPtr currentPosition = dendriteBranch->getPosition();
-    auto        x               = double(std::get<0>(coords)) + currentPosition->x;
-    auto        y               = double(std::get<1>(coords)) + currentPosition->y;
-    auto        z               = double(std::get<2>(coords)) + currentPosition->z;
-    currentPosition->x          = x;
-    currentPosition->y          = y;
-    currentPosition->z          = z;
+    auto coords = get_coordinates(static_cast<int>(dendriteBranches.size() + 1),
+                                  static_cast<int>(dendriteBranches.size() + 1), 5);
+    auto currentPosition = dendriteBranch->getPosition();
+    currentPosition->x += static_cast<double>(std::get<0>(coords));
+    currentPosition->y += static_cast<double>(std::get<1>(coords));
+    currentPosition->z += static_cast<double>(std::get<2>(coords));
     dendriteBranches.emplace_back(std::move(dendriteBranch));
+}
+
+const std::vector<std::shared_ptr<DendriteBranch>>& Soma::getDendriteBranches() const
+{
+    return dendriteBranches;
 }
 
 void Soma::updateFromNeuron(std::shared_ptr<Neuron> parentPointer)
 {
-    this->parentNeuron = std::move(parentPointer);
+    parentNeuron = std::move(parentPointer);
+}
+
+std::shared_ptr<Neuron> Soma::getParentNeuron() const
+{
+    return parentNeuron;
 }

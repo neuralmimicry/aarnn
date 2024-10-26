@@ -1,46 +1,84 @@
 #include "DendriteBranch.h"
-
+#include "Soma.h"
 #include "utils.h"
+#include <iostream>
+
+DendriteBranch::DendriteBranch(const std::shared_ptr<Position>& position)
+        : NeuronalComponent(position)
+{
+    // Additional initialization if needed
+}
 
 void DendriteBranch::initialise()
 {
-    if(!instanceInitialised)
+    NeuronalComponent::initialise(); // Call base class initialise
+
+    if (!instanceInitialised)
     {
-        if(this->onwardDendrites.empty())
+        std::cout << "Initialising DendriteBranch" << std::endl;
+
+        if (onwardDendrites.empty())
         {
-            connectDendrite(std::make_shared<Dendrite>(
-             std::make_shared<Position>((position->x) - 1, (position->y) - 1, (position->z) - 1)));
-            this->onwardDendrites.back()->initialise();
-            this->onwardDendrites.back()->updateFromDendriteBranch(shared_from_this());
+            // Create a new Dendrite and connect it
+            auto newDendritePosition = std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1);
+            auto newDendrite = std::make_shared<Dendrite>(newDendritePosition);
+            connectDendrite(newDendrite);
+
+            // Initialise the new Dendrite
+            onwardDendrites.back()->initialise();
+            onwardDendrites.back()->updateFromDendriteBranch(std::static_pointer_cast<DendriteBranch>(shared_from_this()));
         }
+
         instanceInitialised = true;
     }
 }
 
-void DendriteBranch::updatePosition(const PositionPtr &newPosition)
-{
-    position = newPosition;
-}
-
 void DendriteBranch::connectDendrite(std::shared_ptr<Dendrite> dendrite)
 {
-    auto        coords = get_coordinates(int(onwardDendrites.size() + 1), int(onwardDendrites.size() + 1), int(5));
-    PositionPtr currentPosition = dendrite->getPosition();
-    auto        x               = double(std::get<0>(coords)) + currentPosition->x;
-    auto        y               = double(std::get<1>(coords)) + currentPosition->y;
-    auto        z               = double(std::get<2>(coords)) + currentPosition->z;
-    currentPosition->x          = x;
-    currentPosition->y          = y;
-    currentPosition->z          = z;
+    auto coords = get_coordinates(static_cast<int>(onwardDendrites.size() + 1),
+                                  static_cast<int>(onwardDendrites.size() + 1), 5);
+    auto currentPosition = dendrite->getPosition();
+    currentPosition->x += static_cast<double>(std::get<0>(coords));
+    currentPosition->y += static_cast<double>(std::get<1>(coords));
+    currentPosition->z += static_cast<double>(std::get<2>(coords));
     onwardDendrites.emplace_back(std::move(dendrite));
+}
+
+const std::vector<std::shared_ptr<Dendrite>>& DendriteBranch::getDendrites() const
+{
+    return onwardDendrites;
 }
 
 void DendriteBranch::updateFromSoma(std::shared_ptr<Soma> parentSomaPointer)
 {
-    this->parentSoma = std::move(parentSomaPointer);
+    parentSoma = std::move(parentSomaPointer);
+}
+
+std::shared_ptr<Soma> DendriteBranch::getParentSoma() const
+{
+    return parentSoma;
 }
 
 void DendriteBranch::updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer)
 {
-    this->parentDendrite = std::move(parentDendritePointer);
+    parentDendrite = std::move(parentDendritePointer);
+}
+
+std::shared_ptr<Dendrite> DendriteBranch::getParentDendrite() const
+{
+    return parentDendrite;
+}
+
+void DendriteBranch::update(double deltaTime)
+{
+    // Update energy levels
+    updateEnergy(deltaTime);
+
+    // Update dendrites
+    for (auto& dendrite : onwardDendrites)
+    {
+        dendrite->update(deltaTime);
+    }
+
+    // Additional updates if necessary
 }

@@ -1,34 +1,65 @@
 #include "AxonHillock.h"
+#include "Axon.h"
+#include "Soma.h"
+#include <iostream>
+
+AxonHillock::AxonHillock(const std::shared_ptr<Position>& position)
+        : NeuronalComponent(position)
+{
+    // Additional initialization if needed
+}
 
 void AxonHillock::initialise()
 {
+    NeuronalComponent::initialise(); // Call base class initialise
+
     if (!instanceInitialised)
     {
         std::cout << "Initialising AxonHillock" << std::endl;
 
-        if (!this->onwardAxon)
+        if (!onwardAxon)
         {
             std::cout << "Creating Axon" << std::endl;
-            this->onwardAxon = std::make_shared<Axon>(
-                    std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
+            onwardAxon = std::make_shared<Axon>(
+                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1));
         }
 
         std::cout << "AxonHillock initialising Axon" << std::endl;
-        this->onwardAxon->initialise();
+        onwardAxon->initialise();
         std::cout << "AxonHillock updating from Axon" << std::endl;
-        this->onwardAxon->updateFromAxonHillock(shared_from_this());
+        onwardAxon->updateFromAxonHillock(std::static_pointer_cast<AxonHillock>(shared_from_this()));
 
         instanceInitialised = true;
     }
     std::cout << "AxonHillock initialised" << std::endl;
 }
 
-void AxonHillock::updatePosition(const PositionPtr& newPosition)
+void AxonHillock::update(double deltaTime)
 {
-    position = newPosition;
+    // Update energy levels
+    updateEnergy(deltaTime);
+
+    // Update the onward axon
+    if (onwardAxon)
+    {
+        onwardAxon->update(deltaTime);
+    }
+
+    // Additional updates if necessary
+}
+
+std::shared_ptr<Axon> AxonHillock::getAxon() const
+{
+    return onwardAxon;
 }
 
 void AxonHillock::updateFromSoma(std::shared_ptr<Soma> parentPointer)
 {
-    this->parentSoma = std::move(parentPointer);
+    parentSoma = std::move(parentPointer);
 }
+
+std::shared_ptr<Soma> AxonHillock::getParentSoma() const
+{
+    return parentSoma;
+}
+

@@ -1,36 +1,28 @@
 #ifndef SENSORYRECEPTOR_H
 #define SENSORYRECEPTOR_H
 
-#include "BodyComponent.h"
-#include "BodyShapeComponent.h"
+#include "NeuronalComponent.h"
 #include "Position.h"
+#include "SynapticGap.h"
 
 #include <chrono>
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <cmath>
 
 class SynapticGap;
 
-class SensoryReceptor
-: public std::enable_shared_from_this<SensoryReceptor>
-, public BodyComponent<Position>
-, public BodyShapeComponent
+class SensoryReceptor : public NeuronalComponent
 {
-    public:
-    explicit SensoryReceptor(const PositionPtr &position,
-                             double             propRate = BodyComponent<Position>::defaultPropagationRate)
-    : BodyComponent<Position>(position, propRate)
-    , BodyShapeComponent()
-    {
-    }
+public:
+    explicit SensoryReceptor(const std::shared_ptr<Position>& position);
+
     ~SensoryReceptor() override = default;
 
-    void initialise();
+    void initialise() override;
 
     void addSynapticGap(std::shared_ptr<SynapticGap> gap);
-
-    void updatePosition(const PositionPtr &newPosition);
 
     [[nodiscard]] std::vector<std::shared_ptr<SynapticGap>> getSynapticGaps() const;
 
@@ -50,9 +42,7 @@ class SensoryReceptor
     double calcPropagationRate();
     void   updateComponent(double time, double energy);
 
-    [[nodiscard]] const PositionPtr &getPosition() const;
-
-    private:
+private:
     bool                                      instanceInitialised = false;
     std::vector<std::shared_ptr<SynapticGap>> synapticGaps;
     std::shared_ptr<SynapticGap>              synapticGap;
@@ -69,6 +59,7 @@ class SensoryReceptor
     double                                    maxPropagationRate{};
     double                                    lastCallTime{};
     int                                       callCount{};
+    double                                    propagationRate{};
 };
 
 #endif  // SENSORYRECEPTOR_H

@@ -29,17 +29,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change afterPath="$PROJECT_DIR$/include/wss.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/visualiser/wss.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/Cluster.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/NeuronalComponent.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/Cluster.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/NeuronalComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configure/simulation.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configure/simulation.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Axon.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Axon.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/AxonBouton.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonBouton.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/AxonBranch.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonBranch.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/AxonHillock.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonHillock.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Dendrite.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Dendrite.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/DendriteBouton.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/DendriteBouton.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/DendriteBranch.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/DendriteBranch.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Effector.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Effector.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Neuron.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Neuron.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/SensoryReceptor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SensoryReceptor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Soma.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Soma.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/SynapticGap.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SynapticGap.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/database.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/database.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/globals.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/globals.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/visualiser.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/visualiser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/Logger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Axon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Axon.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonHillock.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonHillock.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBouton.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Effector.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Effector.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Soma.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Soma.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/database.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/utils.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,42 +110,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "CMake Application.AARNN.executor": "Run",
-    "Database Script.debug_database.sql.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "Shell Script.ComposeContainers.sh.executor": "Run",
-    "Shell Script.RunContainers.executor": "Run",
-    "cf.advertisement.text.has.clang-format": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/pbisaacs/Developer/aarnn/src/visualiser",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "CMakeSettings",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;CMake Application.AARNN.executor&quot;: &quot;Run&quot;,
+    &quot;Database Script.debug_database.sql.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;Shell Script.ComposeContainers.sh.executor&quot;: &quot;Run&quot;,
+    &quot;Shell Script.RunContainers.executor&quot;: &quot;Run&quot;,
+    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/pbisaacs/Developer/aarnn/include&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ],
-    "RunConfigurationTargetLRU": [
-      "baacce9a-d183-41f9-ad6d-ea8cf8c0e36b/database/\"neurons\""
+    &quot;RunConfigurationTargetLRU&quot;: [
+      &quot;baacce9a-d183-41f9-ad6d-ea8cf8c0e36b/database/\&quot;neurons\&quot;&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/include" />
+      <recent name="$PROJECT_DIR$/src/aarnn" />
       <recent name="$PROJECT_DIR$/src/visualiser" />
       <recent name="$PROJECT_DIR$/configure" />
       <recent name="$PROJECT_DIR$" />
@@ -283,7 +312,12 @@
       <workItem from="1728979960005" duration="11542000" />
       <workItem from="1729065550348" duration="85674000" />
       <workItem from="1729416955644" duration="6082000" />
-      <workItem from="1729453437817" duration="34183000" />
+      <workItem from="1729453437817" duration="37292000" />
+      <workItem from="1729587405961" duration="19249000" />
+      <workItem from="1729670658529" duration="11921000" />
+      <workItem from="1729759058473" duration="9000" />
+      <workItem from="1729759529344" duration="23682000" />
+      <workItem from="1729949255836" duration="5854000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
@@ -331,5 +365,16 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Builds for Podman" />
     <option name="LAST_COMMIT_MESSAGE" value="Builds for Podman" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/include/AxonHillock.h</url>
+          <line>3</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
