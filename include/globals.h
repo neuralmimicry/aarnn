@@ -14,6 +14,7 @@
 #include "Neuron.h"
 
 extern std::unordered_set<std::shared_ptr<Neuron>> changedNeurons;
+extern std::unordered_set<std::shared_ptr<Cluster>> changedClusters;
 extern std::mutex changedNeuronsMutex;
 extern std::atomic<bool> running;
 extern std::condition_variable cv;

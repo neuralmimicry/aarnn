@@ -29,6 +29,7 @@ public:
      * @brief Constructs a Visualiser object.
      * @param conn Shared pointer to a pqxx::connection object.
      * @param logger Reference to a Logger object for logging purposes.
+     * @param ws_server Reference to a WebSocketServer object for WebSocket communication.
      */
     Visualiser(std::shared_ptr<pqxx::connection> conn, Logger& logger, WebSocketServer& ws_server);
 
@@ -47,6 +48,7 @@ private:
      * @param glyphPoints VTK points object for glyph positioning.
      * @param glyphVectors VTK float array for glyph orientation vectors.
      * @param glyphTypes VTK unsigned char array for glyph type identifiers.
+     * @param glyphColors VTK unsigned char array for glyph colors based on energy levels.
      * @param parent_soma_id ID of the parent soma (-1 if not applicable).
      * @param parent_dendrite_id ID of the parent dendrite (-1 if connected to soma).
      */
@@ -56,6 +58,7 @@ private:
                                 vtkSmartPointer<vtkPoints>& glyphPoints,
                                 vtkSmartPointer<vtkFloatArray>& glyphVectors,
                                 vtkSmartPointer<vtkUnsignedCharArray>& glyphTypes,
+                                vtkSmartPointer<vtkUnsignedCharArray>& glyphColors,
                                 int parent_soma_id,
                                 int parent_dendrite_id = -1);
 
@@ -67,6 +70,7 @@ private:
      * @param glyphPoints VTK points object for glyph positioning.
      * @param glyphVectors VTK float array for glyph orientation vectors.
      * @param glyphTypes VTK unsigned char array for glyph type identifiers.
+     * @param glyphColors VTK unsigned char array for glyph colors based on energy levels.
      * @param parent_axon_id ID of the parent axon.
      * @param parent_axon_branch_id ID of the parent axon branch (-1 if connected to hillock).
      * @param parent_axon_hillock_id ID of the parent axon hillock (-1 if not applicable).
@@ -77,6 +81,7 @@ private:
                      vtkSmartPointer<vtkPoints>& glyphPoints,
                      vtkSmartPointer<vtkFloatArray>& glyphVectors,
                      vtkSmartPointer<vtkUnsignedCharArray>& glyphTypes,
+                     vtkSmartPointer<vtkUnsignedCharArray>& glyphColors,
                      int parent_axon_id,
                      int parent_axon_branch_id = -1,
                      int parent_axon_hillock_id = -1);
@@ -93,8 +98,8 @@ private:
 
     // Data Members
     std::shared_ptr<pqxx::connection> conn_; ///< Shared pointer to the PostgreSQL connection.
-    Logger& logger_;                          ///< Reference to the Logger object for logging.
-    WebSocketServer& ws_server_;
+    Logger& logger_;                         ///< Reference to the Logger object for logging.
+    WebSocketServer& ws_server_;             ///< Reference to the WebSocketServer object for communication.
 };
 
 #endif // AARNN_VISUALISER_H

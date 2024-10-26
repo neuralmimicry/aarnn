@@ -345,22 +345,25 @@ void addAxonBranchPositionsToPolyData(vtkRenderer *renderer,
 
 std::tuple<double, double, double> get_coordinates(int i, int total_points, int points_per_layer)
 {
-    const double golden_angle = M_PI * (3 - std::sqrt(5));
+    // Calculate the number of layers
+    int num_layers = total_points / points_per_layer;
+    if (num_layers == 0) num_layers = 1; // Avoid division by zero
 
+    // Determine the layer index and index within the layer
     int layer = i / points_per_layer;
     int index_in_layer = i % points_per_layer;
 
-    double r = (double)(layer + 1) / (double(total_points) / points_per_layer);
+    // Calculate the radius for this layer
+    double radius = 1.0 + layer * 0.5; // Adjust 0.5 to control the spacing between layers
 
-    double theta = golden_angle * index_in_layer;
+    // Calculate the angles for spherical coordinates
+    double theta = M_PI * (double)(layer + 1) / (double)(num_layers + 1);          // Polar angle from 0 to PI
+    double phi = 2.0 * M_PI * (double)(index_in_layer) / (double)(points_per_layer); // Azimuthal angle from 0 to 2PI
 
-    double y = 1 - (double)(layer) / (double(total_points) / points_per_layer - 1);
-
-    double radius = std::sqrt(1 - y * y);
-
-    double x = r * radius * std::cos(theta);
-    y = r * y;
-    double z = r * radius * std::sin(theta);
+    // Convert spherical coordinates to Cartesian coordinates
+    double x = radius * sin(theta) * cos(phi);
+    double y = radius * sin(theta) * sin(phi);
+    double z = radius * cos(theta);
 
     return std::make_tuple(x, y, z);
 }

@@ -1,24 +1,57 @@
 #include "Axon.h"
+#include "AxonBouton.h"
+#include "AxonBranch.h"
+#include "AxonHillock.h"
+#include <iostream>
+
+Axon::Axon(const std::shared_ptr<Position>& position)
+        : NeuronalComponent(position)
+{
+    // Additional initialization if needed
+}
 
 void Axon::initialise()
 {
-    if(!instanceInitialised)
+    NeuronalComponent::initialise(); // Call base class initialise
+
+    if (!instanceInitialised)
     {
         std::cout << "Initialising Axon" << std::endl;
-        if(!this->onwardAxonBouton)
+
+        if (!onwardAxonBouton)
         {
-            this->onwardAxonBouton = std::make_shared<AxonBouton>(
-             std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1));
+            onwardAxonBouton = std::make_shared<AxonBouton>(
+                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1));
         }
-        this->onwardAxonBouton->initialise();
-        this->onwardAxonBouton->updateFromAxon(shared_from_this());
+        onwardAxonBouton->initialise();
+        onwardAxonBouton->updateFromAxon(std::static_pointer_cast<Axon>(shared_from_this()));
+
         instanceInitialised = true;
     }
 }
 
-void Axon::updatePosition(const std::shared_ptr<Position> &newPosition)
+void Axon::update(double deltaTime)
 {
-    position = newPosition;
+    // Update energy levels
+    updateEnergy(deltaTime);
+
+    // Propagate signal if possible
+    //if (canPropagateSignal())
+    //{
+    //    propagateSignal();
+    //}
+
+    // Update onward Axon Bouton
+    if (onwardAxonBouton)
+    {
+        onwardAxonBouton->update(deltaTime);
+    }
+
+    // Update branches
+    for (auto& branch : axonBranches)
+    {
+        branch->update(deltaTime);
+    }
 }
 
 void Axon::addBranch(std::shared_ptr<AxonBranch> branch)
@@ -26,7 +59,7 @@ void Axon::addBranch(std::shared_ptr<AxonBranch> branch)
     axonBranches.push_back(branch);
 }
 
-const std::vector<std::shared_ptr<AxonBranch>> &Axon::getAxonBranches() const
+const std::vector<std::shared_ptr<AxonBranch>>& Axon::getAxonBranches() const
 {
     return axonBranches;
 }
@@ -38,26 +71,26 @@ std::shared_ptr<AxonBouton> Axon::getAxonBouton() const
 
 double Axon::calcPropagationTime()
 {
-    // Implement the calculation
+    // Implement the calculation based on axon properties
     return 0.0;
 }
 
 void Axon::updateFromAxonHillock(std::shared_ptr<AxonHillock> parentAxonHillockPointer)
 {
-    this->parentAxonHillock = std::move(parentAxonHillockPointer);
+    parentAxonHillock = std::move(parentAxonHillockPointer);
 }
 
 std::shared_ptr<AxonHillock> Axon::getParentAxonHillock() const
 {
-    return this->parentAxonHillock;
+    return parentAxonHillock;
 }
 
 void Axon::updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer)
 {
-    this->parentAxonBranch = std::move(parentAxonBranchPointer);
+    parentAxonBranch = std::move(parentAxonBranchPointer);
 }
 
 std::shared_ptr<AxonBranch> Axon::getParentAxonBranch() const
 {
-    return this->parentAxonBranch;
+    return parentAxonBranch;
 }

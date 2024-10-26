@@ -1,49 +1,35 @@
 #ifndef AXONHILLOCK_H
 #define AXONHILLOCK_H
 
-#include "BodyComponent.h"
-#include "BodyShapeComponent.h"
-#include "Position.h"
 #include <memory>
 #include <vector>
-#include "utils.h"
+#include "NeuronalComponent.h"
+#include "Position.h"
 
+// Forward declarations to avoid circular dependencies
 class Soma;
 class Axon;
 
-class AxonHillock
-: public std::enable_shared_from_this<AxonHillock>
-, public BodyComponent<Position>
-, public BodyShapeComponent
+class AxonHillock : public NeuronalComponent
 {
-    public:
-    explicit AxonHillock(const PositionPtr &position, double propRate = BodyComponent<Position>::defaultPropagationRate)
-    : BodyComponent<Position>(position, propRate)
-    , BodyShapeComponent()
-    {
-    }
+public:
+    explicit AxonHillock(const std::shared_ptr<Position>& position);
 
     ~AxonHillock() override = default;
-    void                                initialise();
-    void                                updatePosition(const PositionPtr &newPosition);
-    [[nodiscard]] std::shared_ptr<Axon> getAxon() const
-    {
-        return onwardAxon;
-    }
-    void                                updateFromSoma(std::shared_ptr<Soma> parentPointer);
-    [[nodiscard]] std::shared_ptr<Soma> getParentSoma() const
-    {
-        return parentSoma;
-    }
-    [[nodiscard]] const PositionPtr &getPosition() const
-    {
-        return position;
-    }
 
-    private:
-    bool                  instanceInitialised = false;
+    // Override methods from NeuronalComponent
+    void initialise() override;
+    void update(double deltaTime);
+
+    // AxonHillock-specific methods
+    [[nodiscard]] std::shared_ptr<Axon> getAxon() const;
+    void updateFromSoma(std::shared_ptr<Soma> parentPointer);
+    [[nodiscard]] std::shared_ptr<Soma> getParentSoma() const;
+
+private:
+    // Member variables
     std::shared_ptr<Axon> onwardAxon;
     std::shared_ptr<Soma> parentSoma;
 };
 
-#endif
+#endif // AXONHILLOCK_H

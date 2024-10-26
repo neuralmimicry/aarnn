@@ -189,6 +189,7 @@ add_executable(AARNN ${AARNN_SRC}
         include/Effector.h
         include/Logger.h
         include/msock.h
+        include/NeuronalComponent.h
         include/NeuronParameters.h
         include/nvTimerCallback.h
         include/portaudioMicThread.h

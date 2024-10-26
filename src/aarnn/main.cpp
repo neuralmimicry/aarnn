@@ -17,10 +17,17 @@
 #include "vclient.h"
 #include "NeuronParameters.h"
 #include "globals.h"
+#include <cmath>
+#include "Cluster.h"
+#include "SensoryReceptor.h"
+#include "Effector.h"
+#include "Neuron.h"
 
-std::atomic<double> totalPropagationRate(0.0);
+
+//std::atomic<double> totalPropagationRate(0.0);
 std::mutex mtx;
 std::unordered_set<std::shared_ptr<Neuron>> changedNeurons;
+std::unordered_set<std::shared_ptr<Cluster>> changedClusters;
 std::mutex changedNeuronsMutex;
 std::atomic<bool> running(true);
 std::condition_variable cv;
@@ -60,33 +67,32 @@ void checkForQuit() {
     }
 }
 
-void computePropagationRate(const std::shared_ptr<Neuron>& neuron) {
-    if (!neuron) return; // Add check for null neuron
+double computePropagationRate(const std::shared_ptr<Neuron>& neuron) {
+    if (!neuron) return 0.0; // Return 0.0 for null neuron
     auto soma = neuron->getSoma();
-    if (!soma) return; // Add check for null soma
-    double propagationRate = soma->getPropagationRate();
+    if (!soma) return 0.0; // Return 0.0 for null soma
 
-    atomic_add(totalPropagationRate, propagationRate);
+    // Compute the propagation rate (replace with actual computation)
+    double propagationRate = 1.0; // Placeholder value
+    neuron->setPropagationRate(propagationRate);
 
     {
         std::lock_guard<std::mutex> lock(changedNeuronsMutex);
         changedNeurons.insert(neuron);
     }
+
+    return propagationRate;
 }
 
 
 int main() {
     // Initialize Logger
     Logger logger("errors_aarnn.log");
-
     std::thread t1(logMessages, std::ref(logger), 1);
-
 
     std::string input = "Hello, World!";
     std::string encoded = base64_encode(reinterpret_cast<const unsigned char*>(input.c_str()), input.length());
-
     std::cout << "Base64 Encoded: " << encoded << std::endl;
-    std::string query;
 
     std::vector<std::string> config_filenames = { "simulation.conf" };
     auto config = read_config(config_filenames);
@@ -97,6 +103,8 @@ int main() {
         std::cerr << "Failed to initialise database connection." << std::endl;
         return 1;
     }
+
+    int num_clusters = std::stoi(config["num_clusters"]);
     int num_neurons = std::stoi(config["num_neurons"]);
     int num_pixels = std::stoi(config["num_pixels"]);
     int num_phonels = std::stoi(config["num_phonels"]);
@@ -116,259 +124,319 @@ int main() {
     txn.exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
     txn.exec("SET lock_timeout = '5s';");
 
-    NeuronParameters params;
+    // Create clusters
+    std::vector<std::shared_ptr<Cluster>> clusters;
+    clusters.reserve(num_clusters);
 
-    std::vector<std::shared_ptr<Neuron>> neurons;
-    std::mutex neuron_mutex;
-    std::mutex empty_neuron_mutex;
-    neurons.reserve(num_neurons);
-    double shiftX = 0.0;
-    double shiftY = 0.0;
-    double shiftZ = 0.0;
-    double newPositionX;
-    double newPositionY;
-    double newPositionZ;
-    std::shared_ptr<Neuron> prevNeuron;
-    for (int i = 0; i < num_neurons; ++i) {
-        auto coords = get_coordinates(i, num_neurons, neuron_points_per_layer);
-        if (i > 0) {
-            prevNeuron = neurons.back();
-            shiftX = std::get<0>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
-            shiftY = std::get<1>(coords) + (0.1 * i) + cos((3.14 / 180) * (i * 10)) * 0.1;
-            shiftZ = std::get<2>(coords) + (0.1 * i) + sin((3.14 / 180) * (i * 10)) * 0.1;
-        }
-
-        neurons.emplace_back(std::make_shared<Neuron>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-        neurons.back()->initialise();
-        neurons.back()->setPropagationRate(1.0);
-        if (i > 0 && i % 3 == 0) {
-            PositionPtr prevDendriteBoutonPosition = prevNeuron->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
-            PositionPtr currentSynapticGapPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
-            newPositionX = prevDendriteBoutonPosition->x + 0.4;
-            newPositionY = prevDendriteBoutonPosition->y + 0.4;
-            newPositionZ = prevDendriteBoutonPosition->z + 0.4;
-            currentSynapticGapPosition->x = newPositionX;
-            currentSynapticGapPosition->y = newPositionY;
-            currentSynapticGapPosition->z = newPositionZ;
-            PositionPtr currentAxonBoutonPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
-            newPositionX = newPositionX + 0.4;
-            newPositionY = newPositionY + 0.4;
-            newPositionZ = newPositionZ + 0.4;
-            currentAxonBoutonPosition->x = newPositionX;
-            currentAxonBoutonPosition->y = newPositionY;
-            currentAxonBoutonPosition->z = newPositionZ;
-            PositionPtr currentAxonPosition = neurons.back()->getSoma()->getAxonHillock()->getAxon()->getPosition();
-            newPositionX = newPositionX + (currentAxonPosition->x - newPositionX) / 2.0;
-            newPositionY = newPositionY + (currentAxonPosition->y - newPositionY) / 2.0;
-            newPositionZ = newPositionZ + (currentAxonPosition->z - newPositionZ) / 2.0;
-            currentAxonPosition->x = newPositionX;
-            currentAxonPosition->y = newPositionY;
-            currentAxonPosition->z = newPositionZ;
-            associateSynapticGap(*neurons[i - 1], *neurons[i], proximityThreshold);
-        }
+    for (int i = 0; i < num_clusters; ++i) {
+        // Create a cluster with a position that is at least 100 units away from previous clusters
+        auto cluster = Cluster::createCluster(100.0);
+        cluster->initialise(num_neurons, neuron_points_per_layer, proximityThreshold);
+        cluster->setPropagationRate(1.0);
+        clusters.emplace_back(cluster);
     }
-    std::cout << "Created " << neurons.size() << " neurons." << std::endl;
 
+    std::cout << "Created " << clusters.size() << " clusters." << std::endl;
+
+    // Flatten all neurons from all clusters into a single vector for easy access
+    std::vector<std::shared_ptr<Neuron>> allNeurons;
+    for (const auto& cluster : clusters) {
+        const auto& neuronsInCluster = cluster->getNeurons();
+        allNeurons.insert(allNeurons.end(), neuronsInCluster.begin(), neuronsInCluster.end());
+    }
+
+    // Create visual inputs
     std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> visualInputs(2);
     visualInputs[0].reserve(num_pixels / 2);
     visualInputs[1].reserve(num_pixels / 2);
-    std::shared_ptr<SensoryReceptor> prevReceptor;
-#pragma omp parallel for
+
+    double shiftX, shiftY, shiftZ;
+    double newPositionX, newPositionY, newPositionZ;
+
     for (int j = 0; j < 2; ++j) {
         for (int i = 0; i < (num_pixels / 2); ++i) {
             auto coords = get_coordinates(i, num_pixels, pixel_points_per_layer);
-            if (i > 0) {
-                prevReceptor = visualInputs[j].back();
-                shiftX = std::get<0>(coords) - 100 + (j * 200);
-                shiftY = std::get<1>(coords);
-                shiftZ = std::get<2>(coords) - 100;
-            }
 
-            std::cout << "Creating visual (" << j << ") input " << i << " at (" << shiftX << ", " << shiftY << ", " << shiftZ << ")" << std::endl;
-            visualInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-            if (!visualInputs[j].back()) {
-                std::cerr << "visualInputs[" << j << "].back() is null!" << std::endl;
-                continue;
-            }
-            visualInputs[j].back()->initialise();
+            shiftX = std::get<0>(coords) - 100 + (j * 200);
+            shiftY = std::get<1>(coords);
+            shiftZ = std::get<2>(coords) - 100;
+
+            auto receptorPosition = std::make_shared<Position>(shiftX, shiftY, shiftZ);
+            auto receptor = std::make_shared<SensoryReceptor>(receptorPosition);
+            receptor->initialise();
+            visualInputs[j].emplace_back(receptor);
+
+            // Connect the receptor to neurons across all clusters
             if (i > 0 && i % 7 == 0) {
-                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
+                // Calculate the neuron index to connect to
+                int neuronIndex = (i + ((num_pixels / 2) * j)) % allNeurons.size();
+                auto neuron = allNeurons[neuronIndex];
 
-                PositionPtr currentSynapticGapPosition = visualInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                // Adjust positions for connection
+                PositionPtr currentDendriteBoutonPosition = neuron->getSoma()->getDendriteBranches()[0]
+                        ->getDendrites()[0]->getDendriteBouton()->getPosition();
+                PositionPtr currentSynapticGapPosition = receptor->getSynapticGaps()[0]->getPosition();
+
                 newPositionX = currentSynapticGapPosition->x + 0.4;
                 newPositionY = currentSynapticGapPosition->y + 0.4;
                 newPositionZ = currentSynapticGapPosition->z + 0.4;
+
                 currentDendriteBoutonPosition->x = newPositionX;
                 currentDendriteBoutonPosition->y = newPositionY;
                 currentDendriteBoutonPosition->z = newPositionZ;
-                PositionPtr currentDendritePosition = neurons[int(i + ((num_pixels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
-                newPositionX = newPositionX + 0.4;
-                newPositionY = newPositionY + 0.4;
-                newPositionZ = newPositionZ + 0.4;
+
+                PositionPtr currentDendritePosition = neuron->getSoma()->getDendriteBranches()[0]
+                        ->getDendrites()[0]->getPosition();
+
+                newPositionX += 0.4;
+                newPositionY += 0.4;
+                newPositionZ += 0.4;
+
                 currentDendritePosition->x = newPositionX;
                 currentDendritePosition->y = newPositionY;
                 currentDendritePosition->z = newPositionZ;
-                associateSynapticGap(*visualInputs[j].back(), *neurons[int(i + ((num_pixels / 2) * j))], proximityThreshold);
+
+                // Associate synaptic gap
+                associateSynapticGap(*receptor, *neuron, proximityThreshold);
             }
         }
     }
-    std::cout << "Created " << ( visualInputs[0].size() + visualInputs[1].size()) << " sensory receptors." << std::endl;
 
+    std::cout << "Created " << (visualInputs[0].size() + visualInputs[1].size()) << " visual sensory receptors." << std::endl;
+
+    // Create audio inputs
     std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> audioInputs(2);
-    audioInputs[0].reserve(num_phonels);
-    audioInputs[1].reserve(num_phonels);
-#pragma omp parallel for
+    audioInputs[0].reserve(num_phonels / 2);
+    audioInputs[1].reserve(num_phonels / 2);
+
     for (int j = 0; j < 2; ++j) {
         for (int i = 0; i < (num_phonels / 2); ++i) {
             auto coords = get_coordinates(i, num_phonels, phonel_points_per_layer);
-            if (i > 0) {
-                prevReceptor = audioInputs[j].back();
-                shiftX = std::get<0>(coords) - 150 + (j * 300);
-                shiftY = std::get<1>(coords);
-                shiftZ = std::get<2>(coords);
-            }
 
-            audioInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-            audioInputs[j].back()->initialise();
+            shiftX = std::get<0>(coords) - 150 + (j * 300);
+            shiftY = std::get<1>(coords);
+            shiftZ = std::get<2>(coords);
+
+            auto receptorPosition = std::make_shared<Position>(shiftX, shiftY, shiftZ);
+            auto receptor = std::make_shared<SensoryReceptor>(receptorPosition);
+            receptor->initialise();
+            audioInputs[j].emplace_back(receptor);
+
+            // Connect the receptor to neurons across all clusters
             if (i > 0 && i % 11 == 0) {
-                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_phonels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
-                PositionPtr currentSynapticGapPosition = audioInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                // Calculate the neuron index to connect to
+                int neuronIndex = (i + ((num_phonels / 2) * j)) % allNeurons.size();
+                auto neuron = allNeurons[neuronIndex];
+
+                // Adjust positions for connection
+                PositionPtr currentDendriteBoutonPosition = neuron->getSoma()->getDendriteBranches()[0]
+                        ->getDendrites()[0]->getDendriteBouton()->getPosition();
+                PositionPtr currentSynapticGapPosition = receptor->getSynapticGaps()[0]->getPosition();
+
                 newPositionX = currentSynapticGapPosition->x + 0.4;
                 newPositionY = currentSynapticGapPosition->y + 0.4;
                 newPositionZ = currentSynapticGapPosition->z + 0.4;
+
                 currentDendriteBoutonPosition->x = newPositionX;
                 currentDendriteBoutonPosition->y = newPositionY;
                 currentDendriteBoutonPosition->z = newPositionZ;
-                PositionPtr currentDendritePosition = neurons[int(i + ((num_phonels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
-                newPositionX = newPositionX + 0.4;
-                newPositionY = newPositionY + 0.4;
-                newPositionZ = newPositionZ + 0.4;
+
+                PositionPtr currentDendritePosition = neuron->getSoma()->getDendriteBranches()[0]
+                        ->getDendrites()[0]->getPosition();
+
+                newPositionX += 0.4;
+                newPositionY += 0.4;
+                newPositionZ += 0.4;
+
                 currentDendritePosition->x = newPositionX;
                 currentDendritePosition->y = newPositionY;
                 currentDendritePosition->z = newPositionZ;
-                associateSynapticGap(*audioInputs[j].back(), *neurons[int(i + ((num_phonels / 2) * j))], proximityThreshold);
+
+                // Associate synaptic gap
+                associateSynapticGap(*receptor, *neuron, proximityThreshold);
             }
         }
     }
-    std::cout << "Created " << ( audioInputs[0].size() + audioInputs[1].size()) << " sensory receptors." << std::endl;
 
+    std::cout << "Created " << (audioInputs[0].size() + audioInputs[1].size()) << " audio sensory receptors." << std::endl;
+
+    // Create olfactory inputs
     std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> olfactoryInputs(2);
-    olfactoryInputs[0].reserve(num_scentels);
-    olfactoryInputs[1].reserve(num_scentels);
-#pragma omp parallel for
+    olfactoryInputs[0].reserve(num_scentels / 2);
+    olfactoryInputs[1].reserve(num_scentels / 2);
+
     for (int j = 0; j < 2; ++j) {
         for (int i = 0; i < (num_scentels / 2); ++i) {
             auto coords = get_coordinates(i, num_scentels, scentel_points_per_layer);
-            if (i > 0) {
-                prevReceptor = olfactoryInputs[j].back();
-                shiftX = std::get<0>(coords) - 20 + (j * 40);
-                shiftY = std::get<1>(coords) - 10;
-                shiftZ = std::get<2>(coords) - 10;
-            }
 
-            olfactoryInputs[j].emplace_back(std::make_shared<SensoryReceptor>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-            olfactoryInputs[j].back()->initialise();
+            shiftX = std::get<0>(coords) - 20 + (j * 40);
+            shiftY = std::get<1>(coords) - 10;
+            shiftZ = std::get<2>(coords) - 10;
+
+            auto receptorPosition = std::make_shared<Position>(shiftX, shiftY, shiftZ);
+            auto receptor = std::make_shared<SensoryReceptor>(receptorPosition);
+            receptor->initialise();
+            olfactoryInputs[j].emplace_back(receptor);
+
+            // Connect the receptor to neurons across all clusters
             if (i > 0 && i % 13 == 0) {
-                PositionPtr currentDendriteBoutonPosition = neurons[int(i + ((num_scentels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getDendriteBouton()->getPosition();
-                PositionPtr currentSynapticGapPosition = olfactoryInputs[j].back()->getSynapticGaps()[0]->getPosition();
+                // Calculate the neuron index to connect to
+                int neuronIndex = (i + ((num_scentels / 2) * j)) % allNeurons.size();
+                auto neuron = allNeurons[neuronIndex];
+
+                // Adjust positions for connection
+                PositionPtr currentDendriteBoutonPosition = neuron->getSoma()->getDendriteBranches()[0]
+                        ->getDendrites()[0]->getDendriteBouton()->getPosition();
+                PositionPtr currentSynapticGapPosition = receptor->getSynapticGaps()[0]->getPosition();
+
                 newPositionX = currentSynapticGapPosition->x + 0.4;
                 newPositionY = currentSynapticGapPosition->y + 0.4;
                 newPositionZ = currentSynapticGapPosition->z + 0.4;
+
                 currentDendriteBoutonPosition->x = newPositionX;
                 currentDendriteBoutonPosition->y = newPositionY;
                 currentDendriteBoutonPosition->z = newPositionZ;
-                PositionPtr currentDendritePosition = neurons[int(i + ((num_scentels / 2) * j))]->getSoma()->getDendriteBranches()[0]->getDendrites()[0]->getPosition();
-                newPositionX = newPositionX + 0.4;
-                newPositionY = newPositionY + 0.4;
-                newPositionZ = newPositionZ + 0.4;
+
+                PositionPtr currentDendritePosition = neuron->getSoma()->getDendriteBranches()[0]
+                        ->getDendrites()[0]->getPosition();
+
+                newPositionX += 0.4;
+                newPositionY += 0.4;
+                newPositionZ += 0.4;
+
                 currentDendritePosition->x = newPositionX;
                 currentDendritePosition->y = newPositionY;
                 currentDendritePosition->z = newPositionZ;
-                associateSynapticGap(*olfactoryInputs[j].back(), *neurons[int(i + ((num_scentels / 2) * j))], proximityThreshold);
+
+                // Associate synaptic gap
+                associateSynapticGap(*receptor, *neuron, proximityThreshold);
             }
         }
     }
-    std::cout << "Created " << ( olfactoryInputs[0].size() + olfactoryInputs[1].size()) << " sensory receptors." << std::endl;
 
+    std::cout << "Created " << (olfactoryInputs[0].size() + olfactoryInputs[1].size()) << " olfactory sensory receptors." << std::endl;
+
+    // Create effectors
     std::vector<std::shared_ptr<Effector>> vocalOutputs;
     vocalOutputs.reserve(num_vocels);
-    std::shared_ptr<Effector> prevEffector;
 
-    for (int i = 0; i < (num_vocels); ++i) {
+    for (int i = 0; i < num_vocels; ++i) {
         auto coords = get_coordinates(i, num_vocels, vocel_points_per_layer);
-        if (i > 0) {
-            prevEffector = vocalOutputs.back();
-            shiftX = std::get<0>(coords);
-            shiftY = std::get<1>(coords) - 100;
-            shiftZ = std::get<2>(coords) + 10;
-        }
 
-        vocalOutputs.emplace_back(std::make_shared<Effector>(std::make_shared<Position>(shiftX, shiftY, shiftZ)));
-        vocalOutputs.back()->initialise();
-        if (i > 0 && i % 17 == 0 && !neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->isAssociated()) {
-            PositionPtr currentSynapticGapPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->getPosition();
-            PositionPtr currentEffectorPosition = vocalOutputs.back()->getPosition();
+        shiftX = std::get<0>(coords);
+        shiftY = std::get<1>(coords) - 100;
+        shiftZ = std::get<2>(coords) + 10;
+
+        auto effectorPosition = std::make_shared<Position>(shiftX, shiftY, shiftZ);
+        auto effector = std::make_shared<Effector>(effectorPosition);
+        effector->initialise();
+        vocalOutputs.emplace_back(effector);
+
+        // Connect the effector to neurons across all clusters
+        if (i > 0 && i % 17 == 0) {
+            // Calculate the neuron index to connect to
+            int neuronIndex = (i + num_vocels) % allNeurons.size();
+            auto neuron = allNeurons[neuronIndex];
+
+            // Adjust positions for connection
+            PositionPtr currentSynapticGapPosition = neuron->getSoma()->getAxonHillock()->getAxon()
+                    ->getAxonBouton()->getSynapticGap()->getPosition();
+            PositionPtr currentEffectorPosition = effector->getPosition();
+
             newPositionX = currentEffectorPosition->x - 0.4;
             newPositionY = currentEffectorPosition->y - 0.4;
             newPositionZ = currentEffectorPosition->z - 0.4;
+
             currentSynapticGapPosition->x = newPositionX;
             currentSynapticGapPosition->y = newPositionY;
             currentSynapticGapPosition->z = newPositionZ;
-            PositionPtr currentAxonBoutonPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getPosition();
-            newPositionX = newPositionX + 0.4;
-            newPositionY = newPositionY + 0.4;
-            newPositionZ = newPositionZ + 0.4;
+
+            PositionPtr currentAxonBoutonPosition = neuron->getSoma()->getAxonHillock()->getAxon()
+                    ->getAxonBouton()->getPosition();
+
+            newPositionX += 0.4;
+            newPositionY += 0.4;
+            newPositionZ += 0.4;
+
             currentAxonBoutonPosition->x = newPositionX;
             currentAxonBoutonPosition->y = newPositionY;
             currentAxonBoutonPosition->z = newPositionZ;
-            PositionPtr currentAxonPosition = neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getPosition();
-            newPositionX = newPositionX + 0.4;
-            newPositionY = newPositionY + 0.4;
-            newPositionZ = newPositionZ + 0.4;
+
+            PositionPtr currentAxonPosition = neuron->getSoma()->getAxonHillock()->getAxon()->getPosition();
+
+            newPositionX += 0.4;
+            newPositionY += 0.4;
+            newPositionZ += 0.4;
+
             currentAxonPosition->x = newPositionX;
             currentAxonPosition->y = newPositionY;
             currentAxonPosition->z = newPositionZ;
-            neurons[int(i + num_vocels)]->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->setAsAssociated();
+
+            neuron->getSoma()->getAxonHillock()->getAxon()->getAxonBouton()->getSynapticGap()->setAsAssociated();
         }
     }
+
     std::cout << "Created " << vocalOutputs.size() << " effectors." << std::endl;
 
+    // Associate neurons between clusters
 #pragma omp parallel for schedule(dynamic)
-    for (size_t i = 0; i < neurons.size(); ++i) {
-        for (size_t j = i + 1; j < neurons.size(); ++j) {
-            associateSynapticGap(*neurons[i], *neurons[j], proximityThreshold);
+    for (size_t c1 = 0; c1 < clusters.size(); ++c1) {
+        auto& cluster1 = clusters[c1];
+        for (size_t c2 = c1 + 1; c2 < clusters.size(); ++c2) {
+            auto& cluster2 = clusters[c2];
+            // Associate neurons between clusters
+            for (const auto& neuron1 : cluster1->getNeurons()) {
+                for (const auto& neuron2 : cluster2->getNeurons()) {
+                    associateSynapticGap(*neuron1, *neuron2, proximityThreshold);
+                }
+            }
         }
     }
 
+    // Prepare to compute propagation rates using threads
     const size_t numThreads = std::thread::hardware_concurrency();
     std::vector<std::thread> threads(numThreads);
 
-    size_t neuronsPerThread = neurons.size() / numThreads;
+// Declare a mutex and the totalPropagationRate variable
+    std::mutex totalPropagationRateMutex;
+    double totalPropagationRate = 0.0;
 
+// Calculate the number of neurons per thread
+    size_t totalNeurons = allNeurons.size();
+    size_t neuronsPerThread = totalNeurons / numThreads;
+    size_t remainingNeurons = totalNeurons % numThreads;
+
+// Launch threads to compute propagation rates
+    size_t start = 0;
     for (size_t t = 0; t < numThreads; ++t) {
-        size_t start = t * neuronsPerThread;
-        size_t end = (t + 1) * neuronsPerThread;
-        if (t == numThreads - 1) end = neurons.size();
-
-        threads[t] = std::thread([start, end, &neurons]() {
+        size_t end = start + neuronsPerThread + (t < remainingNeurons ? 1 : 0);
+        threads[t] = std::thread([start, end, &allNeurons, &totalPropagationRate, &totalPropagationRateMutex]() {
+            double localSum = 0.0;
             for (size_t i = start; i < end; ++i) {
-                computePropagationRate(neurons[i]);
+                double propagationRate = computePropagationRate(allNeurons[i]);
+                localSum += propagationRate;
+            }
+            // Protect the addition with a mutex
+            {
+                std::lock_guard<std::mutex> lock(totalPropagationRateMutex);
+                totalPropagationRate += localSum;
             }
         });
+        start = end;
     }
 
+// Join all threads
     for (auto& t : threads) {
         t.join();
     }
 
-    double propagationRate = totalPropagationRate.load();
-    std::cout << "The propagation rate is " << propagationRate << std::endl;
+    std::cout << "The total propagation rate is " << totalPropagationRate << std::endl;
 
     try {
-        batch_insert_neurons(txn, neurons);
+        batch_insert_clusters(txn, clusters);
         std::cout << "Batch insertion completed." << std::endl;
-        std::cout << "Total Propagation Rate: " << propagationRate << std::endl;
-        if (propagationRate != 0) {
+        std::cout << "Total Propagation Rate: " << totalPropagationRate << std::endl;
+        if (totalPropagationRate != 0) {
             txn.commit();
         } else {
             std::cout << "Propagation rate is zero. Aborting transaction." << std::endl;
@@ -380,21 +448,23 @@ int main() {
         std::cout << "Transaction aborted." << std::endl;
     }
 
-    std::vector<std::shared_ptr<Neuron>> emptyNeurons;
+    // Start threads for input and database updates (if applicable)
     //std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAudioQueue), 0);
     //std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
     std::thread inputThread(checkForQuit);
     std::thread dbThread(updateDatabase, std::ref(conn));
 
+    // Main loop
     while (running) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    inputThread.join();
+    // Clean up
     //nvThread.join();
     //avThread.join();
     //mic->micStop();
     //micThread.join();
+    inputThread.join();
     dbThread.join();
 
     return 0;

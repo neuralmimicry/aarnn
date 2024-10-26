@@ -3,25 +3,38 @@
 #include "utils.h"
 
 #include <cmath>
+#include <ctime>
+#include <cstdlib>
+#include <algorithm>
+
+SensoryReceptor::SensoryReceptor(const std::shared_ptr<Position>& position)
+        : NeuronalComponent(position)
+{
+    // Additional initialization if needed
+}
 
 void SensoryReceptor::initialise()
 {
-    if(!instanceInitialised)
+    NeuronalComponent::initialise(); // Call base class initialise
+
+    if (!instanceInitialised)
     {
-        setAttack((35 - (rand() % 25)) / 100);
-        setDecay((35 - (rand() % 25)) / 100);
-        setSustain((35 - (rand() % 25)) / 100);
-        setRelease((35 - (rand() % 25)) / 100);
+        setAttack((35 - (rand() % 25)) / 100.0);
+        setDecay((35 - (rand() % 25)) / 100.0);
+        setSustain((35 - (rand() % 25)) / 100.0);
+        setRelease((35 - (rand() % 25)) / 100.0);
         setFrequencyResponse(rand() % 44100);
         setPhaseShift(rand() % 360);
-        lastCallTime            = 0.0;
-        PositionPtr positionPtr = std::make_shared<Position>((position->x) + 1, (position->y) + 1, (position->z) + 1);
-        this->synapticGap             = std::make_shared<SynapticGap>(positionPtr);
-        this->synapticGap->initialise();
-        this->synapticGap->updateFromSensoryReceptor(shared_from_this());
-        addSynapticGap(this->synapticGap);
-        minPropagationRate  = (35 - (rand() % 25)) / 100;
-        maxPropagationRate  = (65 + (rand() % 25)) / 100;
+        lastCallTime = 0.0;
+
+        auto positionPtr = std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1);
+        synapticGap = std::make_shared<SynapticGap>(positionPtr);
+        synapticGap->initialise();
+        synapticGap->updateFromSensoryReceptor(std::static_pointer_cast<SensoryReceptor>(shared_from_this()));
+        addSynapticGap(synapticGap);
+
+        minPropagationRate  = (35 - (rand() % 25)) / 100.0;
+        maxPropagationRate  = (65 + (rand() % 25)) / 100.0;
         instanceInitialised = true;
     }
 }
@@ -31,12 +44,7 @@ void SensoryReceptor::addSynapticGap(std::shared_ptr<SynapticGap> gap)
     synapticGaps.emplace_back(std::move(gap));
 }
 
-void SensoryReceptor::updatePosition(const PositionPtr &newPosition)
-{
-    position = newPosition;
-}
-
-[[nodiscard]] std::vector<std::shared_ptr<SynapticGap>> SensoryReceptor::getSynapticGaps() const
+std::vector<std::shared_ptr<SynapticGap>> SensoryReceptor::getSynapticGaps() const
 {
     return synapticGaps;
 }
@@ -82,16 +90,16 @@ double SensoryReceptor::calculateEnergy(double currentTime, double currentEnergy
     previousTime     = currentTime;
     energyLevel      = currentEnergyLevel;
 
-    if(deltaTime < attack)
+    if (deltaTime < attack)
     {
         return (deltaTime / attack) * calculateWaveform(currentTime);
     }
-    else if(deltaTime < attack + decay)
+    else if (deltaTime < attack + decay)
     {
         double decay_time = deltaTime - attack;
         return ((1 - decay_time / decay) * (1 - sustain) + sustain) * calculateWaveform(currentTime);
     }
-    else if(deltaTime < attack + decay + sustain)
+    else if (deltaTime < attack + decay + sustain)
     {
         return sustain * calculateWaveform(currentTime);
     }
@@ -104,15 +112,20 @@ double SensoryReceptor::calculateEnergy(double currentTime, double currentEnergy
 
 double SensoryReceptor::calculateWaveform(double currentTime) const
 {
-    return energyLevel * sin(2 * M_PI * frequencyResponse * currentTime + phaseShift);
+    double phaseShiftRadians = phaseShift * M_PI / 180.0;
+    return energyLevel * sin(2 * M_PI * frequencyResponse * currentTime + phaseShiftRadians);
 }
 
 double SensoryReceptor::calcPropagationRate()
 {
-    double currentTime = (double)std::clock() / CLOCKS_PER_SEC;
+    double currentTime = static_cast<double>(std::clock()) / CLOCKS_PER_SEC;
     callCount++;
     double timeSinceLastCall = currentTime - lastCallTime;
-    lastCallTime             = currentTime;
+
+    if (timeSinceLastCall == 0)
+        timeSinceLastCall = 0.0001; // Prevent division by zero
+
+    lastCallTime = currentTime;
 
     double x = 1 / (1 + exp(-callCount / timeSinceLastCall));
     return minPropagationRate + x * (maxPropagationRate - minPropagationRate);
@@ -120,16 +133,14 @@ double SensoryReceptor::calcPropagationRate()
 
 void SensoryReceptor::updateComponent(double time, double energy)
 {
-    // componentEnergyLevel = calculateEnergy(time, componentEnergyLevel + energy);// Update the component
-    // propagationRate = calcPropagationRate();
-    // for (auto& synapticGap_id : synapticGaps) {
-    //     synapticGap_id->updateComponent(time + position->calcPropagationTime(*synapticGap_id->getPosition(),
-    //     propagationRate), componentEnergyLevel);
-    // }
-    // componentEnergyLevel = 0;
-}
+    componentEnergyLevel = calculateEnergy(time, componentEnergyLevel + energy); // Update the component
+    propagationRate = calcPropagationRate();
 
-[[nodiscard]] const PositionPtr &SensoryReceptor::getPosition() const
-{
-    return position;
+    for (auto& synapticGap_id : synapticGaps)
+    {
+        double propagationTime = position->calcPropagationTime(*synapticGap_id->getPosition(), propagationRate);
+        synapticGap_id->updateComponent(time + propagationTime, componentEnergyLevel);
+    }
+
+    componentEnergyLevel = 0;
 }

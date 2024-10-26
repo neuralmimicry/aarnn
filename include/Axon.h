@@ -1,56 +1,44 @@
-// Axon.h
 #ifndef AXON_H
 #define AXON_H
 
-#include "AxonBouton.h"
-#include "AxonBranch.h"
-#include "BodyComponent.h"
-#include "BodyShapeComponent.h"
-#include "Position.h"
-
 #include <memory>
 #include <vector>
+#include "NeuronalComponent.h"
+#include "Position.h"
 
+// Forward declarations
 class AxonBouton;
 class AxonHillock;
 class AxonBranch;
 
-class Axon
-: public std::enable_shared_from_this<Axon>
-, public BodyComponent<Position>
-, public BodyShapeComponent
+class Axon : public NeuronalComponent
 {
-    public:
-    explicit Axon(const std::shared_ptr<Position>& position, double propRate = BodyComponent<Position>::defaultPropagationRate)
-    : position(position), instanceInitialised(false)
-    , BodyComponent<Position>(position, propRate)
-    , BodyShapeComponent()
-    {
-    }
+public:
+    explicit Axon(const std::shared_ptr<Position>& position);
 
     ~Axon() override = default;
-    void                                                          initialise();
-    void                                                          updatePosition(const PositionPtr &newPosition);
-    void                                                          addBranch(std::shared_ptr<AxonBranch> branch);
-    [[nodiscard]] const std::vector<std::shared_ptr<AxonBranch>> &getAxonBranches() const;
-    [[nodiscard]] std::shared_ptr<AxonBouton>                     getAxonBouton() const;
-    double                                                        calcPropagationTime();
+
+    // Override methods from NeuronalComponent
+    void initialise() override;
+    void update(double deltaTime);
+
+    // Axon-specific methods
+    void addBranch(std::shared_ptr<AxonBranch> branch);
+    [[nodiscard]] const std::vector<std::shared_ptr<AxonBranch>>& getAxonBranches() const;
+    [[nodiscard]] std::shared_ptr<AxonBouton> getAxonBouton() const;
+    double calcPropagationTime();
     void updateFromAxonHillock(std::shared_ptr<AxonHillock> parentAxonHillockPointer);
     [[nodiscard]] std::shared_ptr<AxonHillock> getParentAxonHillock() const;
-    void                                      updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer);
+    void updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer);
     [[nodiscard]] std::shared_ptr<AxonBranch> getParentAxonBranch() const;
-    [[nodiscard]] const std::shared_ptr<Position>          &getPosition() const
-    {
-        return position;
-    }
 
-    private:
-    std::shared_ptr<Position>                position;
-    bool                                     instanceInitialised = false;
+
+private:
+    // Member variables
     std::vector<std::shared_ptr<AxonBranch>> axonBranches;
-    std::shared_ptr<AxonBouton>              onwardAxonBouton;
-    std::shared_ptr<AxonHillock>             parentAxonHillock;
-    std::shared_ptr<AxonBranch>              parentAxonBranch;
+    std::shared_ptr<AxonBouton> onwardAxonBouton;
+    std::shared_ptr<AxonHillock> parentAxonHillock;
+    std::shared_ptr<AxonBranch> parentAxonBranch;
 };
 
 #endif  // AXON_H
