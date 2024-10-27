@@ -31,9 +31,10 @@ void SynapticGap::update(double deltaTime)
     updateEnergy(deltaTime);
 
     // Update component energy level
-    updateComponent(deltaTime, energyLevel);
+    // updateComponent(deltaTime, energyLevel);
 
     // Additional updates if necessary
+    // Spike?
 }
 
 bool SynapticGap::isAssociated() const
@@ -140,4 +141,14 @@ std::shared_ptr<AxonBouton> SynapticGap::getParentAxonBouton() const
 std::shared_ptr<DendriteBouton> SynapticGap::getParentDendriteBouton() const
 {
     return parentDendriteBouton;
+}
+
+void SynapticGap::setSynapticGapId(int id)
+{
+    synapticGapId = id;
+}
+
+int SynapticGap::getSynapticGapId() const
+{
+    return synapticGapId;
 }

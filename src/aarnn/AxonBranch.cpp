@@ -72,3 +72,14 @@ std::shared_ptr<Axon> AxonBranch::getParentAxon() const
 {
     return parentAxon;
 }
+
+void AxonBranch::setAxonBranchId(int id)
+{
+    axonBranchId = id;
+}
+
+int AxonBranch::getAxonBranchId() const
+{
+    return axonBranchId;
+}
+

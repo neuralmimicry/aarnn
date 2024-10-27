@@ -73,3 +73,13 @@ std::shared_ptr<Axon> AxonBouton::getParentAxon() const
 {
     return parentAxon;
 }
+
+void AxonBouton::setAxonBoutonId(int id)
+{
+    axonBoutonId = id;
+}
+
+int AxonBouton::getAxonBoutonId() const
+{
+    return axonBoutonId;
+}

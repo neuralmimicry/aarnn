@@ -19,6 +19,7 @@ private:
     std::vector<std::shared_ptr<DendriteBranch>> dendriteBranches;
     std::shared_ptr<DendriteBouton> dendriteBouton;
     std::shared_ptr<DendriteBranch> parentDendriteBranch;
+    int dendriteId;
 
 public:
     explicit Dendrite(const std::shared_ptr<Position>& position);
@@ -33,6 +34,8 @@ public:
     [[nodiscard]] std::shared_ptr<DendriteBranch> getParentDendriteBranch() const;
     std::shared_ptr<DendriteBouton> getDendriteBoutons();
     void update(double deltaTime);
+    void setDendriteId(int id);
+    int getDendriteId() const;
 };
 
 #endif  // DENDRITE_H

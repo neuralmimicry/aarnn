@@ -48,9 +48,9 @@ void Axon::update(double deltaTime)
     }
 
     // Update branches
-    for (auto& branch : axonBranches)
+    for (auto& axonBranch : axonBranches)
     {
-        branch->update(deltaTime);
+        axonBranch->update(deltaTime);
     }
 }
 
@@ -93,4 +93,14 @@ void Axon::updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPoin
 std::shared_ptr<AxonBranch> Axon::getParentAxonBranch() const
 {
     return parentAxonBranch;
+}
+
+void Axon::setAxonId(int id)
+{
+    axonId = id;
+}
+
+int Axon::getAxonId() const
+{
+    return axonId;
 }

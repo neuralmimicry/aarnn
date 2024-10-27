@@ -25,11 +25,14 @@ public:
     [[nodiscard]] const std::vector<std::shared_ptr<Axon>>& getAxons() const;
     void updateFromAxon(std::shared_ptr<Axon> parentPointer);
     [[nodiscard]] std::shared_ptr<Axon> getParentAxon() const;
+    void setAxonBranchId(int id);
+    int getAxonBranchId() const;
 
 private:
     bool                               instanceInitialised = false;
     std::vector<std::shared_ptr<Axon>> onwardAxons;
     std::shared_ptr<Axon>              parentAxon;
+    int                                axonBranchId;
 };
 
 #endif // AXONBRANCH_H

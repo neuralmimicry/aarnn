@@ -81,7 +81,7 @@ std::shared_ptr<Position> Cluster::generateClusterPosition(double minDistance)
 }
 
 // Initialise the Cluster
-void Cluster::initialise(int num_neurons, int neuron_points_per_layer, double proximityThreshold)
+void Cluster::initialise(int create_new_neurons, int neuron_points_per_layer, double proximityThreshold)
 {
     NeuronalComponent::initialise(); // Call base class initialise
 
@@ -89,14 +89,24 @@ void Cluster::initialise(int num_neurons, int neuron_points_per_layer, double pr
         std::cout << "Initialising Cluster with ID: " << clusterId << std::endl;
 
         // Create neurons
-        createNeurons(num_neurons, neuron_points_per_layer);
+        createNeurons(create_new_neurons, neuron_points_per_layer);
 
-        // Initialize each neuron
-        for (auto &neuron: neurons) {
-            std::cout << "Cluster initializing Neuron with ID: " << neuron->getNeuronId() << std::endl;
-            neuron->initialise();
-            neuron->updateFromCluster(std::static_pointer_cast<Cluster>(shared_from_this()));
-            neuron->setPropagationRate(1.0); // Set default propagation rate
+        // Initialize each neuron in parallel
+        size_t num_neurons = neurons.size();
+
+        // Use OpenMP for parallel processing
+#pragma omp parallel for schedule(dynamic)
+        for (size_t i = 0; i < num_neurons; ++i) {
+            auto& neuron = neurons[i];
+            if (neuron) {
+                // Optional: Protect console output with a mutex if needed
+                // std::lock_guard<std::mutex> lock(consoleMutex);
+                // std::cout << "Cluster initializing Neuron with ID: " << neuron->getNeuronId() << std::endl;
+
+                neuron->initialise();
+                neuron->updateFromCluster(std::static_pointer_cast<Cluster>(shared_from_this()));
+                neuron->setPropagationRate(1.0); // Set default propagation rate
+            }
         }
 
         // Associate neurons
@@ -108,8 +118,10 @@ void Cluster::initialise(int num_neurons, int neuron_points_per_layer, double pr
 
 void Cluster::createNeurons(int num_neurons, int neuron_points_per_layer)
 {
-    neurons.reserve(num_neurons);
+    neurons.resize(num_neurons); // Resize to allow indexed access
 
+    // Use OpenMP for parallel processing
+#pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < num_neurons; ++i)
     {
         auto coords = get_coordinates(i, num_neurons, neuron_points_per_layer);
@@ -120,7 +132,8 @@ void Cluster::createNeurons(int num_neurons, int neuron_points_per_layer)
 
         auto neuronPosition = std::make_shared<Position>(x, y, z);
         auto neuron = std::make_shared<Neuron>(neuronPosition);
-        neurons.push_back(neuron);
+
+        neurons[i] = neuron; // Assign neuron to its position in the vector
     }
 }
 
@@ -199,9 +212,14 @@ void Cluster::update(double deltaTime)
     // Update energy levels
     updateEnergy(deltaTime);
 
-    // Update each Neuron
-    for (auto& neuron : neurons)
+    // Update each Neuron in parallel
+    size_t num_neurons = neurons.size();
+
+    // Use OpenMP for parallel processing
+#pragma omp parallel for schedule(dynamic)
+    for (size_t i = 0; i < num_neurons; ++i)
     {
+        auto& neuron = neurons[i];
         if (neuron)
         {
             neuron->update(deltaTime);

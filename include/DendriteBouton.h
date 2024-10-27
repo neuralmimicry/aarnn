@@ -29,6 +29,8 @@ public:
     void updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer);
     [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const;
     void update(double deltaTime);
+    void setDendriteBoutonId(int id);
+    int getDendriteBoutonId() const;
 
 
 private:
@@ -36,6 +38,7 @@ private:
     std::shared_ptr<SynapticGap> onwardSynapticGap;
     std::weak_ptr<Neuron> neuron;
     std::shared_ptr<Dendrite> parentDendrite;
+    int dendriteBoutonId;
 };
 
 #endif // DENDRITEBOUTON_H

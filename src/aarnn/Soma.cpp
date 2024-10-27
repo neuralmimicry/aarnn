@@ -95,3 +95,13 @@ std::shared_ptr<Neuron> Soma::getParentNeuron() const
 {
     return parentNeuron;
 }
+
+void Soma::setSomaId(int id)
+{
+    somaId = id;
+}
+
+int Soma::getSomaId() const
+{
+    return somaId;
+}

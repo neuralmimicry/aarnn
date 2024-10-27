@@ -63,3 +63,12 @@ std::shared_ptr<Soma> AxonHillock::getParentSoma() const
     return parentSoma;
 }
 
+void AxonHillock::setAxonHillockId(int id)
+{
+    axonHillockId = id;
+}
+
+int AxonHillock::getAxonHillockId() const
+{
+    return axonHillockId;
+}

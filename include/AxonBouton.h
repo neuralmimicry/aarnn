@@ -28,12 +28,15 @@ public:
     void setNeuron(std::weak_ptr<Neuron> parentNeuron);
     void updateFromAxon(std::shared_ptr<Axon> parentAxonPointer);
     [[nodiscard]] std::shared_ptr<Axon> getParentAxon() const;
+    void setAxonBoutonId(int id);
+    int getAxonBoutonId() const;
 
 private:
     // Member variables
     std::shared_ptr<SynapticGap> onwardSynapticGap;
     std::weak_ptr<Neuron> neuron;
     std::shared_ptr<Axon> parentAxon;
+    int axonBoutonId;
 };
 
 #endif  // AXONBOUTON_H

@@ -51,5 +51,17 @@ std::shared_ptr<SynapticGap> DendriteBouton::getSynapticGap() const
 
 void DendriteBouton::update(double deltaTime)
 {
-    // Update logic
+    // Update energy levels
+    updateEnergy(deltaTime);
 }
+
+void DendriteBouton::setDendriteBoutonId(int id)
+{
+    dendriteBoutonId = id;
+}
+
+int DendriteBouton::getDendriteBoutonId() const
+{
+    return dendriteBoutonId;
+}
+

@@ -69,3 +69,15 @@ void Dendrite::update(double deltaTime)
 
     // Additional updates if necessary
 }
+
+void Dendrite::setDendriteId(int id)
+{
+    dendriteId = id;
+}
+
+int Dendrite::getDendriteId() const
+{
+    return dendriteId;
+}
+
+

@@ -29,14 +29,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change afterPath="$PROJECT_DIR$/include/Cluster.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/NeuronalComponent.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/Cluster.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/NeuronalComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/.ninja_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/simulation.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configure/simulation.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Axon.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Axon.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/AxonBouton.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonBouton.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/AxonBranch.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonBranch.h" afterDir="false" />
@@ -44,29 +37,22 @@
       <change beforePath="$PROJECT_DIR$/include/Dendrite.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Dendrite.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/DendriteBouton.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/DendriteBouton.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/DendriteBranch.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/DendriteBranch.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Effector.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Effector.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Neuron.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Neuron.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/SensoryReceptor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SensoryReceptor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Soma.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Soma.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/SynapticGap.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SynapticGap.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/database.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/database.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/globals.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/globals.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/visualiser.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/visualiser.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/Axon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Axon.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/AxonHillock.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonHillock.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Cluster.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Cluster.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBouton.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Effector.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Effector.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/Soma.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Soma.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/database.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/utils.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -317,7 +303,7 @@
       <workItem from="1729670658529" duration="11921000" />
       <workItem from="1729759058473" duration="9000" />
       <workItem from="1729759529344" duration="23682000" />
-      <workItem from="1729949255836" duration="5854000" />
+      <workItem from="1729949255836" duration="23300000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
@@ -365,16 +351,5 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Builds for Podman" />
     <option name="LAST_COMMIT_MESSAGE" value="Builds for Podman" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/include/AxonHillock.h</url>
-          <line>3</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

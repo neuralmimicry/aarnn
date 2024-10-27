@@ -84,6 +84,39 @@ double computePropagationRate(const std::shared_ptr<Neuron>& neuron) {
     return propagationRate;
 }
 
+void updateClusters(std::vector<std::shared_ptr<Cluster>>& clusters, std::atomic<bool>& clusterRunning) {
+    auto lastTime = std::chrono::steady_clock::now();
+    while (clusterRunning) {
+        auto currentTime = std::chrono::steady_clock::now();
+        std::chrono::duration<double> elapsedTime = currentTime - lastTime;
+        double deltaTime = elapsedTime.count();
+        lastTime = currentTime;
+
+        // Update each cluster with the new deltaTime
+        for (auto& cluster : clusters) {
+            if (cluster) {
+                cluster->update(deltaTime);
+            }
+        }
+
+        // Signal database update
+        {
+            std::lock_guard<std::mutex> lock(changedNeuronsMutex);
+            dbUpdateReady = true;
+        }
+        cv.notify_one();
+
+        // Sleep for 250 milliseconds
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    }
+
+    // Signal database thread to exit
+    {
+        std::lock_guard<std::mutex> lock(changedNeuronsMutex);
+        dbUpdateReady = true;
+    }
+    cv.notify_one();
+}
 
 int main() {
     // Initialize Logger
@@ -117,6 +150,7 @@ int main() {
     int vocel_points_per_layer = std::stoi(config["vocel_points_per_layer"]);
     double proximityThreshold = std::stod(config["proximity_threshold"]);
     bool useDatabase = convertStringToBool(config["use_database"]);
+    double deltaTime = 0.1; // Time step in seconds (100 milliseconds)
 
     pqxx::connection conn(connection_string);
     initialise_database(conn);
@@ -453,7 +487,7 @@ int main() {
     //std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
     std::thread inputThread(checkForQuit);
     std::thread dbThread(updateDatabase, std::ref(conn));
-
+    std::thread clusterUpdateThread(updateClusters, std::ref(clusters), std::ref(running));
     // Main loop
     while (running) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -466,6 +500,7 @@ int main() {
     //micThread.join();
     inputThread.join();
     dbThread.join();
+    clusterUpdateThread.join();
 
     return 0;
 }
