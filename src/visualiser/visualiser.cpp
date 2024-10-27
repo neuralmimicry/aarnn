@@ -49,6 +49,7 @@
 
 // Type definitions
 typedef websocketpp::server<websocketpp::config::asio> server;
+
 // Shared data structures
 std::vector<nlohmann::json> coordinate_updates;
 std::mutex data_mutex;
@@ -136,25 +137,31 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
     try {
         pqxx::result dendritebranches;
         int dendriteBranchGlyphType = 3; // Glyph type for dendrite branch connected to soma
-        if (parent_dendrite_id) {
+
+        if (parent_dendrite_id != -1) {
+            // Dendrite branches connected to a dendrite
             dendritebranches = txn.exec_params(
                     "SELECT dendrite_branch_id, dendrite_id, x, y, z, energy_level FROM dendritebranches "
                     "WHERE dendrite_id = $1 ORDER BY dendrite_branch_id ASC",
                     parent_dendrite_id
             );
-            dendriteBranchGlyphType = 2; // Glyph type for dendrite branch connected to dendrite
-        } else {
+            dendriteBranchGlyphType = 3; // Adjust glyph type if needed
+        } else if (parent_soma_id != -1) {
+            // Dendrite branches connected to a soma
             dendritebranches = txn.exec_params(
                     "SELECT dendrite_branch_id, dendrite_id, x, y, z, energy_level FROM dendritebranches "
                     "WHERE soma_id = $1 ORDER BY dendrite_branch_id ASC",
                     parent_soma_id
             );
             dendriteBranchGlyphType = 3;
+        } else {
+            // No valid parent provided
+            return;
         }
 
         for (const auto& branch : dendritebranches) {
             int dendrite_branch_id = branch[0].as<int>();
-            int dendrite_id = branch[1].as<int>();
+            int dendrite_id = branch[1].is_null() ? -1 : branch[1].as<int>();
             double x = branch[2].as<double>();
             double y = branch[3].as<double>();
             double z = branch[4].as<double>();
@@ -260,7 +267,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
     }
 }
 
-// Insert Axons
+// Insert Axons and Axon Branches
 void Visualiser::insertAxons(pqxx::transaction_base& txn,
                              vtkSmartPointer<vtkPoints>& points,
                              vtkSmartPointer<vtkCellArray>& lines,
@@ -273,24 +280,32 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                              int parent_axon_hillock_id) {
     try {
         pqxx::result axonbranches;
-        int axonBranchGlyphType = 7; // Glyph type for axon branch connected to hillock
 
         if (parent_axon_branch_id != -1) {
-            // Branch connected to another axon branch
+            // Axon branches connected to another axon branch
             axonbranches = txn.exec_params(
                     "SELECT axon_branch_id, x, y, z, energy_level FROM axonbranches "
                     "WHERE parent_axon_branch_id = $1 ORDER BY axon_branch_id ASC",
                     parent_axon_branch_id
             );
-            axonBranchGlyphType = 6; // Glyph type for axon branch connected to another branch
-        } else {
-            // Branch connected to axon hillock
+        } else if (parent_axon_id != -1) {
+            // Axon branches connected to an axon
             axonbranches = txn.exec_params(
                     "SELECT axon_branch_id, x, y, z, energy_level FROM axonbranches "
                     "WHERE parent_axon_id = $1 ORDER BY axon_branch_id ASC",
                     parent_axon_id
             );
-            axonBranchGlyphType = 7;
+        } else if (parent_axon_hillock_id != -1) {
+            // Axon branches connected to an axon hillock
+            axonbranches = txn.exec_params(
+                    "SELECT axon_branch_id, x, y, z, energy_level FROM axonbranches "
+                    "WHERE parent_axon_id IN (SELECT axon_id FROM axons WHERE axon_hillock_id = $1) "
+                    "ORDER BY axon_branch_id ASC",
+                    parent_axon_hillock_id
+            );
+        } else {
+            // No valid parent provided
+            return;
         }
 
         for (const auto& branch : axonbranches) {
@@ -307,7 +322,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
             // Insert glyph for branch
             glyphPoints->InsertNextPoint(x, y, z);
             glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for branch glyph
-            glyphTypes->InsertNextValue(axonBranchGlyphType);
+            glyphTypes->InsertNextValue(7); // Glyph type for axon branch
 
             // Compute color based on energy level
             unsigned char R = static_cast<unsigned char>((energy_level / 100.0) * 255);
@@ -352,7 +367,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                 unsigned char color_a[3] = {R_a, G_a, B_a};
                 glyphColors->InsertNextTypedTuple(color_a);
 
-                // Retrieve axon boutons
+                // Insert axon boutons and synaptic gaps
                 pqxx::result axonboutons = txn.exec_params(
                         "SELECT axon_bouton_id, x, y, z, energy_level FROM axonboutons "
                         "WHERE axon_id = $1 ORDER BY axon_bouton_id ASC",
@@ -427,7 +442,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                 }
 
                 // Recursively insert axon branches
-                insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, glyphColors, axon_id_new, axon_branch_id, parent_axon_hillock_id);
+                insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, glyphColors, axon_id_new, axon_branch_id, -1);
             }
         }
     } catch (const std::exception& e) {
@@ -476,12 +491,12 @@ void Visualiser::visualise() {
             // Retrieve neurons with additional fields
             pqxx::result neurons = txn.exec(
                     "SELECT neuron_id, x, y, z, propagation_rate, neuron_type, energy_level "
-                    "FROM neurons ORDER BY neuron_id ASC LIMIT 1500"
+                    "FROM neurons ORDER BY neuron_id ASC"
             );
 
             for (const auto& neuron : neurons) {
                 if (neuron.size() != 7) {
-                    std:cout << "Neuron has incorrect number of fields." << std::endl;
+                    std::cout << "Neuron has incorrect number of fields." << std::endl;
                     continue;
                 }
                 if (neuron[0].is_null() || neuron[1].is_null() || neuron[2].is_null() || neuron[3].is_null() ||
@@ -569,9 +584,6 @@ void Visualiser::visualise() {
                         double ahenergy_level = hillock[4].as<double>();
 
                         // Insert axon hillock glyph
-                        points->InsertNextPoint(ahx, ahy, ahz);
-                        vtkIdType hillockAnchor = points->GetNumberOfPoints() - 1;
-
                         glyphPoints->InsertNextPoint(ahx, ahy, ahz);
                         glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // No vector for hillock glyph
                         glyphTypes->InsertNextValue(5); // Glyph type for axon hillock
@@ -611,8 +623,8 @@ void Visualiser::visualise() {
 
                             // Create line from hillock to axon
                             vtkSmartPointer<vtkLine> axonLine = vtkSmartPointer<vtkLine>::New();
-                            axonLine->GetPointIds()->SetId(0, hillockAnchor);
-                            axonLine->GetPointIds()->SetId(1, axonAnchor);
+                            axonLine->GetPointIds()->SetId(0, points->GetNumberOfPoints() - 2); // From hillock
+                            axonLine->GetPointIds()->SetId(1, axonAnchor); // To axon
                             lines->InsertNextCell(axonLine);
 
                             // Insert glyph for axon
@@ -717,8 +729,8 @@ void Visualiser::visualise() {
                                 }
                             }
 
-                            // Recursively insert axon branches
-                            insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, glyphColors, axon_id, -1, axon_hillock_id);
+                            // Insert axon branches recursively
+                            insertAxons(txn, points, lines, glyphPoints, glyphVectors, glyphTypes, glyphColors, axon_id, -1, -1);
                         }
                     }
                 }
@@ -762,17 +774,16 @@ void Visualiser::visualise() {
             glyph3D->SetScaleModeToScaleByVector();
             glyph3D->SetScaleFactor(1.0);
             glyph3D->SetInputData(glyphPolyData);
-            glyph3D->SetSourceConnection(0, sphereSource->GetOutputPort());
-            glyph3D->SetSourceConnection(1, cubeSource->GetOutputPort());
-            glyph3D->SetSourceConnection(2, cylinderSource->GetOutputPort());
-            glyph3D->SetSourceConnection(3, cylinderSource->GetOutputPort());
-            glyph3D->SetSourceConnection(4, cylinderSource->GetOutputPort());
-            glyph3D->SetSourceConnection(5, cylinderSource->GetOutputPort());
-            glyph3D->SetSourceConnection(6, cylinderSource->GetOutputPort());
-            glyph3D->SetSourceConnection(7, cylinderSource->GetOutputPort());
-            glyph3D->SetSourceConnection(8, cylinderSource->GetOutputPort());
-            glyph3D->SetSourceConnection(9, sphereSource->GetOutputPort());
-            glyph3D->SetSourceConnection(10, sphereSource->GetOutputPort());
+            glyph3D->SetSourceConnection(0, sphereSource->GetOutputPort());    // For neuron glyphs
+            glyph3D->SetSourceConnection(1, cubeSource->GetOutputPort());      // For dendrite boutons
+            glyph3D->SetSourceConnection(2, cylinderSource->GetOutputPort());  // For dendrites
+            glyph3D->SetSourceConnection(3, cubeSource->GetOutputPort());      // For dendrite branches
+            glyph3D->SetSourceConnection(4, sphereSource->GetOutputPort());    // For soma
+            glyph3D->SetSourceConnection(5, sphereSource->GetOutputPort());    // For axon hillock
+            glyph3D->SetSourceConnection(6, cylinderSource->GetOutputPort());  // For axon branches
+            glyph3D->SetSourceConnection(7, cylinderSource->GetOutputPort());  // For axons
+            glyph3D->SetSourceConnection(8, cubeSource->GetOutputPort());      // For axon boutons
+            glyph3D->SetSourceConnection(9, sphereSource->GetOutputPort());    // For synaptic gaps
 
             // Assign glyph types to corresponding sources
             glyph3D->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, "GlyphType");
@@ -794,28 +805,10 @@ void Visualiser::visualise() {
             lineActor->SetMapper(lineMapper);
             lineActor->GetProperty()->SetColor(1.0, 1.0, 0.0); // Yellow lines
 
-            // Setup Membrane (Delaunay Triangulation)
-            vtkSmartPointer<vtkDelaunay3D> delaunay = vtkSmartPointer<vtkDelaunay3D>::New();
-            delaunay->SetInputData(polyData);
-            delaunay->Update();
-
-            vtkSmartPointer<vtkGeometryFilter> geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
-            geometryFilter->SetInputConnection(delaunay->GetOutputPort());
-            geometryFilter->Update();
-
-            vtkSmartPointer<vtkPolyDataMapper> membraneMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            membraneMapper->SetInputConnection(geometryFilter->GetOutputPort());
-
-            vtkSmartPointer<vtkActor> membraneActor = vtkSmartPointer<vtkActor>::New();
-            membraneActor->SetMapper(membraneMapper);
-            membraneActor->GetProperty()->SetColor(0.75, 0.75, 0.75); // Grey membrane
-            membraneActor->GetProperty()->SetOpacity(0.1); // Semi-transparent
-
             // Update Renderer
             renderer->RemoveAllViewProps();
             renderer->AddActor(lineActor);
             renderer->AddActor(glyphActor);
-            renderer->AddActor(membraneActor);
             renderWindow->Render();
 
             // Start Interactor
@@ -864,6 +857,9 @@ int main() {
         // Initialize and Run Visualiser
         Visualiser visualiser(conn, logger, ws_server);
         visualiser.visualise();
+
+        // Join WebSocket thread
+        ws_thread.join();
 
     } catch (const pqxx::sql_error& e) {
         std::cerr << "SQL Error: " << e.what() << std::endl;

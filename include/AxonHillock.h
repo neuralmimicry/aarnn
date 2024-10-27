@@ -25,11 +25,14 @@ public:
     [[nodiscard]] std::shared_ptr<Axon> getAxon() const;
     void updateFromSoma(std::shared_ptr<Soma> parentPointer);
     [[nodiscard]] std::shared_ptr<Soma> getParentSoma() const;
+    void setAxonHillockId(int id);
+    int getAxonHillockId() const;
 
 private:
     // Member variables
     std::shared_ptr<Axon> onwardAxon;
     std::shared_ptr<Soma> parentSoma;
+    int axonHillockId;
 };
 
 #endif // AXONHILLOCK_H

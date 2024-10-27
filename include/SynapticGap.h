@@ -48,6 +48,8 @@ public:
     double calculateEnergy(double currentTime, double currentEnergyLevel);
     double calculateWaveform(double currentTime) const;
     double propagationTime();
+    void setSynapticGapId(int id);
+    int getSynapticGapId() const;
 
 private:
     // Member variables
@@ -70,6 +72,7 @@ private:
     double maxPropagationTime = 1.0;
     double lastCallTime = 0.0;
     int callCount = 0;
+    int synapticGapId;
 };
 
 #endif  // SYNAPTICGAP_H

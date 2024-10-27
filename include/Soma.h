@@ -31,6 +31,8 @@ public:
     void updateFromNeuron(std::shared_ptr<Neuron> parentPointer);
     [[nodiscard]] std::shared_ptr<Neuron> getParentNeuron() const;
     void update(double deltaTime);
+    void setSomaId(int id);
+    int getSomaId() const;
 
 private:
     // Member variables
@@ -38,6 +40,7 @@ private:
     std::vector<std::shared_ptr<DendriteBranch>> dendriteBranches;
     std::shared_ptr<AxonHillock> onwardAxonHillock;
     std::shared_ptr<Neuron> parentNeuron;
+    int somaId;
 };
 
 #endif // SOMA_H

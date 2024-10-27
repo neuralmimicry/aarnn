@@ -82,3 +82,14 @@ void DendriteBranch::update(double deltaTime)
 
     // Additional updates if necessary
 }
+
+void DendriteBranch::setDendriteBranchId(int id)
+{
+    dendriteBranchId = id;
+}
+
+int DendriteBranch::getDendriteBranchId() const
+{
+    return dendriteBranchId;
+}
+

@@ -31,7 +31,8 @@ public:
     [[nodiscard]] std::shared_ptr<AxonHillock> getParentAxonHillock() const;
     void updateFromAxonBranch(std::shared_ptr<AxonBranch> parentAxonBranchPointer);
     [[nodiscard]] std::shared_ptr<AxonBranch> getParentAxonBranch() const;
-
+    void setAxonId(int id);
+    int getAxonId() const;
 
 private:
     // Member variables
@@ -39,6 +40,7 @@ private:
     std::shared_ptr<AxonBouton> onwardAxonBouton;
     std::shared_ptr<AxonHillock> parentAxonHillock;
     std::shared_ptr<AxonBranch> parentAxonBranch;
+    int axonId;
 };
 
 #endif  // AXON_H

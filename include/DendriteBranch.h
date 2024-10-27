@@ -27,8 +27,11 @@ public:
     void updateFromDendrite(std::shared_ptr<Dendrite> parentDendritePointer);
     [[nodiscard]] std::shared_ptr<Dendrite> getParentDendrite() const;
     void update(double deltaTime);
+    void setDendriteBranchId(int id);
+    int getDendriteBranchId() const;
 
 private:
+    int dendriteBranchId;
     bool instanceInitialised = false;  // Initially, the Dendrite is not initialised
     std::vector<std::shared_ptr<Dendrite>> onwardDendrites;
     std::shared_ptr<Soma> parentSoma;

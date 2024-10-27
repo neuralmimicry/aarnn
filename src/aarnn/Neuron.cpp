@@ -1,9 +1,15 @@
 #include "Neuron.h"
 #include "Soma.h"
 #include <iostream>
+#include <mutex>
+#include <omp.h>
 
 // Initialize static member
 int Neuron::nextNeuronId = 0;
+
+// Mutexes for thread safety
+std::mutex synapticGapsAxonMutex;
+std::mutex synapticGapsDendriteMutex;
 
 // Constructor
 Neuron::Neuron(const std::shared_ptr<Position>& position)
@@ -165,17 +171,25 @@ void Neuron::traverseAxonsForStorage(const std::shared_ptr<Axon>& axon)
         std::shared_ptr<SynapticGap> gap = axonBouton->getSynapticGap();
         if (gap)
         {
+            // Protect shared resource with mutex
+            std::lock_guard<std::mutex> lock(synapticGapsAxonMutex);
             synapticGapsAxon.emplace_back(std::move(gap));
         }
     }
 
     const std::vector<std::shared_ptr<AxonBranch>>& branches = axon->getAxonBranches();
-    for (const auto& branch : branches)
+    // Parallelize the loop over branches
+#pragma omp parallel for schedule(dynamic)
+    for (size_t i = 0; i < branches.size(); ++i)
     {
+        const auto& branch = branches[i];
         const std::vector<std::shared_ptr<Axon>>& onwardAxons = branch->getAxons();
-        for (const auto& onwardAxon : onwardAxons)
+
+        // Parallelize the loop over onwardAxons
+#pragma omp parallel for schedule(dynamic)
+        for (size_t j = 0; j < onwardAxons.size(); ++j)
         {
-            traverseAxonsForStorage(onwardAxon);
+            traverseAxonsForStorage(onwardAxons[j]);
         }
     }
 }
@@ -183,17 +197,27 @@ void Neuron::traverseAxonsForStorage(const std::shared_ptr<Axon>& axon)
 // Traverse dendrites to store synaptic gaps
 void Neuron::traverseDendritesForStorage(const std::vector<std::shared_ptr<DendriteBranch>>& dendriteBranches)
 {
-    for (const auto& branch : dendriteBranches)
+    // Parallelize the loop over dendriteBranches
+#pragma omp parallel for schedule(dynamic)
+    for (size_t i = 0; i < dendriteBranches.size(); ++i)
     {
+        const auto& branch = dendriteBranches[i];
         const std::vector<std::shared_ptr<Dendrite>>& onwardDendrites = branch->getDendrites();
-        for (const auto& onwardDendrite : onwardDendrites)
+
+        // Parallelize the loop over onwardDendrites
+#pragma omp parallel for schedule(dynamic)
+        for (size_t j = 0; j < onwardDendrites.size(); ++j)
         {
+            const auto& onwardDendrite = onwardDendrites[j];
+
             std::shared_ptr<DendriteBouton> dendriteBouton = onwardDendrite->getDendriteBouton();
             if (dendriteBouton)
             {
                 std::shared_ptr<SynapticGap> gap = dendriteBouton->getSynapticGap();
                 if (gap)
                 {
+                    // Protect shared resource with mutex
+                    std::lock_guard<std::mutex> lock(synapticGapsDendriteMutex);
                     synapticGapsDendrite.emplace_back(std::move(gap));
                 }
             }
