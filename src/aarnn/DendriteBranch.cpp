@@ -3,8 +3,8 @@
 #include "utils.h"
 #include <iostream>
 
-DendriteBranch::DendriteBranch(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+DendriteBranch::DendriteBranch(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }
@@ -21,7 +21,7 @@ void DendriteBranch::initialise()
         {
             // Create a new Dendrite and connect it
             auto newDendritePosition = std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1);
-            auto newDendrite = std::make_shared<Dendrite>(newDendritePosition);
+            auto newDendrite = std::make_shared<Dendrite>(newDendritePosition, std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
             connectDendrite(newDendrite);
 
             // Initialise the new Dendrite

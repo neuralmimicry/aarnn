@@ -16,7 +16,7 @@ class Dendrite;
 class DendriteBranch : public NeuronalComponent
 {
 public:
-    explicit DendriteBranch(const std::shared_ptr<Position>& position);
+    explicit DendriteBranch(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent);
 
     ~DendriteBranch() override = default;
     void initialise() override;
@@ -31,7 +31,7 @@ public:
     int getDendriteBranchId() const;
 
 private:
-    int dendriteBranchId;
+    int dendriteBranchId = -1;
     bool instanceInitialised = false;  // Initially, the Dendrite is not initialised
     std::vector<std::shared_ptr<Dendrite>> onwardDendrites;
     std::shared_ptr<Soma> parentSoma;

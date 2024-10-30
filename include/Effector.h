@@ -14,7 +14,7 @@ class Position;
 class Effector : public NeuronalComponent
 {
 public:
-    explicit Effector(const std::shared_ptr<Position>& position);
+    explicit Effector(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent = {});
 
     ~Effector() override = default;
 
@@ -26,6 +26,7 @@ public:
 private:
     bool instanceInitialised = false;
     std::vector<std::shared_ptr<SynapticGap>> synapticGaps;
+    int effectorId = -1;
 };
 
 #endif  // EFFECTOR_H

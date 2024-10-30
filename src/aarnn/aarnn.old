@@ -30,7 +30,7 @@
 #include "vtkincludes.h"
 #include "DendriteBranch.h"
 #include "AxonHillock.h"
-#include "PulseAudioMic.h"
+#include "PulseAuditoryMic.h"
 #include "Logger.h"
 #include "nvTimerCallback.h"
 #include "avTimerCallback.h"
@@ -127,7 +127,7 @@ static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, uns
     } else {
         for (unsigned int i = 0; i < framesPerBuffer; i++) {
             // Here you might want to capture audio data
-            //capturedAudio.push_back(in[i]);
+            //capturedAuditory.push_back(in[i]);
         }
     }
     return paContinue;
@@ -484,7 +484,7 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
     }
     if (whichCallBack == 1) {
         vtkSmartPointer<avTimerCallback> avCB = vtkSmartPointer<avTimerCallback>::New();
-        avCB->setAudio(audioQueue);
+        avCB->setAuditory(audioQueue);
         avCB->avRenderWindow->AddRenderer(avCB->avRenderer);
 
         while (true) {
@@ -639,16 +639,16 @@ int main() {
     std::cout << "1" << std::endl;
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
     std::cout << "2" << std::endl;
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAuditoryQueue;
     std::cout << "3" << std::endl;
 
-    std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
+    std::shared_ptr<PulseAuditoryMic> mic = std::make_shared<PulseAuditoryMic>(audioQueue);
     if (!mic) {
-        std::cerr << "Failed to create PulseAudioMic!" << std::endl;
+        std::cerr << "Failed to create PulseAuditoryMic!" << std::endl;
         return 1;
     }
     std::cout << "4" << std::endl;
-    std::thread micThread(&PulseAudioMic::micRun, mic);
+    std::thread micThread(&PulseAuditoryMic::micRun, mic);
 
     std::vector<std::string> config_filenames = { "simulation.conf" };
     auto config = read_config(config_filenames);
@@ -938,7 +938,7 @@ int main() {
     }
 
     std::vector<std::shared_ptr<Neuron>> emptyNeurons;
-    std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAudioQueue), 0);
+    std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAuditoryQueue), 0);
     std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
     std::thread inputThread(checkForQuit);
     std::thread dbThread(updateDatabase, std::ref(conn));

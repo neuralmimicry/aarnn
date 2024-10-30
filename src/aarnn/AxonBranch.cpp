@@ -3,8 +3,8 @@
 #include "utils.h"
 #include <iostream>
 
-AxonBranch::AxonBranch(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+AxonBranch::AxonBranch(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }
@@ -21,7 +21,7 @@ void AxonBranch::initialise()
         {
             // Create a new Axon and connect it
             auto newAxonPosition = std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1);
-            auto newAxon = std::make_shared<Axon>(newAxonPosition);
+            auto newAxon = std::make_shared<Axon>(newAxonPosition, std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
             connectAxon(newAxon);
 
             // Initialise the new Axon

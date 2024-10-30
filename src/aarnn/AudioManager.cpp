@@ -1,39 +1,39 @@
-// AudioManager.cpp
-#include "AudioManager.h"
+// AuditoryManager.cpp
+#include "AuditoryManager.h"
 #include <iostream>
 #include <alsa/asoundlib.h> // Ensure you have ALSA development libraries
 #include <cstring> // For std::to_string
 
-AudioManager::AudioManager() : capturing(false) {}
+AuditoryManager::AuditoryManager() : capturing(false) {}
 
-AudioManager::~AudioManager() {
+AuditoryManager::~AuditoryManager() {
     stopCapture();
 }
 
-bool AudioManager::initialize() {
+bool AuditoryManager::initialise() {
     selectedCaptureDevice = autoSelectFirstAlsaCaptureDevice();
     if (selectedCaptureDevice.empty()) {
         std::cerr << "Failed to select an ALSA capture device." << std::endl;
         return false;
     }
 
-    mic = std::make_shared<PulseAudioMic>(audioQueue);
+    mic = std::make_shared<PulseAuditoryMic>(audioQueue);
     if (!mic) {
-        std::cerr << "Failed to create PulseAudioMic!" << std::endl;
+        std::cerr << "Failed to create PulseAuditoryMic!" << std::endl;
         return false;
     }
 
     return true;
 }
 
-void AudioManager::startCapture() {
+void AuditoryManager::startCapture() {
     if (mic && !capturing.load()) {
         capturing = true;
-        micThread = std::thread(&PulseAudioMic::micRun, mic);
+        micThread = std::thread(&PulseAuditoryMic::micRun, mic);
     }
 }
 
-void AudioManager::stopCapture() {
+void AuditoryManager::stopCapture() {
     if (mic && capturing.load()) {
         capturing = false;
         mic->micStop();
@@ -43,15 +43,15 @@ void AudioManager::stopCapture() {
     }
 }
 
-ThreadSafeQueue<std::vector<std::tuple<double, double>>>& AudioManager::getAudioQueue() {
+ThreadSafeQueue<std::vector<std::tuple<double, double>>>& AuditoryManager::getAuditoryQueue() {
     return audioQueue;
 }
 
-ThreadSafeQueue<std::vector<std::tuple<double, double>>>& AudioManager::getEmptyAudioQueue() {
-    return emptyAudioQueue;
+ThreadSafeQueue<std::vector<std::tuple<double, double>>>& AuditoryManager::getEmptyAuditoryQueue() {
+    return emptyAuditoryQueue;
 }
 
-std::vector<std::string> AudioManager::listAlsaCaptureDevices() {
+std::vector<std::string> AuditoryManager::listAlsaCaptureDevices() {
     std::vector<std::string> captureDevices;
     int card = -1;
     int err;
@@ -106,7 +106,7 @@ std::vector<std::string> AudioManager::listAlsaCaptureDevices() {
     return captureDevices;
 }
 
-std::string AudioManager::autoSelectFirstAlsaCaptureDevice() {
+std::string AuditoryManager::autoSelectFirstAlsaCaptureDevice() {
     std::vector<std::string> devices = listAlsaCaptureDevices();
 
     char* pulse_sink = std::getenv("PULSE_SINK");
@@ -124,14 +124,14 @@ std::string AudioManager::autoSelectFirstAlsaCaptureDevice() {
     }
 
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAuditoryQueue;
 
-    std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
+    std::shared_ptr<PulseAuditoryMic> mic = std::make_shared<PulseAuditoryMic>(audioQueue);
     if (!mic) {
-        std::cerr << "Failed to create PulseAudioMic!" << std::endl;
+        std::cerr << "Failed to create PulseAuditoryMic!" << std::endl;
         return "";
     }
-    std::thread micThread(&PulseAudioMic::micRun, mic);
+    std::thread micThread(&PulseAuditoryMic::micRun, mic);
 
     if (devices.empty()) {
         std::cerr << "Error: No ALSA capture devices found." << std::endl;
@@ -139,4 +139,68 @@ std::string AudioManager::autoSelectFirstAlsaCaptureDevice() {
     }
     std::cout << "Automatically selected ALSA capture device: " << devices[0] << std::endl;
     return devices[0];
+}
+
+void AuditoryManager::setSensoryReceptors(const std::vector<std::shared_ptr<SensoryReceptor>>& receptors) {
+    sensoryReceptors = receptors;
+}
+
+void AuditoryManager::startProcessing() {
+    if (!processing.load()) {
+        processing = true;
+        processingThread = std::thread(&AuditoryManager::processAuditoryData, this);
+    }
+}
+
+void AuditoryManager::stopProcessing() {
+    if (processing.load()) {
+        processing = false;
+        if (processingThread.joinable()) {
+            processingThread.join();
+        }
+    }
+}
+
+void AuditoryManager::processAuditoryData() {
+    const int FFT_SIZE = 1024; // Adjust as needed
+    std::vector<double> audioBuffer;
+    audioBuffer.reserve(FFT_SIZE);
+
+    while (processing.load()) {
+        std::vector<std::tuple<double, double>> audioData;
+        if (audioQueue.pop(audioData)) {
+            // Extract the audio samples (assuming mono audio)
+            for (const auto& sample : audioData) {
+                double leftSample = std::get<0>(sample);
+                audioBuffer.push_back(leftSample);
+                if (audioBuffer.size() >= FFT_SIZE) {
+                    // Perform FFT on audioBuffer
+                    performFFTAndStimulate(audioBuffer);
+                    // Clear buffer for next batch
+                    audioBuffer.clear();
+                }
+            }
+        } else {
+            // Sleep briefly to avoid busy-waiting
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    }
+}
+
+void AuditoryManager::performFFTAndStimulate(const std::vector<double>& audioBuffer) {
+    const int FFT_SIZE = audioBuffer.size();
+    fftw_complex* out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (FFT_SIZE / 2 + 1));
+    fftw_plan p = fftw_plan_dft_r2c_1d(FFT_SIZE, const_cast<double*>(audioBuffer.data()), out, FFTW_ESTIMATE);
+    fftw_execute(p);
+
+    // Stimulate SensoryReceptors based on frequency amplitudes
+    for (size_t i = 0; i < sensoryReceptors.size(); ++i) {
+        if (i < static_cast<size_t>(FFT_SIZE / 2 + 1)) {
+            double magnitude = sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
+            sensoryReceptors[i]->stimulate(magnitude);
+        }
+    }
+
+    fftw_destroy_plan(p);
+    fftw_free(out);
 }

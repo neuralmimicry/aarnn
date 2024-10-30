@@ -17,7 +17,7 @@ class Neuron;
 class Soma : public NeuronalComponent
 {
 public:
-    explicit Soma(const std::shared_ptr<Position>& position);
+    explicit Soma(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent);
 
     ~Soma() override = default;
 
@@ -40,7 +40,7 @@ private:
     std::vector<std::shared_ptr<DendriteBranch>> dendriteBranches;
     std::shared_ptr<AxonHillock> onwardAxonHillock;
     std::shared_ptr<Neuron> parentNeuron;
-    int somaId;
+    int somaId = -1;
 };
 
 #endif // SOMA_H

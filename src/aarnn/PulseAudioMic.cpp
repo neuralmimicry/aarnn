@@ -1,16 +1,16 @@
-#include "PulseAudioMic.h"
+#include "PulseAuditoryMic.h"
 
 #include "utils.h"
 
-PulseAudioMic::PulseAudioMic(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &audioQueue)
+PulseAuditoryMic::PulseAuditoryMic(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &audioQueue)
 : sample_spec({PA_SAMPLE_S16NE, 16000, 2})
 , audioQueue(audioQueue)
 {
-    initializeContext();
-    initializeCallbacks();
+    initialiseContext();
+    initialiseCallbacks();
 }
 
-void PulseAudioMic::sourceSelection()
+void PulseAuditoryMic::sourceSelection()
 {
     std::vector<std::string> sourceList = this->getSources();
 
@@ -28,11 +28,11 @@ void PulseAudioMic::sourceSelection()
     this->setSource(sourceList[selected_source]);
 }
 
-int PulseAudioMic::micRun()
+int PulseAuditoryMic::micRun()
 {
     if(!context)
     {
-        std::cerr << "Context was not initialized correctly.\n";
+        std::cerr << "Context was not initialised correctly.\n";
         return 1;
     }
     pa_threaded_mainloop_start(mainloop);
@@ -41,29 +41,29 @@ int PulseAudioMic::micRun()
     return 0;
 }
 
-void PulseAudioMic::micStop()
+void PulseAuditoryMic::micStop()
 {
     pa_threaded_mainloop_stop(mainloop);
 }
 
-std::vector<std::string> PulseAudioMic::getSources()
+std::vector<std::string> PulseAuditoryMic::getSources()
 {
-    std::lock_guard<std::mutex> lock(capturedAudio_mtx);
+    std::lock_guard<std::mutex> lock(capturedAuditory_mtx);
     return sources;
 }
 
-std::vector<std::tuple<double, double>> PulseAudioMic::getCapturedAudio()
+std::vector<std::tuple<double, double>> PulseAuditoryMic::getCapturedAuditory()
 {
-    std::lock_guard<std::mutex> lock(capturedAudio_mtx);
-    return capturedAudio;
+    std::lock_guard<std::mutex> lock(capturedAuditory_mtx);
+    return capturedAuditory;
 }
 
-void PulseAudioMic::setSource(const std::string &source)
+void PulseAuditoryMic::setSource(const std::string &source)
 {
-    initializeStream(source.c_str());
+    initialiseStream(source.c_str());
 }
 
-void PulseAudioMic::readStream()
+void PulseAuditoryMic::readStream()
 {
     const void *data;
     size_t      length;
@@ -77,7 +77,7 @@ void PulseAudioMic::readStream()
     pa_stream_drop(stream);
 }
 
-void PulseAudioMic::initializeContext()
+void PulseAuditoryMic::initialiseContext()
 {
     mainloop     = pa_threaded_mainloop_new();
     mainloop_api = pa_threaded_mainloop_get_api(mainloop);
@@ -94,13 +94,13 @@ void PulseAudioMic::initializeContext()
     }
 }
 
-void PulseAudioMic::initializeCallbacks()
+void PulseAuditoryMic::initialiseCallbacks()
 {
     pa_context_set_state_callback(context, context_state_callback_static, this);
     // pa_context_set_source_info_callback(context, source_info_callback_static, this);
 }
 
-void PulseAudioMic::initializeStream(const char *source)
+void PulseAuditoryMic::initialiseStream(const char *source)
 {
     if(stream)
     {
@@ -122,7 +122,7 @@ void PulseAudioMic::initializeStream(const char *source)
     }
 }
 
-void PulseAudioMic::cleanUp()
+void PulseAuditoryMic::cleanUp()
 {
     if(stream)
     {
@@ -140,17 +140,17 @@ void PulseAudioMic::cleanUp()
     }
 }
 
-void PulseAudioMic::processStream(const void *inputBuffer, size_t framesPerBuffer)
+void PulseAuditoryMic::processStream(const void *inputBuffer, size_t framesPerBuffer)
 {
     // Capture audio data
 
-    std::lock_guard<std::mutex> lock(capturedAudio_mtx);
+    std::lock_guard<std::mutex> lock(capturedAuditory_mtx);
 
     // auto executeFunc = [&]() {
-    //     std::lock_guard<std::mutex> lock(capturedAudio_mtx);
+    //     std::lock_guard<std::mutex> lock(capturedAuditory_mtx);
     // };
 
-    capturedAudio.clear();
+    capturedAuditory.clear();
     // perform FFT
     auto *out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * framesPerBuffer);
     for(size_t i = 0; i < framesPerBuffer; ++i)
@@ -179,14 +179,14 @@ void PulseAudioMic::processStream(const void *inputBuffer, size_t framesPerBuffe
     {
         if(!std::isnan(magnitude[i]))
         {
-            capturedAudio.emplace_back((double)i * SAMPLE_RATE / framesPerBuffer, magnitude[i]);
-            // std::cout << std::get<0>(capturedAudio.back()) << " " << std::get<1>(capturedAudio.back()) << ", ";
+            capturedAuditory.emplace_back((double)i * SAMPLE_RATE / framesPerBuffer, magnitude[i]);
+            // std::cout << std::get<0>(capturedAuditory.back()) << " " << std::get<1>(capturedAuditory.back()) << ", ";
         }
     }
-    audioQueue.push(capturedAudio);
+    audioQueue.push(capturedAuditory);
 }
 
-void PulseAudioMic::context_state_callback(pa_context *c)
+void PulseAuditoryMic::context_state_callback(pa_context *c)
 {
     switch(pa_context_get_state(c))
     {
@@ -211,7 +211,7 @@ void PulseAudioMic::context_state_callback(pa_context *c)
     }
 }
 
-void PulseAudioMic::source_info_callback(pa_context *c, const pa_source_info *i, int eol)
+void PulseAuditoryMic::source_info_callback(pa_context *c, const pa_source_info *i, int eol)
 {
     if(eol > 0)
     {
@@ -220,7 +220,7 @@ void PulseAudioMic::source_info_callback(pa_context *c, const pa_source_info *i,
     sources.emplace_back(i->name);
 }
 
-void PulseAudioMic::stream_state_callback(pa_stream *s)
+void PulseAuditoryMic::stream_state_callback(pa_stream *s)
 {
     assert(s);
     switch(pa_stream_get_state(s))

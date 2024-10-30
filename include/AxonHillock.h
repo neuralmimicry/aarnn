@@ -13,7 +13,7 @@ class Axon;
 class AxonHillock : public NeuronalComponent
 {
 public:
-    explicit AxonHillock(const std::shared_ptr<Position>& position);
+    explicit AxonHillock(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent);
 
     ~AxonHillock() override = default;
 
@@ -32,7 +32,7 @@ private:
     // Member variables
     std::shared_ptr<Axon> onwardAxon;
     std::shared_ptr<Soma> parentSoma;
-    int axonHillockId;
+    int axonHillockId = -1;
 };
 
 #endif // AXONHILLOCK_H

@@ -12,8 +12,8 @@ std::mutex synapticGapsAxonMutex;
 std::mutex synapticGapsDendriteMutex;
 
 // Constructor
-Neuron::Neuron(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position), neuronId(nextNeuronId++)
+Neuron::Neuron(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent), neuronId(nextNeuronId++)
 {
 }
 
@@ -36,7 +36,7 @@ void Neuron::initialise()
         {
             std::cout << "Creating Soma" << std::endl;
             // Pass the neuron's position to the soma
-            this->soma = std::make_shared<Soma>(position);
+            this->soma = std::make_shared<Soma>(position, std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
         }
 
         std::cout << "Neuron initialising Soma" << std::endl;
@@ -44,7 +44,7 @@ void Neuron::initialise()
         std::cout << "Neuron updating Soma" << std::endl;
         this->soma->updateFromNeuron(std::static_pointer_cast<Neuron>(shared_from_this()));
 
-        instanceInitialised = true; // Mark as initialized
+        instanceInitialised = true; // Mark as initialised
     }
 
     std::cout << "Neuron initialised" << std::endl;

@@ -3,8 +3,8 @@
 #include "Neuron.h"
 #include <utility>
 
-DendriteBouton::DendriteBouton(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+DendriteBouton::DendriteBouton(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }

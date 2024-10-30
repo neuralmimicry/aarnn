@@ -27,7 +27,7 @@ static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, uns
     } else {
         for (unsigned int i = 0; i < framesPerBuffer; i++) {
             // Here you might want to capture audio data
-            //capturedAudio.push_back(in[i]);
+            //capturedAuditory.push_back(in[i]);
         }
     }
     return paContinue;
@@ -49,7 +49,7 @@ void runInteractor(std::vector<std::shared_ptr<Neuron>>& neurons, std::mutex& ne
     }
     if (whichCallBack == 1) {
         vtkSmartPointer<avTimerCallback> avCB = vtkSmartPointer<avTimerCallback>::New();
-        avCB->setAudio(audioQueue);
+        avCB->setAuditory(audioQueue);
         avCB->avRenderWindow->AddRenderer(avCB->avRenderer);
 
         while (true) {

@@ -19,7 +19,7 @@ class AxonHillock;
 class SynapticGap : public NeuronalComponent
 {
 public:
-    explicit SynapticGap(const std::shared_ptr<Position>& position);
+    explicit SynapticGap(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent);
 
     ~SynapticGap() override = default;
 
@@ -72,7 +72,7 @@ private:
     double maxPropagationTime = 1.0;
     double lastCallTime = 0.0;
     int callCount = 0;
-    int synapticGapId;
+    int synapticGapId = -1;
 };
 
 #endif  // SYNAPTICGAP_H

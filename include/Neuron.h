@@ -21,7 +21,7 @@ class Axon;
 class Neuron : public NeuronalComponent
 {
 public:
-    explicit Neuron(const std::shared_ptr<Position>& position);
+    explicit Neuron(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent);
 
     // Methods
     std::shared_ptr<Soma> getSoma();
@@ -52,7 +52,7 @@ private:
     static int nextNeuronId;
 
     // Member variables
-    int neuronId;
+    int neuronId = -1;
     int neuronType;
     std::shared_ptr<Soma> soma;
     std::vector<std::shared_ptr<SynapticGap>> synapticGapsAxon;

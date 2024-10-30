@@ -20,6 +20,6 @@ void initialise_database(pqxx::connection& conn);
 
 void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::shared_ptr<Cluster>>& clusters);
 
-void updateDatabase(pqxx::connection& conn);
+void updateDatabase(pqxx::connection& conn, const std::vector<std::shared_ptr<Cluster>>& clusters);
 
 #endif //AARNN_DATABASE_H
