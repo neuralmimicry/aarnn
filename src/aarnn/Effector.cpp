@@ -2,8 +2,8 @@
 #include "SynapticGap.h"
 #include <utility>
 
-Effector::Effector(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+Effector::Effector(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }

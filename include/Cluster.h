@@ -24,7 +24,7 @@ public:
      * @brief Constructor for the Cluster class.
      * @param position The position of the cluster in space.
      */
-    explicit Cluster(const std::shared_ptr<Position>& position);
+    explicit Cluster(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent = {});
 
     /**
      * @brief Initializes the cluster and its neurons.
@@ -100,14 +100,14 @@ private:
     static int nextClusterId;     ///< Static counter for generating unique cluster IDs.
     static std::vector<std::shared_ptr<Position>> existingClusterPositions; ///< List of existing cluster positions.
 
-    int clusterId;                ///< Unique identifier for the cluster.
+    int clusterId = -1;            ///< Unique DB identifier for the cluster.
     int clusterType;              ///< Type identifier for the cluster.
     double propagationRate;       ///< Propagation rate of signals within the cluster.
 
     std::vector<std::shared_ptr<Neuron>> neurons; ///< Collection of neurons within the cluster.
     std::mutex neuronMutex; ///< Mutex for thread safety when accessing neurons.
 
-    bool instanceInitialised = false; ///< Flag to check if the cluster has been initialized.
+    bool instanceInitialised = false; ///< Flag to check if the cluster has been initialised.
 };
 
 #endif // CLUSTER_H

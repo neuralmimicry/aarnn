@@ -4,8 +4,8 @@
 #include "Neuron.h"
 #include <iostream>
 
-AxonBouton::AxonBouton(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+AxonBouton::AxonBouton(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }
@@ -21,7 +21,7 @@ void AxonBouton::initialise()
         if (!onwardSynapticGap)
         {
             onwardSynapticGap = std::make_shared<SynapticGap>(
-                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1));
+                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1), std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
         }
         onwardSynapticGap->initialise();
         onwardSynapticGap->updateFromAxonBouton(std::static_pointer_cast<AxonBouton>(shared_from_this()));

@@ -29,17 +29,68 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
+      <change afterPath="$PROJECT_DIR$/include/AuditoryProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/BladderBowelProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/ChemoreceptionProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/ElectroceptionProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/GustatoryProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/HeartbeatRespirationProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/HungerThirstProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/InteroceptiveProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/LustProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/MagnetoceptionProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/NetworkClient.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/OlfactoryProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/PressureProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/ProprioceptiveProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/PruriceptionProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/SatietyProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/SensoryReceptorServer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/SomatosensoryProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/StimuliData.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/StretchProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/VisualProcessor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/AuditoryProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/BladderBowelProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/ChemoreceptionProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/ElectroceptionProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/GustatoryProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/HeartbeatRespirationProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/HungerThirstProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/InteroceptiveProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/LustProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/MagnetoceptionProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/NetworkClient.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/OlfactoryProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/PressureProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/ProprioceptiveProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/PruriceptionProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/SatietyProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptorServer.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/SomatosensoryProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/StretchProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/VisualProcessor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/AudioManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AudioManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Axon.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Axon.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/AxonBouton.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonBouton.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/AxonBranch.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonBranch.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/AxonHillock.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonHillock.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Cluster.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Cluster.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Dendrite.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Dendrite.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/DendriteBouton.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/DendriteBouton.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/DendriteBranch.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/DendriteBranch.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Effector.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Effector.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Neuron.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Neuron.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/NeuronalComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/NeuronalComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/PulseAudioMic.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/PulseAudioMic.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/SensoryReceptor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SensoryReceptor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Soma.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Soma.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/SynapticGap.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SynapticGap.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/visualiser.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/visualiser.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/audio.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/audio.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/avTimerCallback.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/avTimerCallback.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/database.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/database.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AudioManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AudioManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/Axon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Axon.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" afterDir="false" />
@@ -48,12 +99,21 @@
       <change beforePath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBouton.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/Effector.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Effector.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/NeuronalComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/NeuronalComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/PulseAudioMic.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/PulseAudioMic.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/Soma.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Soma.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/aarnn.old" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/aarnn.old" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/aarnn.old2" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/aarnn.old2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/audio.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/audio.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/avTimerCallback.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/avTimerCallback.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/database.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/portaudioMicThread.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/portaudioMicThread.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/tempcode.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/tempcode.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,19 +199,14 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/include" />
       <recent name="$PROJECT_DIR$/src/shared_libs" />
       <recent name="$PROJECT_DIR$/BuildFromGit/generic" />
       <recent name="$PROJECT_DIR$/BuildFromGit/podman" />
       <recent name="$PROJECT_DIR$/BuildFromGit/docker" />
-      <recent name="$PROJECT_DIR$/BuildFromGit/kubernetes" />
     </key>
   </component>
   <component name="RunManager" selected="Database Script.debug_database.sql">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="debug_database.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/test/debug_database.sql" />
       <script-mode>FILE</script-mode>
@@ -303,7 +358,9 @@
       <workItem from="1729670658529" duration="11921000" />
       <workItem from="1729759058473" duration="9000" />
       <workItem from="1729759529344" duration="23682000" />
-      <workItem from="1729949255836" duration="23300000" />
+      <workItem from="1729949255836" duration="35575000" />
+      <workItem from="1730127600660" duration="10179000" />
+      <workItem from="1730211021257" duration="22938000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

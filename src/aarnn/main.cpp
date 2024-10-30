@@ -22,6 +22,8 @@
 #include "SensoryReceptor.h"
 #include "Effector.h"
 #include "Neuron.h"
+#include "AuditoryManager.h"
+#include "SensoryReceptorServer.h"
 
 
 //std::atomic<double> totalPropagationRate(0.0);
@@ -32,6 +34,7 @@ std::mutex changedNeuronsMutex;
 std::atomic<bool> running(true);
 std::condition_variable cv;
 std::atomic<bool> dbUpdateReady(false);
+std::mutex clustersMutex;
 
 // Configuration and Logger Initialization
 
@@ -76,10 +79,10 @@ double computePropagationRate(const std::shared_ptr<Neuron>& neuron) {
     double propagationRate = 1.0; // Placeholder value
     neuron->setPropagationRate(propagationRate);
 
-    {
-        std::lock_guard<std::mutex> lock(changedNeuronsMutex);
-        changedNeurons.insert(neuron);
-    }
+    //{
+    //    std::lock_guard<std::mutex> lock(changedNeuronsMutex);
+    //    changedNeurons.insert(neuron);
+    //}
 
     return propagationRate;
 }
@@ -137,6 +140,16 @@ int main() {
         return 1;
     }
 
+    const int FFT_SIZE = 1024;
+    const int NUM_RECEPTORS = FFT_SIZE / 2 + 1;
+
+    // Initialize AuditoryManager
+    AuditoryManager audioManager;
+    if (!audioManager.initialise()) {
+        std::cerr << "Failed to initialise AuditoryManager." << std::endl;
+        return -1;
+    }
+
     int num_clusters = std::stoi(config["num_clusters"]);
     int num_neurons = std::stoi(config["num_neurons"]);
     int num_pixels = std::stoi(config["num_pixels"]);
@@ -180,9 +193,9 @@ int main() {
     }
 
     // Create visual inputs
-    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> visualInputs(2);
-    visualInputs[0].reserve(num_pixels / 2);
-    visualInputs[1].reserve(num_pixels / 2);
+    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> visualReceptors(2);
+    visualReceptors[0].reserve(num_pixels / 2);
+    visualReceptors[1].reserve(num_pixels / 2);
 
     double shiftX, shiftY, shiftZ;
     double newPositionX, newPositionY, newPositionZ;
@@ -198,7 +211,7 @@ int main() {
             auto receptorPosition = std::make_shared<Position>(shiftX, shiftY, shiftZ);
             auto receptor = std::make_shared<SensoryReceptor>(receptorPosition);
             receptor->initialise();
-            visualInputs[j].emplace_back(receptor);
+            visualReceptors[j].emplace_back(receptor);
 
             // Connect the receptor to neurons across all clusters
             if (i > 0 && i % 7 == 0) {
@@ -236,12 +249,12 @@ int main() {
         }
     }
 
-    std::cout << "Created " << (visualInputs[0].size() + visualInputs[1].size()) << " visual sensory receptors." << std::endl;
+    std::cout << "Created " << (visualReceptors[0].size() + visualReceptors[1].size()) << " visual sensory receptors." << std::endl;
 
     // Create audio inputs
-    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> audioInputs(2);
-    audioInputs[0].reserve(num_phonels / 2);
-    audioInputs[1].reserve(num_phonels / 2);
+    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> auditoryReceptors(2);
+    auditoryReceptors[0].reserve(num_phonels / 2);
+    auditoryReceptors[1].reserve(num_phonels / 2);
 
     for (int j = 0; j < 2; ++j) {
         for (int i = 0; i < (num_phonels / 2); ++i) {
@@ -254,7 +267,7 @@ int main() {
             auto receptorPosition = std::make_shared<Position>(shiftX, shiftY, shiftZ);
             auto receptor = std::make_shared<SensoryReceptor>(receptorPosition);
             receptor->initialise();
-            audioInputs[j].emplace_back(receptor);
+            auditoryReceptors[j].emplace_back(receptor);
 
             // Connect the receptor to neurons across all clusters
             if (i > 0 && i % 11 == 0) {
@@ -292,7 +305,7 @@ int main() {
         }
     }
 
-    std::cout << "Created " << (audioInputs[0].size() + audioInputs[1].size()) << " audio sensory receptors." << std::endl;
+    std::cout << "Created " << (auditoryReceptors[0].size() + auditoryReceptors[1].size()) << " audio sensory receptors." << std::endl;
 
     // Create olfactory inputs
     std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> olfactoryInputs(2);
@@ -482,14 +495,159 @@ int main() {
         std::cout << "Transaction aborted." << std::endl;
     }
 
+    // Initialize and start the SensoryReceptorServer
+    SensoryReceptorServer receptorServer;
+    receptorServer.registerReceptors("Auditory", auditoryReceptors);
+    receptorServer.registerReceptors("BladderBowel", bladderBowelReceptors);
+    receptorServer.registerReceptors("Chemoreception", chemoreceptionReceptors);
+    receptorServer.registerReceptors("Electroception", electroceptionReceptors);
+    receptorServer.registerReceptors("Gustatory", gustatoryReceptors);
+    receptorServer.registerReceptors("HeartbeatRespiration", heartbeatRespirationReceptors);
+    receptorServer.registerReceptors("HungerThirst", hungerThirstReceptors);
+    receptorServer.registerReceptors("Interoceptive", interoceptiveReceptors);
+    receptorServer.registerReceptors("Lust", lustReceptors);
+    receptorServer.registerReceptors("Magnetoception", magnetoceptionReceptors);
+    receptorServer.registerReceptors("Olfactory", olfactoryReceptors);
+    receptorServer.registerReceptors("Pressure", pressureReceptors);
+    receptorServer.registerReceptors("Proprioceptive", proprioceptiveReceptors);
+    receptorServer.registerReceptors("Pruriceptive", pruriceptiveReceptors);
+    receptorServer.registerReceptors("Satiety", satietyReceptors);
+    receptorServer.registerReceptors("Somatosensory", somatosensoryReceptors);
+    receptorServer.registerReceptors("Stretch", stretchReceptors);
+    receptorServer.registerReceptors("Thermoception", thermoceptionReceptors);
+    receptorServer.registerReceptors("Visual", visualReceptors);
+
+    if (!receptorServer.startServer(port)) {
+        std::cerr << "Failed to start SensoryReceptor server." << std::endl;
+        return -1;
+    }
+
     // Start threads for input and database updates (if applicable)
-    //std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAudioQueue), 0);
+    //std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAuditoryQueue), 0);
     //std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
     std::thread inputThread(checkForQuit);
-    std::thread dbThread(updateDatabase, std::ref(conn));
     std::thread clusterUpdateThread(updateClusters, std::ref(clusters), std::ref(running));
+    std::thread dbThread(updateDatabase, std::ref(conn), std::ref(clusters));
     // Main loop
     while (running) {
+        double deltaTime = /* compute delta time */;
+
+        #pragma omp parallel
+        {
+            // Auditory Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < auditoryReceptors.size(); ++i) {
+                auditoryReceptors[i]->update(deltaTime);
+            }
+
+            // BladderBowel Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < bladderBowelReceptors.size(); ++i) {
+                bladderBowelReceptors[i]->update(deltaTime);
+            }
+
+            // Chemoreception Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < chemoreceptionReceptors.size(); ++i) {
+                chemoreceptionReceptors[i]->update(deltaTime);
+            }
+
+            // Electroception Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < electroceptionReceptors.size(); ++i) {
+                electroceptionReceptors[i]->update(deltaTime);
+            }
+
+            // Gustatory Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < gustatoryReceptors.size(); ++i) {
+                gustatoryReceptors[i]->update(deltaTime);
+            }
+
+            // HeartbeatRespiration Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < heartbeatRespirationReceptors.size(); ++i) {
+                heartbeatRespirationReceptors[i]->update(deltaTime);
+            }
+
+            // HungerThirst Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < hungerThirstReceptors.size(); ++i) {
+                hungerThirstReceptors[i]->update(deltaTime);
+            }
+
+            // Interoceptive Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < interoceptiveReceptors.size(); ++i) {
+                interoceptiveReceptors[i]->update(deltaTime);
+            }
+
+            // Lust Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < lustReceptors.size(); ++i) {
+                lustReceptors[i]->update(deltaTime);
+            }
+
+            // Magnetoception Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < magnetoceptionReceptors.size(); ++i) {
+                magnetoceptionReceptors[i]->update(deltaTime);
+            }
+
+            // Olfactory Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < olfactoryReceptors.size(); ++i) {
+                olfactoryReceptors[i]->update(deltaTime);
+            }
+
+            // Pressure Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < pressureReceptors.size(); ++i) {
+                pressureReceptors[i]->update(deltaTime);
+            }
+
+            // Propprioceptive Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < proprioceptiveReceptors.size(); ++i) {
+                proprioceptiveReceptors[i]->update(deltaTime);
+            }
+
+            // Pruriceptive Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < pruriceptiveReceptors.size(); ++i) {
+                pruriceptiveReceptors[i]->update(deltaTime);
+            }
+
+            // Satiety Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < satietyReceptors.size(); ++i) {
+                satietyReceptors[i]->update(deltaTime);
+            }
+
+            // Somatosensory Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < somatosensoryReceptors.size(); ++i) {
+                somatosensoryReceptors[i]->update(deltaTime);
+            }
+
+            // Stretch Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < stretchReceptors.size(); ++i) {
+                stretchReceptors[i]->update(deltaTime);
+            }
+
+            // Thermoception Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < thermoceptionReceptors.size(); ++i) {
+                thermoceptionReceptors[i]->update(deltaTime);
+            }
+
+            // Visual Receptors
+            #pragma omp for nowait
+            for (size_t i = 0; i < visualReceptors.size(); ++i) {
+                visualReceptors[i]->update(deltaTime);
+            }
+
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 

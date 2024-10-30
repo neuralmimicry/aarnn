@@ -7,8 +7,8 @@
 #include <cstdlib>
 #include <algorithm>
 
-SensoryReceptor::SensoryReceptor(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+SensoryReceptor::SensoryReceptor(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }
@@ -28,7 +28,7 @@ void SensoryReceptor::initialise()
         lastCallTime = 0.0;
 
         auto positionPtr = std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1);
-        synapticGap = std::make_shared<SynapticGap>(positionPtr);
+        synapticGap = std::make_shared<SynapticGap>(positionPtr, std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
         synapticGap->initialise();
         synapticGap->updateFromSensoryReceptor(std::static_pointer_cast<SensoryReceptor>(shared_from_this()));
         addSynapticGap(synapticGap);
@@ -143,4 +143,40 @@ void SensoryReceptor::updateComponent(double time, double energy)
     }
 
     componentEnergyLevel = 0;
+}
+
+void SensoryReceptor::update(double deltaTime) {
+    NeuronalComponent::updateEnergy(deltaTime);
+
+    double stimulusToProcess = 0.0;
+
+    // Safely access accumulatedStimulus
+    {
+        std::lock_guard<std::mutex> lock(receptorMutex);
+        stimulusToProcess = accumulatedStimulus;
+        accumulatedStimulus = 0.0;
+    }
+
+    // Process the stimulus if it exceeds the threshold
+    if (stimulusToProcess >= threshold) {
+        double energyIncrease = sensitivity * stimulusToProcess;
+        energyTopup(energyIncrease);
+
+        // Here you can add code to propagate the signal to connected components
+    }
+
+    // Additional updates if necessary
+}
+
+void SensoryReceptor::stimulate(double intensity) {
+    std::lock_guard<std::mutex> lock(receptorMutex);
+    accumulatedStimulus += intensity;
+}
+
+void SensoryReceptor::setSensitivity(double newSensitivity) {
+    sensitivity = newSensitivity;
+}
+
+void SensoryReceptor::setThreshold(double newThreshold) {
+    threshold = newThreshold;
 }

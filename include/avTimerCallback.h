@@ -23,7 +23,7 @@ class avTimerCallback : public vtkCommand
             ++this->avTimerCount;
         }
 
-        capturedAudio = avQueue->pop();
+        capturedAuditory = avQueue->pop();
         // avPolyData->SetLines(nullptr);
         // avPolyData->SetPoints(nullptr);
         std::cout << ".";
@@ -33,7 +33,7 @@ class avTimerCallback : public vtkCommand
         double x = 0.0;
         double y = 0.0;
         double z = 0.0;
-        for(const auto &point: capturedAudio)
+        for(const auto &point: capturedAuditory)
         {
             vtkSmartPointer<vtkLine> line = vtkSmartPointer<vtkLine>::New();
             x                             = double(std::get<0>(point)) / 160.0;
@@ -59,7 +59,7 @@ class avTimerCallback : public vtkCommand
         avRenderer->Modified();
     }
 
-    void                                    setAudio(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &aQueue);
+    void                                    setAuditory(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &aQueue);
     void                                    setPoints(const vtkSmartPointer<vtkPoints> &points);
     void                                    setLines(const vtkSmartPointer<vtkCellArray> &lines);
     void                                    setPolyData(const vtkSmartPointer<vtkPolyData> &polydata);
@@ -75,7 +75,7 @@ class avTimerCallback : public vtkCommand
     vtkSmartPointer<vtkPolyData>            avPolyData     = vtkSmartPointer<vtkPolyData>::New();
     vtkSmartPointer<vtkPoints>              avPoints       = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray>           avLines        = vtkSmartPointer<vtkCellArray>::New();
-    std::vector<std::tuple<double, double>> capturedAudio;
+    std::vector<std::tuple<double, double>> capturedAuditory;
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> *avQueue{};
 };
 #endif

@@ -14,7 +14,7 @@ class AxonBranch;
 class Axon : public NeuronalComponent
 {
 public:
-    explicit Axon(const std::shared_ptr<Position>& position);
+    explicit Axon(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent);
 
     ~Axon() override = default;
 
@@ -40,7 +40,7 @@ private:
     std::shared_ptr<AxonBouton> onwardAxonBouton;
     std::shared_ptr<AxonHillock> parentAxonHillock;
     std::shared_ptr<AxonBranch> parentAxonBranch;
-    int axonId;
+    int axonId = -1;
 };
 
 #endif  // AXON_H

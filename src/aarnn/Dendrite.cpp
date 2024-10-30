@@ -3,8 +3,8 @@
 #include "Position.h"
 #include <memory>
 
-Dendrite::Dendrite(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+Dendrite::Dendrite(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }
@@ -18,7 +18,7 @@ void Dendrite::initialise()
         if (!this->dendriteBouton)
         {
             this->dendriteBouton = std::make_shared<DendriteBouton>(
-                    std::make_shared<Position>(position->x - 1, position->y - 1, position->z - 1));
+                    std::make_shared<Position>(position->x - 1, position->y - 1, position->z - 1), std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
             this->dendriteBouton->initialise();
             this->dendriteBouton->updateFromDendrite(std::static_pointer_cast<Dendrite>(shared_from_this()));
         }

@@ -1,4 +1,4 @@
-// AudioManager.h
+// AuditoryManager.h
 #ifndef AUDIOMANAGER_H
 #define AUDIOMANAGER_H
 
@@ -7,51 +7,39 @@
 #include <memory>
 #include <thread>
 #include <atomic>
-#include "PulseAudioMic.h"
+#include "PulseAuditoryMic.h"
 #include "ThreadSafeQueue.h" // Assuming you have a thread-safe queue implementation
+#include "SensoryReceptor.h"
 
-class AudioManager {
+class AuditoryManager {
 public:
-    AudioManager();
-    ~AudioManager();
+    AuditoryManager();
+    ~AuditoryManager();
 
-    // Initialize audio components
-    bool initialize();
-
-    // Start audio capture
+    bool initialise();
     void startCapture();
-
-    // Stop audio capture
     void stopCapture();
 
-    // Get the audio queue
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>>& getAudioQueue();
+    void setSensoryReceptors(const std::vector<std::shared_ptr<SensoryReceptor>>& receptors);
+    void startProcessing();
+    void stopProcessing();
 
-    // Get the empty audio queue
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>>& getEmptyAudioQueue();
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>>& getAuditoryQueue();
 
 private:
-    // List ALSA capture devices
-    std::vector<std::string> listAlsaCaptureDevices();
-
-    // Automatically select the first ALSA capture device
-    std::string autoSelectFirstAlsaCaptureDevice();
-
-    // Audio queues
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
-
-    // PulseAudioMic instance
-    std::shared_ptr<PulseAudioMic> mic;
-
-    // Capture thread
+    std::shared_ptr<PulseAuditoryMic> mic;
     std::thread micThread;
-
-    // Selected capture device
-    std::string selectedCaptureDevice;
-
-    // Flag to control capture
     std::atomic<bool> capturing;
+
+    // New members for processing
+    std::atomic<bool> processing;
+    std::thread processingThread;
+    std::vector<std::shared_ptr<SensoryReceptor>> sensoryReceptors;
+
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
+
+    void processAuditoryData();
+    void performFFTAndStimulate(const std::vector<double>& audioBuffer);
 };
 
 #endif // AUDIOMANAGER_H

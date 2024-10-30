@@ -7,8 +7,8 @@
 #include <ctime>
 #include <cmath>
 
-SynapticGap::SynapticGap(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+SynapticGap::SynapticGap(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }

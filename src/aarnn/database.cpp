@@ -12,8 +12,9 @@ extern std::atomic<bool> dbUpdateReady;
 extern std::mutex changedNeuronsMutex;
 extern std::condition_variable cv;
 
-extern std::unordered_set<std::shared_ptr<Neuron>> changedNeurons;
-extern std::unordered_set<std::shared_ptr<Cluster>> changedClusters;
+// Include clusters and clustersMutex from main.cpp
+extern std::vector<std::shared_ptr<Cluster>> clusters;
+extern std::mutex clustersMutex;
 
 // Forward declarations to resolve circular dependencies
 void updateAxon(pqxx::work& txn, const std::shared_ptr<Axon>& axon);
@@ -614,7 +615,7 @@ void updateDendriteBranch(pqxx::work& txn, const std::shared_ptr<DendriteBranch>
     }
 }
 
-void updateDatabase(pqxx::connection& conn) {
+void updateDatabase(pqxx::connection& conn, const std::vector<std::shared_ptr<Cluster>>& clusters) {
     while (running) {
         std::unique_lock<std::mutex> lock(changedNeuronsMutex);
         cv.wait(lock, [] { return dbUpdateReady.load(); });
@@ -623,95 +624,93 @@ void updateDatabase(pqxx::connection& conn) {
             break;
         }
 
-        // Copy and clear changed neurons and clusters
-        std::unordered_set<std::shared_ptr<Neuron>> neuronsToUpdate = std::move(changedNeurons);
-        changedNeurons.clear();
-
-        std::unordered_set<std::shared_ptr<Cluster>> clustersToUpdate = std::move(changedClusters);
-        changedClusters.clear();
-
         dbUpdateReady = false;
         lock.unlock();
 
         try {
             pqxx::work txn(conn);
 
-            // Update clusters
-            for (const auto& cluster : clustersToUpdate) {
-                if (!cluster) continue;
+            {
+                // Lock the clusters mutex to ensure safe access
+                std::lock_guard<std::mutex> clustersLock(clustersMutex);
 
-                double x = cluster->getPosition()->x;
-                double y = cluster->getPosition()->y;
-                double z = cluster->getPosition()->z;
-                double propagation_rate = cluster->getPropagationRate();
-                double energy_level = cluster->getEnergyLevel();
-                int cluster_id = cluster->getClusterId();
+                // Update all clusters
+                for (const auto& cluster : clusters) {
+                    if (!cluster) continue;
 
-                txn.exec_params(
-                        "UPDATE clusters SET x = $1, y = $2, z = $3, propagation_rate = $4, energy_level = $5 WHERE cluster_id = $6",
-                        x, y, z, propagation_rate, energy_level, cluster_id
-                );
-            }
-
-            // Update neurons and their components
-            for (const auto& neuron : neuronsToUpdate) {
-                if (!neuron) continue;
-
-                // Update Neuron
-                double neuron_x = neuron->getPosition()->x;
-                double neuron_y = neuron->getPosition()->y;
-                double neuron_z = neuron->getPosition()->z;
-                double neuron_propagation_rate = neuron->getPropagationRate();
-                double neuron_energy_level = neuron->getEnergyLevel();
-                int neuron_id = neuron->getNeuronId();
-
-                txn.exec_params(
-                        "UPDATE neurons SET x = $1, y = $2, z = $3, propagation_rate = $4, energy_level = $5 WHERE neuron_id = $6",
-                        neuron_x, neuron_y, neuron_z, neuron_propagation_rate, neuron_energy_level, neuron_id
-                );
-
-                // Update Soma
-                auto soma = neuron->getSoma();
-                if (soma) {
-                    double soma_x = soma->getPosition()->x;
-                    double soma_y = soma->getPosition()->y;
-                    double soma_z = soma->getPosition()->z;
-                    double soma_energy_level = soma->getEnergyLevel();
-                    int soma_id = soma->getSomaId();
+                    double x = cluster->getPosition()->x;
+                    double y = cluster->getPosition()->y;
+                    double z = cluster->getPosition()->z;
+                    double propagation_rate = cluster->getPropagationRate();
+                    double energy_level = cluster->getEnergyLevel();
+                    int cluster_id = cluster->getClusterId();
 
                     txn.exec_params(
-                            "UPDATE somas SET x = $1, y = $2, z = $3, energy_level = $4 WHERE soma_id = $5",
-                            soma_x, soma_y, soma_z, soma_energy_level, soma_id
+                            "UPDATE clusters SET x = $1, y = $2, z = $3, propagation_rate = $4, energy_level = $5 WHERE cluster_id = $6",
+                            x, y, z, propagation_rate, energy_level, cluster_id
                     );
 
-                    // Update Axon Hillock
-                    auto axonHillock = soma->getAxonHillock();
-                    if (axonHillock) {
-                        double axon_hillock_x = axonHillock->getPosition()->x;
-                        double axon_hillock_y = axonHillock->getPosition()->y;
-                        double axon_hillock_z = axonHillock->getPosition()->z;
-                        double axon_hillock_energy_level = axonHillock->getEnergyLevel();
-                        int axon_hillock_id = axonHillock->getAxonHillockId();
+                    // Update all neurons in the cluster
+                    for (const auto& neuron : cluster->getNeurons()) {
+                        if (!neuron) continue;
+
+                        // Update Neuron
+                        double neuron_x = neuron->getPosition()->x;
+                        double neuron_y = neuron->getPosition()->y;
+                        double neuron_z = neuron->getPosition()->z;
+                        double neuron_propagation_rate = neuron->getPropagationRate();
+                        double neuron_energy_level = neuron->getEnergyLevel();
+                        int neuron_id = neuron->getNeuronId();
 
                         txn.exec_params(
-                                "UPDATE axonhillocks SET x = $1, y = $2, z = $3, energy_level = $4 WHERE axon_hillock_id = $5",
-                                axon_hillock_x, axon_hillock_y, axon_hillock_z, axon_hillock_energy_level, axon_hillock_id
+                                "UPDATE neurons SET x = $1, y = $2, z = $3, propagation_rate = $4, energy_level = $5 WHERE neuron_id = $6",
+                                neuron_x, neuron_y, neuron_z, neuron_propagation_rate, neuron_energy_level, neuron_id
                         );
 
-                        // Update Axon and its components
-                        auto axon = axonHillock->getAxon();
-                        if (axon) {
-                            updateAxon(txn, axon);
+                        // Update Soma
+                        auto soma = neuron->getSoma();
+                        if (soma) {
+                            double soma_x = soma->getPosition()->x;
+                            double soma_y = soma->getPosition()->y;
+                            double soma_z = soma->getPosition()->z;
+                            double soma_energy_level = soma->getEnergyLevel();
+                            int soma_id = soma->getSomaId();
+
+                            txn.exec_params(
+                                    "UPDATE somas SET x = $1, y = $2, z = $3, energy_level = $4 WHERE soma_id = $5",
+                                    soma_x, soma_y, soma_z, soma_energy_level, soma_id
+                            );
+
+                            // Update Axon Hillock
+                            auto axonHillock = soma->getAxonHillock();
+                            if (axonHillock) {
+                                double axon_hillock_x = axonHillock->getPosition()->x;
+                                double axon_hillock_y = axonHillock->getPosition()->y;
+                                double axon_hillock_z = axonHillock->getPosition()->z;
+                                double axon_hillock_energy_level = axonHillock->getEnergyLevel();
+                                int axon_hillock_id = axonHillock->getAxonHillockId();
+
+                                txn.exec_params(
+                                        "UPDATE axonhillocks SET x = $1, y = $2, z = $3, energy_level = $4 WHERE axon_hillock_id = $5",
+                                        axon_hillock_x, axon_hillock_y, axon_hillock_z, axon_hillock_energy_level, axon_hillock_id
+                                );
+
+                                // Update Axon and its components
+                                auto axon = axonHillock->getAxon();
+                                if (axon) {
+                                    updateAxon(txn, axon);
+                                }
+                            }
+
+                            // Update Dendrite Branches
+                            const auto& dendriteBranches = soma->getDendriteBranches();
+                            for (const auto& dendriteBranch : dendriteBranches) {
+                                updateDendriteBranch(txn, dendriteBranch);
+                            }
                         }
                     }
-
-                    // Update Dendrite Branches
-                    const auto& dendriteBranches = soma->getDendriteBranches();
-                    for (const auto& dendriteBranch : dendriteBranches) {
-                        updateDendriteBranch(txn, dendriteBranch);
-                    }
                 }
-            }
+            } // End of clustersLock
 
             txn.commit();
         } catch (const std::exception& e) {

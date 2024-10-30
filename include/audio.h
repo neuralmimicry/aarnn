@@ -6,7 +6,7 @@
 #define AARNN_AUDIO_H
 
 #include <portaudio.h>
-#include "PulseAudioMic.h"
+#include "PulseAuditoryMic.h"
 #include "utils.h"
 
 static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData);

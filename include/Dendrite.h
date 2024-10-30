@@ -15,14 +15,14 @@ class DendriteBranch;
 class Dendrite : public NeuronalComponent
 {
 private:
-    bool instanceInitialised = false;  // Initially, the Dendrite is not initialized
+    bool instanceInitialised = false;  // Initially, the Dendrite is not initialised
     std::vector<std::shared_ptr<DendriteBranch>> dendriteBranches;
     std::shared_ptr<DendriteBouton> dendriteBouton;
     std::shared_ptr<DendriteBranch> parentDendriteBranch;
-    int dendriteId;
+    int dendriteId = -1;
 
 public:
-    explicit Dendrite(const std::shared_ptr<Position>& position);
+    explicit Dendrite(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent);
 
     ~Dendrite() override = default;
 

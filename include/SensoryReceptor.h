@@ -10,13 +10,14 @@
 #include <memory>
 #include <vector>
 #include <cmath>
+#include <mutex>
 
 class SynapticGap;
 
 class SensoryReceptor : public NeuronalComponent
 {
 public:
-    explicit SensoryReceptor(const std::shared_ptr<Position>& position);
+    explicit SensoryReceptor(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent = {});
 
     ~SensoryReceptor() override = default;
 
@@ -41,6 +42,12 @@ public:
     double calculateWaveform(double currentTime) const;
     double calcPropagationRate();
     void   updateComponent(double time, double energy);
+    // Generic stimulate method
+    void stimulate(double intensity);
+
+    // Setters for receptor parameters
+    void setSensitivity(double sensitivity);
+    void setThreshold(double threshold);
 
 private:
     bool                                      instanceInitialised = false;
@@ -60,6 +67,14 @@ private:
     double                                    lastCallTime{};
     int                                       callCount{};
     double                                    propagationRate{};
+    int                                       sensoryReceptorID = -1;
+    // Receptor parameters
+    double sensitivity = 1.0; // How strongly the receptor responds to stimuli
+    double threshold = 0.0;   // Minimum intensity required to trigger a response
+
+    // Internal state
+    double accumulatedStimulus = 0.0;
+    std::mutex receptorMutex;
 };
 
 #endif  // SENSORYRECEPTOR_H

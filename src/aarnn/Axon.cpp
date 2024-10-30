@@ -4,8 +4,8 @@
 #include "AxonHillock.h"
 #include <iostream>
 
-Axon::Axon(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+Axon::Axon(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }
@@ -21,7 +21,7 @@ void Axon::initialise()
         if (!onwardAxonBouton)
         {
             onwardAxonBouton = std::make_shared<AxonBouton>(
-                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1));
+                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1), std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
         }
         onwardAxonBouton->initialise();
         onwardAxonBouton->updateFromAxon(std::static_pointer_cast<Axon>(shared_from_this()));

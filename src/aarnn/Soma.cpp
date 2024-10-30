@@ -5,8 +5,8 @@
 #include "utils.h"
 #include <iostream>
 
-Soma::Soma(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+Soma::Soma(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }
@@ -23,7 +23,7 @@ void Soma::initialise()
         {
             std::cout << "Creating AxonHillock" << std::endl;
             onwardAxonHillock = std::make_shared<AxonHillock>(
-                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1));
+                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1), std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
         }
         std::cout << "Soma initialising AxonHillock" << std::endl;
         onwardAxonHillock->initialise();
@@ -32,7 +32,7 @@ void Soma::initialise()
 
         std::cout << "Creating DendriteBranch" << std::endl;
         auto dendriteBranch = std::make_shared<DendriteBranch>(
-                std::make_shared<Position>(position->x - 1, position->y - 1, position->z - 1));
+                std::make_shared<Position>(position->x - 1, position->y - 1, position->z - 1), std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
         addDendriteBranch(dendriteBranch);
 
         std::cout << "Soma initialising DendriteBranch" << std::endl;

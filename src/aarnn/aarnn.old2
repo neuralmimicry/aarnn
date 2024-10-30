@@ -46,7 +46,7 @@ extern "C" {
 
 #include "DendriteBranch.h"
 #include "AxonHillock.h"
-#include "PulseAudioMic.h"
+#include "PulseAuditoryMic.h"
 #include "Logger.h"
 #include "nvTimerCallback.h"
 #include "avTimerCallback.h"
@@ -186,7 +186,7 @@ static int portaudioMicCallBack(const void *inputBuffer, void *outputBuffer, uns
     } else {
         for (unsigned int i = 0; i < framesPerBuffer; i++) {
             // Here you might want to capture audio data
-            //capturedAudio.push_back(in[i]);
+            //capturedAuditory.push_back(in[i]);
         }
     }
     return paContinue;
@@ -270,7 +270,7 @@ void associateSynapticGap(SensoryReceptor& receptor, Neuron& neuron, double prox
  * @brief Initialize the database, checking and creating the required table if needed.
  * @param conn Reference to the pqxx::connection object.
  */
-void initialize_database(pqxx::connection& conn) {
+void initialise_database(pqxx::connection& conn) {
     pqxx::work txn(conn);
 
     // Check if the "neurons" table exists
@@ -603,7 +603,7 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
     }
     if (whichCallBack == 1) {
         vtkSmartPointer<avTimerCallback> avCB = vtkSmartPointer<avTimerCallback>::New();
-        avCB->setAudio(audioQueue);
+        avCB->setAuditory(audioQueue);
         //avCB->setPoints(points);
         //avCB->setLines(lines);
         //avCB->setPolyData(polyData);
@@ -625,7 +625,7 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
 }
 
 /**
- * @brief Main function to initialize, run, and finalize the neuron network simulation.
+ * @brief Main function to initialise, run, and finalize the neuron network simulation.
  * @return int Status code (0 for success, non-zero for failures).
  */
 int main();
@@ -655,10 +655,10 @@ int main() {
     std::cout << "1" << std::endl;
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
     std::cout << "2" << std::endl;
-    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAudioQueue;
+    ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAuditoryQueue;
     std::cout << "3" << std::endl;
 
-    std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
+    std::shared_ptr<PulseAuditoryMic> mic = std::make_shared<PulseAuditoryMic>(audioQueue);
     // std::vector<std::string> availableSources = mic->getSources();
 
     // if(!availableSources.empty()) {
@@ -670,7 +670,7 @@ int main() {
     //     return 1;
     // }
     std::cout << "4" << std::endl;
-    std::thread micThread(&PulseAudioMic::micRun, mic);
+    std::thread micThread(&PulseAuditoryMic::micRun, mic);
 
     // Read the database connection configuration and simulation configuration
     std::cout << "5" << std::endl;
@@ -699,7 +699,7 @@ int main() {
     pqxx::connection conn(connection_string);
 
     // Initialize the database (check and create the required table if needed)
-    initialize_database(conn);
+    initialise_database(conn);
     // Start a transaction
     pqxx::work txn(conn);
     // Set the transaction isolation level
@@ -1062,7 +1062,7 @@ int main() {
 
     std::vector<std::shared_ptr<Neuron>> emptyNeurons;
     // Set up and start the interactors in separate threads
-    std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAudioQueue), 0);
+    std::thread nvThread(runInteractor, std::ref(neurons), std::ref(neuron_mutex), std::ref(emptyAuditoryQueue), 0);
     std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
     std::thread inputThread(checkForQuit);
 

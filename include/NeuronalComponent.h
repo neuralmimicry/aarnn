@@ -8,6 +8,7 @@ class NeuronalComponent : public std::enable_shared_from_this<NeuronalComponent>
 {
 protected:
     std::shared_ptr<Position> position;
+    std::weak_ptr<NeuronalComponent> parent;
     bool instanceInitialised = false;
 
     // Energy management attributes
@@ -17,11 +18,12 @@ protected:
     double energyReplenishRate;
 
 public:
-    explicit NeuronalComponent(std::shared_ptr<Position> position);
+    explicit NeuronalComponent(std::shared_ptr<Position> position, std::weak_ptr<NeuronalComponent> parent = {});
 
     // Position management
     virtual void updatePosition(const std::shared_ptr<Position>& newPosition);
     std::shared_ptr<Position> getPosition() const;
+    virtual void setParent(std::weak_ptr<NeuronalComponent> parentComponent);
 
     // Initialization
     virtual void initialise();

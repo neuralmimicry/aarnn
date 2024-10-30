@@ -31,7 +31,7 @@ static int portaudioMicCallBack(const void                     *inputBuffer,
         for(unsigned int i = 0; i < framesPerBuffer; i++)
         {
             // Here you might want to capture audio data
-            // capturedAudio.push_back(in[i]);
+            // capturedAuditory.push_back(in[i]);
         }
     }
     return paContinue;
@@ -41,11 +41,11 @@ int portaudioMicThread::run()
 {
     // Open the audio device.
     PaError err;
-    std::cout << "PortAudio version: " << Pa_GetVersionText() << std::endl;
+    std::cout << "PortAuditory version: " << Pa_GetVersionText() << std::endl;
     err = Pa_Initialize();
     if(err != paNoError)
     {
-        std::cerr << "PortAudio error: " << Pa_GetErrorText(err) << std::endl;
+        std::cerr << "PortAuditory error: " << Pa_GetErrorText(err) << std::endl;
         return 1;
     }
 

@@ -17,7 +17,7 @@ class Neuron;
 class DendriteBouton : public NeuronalComponent
 {
 public:
-    explicit DendriteBouton(const std::shared_ptr<Position>& position);
+    explicit DendriteBouton(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent);
 
     ~DendriteBouton() override = default;
 
@@ -34,11 +34,11 @@ public:
 
 
 private:
-    bool instanceInitialised = false;  // Initially, the DendriteBouton is not initialized
+    bool instanceInitialised = false;  // Initially, the DendriteBouton is not initialised
     std::shared_ptr<SynapticGap> onwardSynapticGap;
     std::weak_ptr<Neuron> neuron;
     std::shared_ptr<Dendrite> parentDendrite;
-    int dendriteBoutonId;
+    int dendriteBoutonId = -1;
 };
 
 #endif // DENDRITEBOUTON_H

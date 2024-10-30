@@ -1,6 +1,6 @@
 #include "avTimerCallback.h"
 
-void avTimerCallback::setAudio(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &aQueue)
+void avTimerCallback::setAuditory(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &aQueue)
 {
     this->avQueue = &aQueue;
 }

@@ -3,8 +3,8 @@
 #include "Soma.h"
 #include <iostream>
 
-AxonHillock::AxonHillock(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position)
+AxonHillock::AxonHillock(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent)
 {
     // Additional initialization if needed
 }
@@ -21,7 +21,7 @@ void AxonHillock::initialise()
         {
             std::cout << "Creating Axon" << std::endl;
             onwardAxon = std::make_shared<Axon>(
-                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1));
+                    std::make_shared<Position>(position->x + 1, position->y + 1, position->z + 1), std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
         }
 
         std::cout << "AxonHillock initialising Axon" << std::endl;

@@ -13,8 +13,8 @@ int Cluster::nextClusterId = 0;
 std::vector<std::shared_ptr<Position>> Cluster::existingClusterPositions;
 
 // Constructor
-Cluster::Cluster(const std::shared_ptr<Position>& position)
-        : NeuronalComponent(position), clusterId(nextClusterId++)
+Cluster::Cluster(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent)
+        : NeuronalComponent(position, parent), clusterId(nextClusterId++)
 {
     // Add the cluster's position to the list of existing cluster positions
     existingClusterPositions.push_back(position);
@@ -131,7 +131,7 @@ void Cluster::createNeurons(int num_neurons, int neuron_points_per_layer)
         double z = position->z + std::get<2>(coords);
 
         auto neuronPosition = std::make_shared<Position>(x, y, z);
-        auto neuron = std::make_shared<Neuron>(neuronPosition);
+        auto neuron = std::make_shared<Neuron>(neuronPosition, std::static_pointer_cast<NeuronalComponent>(shared_from_this()));
 
         neurons[i] = neuron; // Assign neuron to its position in the vector
     }
