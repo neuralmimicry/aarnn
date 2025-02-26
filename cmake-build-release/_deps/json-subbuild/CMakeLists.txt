@@ -1,7 +1,7 @@
 # Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
 # file Copyright.txt or https://cmake.org/licensing for details.
 
-cmake_minimum_required(VERSION 3.29.6)
+cmake_minimum_required(VERSION 3.30.5)
 
 # Reject any attempt to use a toolchain file. We must not use one because
 # we could be downloading it here. If the CMAKE_TOOLCHAIN_FILE environment
@@ -19,7 +19,7 @@ project(json-populate NONE)
 
 include(ExternalProject)
 ExternalProject_Add(json-populate
-                     "UPDATE_DISCONNECTED" "False" "DOWNLOAD_EXTRACT_TIMESTAMP" "TRUE" "EXTERNALPROJECT_INTERNAL_ARGUMENT_SEPARATOR" "URL" "https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz"
+                     "UPDATE_DISCONNECTED" "False" "DOWNLOAD_EXTRACT_TIMESTAMP" "true" "EXTERNALPROJECT_INTERNAL_ARGUMENT_SEPARATOR" "URL" "https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz"
                     SOURCE_DIR          "/home/pbisaacs/Developer/aarnn/cmake-build-release/_deps/json-src"
                     BINARY_DIR          "/home/pbisaacs/Developer/aarnn/cmake-build-release/_deps/json-build"
                     CONFIGURE_COMMAND   ""
