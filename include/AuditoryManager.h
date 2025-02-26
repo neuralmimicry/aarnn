@@ -7,7 +7,7 @@
 #include <memory>
 #include <thread>
 #include <atomic>
-#include "PulseAuditoryMic.h"
+#include "PulseAudioMic.h"
 #include "ThreadSafeQueue.h" // Assuming you have a thread-safe queue implementation
 #include "SensoryReceptor.h"
 
@@ -27,7 +27,7 @@ public:
     ThreadSafeQueue<std::vector<std::tuple<double, double>>>& getAuditoryQueue();
 
 private:
-    std::shared_ptr<PulseAuditoryMic> mic;
+    std::shared_ptr<PulseAudioMic> mic;
     std::thread micThread;
     std::atomic<bool> capturing;
 
