@@ -36,30 +36,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change beforePath="$PROJECT_DIR$/.idea/QtSettings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/aarnn.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aarnn.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/.ninja_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/cmake_install.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/download-json-populate.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/download-json-populate.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/extract-json-populate.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/extract-json-populate.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/json-populate-urlinfo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/json-populate-urlinfo.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/tmp/json-populate-mkdirs.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/tmp/json-populate-mkdirs.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/cmake_install.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/download-json-populate.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/download-json-populate.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/extract-json-populate.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/extract-json-populate.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/json-populate-urlinfo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/json-populate-urlinfo.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/tmp/json-populate-mkdirs.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/tmp/json-populate-mkdirs.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/AudioManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AuditoryManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/AudioManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AuditoryManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/AuditoryManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AuditoryManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/ThreadSafeQueue.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/ThreadSafeQueue.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -315,7 +294,7 @@
       <workItem from="1729949255836" duration="35575000" />
       <workItem from="1730127600660" duration="10179000" />
       <workItem from="1730211021257" duration="22938000" />
-      <workItem from="1740600789376" duration="4558000" />
+      <workItem from="1740600789376" duration="6802000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
