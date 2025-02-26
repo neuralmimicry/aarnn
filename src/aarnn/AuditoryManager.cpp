@@ -4,10 +4,11 @@
 #include <alsa/asoundlib.h> // Ensure you have ALSA development libraries
 #include <cstring> // For std::to_string
 
-AuditoryManager::AuditoryManager() : capturing(false) {}
+AuditoryManager::AuditoryManager() : capturing(false), processing(false) {}
 
 AuditoryManager::~AuditoryManager() {
     stopCapture();
+    stopProcessing();
 }
 
 bool AuditoryManager::initialise() {
