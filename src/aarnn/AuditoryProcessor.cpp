@@ -64,7 +64,7 @@ void AuditoryProcessor::setAuditoryReceptors(const std::vector<std::shared_ptr<S
 }
 
 void AuditoryProcessor::captureAuditoryData() {
-    // Implement audio capture using a library like PortAuditory or PulseAuditory
+    // Implement audio capture using a library like PortAuditory or PulseAudio
 
     // Placeholder implementation
     while (processing.load()) {

@@ -47,7 +47,7 @@ extern "C" {
 
 #include "DendriteBranch.h"
 #include "AxonHillock.h"
-#include "PulseAuditoryMic.h"
+#include "PulseAudioMic.h"
 #include "Logger.h"
 #include "nvTimerCallback.h"
 #include "avTimerCallback.h"
@@ -726,9 +726,9 @@ int main() {
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAuditoryQueue;
     std::cout << "3" << std::endl;
 
-    std::shared_ptr<PulseAuditoryMic> mic = std::make_shared<PulseAuditoryMic>(audioQueue);
+    std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
     if (!mic) {
-        std::cerr << "Failed to create PulseAuditoryMic!" << std::endl;
+        std::cerr << "Failed to create PulseAudioMic!" << std::endl;
         return 1;
     }
     // std::vector<std::string> availableSources = mic->getSources();
@@ -742,7 +742,7 @@ int main() {
     //     return 1;
     // }
     std::cout << "4" << std::endl;
-    std::thread micThread(&PulseAuditoryMic::micRun, mic);
+    std::thread micThread(&PulseAudioMic::micRun, mic);
 
     // Read the database connection configuration and simulation configuration
     std::cout << "5" << std::endl;

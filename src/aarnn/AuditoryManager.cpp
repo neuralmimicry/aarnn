@@ -17,9 +17,9 @@ bool AuditoryManager::initialise() {
         return false;
     }
 
-    mic = std::make_shared<PulseAuditoryMic>(audioQueue);
+    mic = std::make_shared<PulseAudioMic>(audioQueue);
     if (!mic) {
-        std::cerr << "Failed to create PulseAuditoryMic!" << std::endl;
+        std::cerr << "Failed to create PulseAudioMic!" << std::endl;
         return false;
     }
 
@@ -29,7 +29,7 @@ bool AuditoryManager::initialise() {
 void AuditoryManager::startCapture() {
     if (mic && !capturing.load()) {
         capturing = true;
-        micThread = std::thread(&PulseAuditoryMic::micRun, mic);
+        micThread = std::thread(&PulseAudioMic::micRun, mic);
     }
 }
 
@@ -126,12 +126,12 @@ std::string AuditoryManager::autoSelectFirstAlsaCaptureDevice() {
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> audioQueue;
     ThreadSafeQueue<std::vector<std::tuple<double, double>>> emptyAuditoryQueue;
 
-    std::shared_ptr<PulseAuditoryMic> mic = std::make_shared<PulseAuditoryMic>(audioQueue);
+    std::shared_ptr<PulseAudioMic> mic = std::make_shared<PulseAudioMic>(audioQueue);
     if (!mic) {
-        std::cerr << "Failed to create PulseAuditoryMic!" << std::endl;
+        std::cerr << "Failed to create PulseAudioMic!" << std::endl;
         return "";
     }
-    std::thread micThread(&PulseAuditoryMic::micRun, mic);
+    std::thread micThread(&PulseAudioMic::micRun, mic);
 
     if (devices.empty()) {
         std::cerr << "Error: No ALSA capture devices found." << std::endl;

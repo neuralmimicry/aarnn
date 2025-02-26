@@ -13,11 +13,11 @@
 #include <pulse/simple.h>
 #include <queue>
 
-class PulseAuditoryMic
+class PulseAudioMic
 {
     public:
-    explicit PulseAuditoryMic(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &audioQueue);
-    ~PulseAuditoryMic()
+    explicit PulseAudioMic(ThreadSafeQueue<std::vector<std::tuple<double, double>>> &audioQueue);
+    ~PulseAudioMic()
     {
         cleanUp();
     }
@@ -47,26 +47,26 @@ class PulseAuditoryMic
     void        processStream(const void *inputBuffer, size_t framesPerBuffer);
     static void context_state_callback_static(pa_context *c, void *userdata)
     {
-        auto *self = reinterpret_cast<PulseAuditoryMic *>(userdata);
+        auto *self = reinterpret_cast<PulseAudioMic *>(userdata);
         self->context_state_callback(c);
     }
     void        context_state_callback(pa_context *c);
     static void source_info_callback_static(pa_context *c, const pa_source_info *i, int eol, void *userdata)
     {
-        auto *self = reinterpret_cast<PulseAuditoryMic *>(userdata);
+        auto *self = reinterpret_cast<PulseAudioMic *>(userdata);
         self->source_info_callback(c, i, eol);
     }
     void        source_info_callback(pa_context *c, const pa_source_info *i, int eol);
     static void stream_state_callback_static(pa_stream *s, void *userdata)
     {
-        auto *self = reinterpret_cast<PulseAuditoryMic *>(userdata);
+        auto *self = reinterpret_cast<PulseAudioMic *>(userdata);
         std::cout << "Stream state changed\n";
         self->stream_state_callback(s);
     }
     static void        stream_state_callback(pa_stream *s);
     static void stream_read_callback_static(pa_stream *s, size_t length, void *userdata)
     {
-        auto *self = reinterpret_cast<PulseAuditoryMic *>(userdata);
+        auto *self = reinterpret_cast<PulseAudioMic *>(userdata);
         // std::cout << "O";
         self->readStream();
     }
