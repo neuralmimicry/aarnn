@@ -32,8 +32,11 @@ private:
 
     // Internal methods
     void simulateSomatosensoryInput();
-    void processSomatosensoryData(/* parameters */);
 
     // Helper methods
     void stimulateReceptors(/* processed data */);
+
+    void
+    processSomatosensoryData(const std::vector<double> &touchStimuli, const std::vector<double> &temperatureStimuli,
+                             const std::vector<double> &painStimuli);
 };

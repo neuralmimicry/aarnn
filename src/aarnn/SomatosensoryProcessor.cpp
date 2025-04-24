@@ -50,13 +50,16 @@ void SomatosensoryProcessor::simulateSomatosensoryInput() {
 
         // Generate stimuli
         for (auto& stimulus : touchStimuli) {
-            stimulus = /* simulate touch stimulus */;
+            /* simulate touch stimulus */
+            stimulus = static_cast<double>(rand()) / RAND_MAX; // Random value between 0 and 1
         }
         for (auto& stimulus : temperatureStimuli) {
-            stimulus = /* simulate temperature stimulus */;
+            /* simulate temperature stimulus */
+            stimulus = static_cast<double>(rand()) / RAND_MAX; // Random value between 0 and 1
         }
         for (auto& stimulus : painStimuli) {
-            stimulus = /* simulate pain stimulus */;
+            /* simulate pain stimulus */
+            stimulus = static_cast<double>(rand()) / RAND_MAX; // Random value between 0 and 1
         }
 
         // Process the somatosensory data
@@ -84,4 +87,8 @@ void SomatosensoryProcessor::processSomatosensoryData(const std::vector<double>&
     for (size_t i = 0; i < painReceptors.size(); ++i) {
         painReceptors[i]->stimulate(painStimuli[i]);
     }
+}
+
+void SomatosensoryProcessor::stimulateReceptors() {
+
 }

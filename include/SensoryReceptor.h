@@ -49,6 +49,8 @@ public:
     void setSensitivity(double sensitivity);
     void setThreshold(double threshold);
 
+    void update(double deltaTime);
+
 private:
     bool                                      instanceInitialised = false;
     std::vector<std::shared_ptr<SynapticGap>> synapticGaps;
@@ -75,6 +77,7 @@ private:
     // Internal state
     double accumulatedStimulus = 0.0;
     std::mutex receptorMutex;
+
 };
 
 #endif  // SENSORYRECEPTOR_H

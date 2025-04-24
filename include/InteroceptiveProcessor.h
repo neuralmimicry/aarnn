@@ -28,8 +28,9 @@ private:
 
     // Internal methods
     void simulateInteroceptiveInput();
-    void processInteroceptiveData(/* parameters */);
 
     // Helper methods
-    void stimulateReceptors(/* processed data */);
+    void stimulateReceptors(const std::vector<double> &stimuli);
+
+    void processInteroceptiveData(const std::vector<double> &internalStimuli);
 };

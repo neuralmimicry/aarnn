@@ -6,37 +6,36 @@
 #include <memory>
 #include <atomic>
 #include <thread>
+#include <string>
 #include "NetworkClient.h"
-#include "SensoryReceptor.h"
+#include "StimuliData.h"
+#include "ThreadSafeQueue.h"
 
 class AuditoryProcessor {
 public:
-    AuditoryProcessor();
+    AuditoryProcessor(const std::string& host, unsigned short port);
     ~AuditoryProcessor();
 
     bool initialise();
     void startProcessing();
     void stopProcessing();
 
-    void setAuditoryReceptors(const std::vector<std::shared_ptr<SensoryReceptor>>& leftReceptors,
-                              const std::vector<std::shared_ptr<SensoryReceptor>>& rightReceptors);
+    // Method to receive audio data from AuditoryManager
+    void receiveAudioData(const std::vector<double>& audioData);
 
 private:
-    std::vector<std::shared_ptr<SensoryReceptor>> leftAuditoryReceptors;
-    std::vector<std::shared_ptr<SensoryReceptor>> rightAuditoryReceptors;
-
-    // Thread management
-    std::atomic<bool> processing;
+    std::atomic<bool> processing{false};
     std::thread processingThread;
 
-    // Internal methods
-    void captureAuditoryData();
-    void processAuditoryData(const std::vector<double>& leftChannel,
-                          const std::vector<double>& rightChannel);
-
-    // Helper methods
-    void stimulateReceptors(const std::vector<double>& leftFrequencies,
-                            const std::vector<double>& rightFrequencies);
-    // Network client for sending stimuli data
     std::unique_ptr<NetworkClient> networkClient;
+
+    // Internal methods
+    void processAudioDataLoop();
+    void performFFTAndSend(const std::vector<double>& audioBuffer);
+
+    // Thread-safe queue for audio data
+    ThreadSafeQueue<std::vector<double>> audioDataQueue;
+
+    // Constants
+    static constexpr int FFT_SIZE = 1024; // Adjust as needed
 };

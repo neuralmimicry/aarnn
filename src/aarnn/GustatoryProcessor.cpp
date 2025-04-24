@@ -38,7 +38,8 @@ void GustatoryProcessor::simulateTasteDetection() {
         // Simulate detection of taste stimuli
         std::vector<double> tasteIntensities(gustatoryReceptors.size());
         for (auto& intensity : tasteIntensities) {
-            intensity = /* simulate intensity */;
+            /* simulate intensity */
+            intensity = static_cast<double>(rand()) / RAND_MAX; // Random value between 0 and 1
         }
 
         // Process the taste data

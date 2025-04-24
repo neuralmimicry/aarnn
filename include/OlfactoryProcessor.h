@@ -28,8 +28,9 @@ private:
 
     // Internal methods
     void simulateChemicalDetection();
-    void processChemicalData(/* parameters */);
 
     // Helper methods
-    void stimulateReceptors(/* processed data */);
+    void stimulateReceptors(const std::vector<double> &concentrations);
+
+    void processChemicalData(const std::vector<double> &chemicalConcentrations);
 };

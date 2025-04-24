@@ -6,6 +6,7 @@
 #include <memory>
 #include <atomic>
 #include <thread>
+#include <opencv2/core/mat.hpp>
 #include "SensoryReceptor.h"
 
 class VisualProcessor {
@@ -28,8 +29,11 @@ private:
 
     // Internal methods
     void captureVisualData();
-    void processVisualData(/* parameters for image data */);
 
     // Helper methods
     void stimulateReceptors(/* processed data */);
+
+    void processVisualData(cv::Mat &frame);
+
+    void stimulateReceptors(double intensity);
 };

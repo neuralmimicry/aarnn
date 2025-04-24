@@ -1,37 +1,90 @@
 // AuditoryProcessor.cpp
 
 #include "AuditoryProcessor.h"
-#include "NetworkClient.h"
-#include "StimuliData.h"
 #include <fftw3.h>
 #include <cmath>
-#include <thread>
-#include <chrono>
+#include <iostream>
 
-AuditoryProcessor::AuditoryProcessor() : processing(false) {}
+AuditoryProcessor::AuditoryProcessor(const std::string& host, unsigned short port)
+        : processing(false)
+{
+    networkClient = std::make_unique<NetworkClient>(host, port);
+}
 
 AuditoryProcessor::~AuditoryProcessor() {
     stopProcessing();
 }
 
 bool AuditoryProcessor::initialise() {
-    // Initialize audio capture devices and resources
-    networkClient = std::make_unique<NetworkClient>("sensory_receptor_host", port);
     if (!networkClient->connect()) {
         std::cerr << "Failed to connect to SensoryReceptor server." << std::endl;
         return false;
     }
-
     return true;
 }
 
-void AuditoryProcessor::stimulateReceptors(const std::vector<double>& values) {
+void AuditoryProcessor::startProcessing() {
+    if (processing.load()) {
+        return;
+    }
+    processing = true;
+    processingThread = std::thread(&AuditoryProcessor::processAudioDataLoop, this);
+}
+
+void AuditoryProcessor::stopProcessing() {
+    if (!processing.load()) {
+        return;
+    }
+    processing = false;
+    if (processingThread.joinable()) {
+        processingThread.join();
+    }
+}
+
+void AuditoryProcessor::receiveAudioData(const std::vector<double>& audioData) {
+    audioDataQueue.push(audioData);
+}
+
+void AuditoryProcessor::processAudioDataLoop() {
+    std::vector<double> audioBuffer;
+    audioBuffer.reserve(FFT_SIZE);
+
+    while (processing.load()) {
+        auto audioData = audioDataQueue.pop();
+        audioBuffer.insert(audioBuffer.end(), audioData.begin(), audioData.end());
+        while (audioBuffer.size() >= FFT_SIZE) {
+            std::vector<double> fftInput(audioBuffer.begin(), audioBuffer.begin() + FFT_SIZE);
+            performFFTAndSend(fftInput);
+            audioBuffer.erase(audioBuffer.begin(), audioBuffer.begin() + FFT_SIZE);
+        }
+    }
+}
+
+void AuditoryProcessor::performFFTAndSend(const std::vector<double>& audioBuffer) {
+    fftw_complex* out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (FFT_SIZE / 2 + 1));
+    fftw_plan p = fftw_plan_dft_r2c_1d(FFT_SIZE, const_cast<double*>(audioBuffer.data()), out, FFTW_ESTIMATE);
+    fftw_execute(p);
+
+    // Prepare frequency magnitudes
+    std::vector<double> magnitudes(FFT_SIZE / 2 + 1);
+    for (size_t i = 0; i < magnitudes.size(); ++i) {
+        magnitudes[i] = sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
+    }
+
+    // Normalize magnitudes
+    double maxMagnitude = *std::max_element(magnitudes.begin(), magnitudes.end());
+    if (maxMagnitude > 0) {
+        for (auto& mag : magnitudes) {
+            mag /= maxMagnitude;
+        }
+    }
+
     // Prepare stimuli data
     StimuliData data;
-    data.receptorType = "Auditory"; // or the appropriate type
-    data.values = values;
+    data.receptorType = "Auditory";
+    data.values = magnitudes;
 
-    // Serialize the data (assuming you have a serialization function)
+    // Serialize the data
     std::string serializedData = serializeStimuliData(data);
 
     // Send data using the NetworkClient
@@ -39,71 +92,7 @@ void AuditoryProcessor::stimulateReceptors(const std::vector<double>& values) {
         std::cerr << "Failed to send data to SensoryReceptor server." << std::endl;
         // Handle error (e.g., attempt to reconnect)
     }
-}
 
-void AuditoryProcessor::startProcessing() {
-    if (!processing.load()) {
-        processing = true;
-        processingThread = std::thread(&AuditoryProcessor::captureAuditoryData, this);
-    }
-}
-
-void AuditoryProcessor::stopProcessing() {
-    if (processing.load()) {
-        processing = false;
-        if (processingThread.joinable()) {
-            processingThread.join();
-        }
-    }
-}
-
-void AuditoryProcessor::setAuditoryReceptors(const std::vector<std::shared_ptr<SensoryReceptor>>& leftReceptors,
-                                          const std::vector<std::shared_ptr<SensoryReceptor>>& rightReceptors) {
-    leftAuditoryReceptors = leftReceptors;
-    rightAuditoryReceptors = rightReceptors;
-}
-
-void AuditoryProcessor::captureAuditoryData() {
-    // Implement audio capture using a library like PortAuditory or PulseAuditory
-
-    // Placeholder implementation
-    while (processing.load()) {
-        std::vector<double> leftChannel;
-        std::vector<double> rightChannel;
-
-        // Capture audio data into leftChannel and rightChannel
-        // ...
-
-        // Process the audio data
-        processAuditoryData(leftChannel, rightChannel);
-
-        // Sleep briefly to simulate real-time processing
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-}
-
-void AuditoryProcessor::processAuditoryData(const std::vector<double>& leftChannel,
-                                      const std::vector<double>& rightChannel) {
-    // Perform FFT on both channels
-    // ...
-
-    // Stimulate receptors based on frequency components
-    std::vector<double> leftFrequencies;  // Compute from leftChannel
-    std::vector<double> rightFrequencies; // Compute from rightChannel
-
-    stimulateReceptors(leftFrequencies, rightFrequencies);
-}
-
-void AuditoryProcessor::stimulateReceptors(const std::vector<double>& leftFrequencies,
-                                        const std::vector<double>& rightFrequencies) {
-    // Map frequencies to receptors
-    for (size_t i = 0; i < leftAuditoryReceptors.size(); ++i) {
-        double intensity = /* map frequency to intensity */;
-        leftAuditoryReceptors[i]->stimulate(intensity);
-    }
-
-    for (size_t i = 0; i < rightAuditoryReceptors.size(); ++i) {
-        double intensity = /* map frequency to intensity */;
-        rightAuditoryReceptors[i]->stimulate(intensity);
-    }
+    fftw_destroy_plan(p);
+    fftw_free(out);
 }

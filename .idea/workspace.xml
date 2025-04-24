@@ -17,6 +17,7 @@
   </component>
   <component name="CMakeRunConfigurationManager">
     <generated>
+      <config projectName="AARNN" targetName="Audio" />
       <config projectName="AARNN" targetName="AARNN" />
       <config projectName="AARNN" targetName="Visualiser" />
     </generated>
@@ -29,90 +30,164 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change afterPath="$PROJECT_DIR$/include/AuditoryProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/BladderBowelProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/ChemoreceptionProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/ElectroceptionProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/GustatoryProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/HeartbeatRespirationProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/HungerThirstProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/InteroceptiveProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/LustProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/MagnetoceptionProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/NetworkClient.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/OlfactoryProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/PressureProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/ProprioceptiveProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/PruriceptionProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/SatietyProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/SensoryReceptorServer.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/SomatosensoryProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/StimuliData.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/StretchProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/VisualProcessor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/AuditoryProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/BladderBowelProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/ChemoreceptionProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/ElectroceptionProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/GustatoryProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/HeartbeatRespirationProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/HungerThirstProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/InteroceptiveProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/LustProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/MagnetoceptionProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/NetworkClient.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/OlfactoryProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/PressureProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/ProprioceptiveProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/PruriceptionProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/SatietyProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptorServer.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/SomatosensoryProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/StretchProcessor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/VisualProcessor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/NetworkServer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/AuditorySolution.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/NetworkServer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aarnn.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aarnn.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/AudioManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AudioManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Axon.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Axon.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/AxonBouton.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonBouton.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/AxonBranch.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonBranch.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/AxonHillock.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AxonHillock.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Cluster.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Cluster.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Dendrite.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Dendrite.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/DendriteBouton.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/DendriteBouton.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/DendriteBranch.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/DendriteBranch.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Effector.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Effector.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Neuron.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Neuron.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/NeuronalComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/NeuronalComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-build/nlohmann_json.pc" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-build/nlohmann_json.pc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-build/nlohmann_jsonConfigVersion.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-build/nlohmann_jsonConfigVersion.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/LICENSE.MIT" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/LICENSE.MIT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/cmake/pkg-config.pc.in" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/cmake/pkg-config.pc.in" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/adl_serializer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/adl_serializer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/byte_container_with_subtype.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/byte_container_with_subtype.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/abi_macros.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/abi_macros.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/conversions/from_json.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/conversions/from_json.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/conversions/to_chars.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/conversions/to_chars.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/conversions/to_json.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/conversions/to_json.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/exceptions.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/exceptions.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/hash.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/hash.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/binary_reader.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/binary_reader.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/input_adapters.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/input_adapters.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/json_sax.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/json_sax.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/lexer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/parser.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/position_t.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/input/position_t.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/internal_iterator.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/internal_iterator.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/iter_impl.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/iter_impl.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/iteration_proxy.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/iteration_proxy.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/iterator_traits.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/iterator_traits.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/json_reverse_iterator.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/json_reverse_iterator.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/primitive_iterator.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/iterators/primitive_iterator.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/json_custom_base_class.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/json_custom_base_class.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/json_pointer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/json_pointer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/json_ref.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/json_ref.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/macro_scope.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/macro_scope.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/macro_unscope.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/macro_unscope.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/call_std/begin.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/call_std/begin.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/call_std/end.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/call_std/end.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/cpp_future.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/cpp_future.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/detected.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/detected.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/identity_tag.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/identity_tag.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/is_sax.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/is_sax.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/std_fs.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/std_fs.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/type_traits.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/type_traits.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/void_t.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/meta/void_t.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/output/binary_writer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/output/binary_writer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/output/output_adapters.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/output/output_adapters.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/output/serializer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/output/serializer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/string_concat.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/string_concat.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/string_escape.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/string_escape.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/value_t.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/detail/value_t.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/json.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/json.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/json_fwd.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/json_fwd.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/ordered_map.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/include/nlohmann/ordered_map.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/nlohmann_json.natvis" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/nlohmann_json.natvis" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/single_include/nlohmann/json.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/single_include/nlohmann/json.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/single_include/nlohmann/json_fwd.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-src/single_include/nlohmann/json_fwd.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/download-json-populate.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/download-json-populate.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/extract-json-populate.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/extract-json-populate.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/json-populate-urlinfo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/json-populate-urlinfo.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json.tar.xz" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/src/json.tar.xz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/tmp/json-populate-mkdirs.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/json-subbuild/json-populate-prefix/tmp/json-populate-mkdirs.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-build/nlohmann_json.pc" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-build/nlohmann_json.pc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-build/nlohmann_jsonConfigVersion.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-build/nlohmann_jsonConfigVersion.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/LICENSE.MIT" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/LICENSE.MIT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/cmake/pkg-config.pc.in" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/cmake/pkg-config.pc.in" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/adl_serializer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/adl_serializer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/byte_container_with_subtype.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/byte_container_with_subtype.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/abi_macros.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/abi_macros.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/conversions/from_json.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/conversions/from_json.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/conversions/to_chars.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/conversions/to_chars.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/conversions/to_json.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/conversions/to_json.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/exceptions.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/exceptions.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/hash.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/hash.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/binary_reader.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/binary_reader.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/input_adapters.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/input_adapters.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/json_sax.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/json_sax.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/lexer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/parser.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/position_t.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/input/position_t.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/internal_iterator.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/internal_iterator.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/iter_impl.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/iter_impl.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/iteration_proxy.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/iteration_proxy.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/iterator_traits.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/iterator_traits.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/json_reverse_iterator.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/json_reverse_iterator.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/primitive_iterator.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/iterators/primitive_iterator.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/json_custom_base_class.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/json_custom_base_class.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/json_pointer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/json_pointer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/json_ref.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/json_ref.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/macro_scope.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/macro_scope.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/macro_unscope.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/macro_unscope.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/call_std/begin.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/call_std/begin.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/call_std/end.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/call_std/end.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/cpp_future.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/cpp_future.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/detected.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/detected.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/identity_tag.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/identity_tag.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/is_sax.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/is_sax.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/std_fs.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/std_fs.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/type_traits.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/type_traits.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/void_t.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/meta/void_t.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/output/binary_writer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/output/binary_writer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/output/output_adapters.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/output/output_adapters.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/output/serializer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/output/serializer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/string_concat.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/string_concat.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/string_escape.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/string_escape.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/value_t.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/detail/value_t.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/json.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/json.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/json_fwd.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/json_fwd.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/ordered_map.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/include/nlohmann/ordered_map.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/nlohmann_json.natvis" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/nlohmann_json.natvis" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/single_include/nlohmann/json.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/single_include/nlohmann/json.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/single_include/nlohmann/json_fwd.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-src/single_include/nlohmann/json_fwd.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/download-json-populate.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/download-json-populate.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/extract-json-populate.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/extract-json-populate.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/json-populate-urlinfo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json-populate-stamp/json-populate-urlinfo.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json.tar.xz" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/src/json.tar.xz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/tmp/json-populate-mkdirs.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/json-subbuild/json-populate-prefix/tmp/json-populate-mkdirs.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/AudioManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AuditoryManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/AuditoryProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AuditoryProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/ElectroceptionProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/ElectroreceptionProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/GustatoryProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/GustatoryProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/InteroceptiveProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/InteroceptiveProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/OlfactoryProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/OlfactoryProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/ProprioceptiveProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/ProprioceptiveProcessor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/PulseAudioMic.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/PulseAudioMic.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/SensoryReceptor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SensoryReceptor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Soma.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Soma.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/SynapticGap.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SynapticGap.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/audio.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/audio.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/avTimerCallback.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/avTimerCallback.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/database.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/database.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/AudioManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AudioManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Axon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Axon.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBouton.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonBranch.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/AxonHillock.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AxonHillock.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Cluster.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Cluster.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Dendrite.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBouton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBouton.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/DendriteBranch.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Effector.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Effector.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/NeuronalComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/NeuronalComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/SensoryReceptorServer.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SensoryReceptorServer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/SomatosensoryProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SomatosensoryProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/VisualProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/VisualProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/audio.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AudioManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AuditoryManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/AuditoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/AuditoryProcessor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/ElectroceptionProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/ElectroreceptionProcessor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/GustatoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/GustatoryProcessor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/InteroceptiveProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/InteroceptiveProcessor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/OlfactoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/OlfactoryProcessor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/ProprioceptiveProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/ProprioceptiveProcessor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/PulseAudioMic.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/PulseAudioMic.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Soma.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Soma.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SynapticGap.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/SomatosensoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SomatosensoryProcessor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/aarnn.old" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/aarnn.old" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/aarnn.old2" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/aarnn.old2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/audio.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/audio.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/avTimerCallback.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/avTimerCallback.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/database.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/audio.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/portaudioMicThread.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/portaudioMicThread.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/tempcode.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/tempcode.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -164,14 +239,17 @@
     &quot;Database Script.debug_database.sql.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
     &quot;Shell Script.ComposeContainers.sh.executor&quot;: &quot;Run&quot;,
     &quot;Shell Script.RunContainers.executor&quot;: &quot;Run&quot;,
     &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;devcontainer.show.open.project.notification&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/pbisaacs/Developer/aarnn/include&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/pbisaacs/Developer/cortex_install_script.sh&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -207,6 +285,16 @@
     </key>
   </component>
   <component name="RunManager" selected="Database Script.debug_database.sql">
+    <configuration name="Audio" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="AARNN" TARGET_NAME="Audio" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="AARNN" RUN_TARGET_NAME="Audio">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="debug_database.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/test/debug_database.sql" />
       <script-mode>FILE</script-mode>
@@ -244,14 +332,15 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="CMake Application.Audio" />
       <item itemvalue="Database Script.debug_database.sql" />
       <item itemvalue="Shell Script.RunContainers" />
       <item itemvalue="Shell Script.ComposeContainers.sh" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Database Script.debug_database.sql" />
         <item itemvalue="Shell Script.ComposeContainers.sh" />
+        <item itemvalue="Database Script.debug_database.sql" />
       </list>
     </recent_temporary>
   </component>
@@ -360,7 +449,22 @@
       <workItem from="1729759529344" duration="23682000" />
       <workItem from="1729949255836" duration="35575000" />
       <workItem from="1730127600660" duration="10179000" />
-      <workItem from="1730211021257" duration="22938000" />
+      <workItem from="1730211021257" duration="28971000" />
+      <workItem from="1730494271553" duration="521000" />
+      <workItem from="1731675181072" duration="40000" />
+      <workItem from="1731675228448" duration="4558000" />
+      <workItem from="1732879232024" duration="3810000" />
+      <workItem from="1739216859008" duration="13000" />
+      <workItem from="1739538880704" duration="275000" />
+      <workItem from="1739539170371" duration="2000" />
+      <workItem from="1741292957594" duration="23000" />
+      <workItem from="1741712001952" duration="1309000" />
+      <workItem from="1744908445214" duration="286000" />
+      <workItem from="1744960830204" duration="6000" />
+      <workItem from="1745343011215" duration="5552000" />
+      <workItem from="1745480106455" duration="99000" />
+      <workItem from="1745480216986" duration="12197000" />
+      <workItem from="1745515317095" duration="6074000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

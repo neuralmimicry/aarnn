@@ -18,7 +18,7 @@ public:
                            const std::vector<std::shared_ptr<SensoryReceptor>>& receptors);
 
 private:
-    std::unique_ptr<NetworkServer> networkServer;
+    std::unique_ptr<NetworkServer> networkServer{};
     std::atomic<bool> running;
     std::thread serverThread;
 

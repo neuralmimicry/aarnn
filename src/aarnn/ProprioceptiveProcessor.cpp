@@ -45,10 +45,12 @@ void ProprioceptiveProcessor::simulateProprioceptiveInput() {
 
         // Generate stimuli
         for (auto& stimulus : proprioceptiveStimuli) {
-            stimulus = /* simulate proprioceptive stimulus */;
+            /* simulate proprioceptive stimulus */
+            stimulus = static_cast<double>(rand()) / RAND_MAX; // Random value between 0 and 1
         }
         for (auto& stimulus : equilibrioceptiveStimuli) {
-            stimulus = /* simulate equilibrioceptive stimulus */;
+            /* simulate equilibrioceptive stimulus */
+            stimulus = static_cast<double>(rand()) / RAND_MAX; // Random value between 0 and 1
         }
 
         // Process the data

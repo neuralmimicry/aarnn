@@ -28,8 +28,9 @@ private:
 
     // Internal methods
     void simulateTasteDetection();
-    void processTasteData(/* parameters */);
 
     // Helper methods
-    void stimulateReceptors(/* processed data */);
+    void stimulateReceptors(const std::vector<double> &intensities);
+
+    void processTasteData(const std::vector<double> &tasteIntensities);
 };

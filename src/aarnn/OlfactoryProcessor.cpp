@@ -39,7 +39,8 @@ void OlfactoryProcessor::simulateChemicalDetection() {
         // For testing, generate random concentrations
         std::vector<double> chemicalConcentrations(olfactoryReceptors.size());
         for (auto& concentration : chemicalConcentrations) {
-            concentration = /* simulate concentration */;
+            /* simulate concentration */
+            concentration = static_cast<double>(rand()) / RAND_MAX; // Random concentration between 0 and 1
         }
 
         // Process the chemical data

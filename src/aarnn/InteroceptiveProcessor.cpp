@@ -40,7 +40,8 @@ void InteroceptiveProcessor::simulateInteroceptiveInput() {
 
         // Generate stimuli
         for (auto& stimulus : internalStimuli) {
-            stimulus = /* simulate internal stimulus */;
+            /* simulate internal stimulus */
+            stimulus = static_cast<double>(rand()) / RAND_MAX; // Random value between 0 and 1
         }
 
         // Process the data

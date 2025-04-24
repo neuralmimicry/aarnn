@@ -252,7 +252,7 @@ int main() {
     std::cout << "Created " << (visualReceptors[0].size() + visualReceptors[1].size()) << " visual sensory receptors." << std::endl;
 
     // Create audio inputs
-    std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> auditoryReceptors(2);
+    std::vector<std::shared_ptr<SensoryReceptor>> auditoryReceptors(2);
     auditoryReceptors[0].reserve(num_phonels / 2);
     auditoryReceptors[1].reserve(num_phonels / 2);
 
@@ -498,6 +498,7 @@ int main() {
     // Initialize and start the SensoryReceptorServer
     SensoryReceptorServer receptorServer;
     receptorServer.registerReceptors("Auditory", auditoryReceptors);
+    std::vector<std::shared_ptr<SensoryReceptor>> &bladderBowelReceptors;
     receptorServer.registerReceptors("BladderBowel", bladderBowelReceptors);
     receptorServer.registerReceptors("Chemoreception", chemoreceptionReceptors);
     receptorServer.registerReceptors("Electroception", electroceptionReceptors);
@@ -530,7 +531,8 @@ int main() {
     std::thread dbThread(updateDatabase, std::ref(conn), std::ref(clusters));
     // Main loop
     while (running) {
-        double deltaTime = /* compute delta time */;
+        /* compute delta time */
+        double deltaTime = 0.1; // Placeholder for actual delta time calculation
 
         #pragma omp parallel
         {

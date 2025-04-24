@@ -1,9 +1,12 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.31)
 
 project(AARNN)
 
 file(GLOB AARNN_SRC
     "src/aarnn/*.cpp"
+)
+file(GLOB AUDIO_SRC
+        "src/aarnn/*.cpp"
 )
 file(GLOB VISUALISER_SRC
         "src/visualiser/*.cpp"
@@ -19,7 +22,8 @@ set(SANITIZER_FLAGS "")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
 set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+list(APPEND CMAKE_MODULE_PATH "/usr/local/share/cmake-4.0/Modules")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CGAL_DIR "/usr/lib/x86_64-linux-gnu/cmake/CGAL/")
@@ -37,8 +41,42 @@ if(NOT OPENGL_FOUND)
     message(FATAL_ERROR "OpenGL library not found")
 endif()
 
-message(STATUS "VTK INCLUDE : ${VTK_DIR}")
-find_package(VTK REQUIRED)
+find_package(Freetype REQUIRED)
+if(NOT FREETYPE_FOUND)
+    message(FATAL_ERROR "Freetype library not found")
+endif()
+
+if(FREETYPE_INCLUDE_DIRS)
+    message(STATUS "Freetype include dir: ${FREETYPE_INCLUDE_DIRS}")
+else()
+    set(FREETYPE_INCLUDE_DIRS "/usr/include/freetype2")
+    message(STATUS "Using default Freetype include dir: ${FREETYPE_INCLUDE_DIRS}")
+endif ()
+
+include(FetchContent)
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
+# Check if JsonCpp target does not exist and then create it manually
+if(NOT TARGET JsonCpp::JsonCpp)
+    # Attempt to find JsonCpp library - modify paths as needed
+    find_library(JSONCPP_LIBRARY NAMES jsoncpp PATHS /usr/lib/x86_64-linux-gnu/cmake/jsoncpp)
+    find_path(JSONCPP_INCLUDE_DIR NAMES json/json.h PATHS /usr/include)
+
+    # Create an imported target
+    add_library(JsonCpp::JsonCpp SHARED IMPORTED)
+    set_target_properties(JsonCpp::JsonCpp PROPERTIES
+            IMPORTED_LOCATION "${JSONCPP_LIBRARY}"
+            INTERFACE_INCLUDE_DIRECTORIES "${JSONCPP_INCLUDE_DIR}")
+endif()
+
+find_package(VTK REQUIRED
+    COMPONENTS
+        RenderingOpenGL2
+        InteractionStyle
+        RenderingFreeType
+    )
 if(NOT VTK_FOUND)
     message(FATAL_ERROR "VTK library not found")
 endif()
@@ -46,7 +84,8 @@ endif()
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost REQUIRED COMPONENTS system filesystem)
+find_package(Boost CONFIG REQUIRED COMPONENTS system filesystem)
+
 if(NOT Boost_FOUND)
     message(FATAL_ERROR "Boost library not found")
 endif()
@@ -78,25 +117,32 @@ if(NOT OpenMP_CXX_FOUND)
     message(FATAL_ERROR "OpenMP library not found")
 endif()
 
-# Use pkg-config to get the necessary flags
-execute_process(
-    COMMAND pkg-config --cflags --libs portaudio-2.0
-    OUTPUT_VARIABLE PORTAUDIO_PKG_CONFIG
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-# Set PortAudio_LIBRARIES and PORTAUDIO_INCLUDE_DIRS using the pkg-config output
-string(REGEX MATCHALL "-I([^ \t\n]*)"
-    PORTAUDIO_INCLUDE_DIRS ${PORTAUDIO_PKG_CONFIG})
-
-set(PORTAUDIO_LIBRARIES ${PORTAUDIO_PKG_CONFIG})
-message(STATUS "PortAudio Libraries: ${PORTAUDIO_LIBRARIES}")
-
-if(NOT PORTAUDIO_LIBRARIES)
-    message(FATAL_ERROR "PortAudio library not found")
+# Find gStreamer
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0 gstreamer-audio-1.0)
+if(NOT GSTREAMER_FOUND)
+    message(FATAL_ERROR "gStreamer library not found")
 endif()
 
-message(STATUS "PortAudio Include Dirs: ${PORTAUDIO_INCLUDE_DIRS}")
+# Use pkg-config to get the necessary flags
+#execute_process(
+#    COMMAND pkg-config --cflags --libs portaudio-2.0
+#    OUTPUT_VARIABLE PORTAUDIO_PKG_CONFIG
+#    OUTPUT_STRIP_TRAILING_WHITESPACE
+#)
+
+# Set PortAudio_LIBRARIES and PORTAUDIO_INCLUDE_DIRS using the pkg-config output
+#string(REGEX MATCHALL "-I([^ \t\n]*)"
+#    PORTAUDIO_INCLUDE_DIRS ${PORTAUDIO_PKG_CONFIG})
+
+#set(PORTAUDIO_LIBRARIES ${PORTAUDIO_PKG_CONFIG})
+#message(STATUS "PortAudio Libraries: ${PORTAUDIO_LIBRARIES}")
+
+#if(NOT PORTAUDIO_LIBRARIES)
+#    message(FATAL_ERROR "PortAudio library not found")
+#endif()
+
+#message(STATUS "PortAudio Include Dirs: ${PORTAUDIO_INCLUDE_DIRS}")
 
 # PulseAudio directories
 set(PULSEAUDIO_INCLUDE_DIRS "/usr/include/pulseaudio")
@@ -109,6 +155,10 @@ set(PULSEAUDIO_LIBRARIES pulse pulse-simple)
 message(STATUS "PulseAudio Include Dirs: ${PULSEAUDIO_INCLUDE_DIRS}")
 message(STATUS "PulseAudio Library Dirs: ${PULSEAUDIO_LIBRARY_DIRS}")
 message(STATUS "PulseAudio Libraries: ${PULSEAUDIO_LIBRARIES}")
+
+find_package(OpenCV REQUIRED)
+message(STATUS "OpenCV include dirs: ${OpenCV_INCLUDE_DIRS}")
+message(STATUS "OpenCV libraries: ${OpenCV_LIBS}")
 
 # Find CURL
 find_package(CURL REQUIRED)
@@ -143,11 +193,6 @@ if(NOT FFTW3_LIBRARIES)
     message(STATUS "Using default FFTW3 libraries: ${FFTW3_LIBRARIES}")
 endif()
 
-include(FetchContent)
-
-FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
-FetchContent_MakeAvailable(json)
-
 # Add the src subdirectory to the include paths
 include_directories(include)
 include_directories(src)
@@ -157,17 +202,60 @@ include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
 include_directories(${Boost_INCLUDE_DIRS})  # Add Boost include directories
 include_directories(${OpenSSL_INCLUDE_DIRS})  # Add OpenSSL include directories
 include_directories(${FFmpeg_INCLUDE_DIRS})  # Add FFmpeg include directories
-include_directories(${PORTAUDIO_INCLUDE_DIRS}) # Add PortAudio include directories
 include_directories(${PulseAudio_INCLUDE_DIRS}) # Add PulseAudio include directories
 include_directories(${FFTW3_INCLUDE_DIRS}) # Add FFTW3 include directories
 include_directories(${CURL_INCLUDE_DIRS}) # Add CURL include directories
 include_directories(${CGAL_INCLUDE_DIRS}) # Add CGAL include directories
+include_directories(${GSTREAMER_INCLUDE_DIRS})
 
 link_directories(${PostgreSQL_LIBRARY_DIR})
-link_directories(${PORTAUDIO_LIBRARY_DIR})
 link_directories(${PulseAudio_LIBRARY_DIRS})
 link_directories(${FFTW3_LIBRARY_DIRS})
 link_directories(${LOCAL_LIB64})
+link_directories(${GSTREAMER_LIBRARY_DIRS})
+link_directories(${OpenCV_LIBRARY_DIRS})
+
+add_executable(Audio ${AARNN_SRC}
+        include/vclient.h
+        src/shared_libs/vclient.cpp
+        include/utils.h
+        include/avTimerCallback.h
+        include/boostincludes.h
+        include/Logger.h
+        include/msock.h
+        include/PulseAudioMic.h
+        include/ThreadSafeQueue.h
+        include/timer.h
+        src/shared_libs/Logger.cpp
+        src/aarnn/timer.cpp
+        src/aarnn/AuditorySolution.cpp
+        src/aarnn/utils.cpp
+        include/globals.h
+)
+
+target_link_libraries(Audio PRIVATE
+        Freetype::Freetype
+        nlohmann_json::nlohmann_json
+        ${VTK_LIBRARIES}
+        ${Boost_LIBRARIES}
+        ${OpenSSL_LIBRARIES}
+        ${FFmpeg_LIBRARIES}
+        ${PULSEAUDIO_LIBRARIES}
+        ${FFTW3_LIBRARIES}
+        ${CURL_LIBRARIES}
+        ${CGAL_LIBRARIES}
+        ${GSTREAMER_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+
+# If you still need vtkAutoInit.h for legacy code, enable autoinit:
+if (VTK_VERSION VERSION_GREATER "8.90.0")
+    # This will generate the proper VTK_MODULE_INIT calls under the hood
+    vtk_module_autoinit(
+            TARGETS Audio
+            MODULES ${VTK_LIBRARIES}
+    )
+endif()
 
 add_executable(AARNN ${AARNN_SRC}
         include/vclient.h
@@ -192,7 +280,6 @@ add_executable(AARNN ${AARNN_SRC}
         include/NeuronalComponent.h
         include/NeuronParameters.h
         include/nvTimerCallback.h
-        include/portaudioMicThread.h
         include/Position.h
         include/PulseAudioMic.h
         include/SensoryReceptor.h
@@ -204,27 +291,30 @@ add_executable(AARNN ${AARNN_SRC}
         src/aarnn/config.cpp
         include/config.h
         include/database.h
-        include/audio.h
         include/timer.h
         src/aarnn/database.cpp
-        src/aarnn/audio.cpp
         src/shared_libs/Logger.cpp
         src/aarnn/timer.cpp
         src/aarnn/main.cpp
         src/aarnn/utils.cpp
-        include/globals.h)
+        include/globals.h
+)
+
 target_link_libraries(AARNN PRIVATE
+        Freetype::Freetype
+        nlohmann_json::nlohmann_json
         ${VTK_LIBRARIES}
         ${PostgreSQL_LIBRARIES}
         ${Boost_LIBRARIES}
         ${OpenSSL_LIBRARIES}
         ${FFmpeg_LIBRARIES}
-        ${PORTAUDIO_LIBRARIES}
         ${PULSEAUDIO_LIBRARIES}
         ${FFTW3_LIBRARIES}
         ${PQXX_LIB}
         ${CURL_LIBRARIES}
         ${CGAL_LIBRARIES}
+        ${GSTREAMER_LIBRARIES}
+        ${OpenCV_LIBS}
 )
 
 # Copy simulation.conf into the same directory as the AARNN executable
@@ -239,8 +329,11 @@ add_executable(Visualiser ${VISUALISER_SRC}
         include/Logger.h
         src/shared_libs/Logger.cpp
         src/shared_libs/vclient.cpp
-        src/visualiser/wss.cpp)
+        src/visualiser/wss.cpp
+)
+
 target_link_libraries(Visualiser PRIVATE
+        nlohmann_json::nlohmann_json
         ${VTK_LIBRARIES}
         ${PostgreSQL_LIBRARIES}
         ${Boost_LIBRARIES}
@@ -249,7 +342,7 @@ target_link_libraries(Visualiser PRIVATE
         ${PQXX_LIB}
         ${CURL_LIBRARIES}
         ${CGAL_LIBRARIES}
-        nlohmann_json::nlohmann_json
+        ${OpenCV_LIBS}
 )
 
 # Copy simulation.conf into the same directory as the AARNN executable

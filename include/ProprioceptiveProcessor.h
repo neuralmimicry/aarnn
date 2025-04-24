@@ -30,8 +30,10 @@ private:
 
     // Internal methods
     void simulateProprioceptiveInput();
-    void processProprioceptiveData(/* parameters */);
 
     // Helper methods
-    void stimulateReceptors(/* processed data */);
+    void stimulateReceptors(const std::vector<double> &proprioceptiveStimuli);
+
+    void processProprioceptiveData(const std::vector<double> &proprioceptiveStimuli,
+                                   const std::vector<double> &equilibrioceptiveStimuli);
 };
