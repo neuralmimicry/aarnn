@@ -10,3 +10,5 @@ bin
 errors.log
 thirdparty
 .env
+cmake-build-debug/
+cmake-build-release/
