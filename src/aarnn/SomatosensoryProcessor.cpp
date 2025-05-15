@@ -9,7 +9,7 @@ SomatosensoryProcessor::~SomatosensoryProcessor() {
 }
 
 bool SomatosensoryProcessor::initialise() {
-    // Initialize sensors or simulation parameters
+    // Initialise sensors or simulation parameters
     return true;
 }
 

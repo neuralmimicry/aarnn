@@ -249,16 +249,16 @@ CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 CMAKE_PROJECT_NAME:STATIC=AARNN
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION:STATIC=3.11.3
+CMAKE_PROJECT_VERSION:STATIC=1.0
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION_MAJOR:STATIC=3
+CMAKE_PROJECT_VERSION_MAJOR:STATIC=1
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION_MINOR:STATIC=11
+CMAKE_PROJECT_VERSION_MINOR:STATIC=0
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION_PATCH:STATIC=3
+CMAKE_PROJECT_VERSION_PATCH:STATIC=
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION_TWEAK:STATIC=
@@ -340,6 +340,9 @@ CURL_LIBRARY_DEBUG:FILEPATH=CURL_LIBRARY_DEBUG-NOTFOUND
 //Path to a library.
 CURL_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libcurl.so
 
+//Enable Address/Undefined Behavior Sanitizers
+ENABLE_SANITIZERS:BOOL=OFF
+
 //Path to a file.
 EXPAT_INCLUDE_DIR:PATH=/usr/include
 
@@ -363,11 +366,24 @@ FETCHCONTENT_QUIET:BOOL=ON
 // for json
 FETCHCONTENT_SOURCE_DIR_JSON:PATH=
 
+//When not empty, overrides where to find pre-populated content
+// for nlohmann_json
+FETCHCONTENT_SOURCE_DIR_NLOHMANN_JSON:PATH=
+
 //Enables UPDATE_DISCONNECTED behavior for all content population
 FETCHCONTENT_UPDATES_DISCONNECTED:BOOL=OFF
 
 //Enables UPDATE_DISCONNECTED behavior just for population of json
 FETCHCONTENT_UPDATES_DISCONNECTED_JSON:BOOL=OFF
+
+//Enables UPDATE_DISCONNECTED behavior just for population of nlohmann_json
+FETCHCONTENT_UPDATES_DISCONNECTED_NLOHMANN_JSON:BOOL=OFF
+
+//Path to a file.
+FLAC_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+FLAC_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libFLAC.so
 
 //Path to a file.
 FREETYPE_INCLUDE_DIR_freetype2:PATH=/usr/include/freetype2
@@ -399,17 +415,35 @@ GL2PS_INCLUDE_DIR:PATH=/usr/include
 //gl2ps library
 GL2PS_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libgl2ps.so
 
+//The directory containing a CMake configuration file for GLEW.
+GLEW_DIR:PATH=GLEW_DIR-NOTFOUND
+
 //glew include directory
 GLEW_INCLUDE_DIR:PATH=/usr/include
 
 //glew library
 GLEW_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libGLEW.so
 
+//Path to a library.
+GLEW_SHARED_LIBRARY_DEBUG:FILEPATH=GLEW_SHARED_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+GLEW_SHARED_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libGLEW.so
+
+//Path to a library.
+GLEW_STATIC_LIBRARY_DEBUG:FILEPATH=GLEW_STATIC_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+GLEW_STATIC_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libGLEW.a
+
 //The directory containing the GMPXX include files
 GMPXX_INCLUDE_DIR:PATH=/usr/include
 
 //Path to the GMPXX library
 GMPXX_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libgmpxx.so
+
+//The directory containing a CMake configuration file for GMP.
+GMP_DIR:PATH=GMP_DIR-NOTFOUND
 
 //The directory containing the GMP header files
 GMP_INCLUDE_DIR:PATH=/usr/include/x86_64-linux-gnu
@@ -606,6 +640,15 @@ LibPROJ_LIBRARY_DEBUG:FILEPATH=LibPROJ_LIBRARY_DEBUG-NOTFOUND
 //libproj release library
 LibPROJ_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libproj.so
 
+//Path to a library.
+MP3LAME_HIP_LIBRARY:FILEPATH=MP3LAME_HIP_LIBRARY-NOTFOUND
+
+//Path to a file.
+MP3LAME_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+MP3LAME_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libmp3lame.so
+
 //The directory containing the MPFR header files
 MPFR_INCLUDE_DIR:PATH=/usr/include
 
@@ -631,8 +674,35 @@ MPIEXEC_POSTFLAGS:STRING=
 // run by mpiexec.
 MPIEXEC_PREFLAGS:STRING=
 
+//MPI CXX additional include directories
+MPI_CXX_ADDITIONAL_INCLUDE_DIRS:STRING=
+
+//MPI compiler for CXX
+MPI_CXX_COMPILER:FILEPATH=/usr/bin/mpicxx
+
+//MPI CXX compiler wrapper include directories
+MPI_CXX_COMPILER_INCLUDE_DIRS:STRING=/usr/lib/x86_64-linux-gnu/openmpi/include;/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi
+
+//MPI CXX compilation definitions
+MPI_CXX_COMPILE_DEFINITIONS:STRING=
+
+//MPI CXX compilation options
+MPI_CXX_COMPILE_OPTIONS:STRING=
+
+//Path to a file.
+MPI_CXX_HEADER_DIR:PATH=/usr/lib/x86_64-linux-gnu/openmpi/include
+
+//MPI CXX libraries to link against
+MPI_CXX_LIB_NAMES:STRING=mpi_cxx;mpi
+
+//MPI CXX linker flags
+MPI_CXX_LINK_FLAGS:STRING=
+
+//If true, the MPI-2 C++ bindings are disabled using definitions.
+MPI_CXX_SKIP_MPICXX:BOOL=OFF
+
 //MPI C additional include directories
-MPI_C_ADDITIONAL_INCLUDE_DIRS:STRING=
+MPI_C_ADDITIONAL_INCLUDE_DIRS:STRING=/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi
 
 //MPI compiler for C
 MPI_C_COMPILER:FILEPATH=/usr/bin/mpicc
@@ -657,6 +727,9 @@ MPI_C_LINK_FLAGS:STRING=-L/usr/lib/x86_64-linux-gnu/openmpi/lib
 
 //Location of the mpi library for MPI
 MPI_mpi_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libmpi.so
+
+//Location of the mpi_cxx library for MPI
+MPI_mpi_cxx_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi_cxx.so
 
 //ogg include directory
 OGG_INCLUDE_DIR:PATH=/usr/include
@@ -711,6 +784,12 @@ OPENSSL_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a library.
 OPENSSL_SSL_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libssl.so
+
+//Path to a file.
+OPUS_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+OPUS_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libopus.so
 
 //The directory containing a CMake configuration file for OpenCV.
 OpenCV_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/opencv4
@@ -769,6 +848,15 @@ PostgreSQL_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libpq.so
 // /usr/local/include/PostgreSQL/8.4 or C:/Program Files/PostgreSQL/8.4/include
 PostgreSQL_TYPE_INCLUDE_DIR:PATH=/usr/include/postgresql/16/server
 
+//Value Computed by CMake
+Project_BINARY_DIR:STATIC=/home/pbisaacs/Developer/aarnn/cmake-build-debug
+
+//Value Computed by CMake
+Project_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+Project_SOURCE_DIR:STATIC=/home/pbisaacs/Developer/aarnn
+
 //The directory containing a CMake configuration file for Qt5Core.
 Qt5Core_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt5Core
 
@@ -789,6 +877,12 @@ SQLite3_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a library.
 SQLite3_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libsqlite3.so
+
+//The directory containing a CMake configuration file for SndFile.
+SndFile_DIR:PATH=/usr/local/lib/cmake/SndFile
+
+//The directory containing a CMake configuration file for Snd.
+Snd_DIR:PATH=Snd_DIR-NOTFOUND
 
 //The directory containing a CMake configuration file for TBB.
 TBB_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/TBB
@@ -822,6 +916,24 @@ VTK_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/vtk-9.3
 
 //Number of processors available to run parallel tests.
 VTK_MPI_NUMPROCS:STRING=2
+
+//Path to a file.
+Vorbis_Enc_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+Vorbis_Enc_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libvorbisenc.so
+
+//Path to a file.
+Vorbis_File_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+Vorbis_File_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libvorbisfile.so
+
+//Path to a file.
+Vorbis_Vorbis_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+Vorbis_Vorbis_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libvorbis.so
 
 //Path to a file.
 X11_ICE_INCLUDE_PATH:PATH=/usr/include
@@ -1273,11 +1385,17 @@ freetype_DIR:PATH=freetype_DIR-NOTFOUND
 //The directory containing a CMake configuration file for json.
 json_DIR:PATH=json_DIR-NOTFOUND
 
+//Path to a file.
+mpg123_INCLUDE_DIR:PATH=/usr/include/x86_64-linux-gnu
+
+//Path to a library.
+mpg123_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libmpg123.so
+
 //The directory containing a CMake configuration file for netCDF.
 netCDF_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/netCDF
 
 //Value Computed by CMake
-nlohmann_json_BINARY_DIR:STATIC=/home/pbisaacs/Developer/aarnn/cmake-build-debug/_deps/json-build
+nlohmann_json_BINARY_DIR:STATIC=/home/pbisaacs/Developer/aarnn/cmake-build-debug/_deps/nlohmann_json-build
 
 //The directory containing a CMake configuration file for nlohmann_json.
 nlohmann_json_DIR:PATH=nlohmann_json_DIR-NOTFOUND
@@ -1286,7 +1404,28 @@ nlohmann_json_DIR:PATH=nlohmann_json_DIR-NOTFOUND
 nlohmann_json_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-nlohmann_json_SOURCE_DIR:STATIC=/home/pbisaacs/Developer/aarnn/cmake-build-debug/_deps/json-src
+nlohmann_json_SOURCE_DIR:STATIC=/home/pbisaacs/Developer/aarnn/cmake-build-debug/_deps/nlohmann_json-src
+
+//Path to a library.
+pkgcfg_lib_ALSA_asound:FILEPATH=/usr/lib/x86_64-linux-gnu/libasound.so
+
+//Path to a library.
+pkgcfg_lib_FFMPEG_avcodec:FILEPATH=/usr/lib/x86_64-linux-gnu/libavcodec.so
+
+//Path to a library.
+pkgcfg_lib_FFMPEG_avformat:FILEPATH=/usr/lib/x86_64-linux-gnu/libavformat.so
+
+//Path to a library.
+pkgcfg_lib_FFMPEG_avutil:FILEPATH=/usr/lib/x86_64-linux-gnu/libavutil.so
+
+//Path to a library.
+pkgcfg_lib_FFMPEG_swresample:FILEPATH=/usr/lib/x86_64-linux-gnu/libswresample.so
+
+//Path to a library.
+pkgcfg_lib_FFMPEG_swscale:FILEPATH=/usr/lib/x86_64-linux-gnu/libswscale.so
+
+//Path to a library.
+pkgcfg_lib_FFTW3_fftw3:FILEPATH=/usr/lib/x86_64-linux-gnu/libfftw3.so
 
 //Path to a library.
 pkgcfg_lib_FFmpeg_avcodec:FILEPATH=/usr/lib/x86_64-linux-gnu/libavcodec.so
@@ -1302,6 +1441,9 @@ pkgcfg_lib_FFmpeg_swresample:FILEPATH=/usr/lib/x86_64-linux-gnu/libswresample.so
 
 //Path to a library.
 pkgcfg_lib_FFmpeg_swscale:FILEPATH=/usr/lib/x86_64-linux-gnu/libswscale.so
+
+//Path to a library.
+pkgcfg_lib_GMP_gmp:FILEPATH=/usr/lib/x86_64-linux-gnu/libgmp.so
 
 //Path to a library.
 pkgcfg_lib_GSTREAMER_glib-2.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libglib-2.0.so
@@ -1325,22 +1467,85 @@ pkgcfg_lib_GSTREAMER_gstreamer-1.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgstream
 pkgcfg_lib_GSTREAMER_gstvideo-1.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgstvideo-1.0.so
 
 //Path to a library.
+pkgcfg_lib_GStreamer_glib-2.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libglib-2.0.so
+
+//Path to a library.
+pkgcfg_lib_GStreamer_gobject-2.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgobject-2.0.so
+
+//Path to a library.
+pkgcfg_lib_GStreamer_gstapp-1.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgstapp-1.0.so
+
+//Path to a library.
+pkgcfg_lib_GStreamer_gstaudio-1.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgstaudio-1.0.so
+
+//Path to a library.
+pkgcfg_lib_GStreamer_gstbase-1.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgstbase-1.0.so
+
+//Path to a library.
+pkgcfg_lib_GStreamer_gstreamer-1.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so
+
+//Path to a library.
+pkgcfg_lib_GStreamer_gstvideo-1.0:FILEPATH=/usr/lib/x86_64-linux-gnu/libgstvideo-1.0.so
+
+//Path to a library.
+pkgcfg_lib_JSONCPP_jsoncpp:FILEPATH=/usr/lib/x86_64-linux-gnu/libjsoncpp.so
+
+//Path to a library.
 pkgcfg_lib_PC_CURL_curl:FILEPATH=/usr/lib/x86_64-linux-gnu/libcurl.so
 
 //Path to a library.
 pkgcfg_lib_PC_EXPAT_expat:FILEPATH=/usr/lib/x86_64-linux-gnu/libexpat.so
 
 //Path to a library.
+pkgcfg_lib_PC_FLAC_FLAC:FILEPATH=/usr/lib/x86_64-linux-gnu/libFLAC.so
+
+//Path to a library.
 pkgcfg_lib_PC_LIBXML_xml2:FILEPATH=/usr/lib/x86_64-linux-gnu/libxml2.so
 
 //Path to a library.
+pkgcfg_lib_PC_MPG123_mpg123:FILEPATH=/usr/lib/x86_64-linux-gnu/libmpg123.so
+
+//Path to a library.
+pkgcfg_lib_PC_OGG_ogg:FILEPATH=/usr/lib/x86_64-linux-gnu/libogg.so
+
+//Path to a library.
+pkgcfg_lib_PC_OPUS_opus:FILEPATH=/usr/lib/x86_64-linux-gnu/libopus.so
+
+//Path to a library.
 pkgcfg_lib_PC_SQLite3_sqlite3:FILEPATH=/usr/lib/x86_64-linux-gnu/libsqlite3.so
+
+//Path to a library.
+pkgcfg_lib_PC_Vorbis_Enc_vorbisenc:FILEPATH=/usr/lib/x86_64-linux-gnu/libvorbisenc.so
+
+//Path to a library.
+pkgcfg_lib_PC_Vorbis_File_vorbisfile:FILEPATH=/usr/lib/x86_64-linux-gnu/libvorbisfile.so
+
+//Path to a library.
+pkgcfg_lib_PC_Vorbis_Vorbis_vorbis:FILEPATH=/usr/lib/x86_64-linux-gnu/libvorbis.so
 
 //Path to a library.
 pkgcfg_lib_PKG_FONTCONFIG_fontconfig:FILEPATH=/usr/lib/x86_64-linux-gnu/libfontconfig.so
 
 //Path to a library.
 pkgcfg_lib_PKG_FONTCONFIG_freetype:FILEPATH=/usr/lib/x86_64-linux-gnu/libfreetype.so
+
+//Path to a library.
+pkgcfg_lib_PORTAUDIO_asound:FILEPATH=/usr/lib/x86_64-linux-gnu/libasound.so
+
+//Path to a library.
+pkgcfg_lib_PORTAUDIO_m:FILEPATH=/usr/lib/x86_64-linux-gnu/libm.so
+
+//Path to a library.
+pkgcfg_lib_PORTAUDIO_portaudio:FILEPATH=/usr/lib/x86_64-linux-gnu/libportaudio.so
+
+//Path to a library.
+pkgcfg_lib_PORTAUDIO_pthread:FILEPATH=/usr/lib/x86_64-linux-gnu/libpthread.a
+
+//Path to a library.
+pkgcfg_lib_PULSE_pulse:FILEPATH=/usr/local/lib/x86_64-linux-gnu/libpulse.so
+
+//Path to a library.
+pkgcfg_lib_PULSE_pulse-simple:FILEPATH=/usr/local/lib/x86_64-linux-gnu/libpulse-simple.so
 
 //Path to a library.
 pkgcfg_lib__OPENSSL_crypto:FILEPATH=/usr/lib/x86_64-linux-gnu/libcrypto.so
@@ -1356,6 +1561,41 @@ utf8cpp_INCLUDE_DIR:PATH=/usr/include/utf8cpp
 # INTERNAL cache entries
 ########################
 
+ALSA_CFLAGS:INTERNAL=-I/usr/include
+ALSA_CFLAGS_I:INTERNAL=
+ALSA_CFLAGS_OTHER:INTERNAL=
+ALSA_FOUND:INTERNAL=1
+ALSA_INCLUDEDIR:INTERNAL=/usr/include
+ALSA_INCLUDE_DIRS:INTERNAL=/usr/include
+ALSA_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lasound
+ALSA_LDFLAGS_OTHER:INTERNAL=
+ALSA_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+ALSA_LIBRARIES:INTERNAL=asound
+ALSA_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+ALSA_LIBS:INTERNAL=
+ALSA_LIBS_L:INTERNAL=
+ALSA_LIBS_OTHER:INTERNAL=
+ALSA_LIBS_PATHS:INTERNAL=
+ALSA_MODULE_NAME:INTERNAL=alsa
+ALSA_PREFIX:INTERNAL=/usr
+ALSA_STATIC_CFLAGS:INTERNAL=-I/usr/include
+ALSA_STATIC_CFLAGS_I:INTERNAL=
+ALSA_STATIC_CFLAGS_OTHER:INTERNAL=
+ALSA_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+ALSA_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lasound;-lm;-lpthread;-lrt
+ALSA_STATIC_LDFLAGS_OTHER:INTERNAL=
+ALSA_STATIC_LIBDIR:INTERNAL=
+ALSA_STATIC_LIBRARIES:INTERNAL=asound;m;pthread;rt
+ALSA_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+ALSA_STATIC_LIBS:INTERNAL=
+ALSA_STATIC_LIBS_L:INTERNAL=
+ALSA_STATIC_LIBS_OTHER:INTERNAL=
+ALSA_STATIC_LIBS_PATHS:INTERNAL=
+ALSA_VERSION:INTERNAL=1.2.12
+ALSA_alsa_INCLUDEDIR:INTERNAL=
+ALSA_alsa_LIBDIR:INTERNAL=
+ALSA_alsa_PREFIX:INTERNAL=
+ALSA_alsa_VERSION:INTERNAL=
 //ADVANCED property for variable: Boost_DEBUG
 Boost_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_DIR
@@ -1569,6 +1809,97 @@ EXPAT_INCLUDE_DIR-ADVANCED:INTERNAL=1
 EXPAT_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Eigen3_INCLUDE_DIR
 Eigen3_INCLUDE_DIR-ADVANCED:INTERNAL=1
+FFMPEG_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
+FFMPEG_CFLAGS_I:INTERNAL=
+FFMPEG_CFLAGS_OTHER:INTERNAL=
+FFMPEG_FOUND:INTERNAL=1
+FFMPEG_INCLUDEDIR:INTERNAL=
+FFMPEG_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
+FFMPEG_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavcodec;-lavformat;-lavutil;-lswscale;-lswresample
+FFMPEG_LDFLAGS_OTHER:INTERNAL=
+FFMPEG_LIBDIR:INTERNAL=
+FFMPEG_LIBRARIES:INTERNAL=avcodec;avformat;avutil;swscale;swresample
+FFMPEG_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFMPEG_LIBS:INTERNAL=
+FFMPEG_LIBS_L:INTERNAL=
+FFMPEG_LIBS_OTHER:INTERNAL=
+FFMPEG_LIBS_PATHS:INTERNAL=
+FFMPEG_MODULE_NAME:INTERNAL=
+FFMPEG_PREFIX:INTERNAL=
+FFMPEG_STATIC_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
+FFMPEG_STATIC_CFLAGS_I:INTERNAL=
+FFMPEG_STATIC_CFLAGS_OTHER:INTERNAL=
+FFMPEG_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
+FFMPEG_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavformat;-lm;-latomic;-ldvdnav;-lpthread;-ldvdread;-lxml2;-lbz2;-lgme;-lopenmpt;-lstdc++;-lchromaprint;-lbluray;-lz;-lgnutls;-lrabbitmq;-lrist;-lsrt-gnutls;-lssh;-lzmq;-L/usr/lib/x86_64-linux-gnu;-lavcodec;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lvpx;-lm;-lwebpmux;-pthread;-lm;-latomic;-llzma;-ldav1d;-lrsvg-2;-lm;-lgio-2.0;-lgdk_pixbuf-2.0;-lgobject-2.0;-lglib-2.0;-lcairo;-lzvbi;-lpthread;-lm;-lpng;-lz;-lsnappy;-lstdc++;-laom;-lcodec2;-lgsm;-ljxl;-ljxl_threads;-lmp3lame;-lm;-lopenjp2;-lopus;-lrav1e;-lm;-lshine;-lspeex;-lSvtAv1Enc;-ltheoraenc;-ltheoradec;-logg;-ltwolame;-lvorbis;-lvorbisenc;-lwebp;-lx264;-lx265;-lxvidcore;-lz;-lva;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-L/usr/lib/x86_64-linux-gnu;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswscale;-lm;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11;-lswresample;-lm;-lsoxr;-latomic;-L/usr/lib/x86_64-linux-gnu;-lavutil;-pthread;-lva-drm;-lva;-lva-x11;-lva;-lvdpau;-lX11;-lm;-ldrm;-L/usr/lib/x86_64-linux-gnu/pkgconfig/../;-lvpl;-ldl;-lstdc++;-lOpenCL;-lva;-latomic;-lX11
+FFMPEG_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread
+FFMPEG_STATIC_LIBDIR:INTERNAL=
+FFMPEG_STATIC_LIBRARIES:INTERNAL=avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;swresample;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avformat;m;atomic;dvdnav;pthread;dvdread;xml2;bz2;gme;openmpt;stdc++;chromaprint;bluray;z;gnutls;rabbitmq;rist;srt-gnutls;ssh;zmq;avcodec;vpx;m;vpx;m;vpx;m;vpx;m;webpmux;m;atomic;lzma;dav1d;rsvg-2;m;gio-2.0;gdk_pixbuf-2.0;gobject-2.0;glib-2.0;cairo;zvbi;pthread;m;png;z;snappy;stdc++;aom;codec2;gsm;jxl;jxl_threads;mp3lame;m;openjp2;opus;rav1e;m;shine;speex;SvtAv1Enc;theoraenc;theoradec;ogg;twolame;vorbis;vorbisenc;webp;x264;x265;xvidcore;z;va;vpl;dl;stdc++;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;m;soxr;atomic;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swscale;m;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11;swresample;m;soxr;atomic;avutil;va-drm;va;va-x11;va;vdpau;X11;m;drm;vpl;dl;stdc++;OpenCL;va;atomic;X11
+FFMPEG_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/pkgconfig/../
+FFMPEG_STATIC_LIBS:INTERNAL=
+FFMPEG_STATIC_LIBS_L:INTERNAL=
+FFMPEG_STATIC_LIBS_OTHER:INTERNAL=
+FFMPEG_STATIC_LIBS_PATHS:INTERNAL=
+FFMPEG_VERSION:INTERNAL=
+FFMPEG_libavcodec_INCLUDEDIR:INTERNAL=/usr/include/x86_64-linux-gnu
+FFMPEG_libavcodec_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFMPEG_libavcodec_MODULE_NAME:INTERNAL=libavcodec
+FFMPEG_libavcodec_PREFIX:INTERNAL=/usr
+FFMPEG_libavcodec_VERSION:INTERNAL=61.3.100
+FFMPEG_libavformat_INCLUDEDIR:INTERNAL=/usr/include/x86_64-linux-gnu
+FFMPEG_libavformat_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFMPEG_libavformat_MODULE_NAME:INTERNAL=libavformat
+FFMPEG_libavformat_PREFIX:INTERNAL=/usr
+FFMPEG_libavformat_VERSION:INTERNAL=61.1.100
+FFMPEG_libavutil_INCLUDEDIR:INTERNAL=/usr/include/x86_64-linux-gnu
+FFMPEG_libavutil_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFMPEG_libavutil_MODULE_NAME:INTERNAL=libavutil
+FFMPEG_libavutil_PREFIX:INTERNAL=/usr
+FFMPEG_libavutil_VERSION:INTERNAL=59.8.100
+FFMPEG_libswresample_INCLUDEDIR:INTERNAL=/usr/include/x86_64-linux-gnu
+FFMPEG_libswresample_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFMPEG_libswresample_MODULE_NAME:INTERNAL=libswresample
+FFMPEG_libswresample_PREFIX:INTERNAL=/usr
+FFMPEG_libswresample_VERSION:INTERNAL=5.1.100
+FFMPEG_libswscale_INCLUDEDIR:INTERNAL=/usr/include/x86_64-linux-gnu
+FFMPEG_libswscale_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFMPEG_libswscale_MODULE_NAME:INTERNAL=libswscale
+FFMPEG_libswscale_PREFIX:INTERNAL=/usr
+FFMPEG_libswscale_VERSION:INTERNAL=8.1.100
+FFTW3_CFLAGS:INTERNAL=-I/usr/include
+FFTW3_CFLAGS_I:INTERNAL=
+FFTW3_CFLAGS_OTHER:INTERNAL=
+FFTW3_FOUND:INTERNAL=1
+FFTW3_INCLUDEDIR:INTERNAL=/usr/include
+FFTW3_INCLUDE_DIRS:INTERNAL=/usr/include
+FFTW3_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lfftw3
+FFTW3_LDFLAGS_OTHER:INTERNAL=
+FFTW3_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFTW3_LIBRARIES:INTERNAL=fftw3
+FFTW3_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFTW3_LIBS:INTERNAL=
+FFTW3_LIBS_L:INTERNAL=
+FFTW3_LIBS_OTHER:INTERNAL=
+FFTW3_LIBS_PATHS:INTERNAL=
+FFTW3_MODULE_NAME:INTERNAL=fftw3
+FFTW3_PREFIX:INTERNAL=/usr
+FFTW3_STATIC_CFLAGS:INTERNAL=-I/usr/include
+FFTW3_STATIC_CFLAGS_I:INTERNAL=
+FFTW3_STATIC_CFLAGS_OTHER:INTERNAL=
+FFTW3_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+FFTW3_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lfftw3;-lm
+FFTW3_STATIC_LDFLAGS_OTHER:INTERNAL=
+FFTW3_STATIC_LIBDIR:INTERNAL=
+FFTW3_STATIC_LIBRARIES:INTERNAL=fftw3;m
+FFTW3_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+FFTW3_STATIC_LIBS:INTERNAL=
+FFTW3_STATIC_LIBS_L:INTERNAL=
+FFTW3_STATIC_LIBS_OTHER:INTERNAL=
+FFTW3_STATIC_LIBS_PATHS:INTERNAL=
+FFTW3_VERSION:INTERNAL=3.3.10
+FFTW3_fftw3_INCLUDEDIR:INTERNAL=
+FFTW3_fftw3_LIBDIR:INTERNAL=
+FFTW3_fftw3_PREFIX:INTERNAL=
+FFTW3_fftw3_VERSION:INTERNAL=
 FFmpeg_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
 FFmpeg_CFLAGS_I:INTERNAL=
 FFmpeg_CFLAGS_OTHER:INTERNAL=
@@ -1626,13 +1957,15 @@ FFmpeg_libswscale_MODULE_NAME:INTERNAL=libswscale
 FFmpeg_libswscale_PREFIX:INTERNAL=/usr
 FFmpeg_libswscale_VERSION:INTERNAL=7.5.100
 //Details about finding Boost
-FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/lib/x86_64-linux-gnu/cmake/Boost-1.83.0/BoostConfig.cmake][ ][v1.83.0(1.66)]
+FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/lib/x86_64-linux-gnu/cmake/Boost-1.83.0/BoostConfig.cmake][cfound components: system filesystem ][v1.83.0()]
 //Details about finding CURL
-FIND_PACKAGE_MESSAGE_DETAILS_CURL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcurl.so][/usr/include/x86_64-linux-gnu][ ][v8.9.1()]
+FIND_PACKAGE_MESSAGE_DETAILS_CURL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcurl.so][/usr/include/x86_64-linux-gnu][c ][v8.9.1()]
 //Details about finding EXPAT
 FIND_PACKAGE_MESSAGE_DETAILS_EXPAT:INTERNAL=[/usr/lib/x86_64-linux-gnu/libexpat.so][/usr/include][v2.6.2()]
 //Details about finding Eigen3
 FIND_PACKAGE_MESSAGE_DETAILS_Eigen3:INTERNAL=[/usr/include/eigen3][v3.4.0()]
+//Details about finding FLAC
+FIND_PACKAGE_MESSAGE_DETAILS_FLAC:INTERNAL=[/usr/lib/x86_64-linux-gnu/libFLAC.so][/usr/include][TRUE][v1.4.3()]
 //Details about finding Freetype
 FIND_PACKAGE_MESSAGE_DETAILS_Freetype:INTERNAL=[/usr/lib/x86_64-linux-gnu/libfreetype.so][/usr/include/freetype2][v2.13.3()]
 //Details about finding GL2PS
@@ -1658,17 +1991,21 @@ FIND_PACKAGE_MESSAGE_DETAILS_LibXml2:INTERNAL=[/usr/lib/x86_64-linux-gnu/libxml2
 //Details about finding MPFR
 FIND_PACKAGE_MESSAGE_DETAILS_MPFR:INTERNAL=[/usr/lib/x86_64-linux-gnu/libmpfr.so][/usr/include][v()]
 //Details about finding MPI
-FIND_PACKAGE_MESSAGE_DETAILS_MPI:INTERNAL=[TRUE][found components: C ][v3.1()]
+FIND_PACKAGE_MESSAGE_DETAILS_MPI:INTERNAL=[TRUE][cfound components: C ][v3.1()]
 //Details about finding MPI_C
 FIND_PACKAGE_MESSAGE_DETAILS_MPI_C:INTERNAL=[/usr/lib/x86_64-linux-gnu/libmpi.so][mpi][/usr/lib/x86_64-linux-gnu/openmpi/include][TRUE][v3.1()]
+//Details about finding MPI_CXX
+FIND_PACKAGE_MESSAGE_DETAILS_MPI_CXX:INTERNAL=[/usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi_cxx.so][/usr/lib/x86_64-linux-gnu/libmpi.so][mpi_cxx;mpi][/usr/lib/x86_64-linux-gnu/openmpi/include][TRUE][v3.1()]
 //Details about finding NetCDF
 FIND_PACKAGE_MESSAGE_DETAILS_NetCDF:INTERNAL=[/usr/include][netCDF::netcdf][v4.9.2()]
 //Details about finding OGG
 FIND_PACKAGE_MESSAGE_DETAILS_OGG:INTERNAL=[/usr/lib/x86_64-linux-gnu/libogg.so][/usr/include][v()]
+//Details about finding Ogg
+FIND_PACKAGE_MESSAGE_DETAILS_Ogg:INTERNAL=[/usr/lib/x86_64-linux-gnu/libogg.so][/usr/include][v1.3.5(1.3)]
 //Details about finding OpenCV
-FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[/usr][v4.6.0()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[/usr][cfound components: core imgproc highgui ][v4.6.0()]
 //Details about finding OpenGL
-FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenGL.so][/usr/lib/x86_64-linux-gnu/libGLX.so][/usr/include][found components: OpenGL GLX ][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libOpenGL.so][/usr/lib/x86_64-linux-gnu/libGLX.so][/usr/include][cfound components: OpenGL GLX ][v()]
 //Details about finding OpenMP
 FIND_PACKAGE_MESSAGE_DETAILS_OpenMP:INTERNAL=[TRUE][TRUE][ ][v4.5()]
 //Details about finding OpenMP_C
@@ -1676,13 +2013,15 @@ FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_C:INTERNAL=[-fopenmp][/usr/lib/gcc/x86_64-li
 //Details about finding OpenMP_CXX
 FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_CXX:INTERNAL=[-fopenmp][/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][v4.5()]
 //Details about finding OpenSSL
-FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][ ][v3.3.1()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][c ][v3.3.1()]
+//Details about finding Opus
+FIND_PACKAGE_MESSAGE_DETAILS_Opus:INTERNAL=[/usr/lib/x86_64-linux-gnu/libopus.so][/usr/include][TRUE][v1.5.2()]
 //Details about finding PNG
 FIND_PACKAGE_MESSAGE_DETAILS_PNG:INTERNAL=[/usr/lib/x86_64-linux-gnu/libpng.so][/usr/include][v1.6.44()]
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.8.1()]
 //Details about finding PostgreSQL
-FIND_PACKAGE_MESSAGE_DETAILS_PostgreSQL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libpq.so][/usr/include/postgresql][ ][v16.8()]
+FIND_PACKAGE_MESSAGE_DETAILS_PostgreSQL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libpq.so][/usr/include/postgresql][c ][v16.8()]
 //Details about finding Python3
 FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/usr/bin/python3.12][/usr/include/python3.12][cfound components: Interpreter Development.Module Development.Embed ][v3.12.7(3.12)]
 //Details about finding SQLite3
@@ -1690,17 +2029,27 @@ FIND_PACKAGE_MESSAGE_DETAILS_SQLite3:INTERNAL=[/usr/include][/usr/lib/x86_64-lin
 //Details about finding THEORA
 FIND_PACKAGE_MESSAGE_DETAILS_THEORA:INTERNAL=[/usr/lib/x86_64-linux-gnu/libtheora.so][/usr/lib/x86_64-linux-gnu/libtheoradec.so][/usr/lib/x86_64-linux-gnu/libtheoraenc.so][/usr/include][v()]
 //Details about finding TIFF
-FIND_PACKAGE_MESSAGE_DETAILS_TIFF:INTERNAL=[/usr/lib/x86_64-linux-gnu/libtiff.so][/usr/include/x86_64-linux-gnu][ ][v4.5.1()]
+FIND_PACKAGE_MESSAGE_DETAILS_TIFF:INTERNAL=[/usr/lib/x86_64-linux-gnu/libtiff.so][/usr/include/x86_64-linux-gnu][c ][v4.5.1()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
+//Details about finding Vorbis
+FIND_PACKAGE_MESSAGE_DETAILS_Vorbis:INTERNAL=[/usr/lib/x86_64-linux-gnu/libvorbis.so][/usr/include][TRUE][ ][v1.3.7()]
 //Details about finding X11
-FIND_PACKAGE_MESSAGE_DETAILS_X11:INTERNAL=[/usr/include][/usr/lib/x86_64-linux-gnu/libX11.so][ ][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_X11:INTERNAL=[/usr/include][/usr/lib/x86_64-linux-gnu/libX11.so][c ][v()]
 //Details about finding ZLIB
-FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/usr/lib/x86_64-linux-gnu/libz.so][/usr/include][ ][v1.3.1()]
+FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/usr/lib/x86_64-linux-gnu/libz.so][/usr/include][c ][v1.3.1()]
 //Details about finding double-conversion
 FIND_PACKAGE_MESSAGE_DETAILS_double-conversion:INTERNAL=[/usr/lib/x86_64-linux-gnu/libdouble-conversion.so][/usr/include/double-conversion][v()]
+//Details about finding mp3lame
+FIND_PACKAGE_MESSAGE_DETAILS_mp3lame:INTERNAL=[/usr/lib/x86_64-linux-gnu/libmp3lame.so][/usr/include][v()]
+//Details about finding mpg123
+FIND_PACKAGE_MESSAGE_DETAILS_mpg123:INTERNAL=[/usr/lib/x86_64-linux-gnu/libmpg123.so][/usr/include/x86_64-linux-gnu][v1.32.7()]
 //Details about finding utf8cpp
 FIND_PACKAGE_MESSAGE_DETAILS_utf8cpp:INTERNAL=[/usr/include/utf8cpp][v()]
+//ADVANCED property for variable: FLAC_INCLUDE_DIR
+FLAC_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FLAC_LIBRARY
+FLAC_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: FREETYPE_INCLUDE_DIR_freetype2
 FREETYPE_INCLUDE_DIR_freetype2-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: FREETYPE_INCLUDE_DIR_ft2build
@@ -1721,6 +2070,49 @@ GL2PS_LIBRARY-ADVANCED:INTERNAL=1
 GLEW_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: GLEW_LIBRARY
 GLEW_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GLEW_SHARED_LIBRARY_DEBUG
+GLEW_SHARED_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GLEW_SHARED_LIBRARY_RELEASE
+GLEW_SHARED_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GLEW_STATIC_LIBRARY_DEBUG
+GLEW_STATIC_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GLEW_STATIC_LIBRARY_RELEASE
+GLEW_STATIC_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+GMP_CFLAGS:INTERNAL=-I/usr/include
+GMP_CFLAGS_I:INTERNAL=
+GMP_CFLAGS_OTHER:INTERNAL=
+GMP_FOUND:INTERNAL=1
+GMP_INCLUDEDIR:INTERNAL=/usr/include
+GMP_INCLUDE_DIRS:INTERNAL=/usr/include
+GMP_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lgmp
+GMP_LDFLAGS_OTHER:INTERNAL=
+GMP_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+GMP_LIBRARIES:INTERNAL=gmp
+GMP_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+GMP_LIBS:INTERNAL=
+GMP_LIBS_L:INTERNAL=
+GMP_LIBS_OTHER:INTERNAL=
+GMP_LIBS_PATHS:INTERNAL=
+GMP_MODULE_NAME:INTERNAL=gmp
+GMP_PREFIX:INTERNAL=/usr
+GMP_STATIC_CFLAGS:INTERNAL=-I/usr/include
+GMP_STATIC_CFLAGS_I:INTERNAL=
+GMP_STATIC_CFLAGS_OTHER:INTERNAL=
+GMP_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+GMP_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lgmp
+GMP_STATIC_LDFLAGS_OTHER:INTERNAL=
+GMP_STATIC_LIBDIR:INTERNAL=
+GMP_STATIC_LIBRARIES:INTERNAL=gmp
+GMP_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+GMP_STATIC_LIBS:INTERNAL=
+GMP_STATIC_LIBS_L:INTERNAL=
+GMP_STATIC_LIBS_OTHER:INTERNAL=
+GMP_STATIC_LIBS_PATHS:INTERNAL=
+GMP_VERSION:INTERNAL=6.3.0
+GMP_gmp_INCLUDEDIR:INTERNAL=
+GMP_gmp_LIBDIR:INTERNAL=
+GMP_gmp_PREFIX:INTERNAL=
+GMP_gmp_VERSION:INTERNAL=
 GSTREAMER_CFLAGS:INTERNAL=-I/usr/include/gstreamer-1.0;-I/usr/include/glib-2.0;-I/usr/lib/x86_64-linux-gnu/glib-2.0/include;-I/usr/include;-I/usr/include/x86_64-linux-gnu;-I/usr/include/orc-0.4;-pthread
 GSTREAMER_CFLAGS_I:INTERNAL=
 GSTREAMER_CFLAGS_OTHER:INTERNAL=-pthread
@@ -1772,6 +2164,57 @@ GSTREAMER_gstreamer-video-1.0_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
 GSTREAMER_gstreamer-video-1.0_MODULE_NAME:INTERNAL=gstreamer-video-1.0
 GSTREAMER_gstreamer-video-1.0_PREFIX:INTERNAL=/usr
 GSTREAMER_gstreamer-video-1.0_VERSION:INTERNAL=1.24.2
+GStreamer_CFLAGS:INTERNAL=-I/usr/include/gstreamer-1.0;-I/usr/include/glib-2.0;-I/usr/lib/x86_64-linux-gnu/glib-2.0/include;-I/usr/include/sysprof-6;-I/usr/include;-I/usr/include/x86_64-linux-gnu;-I/usr/include/orc-0.4;-pthread
+GStreamer_CFLAGS_I:INTERNAL=
+GStreamer_CFLAGS_OTHER:INTERNAL=-pthread
+GStreamer_FOUND:INTERNAL=1
+GStreamer_INCLUDEDIR:INTERNAL=
+GStreamer_INCLUDE_DIRS:INTERNAL=/usr/include/gstreamer-1.0;/usr/include/glib-2.0;/usr/lib/x86_64-linux-gnu/glib-2.0/include;/usr/include/sysprof-6;/usr/include;/usr/include/x86_64-linux-gnu;/usr/include/orc-0.4
+GStreamer_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lgstapp-1.0;-lgstvideo-1.0;-lgstaudio-1.0;-lgstbase-1.0;-lgstreamer-1.0;-lgobject-2.0;-lglib-2.0
+GStreamer_LDFLAGS_OTHER:INTERNAL=
+GStreamer_LIBDIR:INTERNAL=
+GStreamer_LIBRARIES:INTERNAL=gstapp-1.0;gstvideo-1.0;gstaudio-1.0;gstbase-1.0;gstreamer-1.0;gobject-2.0;glib-2.0
+GStreamer_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+GStreamer_LIBS:INTERNAL=
+GStreamer_LIBS_L:INTERNAL=
+GStreamer_LIBS_OTHER:INTERNAL=
+GStreamer_LIBS_PATHS:INTERNAL=
+GStreamer_MODULE_NAME:INTERNAL=
+GStreamer_PREFIX:INTERNAL=
+GStreamer_STATIC_CFLAGS:INTERNAL=-I/usr/include/gstreamer-1.0;-I/usr/include/glib-2.0;-I/usr/lib/x86_64-linux-gnu/glib-2.0/include;-I/usr/include/sysprof-6;-I/usr/include;-I/usr/include/x86_64-linux-gnu;-I/usr/include/orc-0.4;-pthread;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC
+GStreamer_STATIC_CFLAGS_I:INTERNAL=
+GStreamer_STATIC_CFLAGS_OTHER:INTERNAL=-pthread;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC;-DLZMA_API_STATIC
+GStreamer_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/gstreamer-1.0;/usr/include/glib-2.0;/usr/lib/x86_64-linux-gnu/glib-2.0/include;/usr/include/sysprof-6;/usr/include;/usr/include/x86_64-linux-gnu;/usr/include/orc-0.4
+GStreamer_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lm;-ldl;-lnsl;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-lgmodule-2.0;-pthread;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-L/usr/lib;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-llzma;-pthread;-lpthread;-pthread;-lgstapp-1.0;-lm;-ldl;-lnsl;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-lgmodule-2.0;-pthread;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-llzma;-pthread;-lpthread;-pthread;-lgstbase-1.0;-lm;-ldl;-lnsl;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-pthread;-L/usr/lib/x86_64-linux-gnu;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-llzma;-pthread;-lpthread;-pthread;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-lffi;-lgmodule-2.0;-pthread;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lgstvideo-1.0;-lm;-lm;-ldl;-lnsl;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-lgmodule-2.0;-pthread;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-llzma;-pthread;-lpthread;-pthread;-lgstbase-1.0;-lm;-ldl;-lnsl;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-pthread;-L/usr/lib/x86_64-linux-gnu;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-llzma;-pthread;-lpthread;-pthread;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-lffi;-lgmodule-2.0;-pthread;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-L/usr/lib/x86_64-linux-gnu;-lm;-pthread;-lgstaudio-1.0;-lm;-lm;-ldl;-lnsl;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-lgmodule-2.0;-pthread;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-llzma;-pthread;-lpthread;-pthread;-lgstbase-1.0;-lgstreamer-1.0;-lm;-ldl;-lnsl;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-pthread;-L/usr/lib/x86_64-linux-gnu;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-llzma;-pthread;-lpthread;-pthread;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-lffi;-lgmodule-2.0;-pthread;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-L/usr/lib/x86_64-linux-gnu;-lgsttag-1.0;-lm;-L/usr/lib/x86_64-linux-gnu;-lgstreamer-1.0;-lm;-ldl;-lnsl;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-lgmodule-2.0;-pthread;-L/usr/lib/x86_64-linux-gnu;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lbz2;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-llzma;-pthread;-lpthread;-pthread;-L/usr/lib/x86_64-linux-gnu;-lgstbase-1.0;-L/usr/lib/x86_64-linux-gnu;-lgstreamer-1.0;-lm;-ldl;-lnsl;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lffi;-L/usr/lib/x86_64-linux-gnu;-pthread;-L/usr/lib/x86_64-linux-gnu;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lunwind;-ldw;-lbz2;-lelf;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-lz;-pthread;-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu;-llzma;-pthread;-lpthread;-lzstd;-pthread;-L/usr/lib/x86_64-linux-gnu;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lgobject-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-lffi;-lgmodule-2.0;-pthread;-lglib-2.0;-latomic;-lm;-pthread;-L/usr/lib/x86_64-linux-gnu;-lsysprof-capture-4;-pthread;-lpcre2-8;-lz;-lorc-0.4;-lm;-pthread
+GStreamer_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread;-pthread
+GStreamer_STATIC_LIBDIR:INTERNAL=
+GStreamer_STATIC_LIBRARIES:INTERNAL=m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;gmodule-2.0;atomic;m;sysprof-capture-4;pcre2-8;bz2;z;z;lzma;pthread;gstapp-1.0;m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;gmodule-2.0;atomic;m;sysprof-capture-4;pcre2-8;bz2;z;z;lzma;pthread;gstbase-1.0;m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;bz2;z;z;lzma;pthread;atomic;m;sysprof-capture-4;pcre2-8;atomic;m;sysprof-capture-4;ffi;gmodule-2.0;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;gstvideo-1.0;m;m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;gmodule-2.0;atomic;m;sysprof-capture-4;pcre2-8;bz2;z;z;lzma;pthread;gstbase-1.0;m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;bz2;z;z;lzma;pthread;atomic;m;sysprof-capture-4;pcre2-8;atomic;m;sysprof-capture-4;ffi;gmodule-2.0;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;m;gstaudio-1.0;m;m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;gmodule-2.0;atomic;m;sysprof-capture-4;pcre2-8;bz2;z;z;lzma;pthread;gstbase-1.0;gstreamer-1.0;m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;bz2;z;z;lzma;pthread;atomic;m;sysprof-capture-4;pcre2-8;atomic;m;sysprof-capture-4;ffi;gmodule-2.0;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;gsttag-1.0;m;gstreamer-1.0;m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;gmodule-2.0;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;bz2;z;z;lzma;pthread;gstbase-1.0;gstreamer-1.0;m;dl;nsl;atomic;m;sysprof-capture-4;pcre2-8;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;ffi;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;unwind;dw;bz2;elf;z;lzma;pthread;zstd;atomic;m;sysprof-capture-4;pcre2-8;gobject-2.0;atomic;m;sysprof-capture-4;ffi;gmodule-2.0;glib-2.0;atomic;m;sysprof-capture-4;pcre2-8;z;orc-0.4;m
+GStreamer_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu
+GStreamer_STATIC_LIBS:INTERNAL=
+GStreamer_STATIC_LIBS_L:INTERNAL=
+GStreamer_STATIC_LIBS_OTHER:INTERNAL=
+GStreamer_STATIC_LIBS_PATHS:INTERNAL=
+GStreamer_VERSION:INTERNAL=
+GStreamer_gstreamer-1.0_INCLUDEDIR:INTERNAL=/usr/include
+GStreamer_gstreamer-1.0_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+GStreamer_gstreamer-1.0_MODULE_NAME:INTERNAL=gstreamer-1.0
+GStreamer_gstreamer-1.0_PREFIX:INTERNAL=/usr
+GStreamer_gstreamer-1.0_VERSION:INTERNAL=1.24.8
+GStreamer_gstreamer-app-1.0_INCLUDEDIR:INTERNAL=/usr/include
+GStreamer_gstreamer-app-1.0_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+GStreamer_gstreamer-app-1.0_MODULE_NAME:INTERNAL=gstreamer-app-1.0
+GStreamer_gstreamer-app-1.0_PREFIX:INTERNAL=/usr
+GStreamer_gstreamer-app-1.0_VERSION:INTERNAL=1.24.8
+GStreamer_gstreamer-audio-1.0_INCLUDEDIR:INTERNAL=/usr/include
+GStreamer_gstreamer-audio-1.0_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+GStreamer_gstreamer-audio-1.0_MODULE_NAME:INTERNAL=gstreamer-audio-1.0
+GStreamer_gstreamer-audio-1.0_PREFIX:INTERNAL=/usr
+GStreamer_gstreamer-audio-1.0_VERSION:INTERNAL=1.24.8
+GStreamer_gstreamer-video-1.0_INCLUDEDIR:INTERNAL=/usr/include
+GStreamer_gstreamer-video-1.0_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+GStreamer_gstreamer-video-1.0_MODULE_NAME:INTERNAL=gstreamer-video-1.0
+GStreamer_gstreamer-video-1.0_PREFIX:INTERNAL=/usr
+GStreamer_gstreamer-video-1.0_VERSION:INTERNAL=1.24.8
 //ADVANCED property for variable: HDF5_C_COMPILER_EXECUTABLE
 HDF5_C_COMPILER_EXECUTABLE-ADVANCED:INTERNAL=1
 //Result of TRY_COMPILE
@@ -1828,6 +2271,41 @@ JPEG_INCLUDE_DIR-ADVANCED:INTERNAL=1
 JPEG_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: JPEG_LIBRARY_RELEASE
 JPEG_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+JSONCPP_CFLAGS:INTERNAL=-I/usr/include/jsoncpp
+JSONCPP_CFLAGS_I:INTERNAL=
+JSONCPP_CFLAGS_OTHER:INTERNAL=
+JSONCPP_FOUND:INTERNAL=1
+JSONCPP_INCLUDEDIR:INTERNAL=/usr/include/jsoncpp
+JSONCPP_INCLUDE_DIRS:INTERNAL=/usr/include/jsoncpp
+JSONCPP_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-ljsoncpp
+JSONCPP_LDFLAGS_OTHER:INTERNAL=
+JSONCPP_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+JSONCPP_LIBRARIES:INTERNAL=jsoncpp
+JSONCPP_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+JSONCPP_LIBS:INTERNAL=
+JSONCPP_LIBS_L:INTERNAL=
+JSONCPP_LIBS_OTHER:INTERNAL=
+JSONCPP_LIBS_PATHS:INTERNAL=
+JSONCPP_MODULE_NAME:INTERNAL=jsoncpp
+JSONCPP_PREFIX:INTERNAL=/usr
+JSONCPP_STATIC_CFLAGS:INTERNAL=-I/usr/include/jsoncpp
+JSONCPP_STATIC_CFLAGS_I:INTERNAL=
+JSONCPP_STATIC_CFLAGS_OTHER:INTERNAL=
+JSONCPP_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/jsoncpp
+JSONCPP_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-ljsoncpp
+JSONCPP_STATIC_LDFLAGS_OTHER:INTERNAL=
+JSONCPP_STATIC_LIBDIR:INTERNAL=
+JSONCPP_STATIC_LIBRARIES:INTERNAL=jsoncpp
+JSONCPP_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+JSONCPP_STATIC_LIBS:INTERNAL=
+JSONCPP_STATIC_LIBS_L:INTERNAL=
+JSONCPP_STATIC_LIBS_OTHER:INTERNAL=
+JSONCPP_STATIC_LIBS_PATHS:INTERNAL=
+JSONCPP_VERSION:INTERNAL=1.9.5
+JSONCPP_jsoncpp_INCLUDEDIR:INTERNAL=
+JSONCPP_jsoncpp_LIBDIR:INTERNAL=
+JSONCPP_jsoncpp_PREFIX:INTERNAL=
+JSONCPP_jsoncpp_VERSION:INTERNAL=
 //ADVANCED property for variable: JsonCpp_INCLUDE_DIR
 JsonCpp_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: JsonCpp_LIBRARY
@@ -1848,6 +2326,12 @@ LibPROJ_INCLUDE_DIR-ADVANCED:INTERNAL=1
 LibPROJ_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: LibPROJ_LIBRARY_RELEASE
 LibPROJ_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MP3LAME_HIP_LIBRARY
+MP3LAME_HIP_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MP3LAME_INCLUDE_DIR
+MP3LAME_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MP3LAME_LIBRARY
+MP3LAME_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPIEXEC_EXECUTABLE
 MPIEXEC_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPIEXEC_MAX_NUMPROCS
@@ -1858,6 +2342,24 @@ MPIEXEC_NUMPROC_FLAG-ADVANCED:INTERNAL=1
 MPIEXEC_POSTFLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPIEXEC_PREFLAGS
 MPIEXEC_PREFLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_ADDITIONAL_INCLUDE_DIRS
+MPI_CXX_ADDITIONAL_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_COMPILER
+MPI_CXX_COMPILER-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_COMPILER_INCLUDE_DIRS
+MPI_CXX_COMPILER_INCLUDE_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_COMPILE_DEFINITIONS
+MPI_CXX_COMPILE_DEFINITIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_COMPILE_OPTIONS
+MPI_CXX_COMPILE_OPTIONS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_HEADER_DIR
+MPI_CXX_HEADER_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_LIB_NAMES
+MPI_CXX_LIB_NAMES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_LINK_FLAGS
+MPI_CXX_LINK_FLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_CXX_SKIP_MPICXX
+MPI_CXX_SKIP_MPICXX-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPI_C_ADDITIONAL_INCLUDE_DIRS
 MPI_C_ADDITIONAL_INCLUDE_DIRS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPI_C_COMPILER
@@ -1875,9 +2377,15 @@ MPI_C_LIB_NAMES-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPI_C_LINK_FLAGS
 MPI_C_LINK_FLAGS-ADVANCED:INTERNAL=1
 //Result of TRY_COMPILE
+MPI_RESULT_CXX_test_mpi_MPICXX:INTERNAL=TRUE
+//Result of TRY_COMPILE
+MPI_RESULT_CXX_test_mpi_normal:INTERNAL=TRUE
+//Result of TRY_COMPILE
 MPI_RESULT_C_test_mpi_normal:INTERNAL=TRUE
 //ADVANCED property for variable: MPI_mpi_LIBRARY
 MPI_mpi_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MPI_mpi_cxx_LIBRARY
+MPI_mpi_cxx_LIBRARY-ADVANCED:INTERNAL=1
 NLOHMANN_JSON_CONFIG_INSTALL_DIR:INTERNAL=share/cmake/nlohmann_json
 //ADVANCED property for variable: OGG_INCLUDE_DIR
 OGG_INCLUDE_DIR-ADVANCED:INTERNAL=1
@@ -1915,6 +2423,10 @@ OPENSSL_CRYPTO_LIBRARY-ADVANCED:INTERNAL=1
 OPENSSL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENSSL_SSL_LIBRARY
 OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPUS_INCLUDE_DIR
+OPUS_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPUS_LIBRARY
+OPUS_LIBRARY-ADVANCED:INTERNAL=1
 //Result of TRY_COMPILE
 OpenMP_COMPILE_RESULT_CXX_fopenmp:INTERNAL=TRUE
 //Result of TRY_COMPILE
@@ -2009,6 +2521,41 @@ PC_EXPAT_expat_INCLUDEDIR:INTERNAL=
 PC_EXPAT_expat_LIBDIR:INTERNAL=
 PC_EXPAT_expat_PREFIX:INTERNAL=
 PC_EXPAT_expat_VERSION:INTERNAL=
+PC_FLAC_CFLAGS:INTERNAL=-I/usr/include
+PC_FLAC_CFLAGS_I:INTERNAL=
+PC_FLAC_CFLAGS_OTHER:INTERNAL=
+PC_FLAC_FOUND:INTERNAL=1
+PC_FLAC_INCLUDEDIR:INTERNAL=/usr/include
+PC_FLAC_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_FLAC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lFLAC
+PC_FLAC_LDFLAGS_OTHER:INTERNAL=
+PC_FLAC_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_FLAC_LIBRARIES:INTERNAL=FLAC
+PC_FLAC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_FLAC_LIBS:INTERNAL=
+PC_FLAC_LIBS_L:INTERNAL=
+PC_FLAC_LIBS_OTHER:INTERNAL=
+PC_FLAC_LIBS_PATHS:INTERNAL=
+PC_FLAC_MODULE_NAME:INTERNAL=flac
+PC_FLAC_PREFIX:INTERNAL=/usr
+PC_FLAC_STATIC_CFLAGS:INTERNAL=-I/usr/include
+PC_FLAC_STATIC_CFLAGS_I:INTERNAL=
+PC_FLAC_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_FLAC_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_FLAC_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lFLAC;-lm;-L/usr/lib/x86_64-linux-gnu;-logg
+PC_FLAC_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_FLAC_STATIC_LIBDIR:INTERNAL=
+PC_FLAC_STATIC_LIBRARIES:INTERNAL=FLAC;m;ogg
+PC_FLAC_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu
+PC_FLAC_STATIC_LIBS:INTERNAL=
+PC_FLAC_STATIC_LIBS_L:INTERNAL=
+PC_FLAC_STATIC_LIBS_OTHER:INTERNAL=
+PC_FLAC_STATIC_LIBS_PATHS:INTERNAL=
+PC_FLAC_VERSION:INTERNAL=1.4.3
+PC_FLAC_flac_INCLUDEDIR:INTERNAL=
+PC_FLAC_flac_LIBDIR:INTERNAL=
+PC_FLAC_flac_PREFIX:INTERNAL=
+PC_FLAC_flac_VERSION:INTERNAL=
 PC_LIBXML_CFLAGS:INTERNAL=-I/usr/include/libxml2
 PC_LIBXML_CFLAGS_I:INTERNAL=
 PC_LIBXML_CFLAGS_OTHER:INTERNAL=
@@ -2044,6 +2591,111 @@ PC_LIBXML_libxml-2.0_INCLUDEDIR:INTERNAL=
 PC_LIBXML_libxml-2.0_LIBDIR:INTERNAL=
 PC_LIBXML_libxml-2.0_PREFIX:INTERNAL=
 PC_LIBXML_libxml-2.0_VERSION:INTERNAL=
+PC_MPG123_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
+PC_MPG123_CFLAGS_I:INTERNAL=
+PC_MPG123_CFLAGS_OTHER:INTERNAL=
+PC_MPG123_FOUND:INTERNAL=1
+PC_MPG123_INCLUDEDIR:INTERNAL=/usr/include/x86_64-linux-gnu
+PC_MPG123_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
+PC_MPG123_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lmpg123
+PC_MPG123_LDFLAGS_OTHER:INTERNAL=
+PC_MPG123_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_MPG123_LIBRARIES:INTERNAL=mpg123
+PC_MPG123_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_MPG123_LIBS:INTERNAL=
+PC_MPG123_LIBS_L:INTERNAL=
+PC_MPG123_LIBS_OTHER:INTERNAL=
+PC_MPG123_LIBS_PATHS:INTERNAL=
+PC_MPG123_MODULE_NAME:INTERNAL=libmpg123
+PC_MPG123_PREFIX:INTERNAL=/usr
+PC_MPG123_STATIC_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
+PC_MPG123_STATIC_CFLAGS_I:INTERNAL=
+PC_MPG123_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_MPG123_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
+PC_MPG123_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lmpg123;-lm
+PC_MPG123_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_MPG123_STATIC_LIBDIR:INTERNAL=
+PC_MPG123_STATIC_LIBRARIES:INTERNAL=mpg123;m
+PC_MPG123_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_MPG123_STATIC_LIBS:INTERNAL=
+PC_MPG123_STATIC_LIBS_L:INTERNAL=
+PC_MPG123_STATIC_LIBS_OTHER:INTERNAL=
+PC_MPG123_STATIC_LIBS_PATHS:INTERNAL=
+PC_MPG123_VERSION:INTERNAL=1.32.7
+PC_MPG123_libmpg123_INCLUDEDIR:INTERNAL=
+PC_MPG123_libmpg123_LIBDIR:INTERNAL=
+PC_MPG123_libmpg123_PREFIX:INTERNAL=
+PC_MPG123_libmpg123_VERSION:INTERNAL=
+PC_OGG_CFLAGS:INTERNAL=-I/usr/include
+PC_OGG_CFLAGS_I:INTERNAL=
+PC_OGG_CFLAGS_OTHER:INTERNAL=
+PC_OGG_FOUND:INTERNAL=1
+PC_OGG_INCLUDEDIR:INTERNAL=/usr/include
+PC_OGG_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_OGG_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-logg
+PC_OGG_LDFLAGS_OTHER:INTERNAL=
+PC_OGG_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_OGG_LIBRARIES:INTERNAL=ogg
+PC_OGG_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_OGG_LIBS:INTERNAL=
+PC_OGG_LIBS_L:INTERNAL=
+PC_OGG_LIBS_OTHER:INTERNAL=
+PC_OGG_LIBS_PATHS:INTERNAL=
+PC_OGG_MODULE_NAME:INTERNAL=ogg
+PC_OGG_PREFIX:INTERNAL=/usr
+PC_OGG_STATIC_CFLAGS:INTERNAL=-I/usr/include
+PC_OGG_STATIC_CFLAGS_I:INTERNAL=
+PC_OGG_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_OGG_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_OGG_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-logg
+PC_OGG_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_OGG_STATIC_LIBDIR:INTERNAL=
+PC_OGG_STATIC_LIBRARIES:INTERNAL=ogg
+PC_OGG_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_OGG_STATIC_LIBS:INTERNAL=
+PC_OGG_STATIC_LIBS_L:INTERNAL=
+PC_OGG_STATIC_LIBS_OTHER:INTERNAL=
+PC_OGG_STATIC_LIBS_PATHS:INTERNAL=
+PC_OGG_VERSION:INTERNAL=1.3.5
+PC_OGG_ogg_INCLUDEDIR:INTERNAL=
+PC_OGG_ogg_LIBDIR:INTERNAL=
+PC_OGG_ogg_PREFIX:INTERNAL=
+PC_OGG_ogg_VERSION:INTERNAL=
+PC_OPUS_CFLAGS:INTERNAL=-I/usr/include/opus
+PC_OPUS_CFLAGS_I:INTERNAL=
+PC_OPUS_CFLAGS_OTHER:INTERNAL=
+PC_OPUS_FOUND:INTERNAL=1
+PC_OPUS_INCLUDEDIR:INTERNAL=/usr/include
+PC_OPUS_INCLUDE_DIRS:INTERNAL=/usr/include/opus
+PC_OPUS_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lopus
+PC_OPUS_LDFLAGS_OTHER:INTERNAL=
+PC_OPUS_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_OPUS_LIBRARIES:INTERNAL=opus
+PC_OPUS_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_OPUS_LIBS:INTERNAL=
+PC_OPUS_LIBS_L:INTERNAL=
+PC_OPUS_LIBS_OTHER:INTERNAL=
+PC_OPUS_LIBS_PATHS:INTERNAL=
+PC_OPUS_MODULE_NAME:INTERNAL=opus
+PC_OPUS_PREFIX:INTERNAL=/usr
+PC_OPUS_STATIC_CFLAGS:INTERNAL=-I/usr/include/opus
+PC_OPUS_STATIC_CFLAGS_I:INTERNAL=
+PC_OPUS_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_OPUS_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/opus
+PC_OPUS_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lopus;-lm
+PC_OPUS_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_OPUS_STATIC_LIBDIR:INTERNAL=
+PC_OPUS_STATIC_LIBRARIES:INTERNAL=opus;m
+PC_OPUS_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_OPUS_STATIC_LIBS:INTERNAL=
+PC_OPUS_STATIC_LIBS_L:INTERNAL=
+PC_OPUS_STATIC_LIBS_OTHER:INTERNAL=
+PC_OPUS_STATIC_LIBS_PATHS:INTERNAL=
+PC_OPUS_VERSION:INTERNAL=1.5.2
+PC_OPUS_opus_INCLUDEDIR:INTERNAL=
+PC_OPUS_opus_LIBDIR:INTERNAL=
+PC_OPUS_opus_PREFIX:INTERNAL=
+PC_OPUS_opus_VERSION:INTERNAL=
 PC_SQLite3_CFLAGS:INTERNAL=-I/usr/include
 PC_SQLite3_CFLAGS_I:INTERNAL=
 PC_SQLite3_CFLAGS_OTHER:INTERNAL=
@@ -2079,6 +2731,111 @@ PC_SQLite3_sqlite3_INCLUDEDIR:INTERNAL=
 PC_SQLite3_sqlite3_LIBDIR:INTERNAL=
 PC_SQLite3_sqlite3_PREFIX:INTERNAL=
 PC_SQLite3_sqlite3_VERSION:INTERNAL=
+PC_Vorbis_Enc_CFLAGS:INTERNAL=-I/usr/include
+PC_Vorbis_Enc_CFLAGS_I:INTERNAL=
+PC_Vorbis_Enc_CFLAGS_OTHER:INTERNAL=
+PC_Vorbis_Enc_FOUND:INTERNAL=1
+PC_Vorbis_Enc_INCLUDEDIR:INTERNAL=/usr/include
+PC_Vorbis_Enc_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_Vorbis_Enc_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lvorbisenc
+PC_Vorbis_Enc_LDFLAGS_OTHER:INTERNAL=
+PC_Vorbis_Enc_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_Vorbis_Enc_LIBRARIES:INTERNAL=vorbisenc
+PC_Vorbis_Enc_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_Vorbis_Enc_LIBS:INTERNAL=
+PC_Vorbis_Enc_LIBS_L:INTERNAL=
+PC_Vorbis_Enc_LIBS_OTHER:INTERNAL=
+PC_Vorbis_Enc_LIBS_PATHS:INTERNAL=
+PC_Vorbis_Enc_MODULE_NAME:INTERNAL=vorbisenc
+PC_Vorbis_Enc_PREFIX:INTERNAL=/usr
+PC_Vorbis_Enc_STATIC_CFLAGS:INTERNAL=-I/usr/include
+PC_Vorbis_Enc_STATIC_CFLAGS_I:INTERNAL=
+PC_Vorbis_Enc_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_Vorbis_Enc_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_Vorbis_Enc_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lvorbisenc;-L/usr/lib/x86_64-linux-gnu;-lvorbis;-lm;-L/usr/lib/x86_64-linux-gnu;-logg
+PC_Vorbis_Enc_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_Vorbis_Enc_STATIC_LIBDIR:INTERNAL=
+PC_Vorbis_Enc_STATIC_LIBRARIES:INTERNAL=vorbisenc;vorbis;m;ogg
+PC_Vorbis_Enc_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu
+PC_Vorbis_Enc_STATIC_LIBS:INTERNAL=
+PC_Vorbis_Enc_STATIC_LIBS_L:INTERNAL=
+PC_Vorbis_Enc_STATIC_LIBS_OTHER:INTERNAL=
+PC_Vorbis_Enc_STATIC_LIBS_PATHS:INTERNAL=
+PC_Vorbis_Enc_VERSION:INTERNAL=1.3.7
+PC_Vorbis_Enc_vorbisenc_INCLUDEDIR:INTERNAL=
+PC_Vorbis_Enc_vorbisenc_LIBDIR:INTERNAL=
+PC_Vorbis_Enc_vorbisenc_PREFIX:INTERNAL=
+PC_Vorbis_Enc_vorbisenc_VERSION:INTERNAL=
+PC_Vorbis_File_CFLAGS:INTERNAL=-I/usr/include
+PC_Vorbis_File_CFLAGS_I:INTERNAL=
+PC_Vorbis_File_CFLAGS_OTHER:INTERNAL=
+PC_Vorbis_File_FOUND:INTERNAL=1
+PC_Vorbis_File_INCLUDEDIR:INTERNAL=/usr/include
+PC_Vorbis_File_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_Vorbis_File_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lvorbisfile
+PC_Vorbis_File_LDFLAGS_OTHER:INTERNAL=
+PC_Vorbis_File_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_Vorbis_File_LIBRARIES:INTERNAL=vorbisfile
+PC_Vorbis_File_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_Vorbis_File_LIBS:INTERNAL=
+PC_Vorbis_File_LIBS_L:INTERNAL=
+PC_Vorbis_File_LIBS_OTHER:INTERNAL=
+PC_Vorbis_File_LIBS_PATHS:INTERNAL=
+PC_Vorbis_File_MODULE_NAME:INTERNAL=vorbisfile
+PC_Vorbis_File_PREFIX:INTERNAL=/usr
+PC_Vorbis_File_STATIC_CFLAGS:INTERNAL=-I/usr/include
+PC_Vorbis_File_STATIC_CFLAGS_I:INTERNAL=
+PC_Vorbis_File_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_Vorbis_File_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_Vorbis_File_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lvorbisfile;-L/usr/lib/x86_64-linux-gnu;-lvorbis;-lm;-L/usr/lib/x86_64-linux-gnu;-logg
+PC_Vorbis_File_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_Vorbis_File_STATIC_LIBDIR:INTERNAL=
+PC_Vorbis_File_STATIC_LIBRARIES:INTERNAL=vorbisfile;vorbis;m;ogg
+PC_Vorbis_File_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu
+PC_Vorbis_File_STATIC_LIBS:INTERNAL=
+PC_Vorbis_File_STATIC_LIBS_L:INTERNAL=
+PC_Vorbis_File_STATIC_LIBS_OTHER:INTERNAL=
+PC_Vorbis_File_STATIC_LIBS_PATHS:INTERNAL=
+PC_Vorbis_File_VERSION:INTERNAL=1.3.7
+PC_Vorbis_File_vorbisfile_INCLUDEDIR:INTERNAL=
+PC_Vorbis_File_vorbisfile_LIBDIR:INTERNAL=
+PC_Vorbis_File_vorbisfile_PREFIX:INTERNAL=
+PC_Vorbis_File_vorbisfile_VERSION:INTERNAL=
+PC_Vorbis_Vorbis_CFLAGS:INTERNAL=-I/usr/include
+PC_Vorbis_Vorbis_CFLAGS_I:INTERNAL=
+PC_Vorbis_Vorbis_CFLAGS_OTHER:INTERNAL=
+PC_Vorbis_Vorbis_FOUND:INTERNAL=1
+PC_Vorbis_Vorbis_INCLUDEDIR:INTERNAL=/usr/include
+PC_Vorbis_Vorbis_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_Vorbis_Vorbis_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lvorbis
+PC_Vorbis_Vorbis_LDFLAGS_OTHER:INTERNAL=
+PC_Vorbis_Vorbis_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_Vorbis_Vorbis_LIBRARIES:INTERNAL=vorbis
+PC_Vorbis_Vorbis_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PC_Vorbis_Vorbis_LIBS:INTERNAL=
+PC_Vorbis_Vorbis_LIBS_L:INTERNAL=
+PC_Vorbis_Vorbis_LIBS_OTHER:INTERNAL=
+PC_Vorbis_Vorbis_LIBS_PATHS:INTERNAL=
+PC_Vorbis_Vorbis_MODULE_NAME:INTERNAL=vorbis
+PC_Vorbis_Vorbis_PREFIX:INTERNAL=/usr
+PC_Vorbis_Vorbis_STATIC_CFLAGS:INTERNAL=-I/usr/include
+PC_Vorbis_Vorbis_STATIC_CFLAGS_I:INTERNAL=
+PC_Vorbis_Vorbis_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_Vorbis_Vorbis_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+PC_Vorbis_Vorbis_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lvorbis;-lm;-L/usr/lib/x86_64-linux-gnu;-logg
+PC_Vorbis_Vorbis_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_Vorbis_Vorbis_STATIC_LIBDIR:INTERNAL=
+PC_Vorbis_Vorbis_STATIC_LIBRARIES:INTERNAL=vorbis;m;ogg
+PC_Vorbis_Vorbis_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu
+PC_Vorbis_Vorbis_STATIC_LIBS:INTERNAL=
+PC_Vorbis_Vorbis_STATIC_LIBS_L:INTERNAL=
+PC_Vorbis_Vorbis_STATIC_LIBS_OTHER:INTERNAL=
+PC_Vorbis_Vorbis_STATIC_LIBS_PATHS:INTERNAL=
+PC_Vorbis_Vorbis_VERSION:INTERNAL=1.3.7
+PC_Vorbis_Vorbis_vorbis_INCLUDEDIR:INTERNAL=
+PC_Vorbis_Vorbis_vorbis_LIBDIR:INTERNAL=
+PC_Vorbis_Vorbis_vorbis_PREFIX:INTERNAL=
+PC_Vorbis_Vorbis_vorbis_VERSION:INTERNAL=
 //ADVANCED property for variable: PKG_CONFIG_ARGN
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
@@ -2124,6 +2881,82 @@ PNG_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 PNG_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PNG_PNG_INCLUDE_DIR
 PNG_PNG_INCLUDE_DIR-ADVANCED:INTERNAL=1
+PORTAUDIO_CFLAGS:INTERNAL=-I/usr/include;-pthread
+PORTAUDIO_CFLAGS_I:INTERNAL=
+PORTAUDIO_CFLAGS_OTHER:INTERNAL=-pthread
+PORTAUDIO_FOUND:INTERNAL=1
+PORTAUDIO_INCLUDEDIR:INTERNAL=/usr/include
+PORTAUDIO_INCLUDE_DIRS:INTERNAL=/usr/include
+PORTAUDIO_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lportaudio;-lasound;-lm;-lpthread
+PORTAUDIO_LDFLAGS_OTHER:INTERNAL=
+PORTAUDIO_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
+PORTAUDIO_LIBRARIES:INTERNAL=portaudio;asound;m;pthread
+PORTAUDIO_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PORTAUDIO_LIBS:INTERNAL=
+PORTAUDIO_LIBS_L:INTERNAL=
+PORTAUDIO_LIBS_OTHER:INTERNAL=
+PORTAUDIO_LIBS_PATHS:INTERNAL=
+PORTAUDIO_MODULE_NAME:INTERNAL=portaudio-2.0
+PORTAUDIO_PREFIX:INTERNAL=/usr
+PORTAUDIO_STATIC_CFLAGS:INTERNAL=-I/usr/include;-pthread
+PORTAUDIO_STATIC_CFLAGS_I:INTERNAL=
+PORTAUDIO_STATIC_CFLAGS_OTHER:INTERNAL=-pthread
+PORTAUDIO_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
+PORTAUDIO_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lportaudio;-lasound;-lm;-lpthread
+PORTAUDIO_STATIC_LDFLAGS_OTHER:INTERNAL=
+PORTAUDIO_STATIC_LIBDIR:INTERNAL=
+PORTAUDIO_STATIC_LIBRARIES:INTERNAL=portaudio;asound;m;pthread
+PORTAUDIO_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
+PORTAUDIO_STATIC_LIBS:INTERNAL=
+PORTAUDIO_STATIC_LIBS_L:INTERNAL=
+PORTAUDIO_STATIC_LIBS_OTHER:INTERNAL=
+PORTAUDIO_STATIC_LIBS_PATHS:INTERNAL=
+PORTAUDIO_VERSION:INTERNAL=19
+PORTAUDIO_portaudio-2.0_INCLUDEDIR:INTERNAL=
+PORTAUDIO_portaudio-2.0_LIBDIR:INTERNAL=
+PORTAUDIO_portaudio-2.0_PREFIX:INTERNAL=
+PORTAUDIO_portaudio-2.0_VERSION:INTERNAL=
+PULSE_CFLAGS:INTERNAL=-I/usr/local/include;-D_REENTRANT
+PULSE_CFLAGS_I:INTERNAL=
+PULSE_CFLAGS_OTHER:INTERNAL=-D_REENTRANT
+PULSE_FOUND:INTERNAL=1
+PULSE_INCLUDEDIR:INTERNAL=
+PULSE_INCLUDE_DIRS:INTERNAL=/usr/local/include
+PULSE_LDFLAGS:INTERNAL=-L/usr/local/lib/x86_64-linux-gnu;-lpulse-simple;-lpulse;-pthread
+PULSE_LDFLAGS_OTHER:INTERNAL=-pthread
+PULSE_LIBDIR:INTERNAL=
+PULSE_LIBRARIES:INTERNAL=pulse-simple;pulse
+PULSE_LIBRARY_DIRS:INTERNAL=/usr/local/lib/x86_64-linux-gnu
+PULSE_LIBS:INTERNAL=
+PULSE_LIBS_L:INTERNAL=
+PULSE_LIBS_OTHER:INTERNAL=
+PULSE_LIBS_PATHS:INTERNAL=
+PULSE_MODULE_NAME:INTERNAL=
+PULSE_PREFIX:INTERNAL=
+PULSE_STATIC_CFLAGS:INTERNAL=-I/usr/local/include;-D_REENTRANT
+PULSE_STATIC_CFLAGS_I:INTERNAL=
+PULSE_STATIC_CFLAGS_OTHER:INTERNAL=-D_REENTRANT
+PULSE_STATIC_INCLUDE_DIRS:INTERNAL=/usr/local/include
+PULSE_STATIC_LDFLAGS:INTERNAL=-L/usr/local/lib/x86_64-linux-gnu;-L/usr/local/lib/x86_64-linux-gnu/pulseaudio;-lpulsecommon-17.0;-lpulse-simple;-L/usr/local/lib/x86_64-linux-gnu/pulseaudio;-lpulsecommon-17.0;-lpulse;-pthread;-L/usr/local/lib/x86_64-linux-gnu/pulseaudio;-lpulsecommon-17.0
+PULSE_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread
+PULSE_STATIC_LIBDIR:INTERNAL=
+PULSE_STATIC_LIBRARIES:INTERNAL=pulsecommon-17.0;pulse-simple;pulsecommon-17.0;pulse;pulsecommon-17.0
+PULSE_STATIC_LIBRARY_DIRS:INTERNAL=/usr/local/lib/x86_64-linux-gnu;/usr/local/lib/x86_64-linux-gnu/pulseaudio;/usr/local/lib/x86_64-linux-gnu/pulseaudio;/usr/local/lib/x86_64-linux-gnu/pulseaudio
+PULSE_STATIC_LIBS:INTERNAL=
+PULSE_STATIC_LIBS_L:INTERNAL=
+PULSE_STATIC_LIBS_OTHER:INTERNAL=
+PULSE_STATIC_LIBS_PATHS:INTERNAL=
+PULSE_VERSION:INTERNAL=
+PULSE_libpulse-simple_INCLUDEDIR:INTERNAL=/usr/local/include
+PULSE_libpulse-simple_LIBDIR:INTERNAL=/usr/local/lib/x86_64-linux-gnu
+PULSE_libpulse-simple_MODULE_NAME:INTERNAL=libpulse-simple
+PULSE_libpulse-simple_PREFIX:INTERNAL=/usr/local
+PULSE_libpulse-simple_VERSION:INTERNAL=17.0
+PULSE_libpulse_INCLUDEDIR:INTERNAL=/usr/local/include
+PULSE_libpulse_LIBDIR:INTERNAL=/usr/local/lib/x86_64-linux-gnu
+PULSE_libpulse_MODULE_NAME:INTERNAL=libpulse
+PULSE_libpulse_PREFIX:INTERNAL=/usr/local
+PULSE_libpulse_VERSION:INTERNAL=17.0
 //ADVANCED property for variable: PostgreSQL_INCLUDE_DIR
 PostgreSQL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PostgreSQL_LIBRARY_DEBUG
@@ -2150,6 +2983,18 @@ TIFF_INCLUDE_DIR-ADVANCED:INTERNAL=1
 TIFF_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: TIFF_LIBRARY_RELEASE
 TIFF_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Vorbis_Enc_INCLUDE_DIR
+Vorbis_Enc_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Vorbis_Enc_LIBRARY
+Vorbis_Enc_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Vorbis_File_INCLUDE_DIR
+Vorbis_File_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Vorbis_File_LIBRARY
+Vorbis_File_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Vorbis_Vorbis_INCLUDE_DIR
+Vorbis_Vorbis_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Vorbis_Vorbis_LIBRARY
+Vorbis_Vorbis_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_ICE_INCLUDE_PATH
 X11_ICE_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_ICE_LIB
@@ -2492,21 +3337,51 @@ _Python3_Interpreter_REASON_FAILURE:INTERNAL=
 _Python3_LIBRARY_RELEASE:INTERNAL=/usr/lib/x86_64-linux-gnu/libpython3.12.so
 //NumPy reason failure
 _Python3_NumPy_REASON_FAILURE:INTERNAL=
+__pkg_config_arguments_ALSA:INTERNAL=REQUIRED;alsa
+__pkg_config_arguments_FFMPEG:INTERNAL=REQUIRED;libavcodec;libavformat;libavutil;libswscale;libswresample
+__pkg_config_arguments_FFTW3:INTERNAL=REQUIRED;fftw3
 __pkg_config_arguments_FFmpeg:INTERNAL=REQUIRED;libavcodec;libavformat;libavutil;libswscale;libswresample
+__pkg_config_arguments_GMP:INTERNAL=REQUIRED;gmp
 __pkg_config_arguments_GSTREAMER:INTERNAL=REQUIRED;gstreamer-1.0;gstreamer-app-1.0;gstreamer-video-1.0;gstreamer-audio-1.0
+__pkg_config_arguments_GStreamer:INTERNAL=REQUIRED;gstreamer-1.0;gstreamer-app-1.0;gstreamer-video-1.0;gstreamer-audio-1.0
+__pkg_config_arguments_JSONCPP:INTERNAL=REQUIRED;jsoncpp
 __pkg_config_arguments_PC_CURL:INTERNAL=QUIET;libcurl
 __pkg_config_arguments_PC_EXPAT:INTERNAL=QUIET;expat
+__pkg_config_arguments_PC_FLAC:INTERNAL=QUIET;flac
 __pkg_config_arguments_PC_LIBXML:INTERNAL=QUIET;libxml-2.0
+__pkg_config_arguments_PC_MPG123:INTERNAL=QUIET;libmpg123>=1.25.10
+__pkg_config_arguments_PC_OGG:INTERNAL=QUIET;ogg>=1.3.0
+__pkg_config_arguments_PC_OPUS:INTERNAL=QUIET;opus>=1.1
 __pkg_config_arguments_PC_SQLite3:INTERNAL=QUIET;sqlite3
+__pkg_config_arguments_PC_Vorbis_Enc:INTERNAL=QUIET;vorbisenc
+__pkg_config_arguments_PC_Vorbis_File:INTERNAL=QUIET;vorbisfile
+__pkg_config_arguments_PC_Vorbis_Vorbis:INTERNAL=QUIET;vorbis
 __pkg_config_arguments_PKG_FONTCONFIG:INTERNAL=QUIET;fontconfig
+__pkg_config_arguments_PORTAUDIO:INTERNAL=REQUIRED;portaudio-2.0
+__pkg_config_arguments_PULSE:INTERNAL=REQUIRED;libpulse;libpulse-simple
 __pkg_config_arguments__OPENSSL:INTERNAL=QUIET;openssl
+__pkg_config_checked_ALSA:INTERNAL=1
+__pkg_config_checked_FFMPEG:INTERNAL=1
+__pkg_config_checked_FFTW3:INTERNAL=1
 __pkg_config_checked_FFmpeg:INTERNAL=1
+__pkg_config_checked_GMP:INTERNAL=1
 __pkg_config_checked_GSTREAMER:INTERNAL=1
+__pkg_config_checked_GStreamer:INTERNAL=1
+__pkg_config_checked_JSONCPP:INTERNAL=1
 __pkg_config_checked_PC_CURL:INTERNAL=1
 __pkg_config_checked_PC_EXPAT:INTERNAL=1
+__pkg_config_checked_PC_FLAC:INTERNAL=1
 __pkg_config_checked_PC_LIBXML:INTERNAL=1
+__pkg_config_checked_PC_MPG123:INTERNAL=1
+__pkg_config_checked_PC_OGG:INTERNAL=1
+__pkg_config_checked_PC_OPUS:INTERNAL=1
 __pkg_config_checked_PC_SQLite3:INTERNAL=1
+__pkg_config_checked_PC_Vorbis_Enc:INTERNAL=1
+__pkg_config_checked_PC_Vorbis_File:INTERNAL=1
+__pkg_config_checked_PC_Vorbis_Vorbis:INTERNAL=1
 __pkg_config_checked_PKG_FONTCONFIG:INTERNAL=1
+__pkg_config_checked_PORTAUDIO:INTERNAL=1
+__pkg_config_checked_PULSE:INTERNAL=1
 __pkg_config_checked__OPENSSL:INTERNAL=1
 //ADVANCED property for variable: boost_atomic_DIR
 boost_atomic_DIR-ADVANCED:INTERNAL=1
@@ -2520,6 +3395,24 @@ boost_system_DIR-ADVANCED:INTERNAL=1
 double-conversion_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: double-conversion_LIBRARY
 double-conversion_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: mpg123_INCLUDE_DIR
+mpg123_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: mpg123_LIBRARY
+mpg123_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_ALSA_asound
+pkgcfg_lib_ALSA_asound-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_FFMPEG_avcodec
+pkgcfg_lib_FFMPEG_avcodec-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_FFMPEG_avformat
+pkgcfg_lib_FFMPEG_avformat-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_FFMPEG_avutil
+pkgcfg_lib_FFMPEG_avutil-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_FFMPEG_swresample
+pkgcfg_lib_FFMPEG_swresample-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_FFMPEG_swscale
+pkgcfg_lib_FFMPEG_swscale-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_FFTW3_fftw3
+pkgcfg_lib_FFTW3_fftw3-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_FFmpeg_avcodec
 pkgcfg_lib_FFmpeg_avcodec-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_FFmpeg_avformat
@@ -2530,6 +3423,8 @@ pkgcfg_lib_FFmpeg_avutil-ADVANCED:INTERNAL=1
 pkgcfg_lib_FFmpeg_swresample-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_FFmpeg_swscale
 pkgcfg_lib_FFmpeg_swscale-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GMP_gmp
+pkgcfg_lib_GMP_gmp-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_GSTREAMER_glib-2.0
 pkgcfg_lib_GSTREAMER_glib-2.0-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_GSTREAMER_gobject-2.0
@@ -2544,18 +3439,60 @@ pkgcfg_lib_GSTREAMER_gstbase-1.0-ADVANCED:INTERNAL=1
 pkgcfg_lib_GSTREAMER_gstreamer-1.0-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_GSTREAMER_gstvideo-1.0
 pkgcfg_lib_GSTREAMER_gstvideo-1.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GStreamer_glib-2.0
+pkgcfg_lib_GStreamer_glib-2.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GStreamer_gobject-2.0
+pkgcfg_lib_GStreamer_gobject-2.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GStreamer_gstapp-1.0
+pkgcfg_lib_GStreamer_gstapp-1.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GStreamer_gstaudio-1.0
+pkgcfg_lib_GStreamer_gstaudio-1.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GStreamer_gstbase-1.0
+pkgcfg_lib_GStreamer_gstbase-1.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GStreamer_gstreamer-1.0
+pkgcfg_lib_GStreamer_gstreamer-1.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_GStreamer_gstvideo-1.0
+pkgcfg_lib_GStreamer_gstvideo-1.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_JSONCPP_jsoncpp
+pkgcfg_lib_JSONCPP_jsoncpp-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PC_CURL_curl
 pkgcfg_lib_PC_CURL_curl-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PC_EXPAT_expat
 pkgcfg_lib_PC_EXPAT_expat-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_FLAC_FLAC
+pkgcfg_lib_PC_FLAC_FLAC-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PC_LIBXML_xml2
 pkgcfg_lib_PC_LIBXML_xml2-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_MPG123_mpg123
+pkgcfg_lib_PC_MPG123_mpg123-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_OGG_ogg
+pkgcfg_lib_PC_OGG_ogg-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_OPUS_opus
+pkgcfg_lib_PC_OPUS_opus-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PC_SQLite3_sqlite3
 pkgcfg_lib_PC_SQLite3_sqlite3-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_Vorbis_Enc_vorbisenc
+pkgcfg_lib_PC_Vorbis_Enc_vorbisenc-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_Vorbis_File_vorbisfile
+pkgcfg_lib_PC_Vorbis_File_vorbisfile-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_Vorbis_Vorbis_vorbis
+pkgcfg_lib_PC_Vorbis_Vorbis_vorbis-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PKG_FONTCONFIG_fontconfig
 pkgcfg_lib_PKG_FONTCONFIG_fontconfig-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PKG_FONTCONFIG_freetype
 pkgcfg_lib_PKG_FONTCONFIG_freetype-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PORTAUDIO_asound
+pkgcfg_lib_PORTAUDIO_asound-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PORTAUDIO_m
+pkgcfg_lib_PORTAUDIO_m-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PORTAUDIO_portaudio
+pkgcfg_lib_PORTAUDIO_portaudio-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PORTAUDIO_pthread
+pkgcfg_lib_PORTAUDIO_pthread-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PULSE_pulse
+pkgcfg_lib_PULSE_pulse-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PULSE_pulse-simple
+pkgcfg_lib_PULSE_pulse-simple-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib__OPENSSL_crypto
 pkgcfg_lib__OPENSSL_crypto-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib__OPENSSL_ssl

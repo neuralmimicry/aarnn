@@ -1,0 +1,386 @@
+cmake_minimum_required(VERSION 3.31)
+
+project(AARNN)
+
+file(GLOB AARNN_SRC
+    "src/aarnn/*.cpp"
+)
+file(GLOB AUDIO_SRC
+        "src/audio/*.cpp"
+)
+file(GLOB VISUALISER_SRC
+        "src/visualiser/*.cpp"
+)
+
+# Set the build type to Debug to include debugging symbols
+set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
+
+# Add AddressSanitizer flags
+#set(SANITIZER_FLAGS "-fsanitize=address -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined")
+set(SANITIZER_FLAGS "")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+
+list(APPEND CMAKE_MODULE_PATH "/usr/local")
+list(APPEND CMAKE_MODULE_PATH "/usr/local/share/cmake-4.0/Modules")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/thirdparty/libsndfile/cmake")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CGAL_DIR "/usr/lib/x86_64-linux-gnu/cmake/CGAL/")
+set(PostgreSQL_ROOT "/usr/include/postgresql/14/server")
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSONCPP REQUIRED jsoncpp)
+
+find_package(PostgreSQL REQUIRED)
+find_library(PQXX_LIB pqxx HINTS /usr/lib64)
+if(NOT PQXX_LIB)
+    message(FATAL_ERROR "pqxx library not found")
+endif()
+
+set(OpenGL_GL_PREFERENCE GLVND)
+find_package(OpenGL REQUIRED)
+if(NOT OPENGL_FOUND)
+    message(FATAL_ERROR "OpenGL library not found")
+endif()
+
+find_package(Freetype REQUIRED)
+if(NOT FREETYPE_FOUND)
+    message(FATAL_ERROR "Freetype library not found")
+endif()
+
+if(FREETYPE_INCLUDE_DIRS)
+    message(STATUS "Freetype include dir: ${FREETYPE_INCLUDE_DIRS}")
+else()
+    set(FREETYPE_INCLUDE_DIRS "/usr/include/freetype2")
+    message(STATUS "Using default Freetype include dir: ${FREETYPE_INCLUDE_DIRS}")
+endif ()
+
+find_package(SndFile CONFIG REQUIRED)
+
+# disable building the JSON library's tests (they bring in their own main())
+set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_MakeAvailable(json)
+
+# Check if JsonCpp target does not exist and then create it manually
+if(NOT TARGET JsonCpp::JsonCpp)
+    # Attempt to find JsonCpp library - modify paths as needed
+    find_library(JSONCPP_LIBRARY NAMES jsoncpp PATHS /usr/lib/x86_64-linux-gnu/cmake/jsoncpp)
+    find_path(JSONCPP_INCLUDE_DIR NAMES json/json.h PATHS /usr/include)
+
+    # Create an imported target
+    add_library(JsonCpp::JsonCpp SHARED IMPORTED)
+    set_target_properties(JsonCpp::JsonCpp PROPERTIES
+            IMPORTED_LOCATION "${JSONCPP_LIBRARY}"
+            INTERFACE_INCLUDE_DIRECTORIES "${JSONCPP_INCLUDE_DIR}")
+endif()
+
+find_package(VTK REQUIRED
+    COMPONENTS
+        RenderingOpenGL2
+        InteractionStyle
+        RenderingFreeType
+        FiltersSources
+    )
+if(NOT VTK_FOUND)
+    message(FATAL_ERROR "VTK library not found")
+endif()
+
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost CONFIG REQUIRED COMPONENTS system filesystem)
+
+if(NOT Boost_FOUND)
+    message(FATAL_ERROR "Boost library not found")
+endif()
+
+# Find FFmpeg using pkg-config
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(FFmpeg REQUIRED libavcodec libavformat libavutil libswscale libswresample)
+
+if(NOT FFmpeg_FOUND)
+    message(FATAL_ERROR "FFmpeg libraries not found")
+endif()
+
+# Include directories
+include_directories(${FFmpeg_INCLUDE_DIRS})
+
+# Libraries
+set(FFmpeg_LIBRARIES ${FFmpeg_LIBRARIES})
+
+# Find OpenSSL
+find_package(OpenSSL REQUIRED)
+if(NOT OpenSSL_FOUND)
+    message(FATAL_ERROR "OpenSSL library not found")
+endif()
+
+# Find OpenMP
+find_package(OpenMP REQUIRED)
+if(NOT OpenMP_CXX_FOUND)
+    message(FATAL_ERROR "OpenMP library not found")
+endif()
+
+# Find gStreamer
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0 gstreamer-audio-1.0)
+if(NOT GSTREAMER_FOUND)
+    message(FATAL_ERROR "gStreamer library not found")
+endif()
+
+# Use pkg-config to get the necessary flags
+#execute_process(
+#    COMMAND pkg-config --cflags --libs portaudio-2.0
+#    OUTPUT_VARIABLE PORTAUDIO_PKG_CONFIG
+#    OUTPUT_STRIP_TRAILING_WHITESPACE
+#)
+
+# Set PortAudio_LIBRARIES and PORTAUDIO_INCLUDE_DIRS using the pkg-config output
+#string(REGEX MATCHALL "-I([^ \t\n]*)"
+#    PORTAUDIO_INCLUDE_DIRS ${PORTAUDIO_PKG_CONFIG})
+
+#set(PORTAUDIO_LIBRARIES ${PORTAUDIO_PKG_CONFIG})
+#message(STATUS "PortAudio Libraries: ${PORTAUDIO_LIBRARIES}")
+
+#if(NOT PORTAUDIO_LIBRARIES)
+#    message(FATAL_ERROR "PortAudio library not found")
+#endif()
+
+#message(STATUS "PortAudio Include Dirs: ${PORTAUDIO_INCLUDE_DIRS}")
+
+# ALSA
+pkg_check_modules(ALSA REQUIRED alsa)
+include_directories(${ALSA_INCLUDE_DIRS})
+
+# PortAudio
+pkg_check_modules(PORTAUDIO REQUIRED portaudio-2.0)
+include_directories(${PORTAUDIO_INCLUDE_DIRS})
+
+# PulseAudio directories
+set(PULSEAUDIO_INCLUDE_DIRS "/usr/include/pulseaudio")
+set(PULSEAUDIO_LIBRARY_DIRS "/usr/lib/x86_64-linux-gnu")
+
+# PulseAudio libraries
+#set(PULSEAUDIO_LIBRARIES "-lpulse -lpulse-simple")
+set(PULSEAUDIO_LIBRARIES pulse pulse-simple)
+
+message(STATUS "PulseAudio Include Dirs: ${PULSEAUDIO_INCLUDE_DIRS}")
+message(STATUS "PulseAudio Library Dirs: ${PULSEAUDIO_LIBRARY_DIRS}")
+message(STATUS "PulseAudio Libraries: ${PULSEAUDIO_LIBRARIES}")
+
+find_package(OpenCV REQUIRED)
+message(STATUS "OpenCV include dirs: ${OpenCV_INCLUDE_DIRS}")
+message(STATUS "OpenCV libraries: ${OpenCV_LIBS}")
+
+# Find CURL
+find_package(CURL REQUIRED)
+if(NOT CURL_FOUND)
+    message(FATAL_ERROR "CURL library not found")
+endif()
+
+# Find CGAL
+find_package(CGAL REQUIRED)
+if(NOT CGAL_FOUND)
+    message(FATAL_ERROR "CGAL library not found")
+endif()
+
+# Find FFTW
+#find_package(FFTW3 REQUIRED)
+#if(NOT FFTW3_FOUND)
+#    message(FATAL_ERROR "FFTW3 library not found")
+#endif()
+message(STATUS "FFTW3 Include Dirs: ${FFTW3_INCLUDE_DIRS}")
+message(STATUS "FFTW3 Library Dirs: ${FFTW3_LIBRARY_DIRS}")
+message(STATUS "FFTW3 Libraries: ${FFTW3_LIBRARIES}")
+if(NOT FFTW3_INCLUDE_DIRS)
+    set(FFTW3_INCLUDE_DIRS "/usr/local/include")
+    message(STATUS "Using default FFTW3 include dir: ${FFTW3_INCLUDE_DIRS}")
+endif()
+if(NOT FFTW3_LIBRARY_DIRS)
+    set(FFTW3_LIBRARY_DIRS "/usr/local/lib")
+    message(STATUS "Using default FFTW3 library dir: ${FFTW3_LIBRARY_DIRS}")
+endif()
+if(NOT FFTW3_LIBRARIES)
+    set(FFTW3_LIBRARIES "-lfftw3")
+    message(STATUS "Using default FFTW3 libraries: ${FFTW3_LIBRARIES}")
+endif()
+
+# Add the src subdirectory to the include paths
+include_directories(include)
+include_directories(src)
+include_directories(thirdparty/websocketpp)
+include_directories(${JSONCPP_INCLUDE_DIRS})
+include_directories(${PostgreSQL_INCLUDE_DIR})
+include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
+include_directories(${Boost_INCLUDE_DIRS})  # Add Boost include directories
+include_directories(${OpenSSL_INCLUDE_DIRS})  # Add OpenSSL include directories
+include_directories(${FFmpeg_INCLUDE_DIRS})  # Add FFmpeg include directories
+include_directories(${PulseAudio_INCLUDE_DIRS}) # Add PulseAudio include directories
+include_directories(${FFTW3_INCLUDE_DIRS}) # Add FFTW3 include directories
+include_directories(${CURL_INCLUDE_DIRS}) # Add CURL include directories
+include_directories(${CGAL_INCLUDE_DIRS}) # Add CGAL include directories
+include_directories(${GSTREAMER_INCLUDE_DIRS})
+
+link_directories(${PostgreSQL_LIBRARY_DIR})
+link_directories(${PulseAudio_LIBRARY_DIRS})
+link_directories(${FFTW3_LIBRARY_DIRS})
+link_directories(${LOCAL_LIB64})
+link_directories(${GSTREAMER_LIBRARY_DIRS})
+link_directories(${OpenCV_LIBRARY_DIRS})
+
+add_executable(Audio ${AUDIO_SRC}
+        include/vclient.h
+        src/shared_libs/vclient.cpp
+        include/utils.h
+        include/avTimerCallback.h
+        include/AuditoryManager.h
+        include/AuditoryProcessor.h
+        include/boostincludes.h
+        include/Logger.h
+        include/msock.h
+        include/NeuronalComponent.h
+        include/Dendrite.h
+        include/PulseAudioMic.h
+        include/SensoryReceptor.h
+        include/ThreadSafeQueue.h
+        include/timer.h
+        src/shared_libs/Logger.cpp
+        src/shared_libs/timer.cpp
+        src/audio/AuditorySolution.cpp
+        src/shared_libs/utils.cpp
+        include/globals.h
+)
+
+# Copy simulation.conf into the same directory as the Visualiser executable
+add_custom_command(TARGET Audio POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/configure/db_connection.conf"
+        "$<TARGET_FILE_DIR:Audio>/db_connection.conf"
+)
+target_link_libraries(Audio PRIVATE
+        Freetype::Freetype
+        nlohmann_json::nlohmann_json
+        SndFile::sndfile
+        ${ALSA_LIBRARIES}
+        ${PORTAUDIO_LIBRARIES}
+        ${PQXX_LIB}
+        ${PostgreSQL_LIBRARIES}
+        ${VTK_LIBRARIES}
+        ${Boost_LIBRARIES}
+        ${OpenSSL_LIBRARIES}
+        ${FFmpeg_LIBRARIES}
+        ${PULSEAUDIO_LIBRARIES}
+        ${FFTW3_LIBRARIES}
+        ${CURL_LIBRARIES}
+        ${CGAL_LIBRARIES}
+        ${GSTREAMER_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+
+# If you still need vtkAutoInit.h for legacy code, enable autoinit:
+if (VTK_VERSION VERSION_GREATER "8.90.0")
+    # This will generate the proper VTK_MODULE_INIT calls under the hood
+    vtk_module_autoinit(
+            TARGETS Audio
+            MODULES ${VTK_LIBRARIES}
+    )
+endif()
+
+add_executable(AARNN ${AARNN_SRC}
+        include/vclient.h
+        src/shared_libs/vclient.cpp
+        include/Neuron.h
+        include/utils.h
+        include/abstractObject.h
+        include/Axon.h
+        include/AxonBouton.h
+        include/AxonBranch.h
+        include/AxonHillock.h
+        include/BodyComponent.h
+        include/BodyShapeComponent.h
+        include/boostincludes.h
+        include/Dendrite.h
+        include/DendriteBouton.h
+        include/DendriteBranch.h
+        include/Effector.h
+        include/Logger.h
+        include/msock.h
+        include/NeuronalComponent.h
+        include/NeuronParameters.h
+        include/Position.h
+        include/SensoryReceptor.h
+        include/Shape3D.h
+        include/Soma.h
+        include/SynapticGap.h
+        include/ThreadSafeQueue.h
+        include/vtkincludes.h
+        src/aarnn/config.cpp
+        include/config.h
+        include/database.h
+        include/timer.h
+        src/aarnn/database.cpp
+        src/shared_libs/Logger.cpp
+        src/shared_libs/timer.cpp
+        src/aarnn/main.cpp
+        src/shared_libs/utils.cpp
+        include/globals.h
+)
+
+target_link_libraries(AARNN PRIVATE
+        Freetype::Freetype
+        nlohmann_json::nlohmann_json
+        ${VTK_LIBRARIES}
+        ${PQXX_LIB}
+        ${PostgreSQL_LIBRARIES}
+        ${Boost_LIBRARIES}
+        ${OpenSSL_LIBRARIES}
+        ${FFmpeg_LIBRARIES}
+        ${PULSEAUDIO_LIBRARIES}
+        ${FFTW3_LIBRARIES}
+        ${CURL_LIBRARIES}
+        ${CGAL_LIBRARIES}
+        ${GSTREAMER_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+
+# Copy simulation.conf into the same directory as the AARNN executable
+add_custom_command(TARGET AARNN POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/configure/simulation.conf"
+        "$<TARGET_FILE_DIR:AARNN>/simulation.conf"
+)
+
+add_executable(Visualiser ${VISUALISER_SRC}
+        include/vclient.h
+        include/Logger.h
+        src/shared_libs/Logger.cpp
+        src/shared_libs/vclient.cpp
+        src/visualiser/wss.cpp
+)
+
+target_link_libraries(Visualiser PRIVATE
+        Freetype::Freetype
+        nlohmann_json::nlohmann_json
+        ${JSONCPP_LIBRARIES}
+        ${VTK_LIBRARIES}
+        ${PQXX_LIB}
+        ${PostgreSQL_LIBRARIES}
+        ${Boost_LIBRARIES}
+        ${OpenSSL_LIBRARIES}
+        ${FFTW3_LIBRARIES}
+        ${CURL_LIBRARIES}
+        ${CGAL_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+
+# Copy simulation.conf into the same directory as the Visualiser executable
+add_custom_command(TARGET Visualiser POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/configure/db_connection.conf"
+        "$<TARGET_FILE_DIR:Visualiser>/db_connection.conf"
+)

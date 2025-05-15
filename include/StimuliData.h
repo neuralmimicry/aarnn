@@ -1,5 +1,5 @@
 // StimuliData.h
-
+#pragma once
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp> // JSON library
@@ -10,7 +10,7 @@ struct StimuliData {
 };
 
 // Serialization
-std::string serializeStimuliData(const StimuliData& data) {
+inline std::string serializeStimuliData(const StimuliData& data) {
     nlohmann::json j;
     j["receptorType"] = data.receptorType;
     j["values"] = data.values;
@@ -18,7 +18,7 @@ std::string serializeStimuliData(const StimuliData& data) {
 }
 
 // Deserialization
-StimuliData deserializeStimuliData(const std::string& jsonString) {
+inline StimuliData deserializeStimuliData(const std::string& jsonString) {
     StimuliData data;
     auto j = nlohmann::json::parse(jsonString);
     data.receptorType = j["receptorType"];

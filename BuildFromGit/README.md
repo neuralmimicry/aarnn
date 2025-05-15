@@ -3,12 +3,12 @@
 
 The docker git clone docker files using the git clone using https, and not ssh
 
-If the account the username is associated to is 2FA enabled, use the Personal Access Toten,
+If the account the username is associated to is 2FA enabled, use the Personal Access Token,
 if it isn't then password needs to be supplied
 
 Before the docker can be run the following directories must be to the same directory
 as the docker files and script.
-- configure (this is for db_contection.conf, simulation.conf and init.sql)
+- configure (this is for *.conf and init.sql)
 
 Also the following files which need to be copied locally
 - .env

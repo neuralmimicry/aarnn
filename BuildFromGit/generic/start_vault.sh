@@ -20,24 +20,24 @@ else
     VAULT_PID=$!
 fi
 
-# Wait for a few seconds to allow Vault to initialize
+# Wait for a few seconds to allow Vault to initialise
 sleep 5
 
 # Debugging
 cat /opt/vault/logs/vault_output.log
 
-# Check if Vault is initialized and running
+# Check if Vault is initialised and running
 for i in {1..60}; do
     if grep -q 'Root Token' /opt/vault/logs/vault_output.log; then
-        echo "Vault is initialized and running."
+        echo "Vault is initialised and running."
         break
     else
-        echo "Waiting for Vault to initialize... ($i)"
+        echo "Waiting for Vault to initialise... ($i)"
         sleep 2
     fi
 
     if [ "$i" -eq 60 ]; then
-        echo "Vault did not initialize in time."
+        echo "Vault did not initialise in time."
         cat /opt/vault/logs/vault_output.log
         exit 1
     fi
@@ -65,7 +65,7 @@ VAULT_API_ADDR=$VAULT_API_ADDR
 VAULT_TOKEN=$VAULT_TOKEN
 EOL
 
-# Initialize Vault with secrets
+# Initialise Vault with secrets
 /usr/local/bin/init_vault.sh
 
 # Wait for the Vault server process to exit

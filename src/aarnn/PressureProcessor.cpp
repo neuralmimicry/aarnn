@@ -12,7 +12,7 @@ PressureProcessor::~PressureProcessor() {
 }
 
 bool PressureProcessor::initialise() {
-    // Initialize simulation parameters if necessary
+    // Initialise simulation parameters if necessary
     return true;
 }
 

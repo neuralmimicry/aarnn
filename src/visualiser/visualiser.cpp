@@ -455,7 +455,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
 // Visualisation Method
 void Visualiser::visualise() {
     try {
-        // Initialize VTK components
+        // Initialise VTK components
         vtkSmartPointer<vtkRenderer> renderer;
         vtkSmartPointer<vtkRenderWindow> renderWindow;
         vtkSmartPointer<vtkRenderWindowInteractor> interactor;
@@ -830,15 +830,15 @@ void Visualiser::visualise() {
 
 int main() {
     try {
-        // Initialize Logger
+        // Initialise Logger
         Logger logger("errors_visualiser.log");
 
         // Read Configuration Files
-        std::vector<std::string> config_files = {"db_connection.conf", "simulation.conf"};
+        std::vector<std::string> config_files = {"Visualiser.conf", "simulation.conf"};
         auto config = read_config(config_files);
         std::string connection_str = build_connection_string(config);
 
-        // Initialize Database Connection
+        // Initialise Database Connection
         std::shared_ptr<pqxx::connection> conn = std::make_shared<pqxx::connection>(connection_str);
         if (!conn->is_open()) {
             throw std::runtime_error("Unable to open database connection.");
@@ -846,7 +846,7 @@ int main() {
         logger << "Successfully connected to the database." << std::endl;
         std::cout << "Connected to PostgreSQL database." << std::endl;
 
-        // Initialize WebSocket server
+        // Initialise WebSocket server
         WebSocketServer ws_server;
 
         // Start the server in a separate thread
@@ -854,7 +854,7 @@ int main() {
             ws_server.run(9002); // Use port 9002 or any available port
         });
 
-        // Initialize and Run Visualiser
+        // Initialise and Run Visualiser
         Visualiser visualiser(conn, logger, ws_server);
         visualiser.visualise();
 

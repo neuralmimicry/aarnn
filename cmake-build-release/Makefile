@@ -92,13 +92,6 @@ all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles 0
 .PHONY : all
 
-# The main codegen target
-codegen: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles /home/pbisaacs/Developer/aarnn/cmake-build-release//CMakeFiles/progress.marks
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 codegen
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles 0
-.PHONY : codegen
-
 # The main clean target
 clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clean
@@ -122,6 +115,45 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+#=============================================================================
+# Target rules for targets named common
+
+# Build rule for target.
+common: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common
+.PHONY : common
+
+# fast build rule for target.
+common/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/build
+.PHONY : common/fast
+
+#=============================================================================
+# Target rules for targets named aarnn_core
+
+# Build rule for target.
+aarnn_core: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 aarnn_core
+.PHONY : aarnn_core
+
+# fast build rule for target.
+aarnn_core/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/build
+.PHONY : aarnn_core/fast
+
+#=============================================================================
+# Target rules for targets named audio_lib
+
+# Build rule for target.
+audio_lib: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 audio_lib
+.PHONY : audio_lib
+
+# fast build rule for target.
+audio_lib/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/build
+.PHONY : audio_lib/fast
 
 #=============================================================================
 # Target rules for targets named Audio
@@ -162,94 +194,12 @@ Visualiser/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visualiser.dir/build.make CMakeFiles/Visualiser.dir/build
 .PHONY : Visualiser/fast
 
-src/aarnn/AuditoryManager.o: src/aarnn/AuditoryManager.cpp.o
-.PHONY : src/aarnn/AuditoryManager.o
-
-# target to build an object file
-src/aarnn/AuditoryManager.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditoryManager.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditoryManager.cpp.o
-.PHONY : src/aarnn/AuditoryManager.cpp.o
-
-src/aarnn/AuditoryManager.i: src/aarnn/AuditoryManager.cpp.i
-.PHONY : src/aarnn/AuditoryManager.i
-
-# target to preprocess a source file
-src/aarnn/AuditoryManager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditoryManager.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditoryManager.cpp.i
-.PHONY : src/aarnn/AuditoryManager.cpp.i
-
-src/aarnn/AuditoryManager.s: src/aarnn/AuditoryManager.cpp.s
-.PHONY : src/aarnn/AuditoryManager.s
-
-# target to generate assembly for a file
-src/aarnn/AuditoryManager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditoryManager.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditoryManager.cpp.s
-.PHONY : src/aarnn/AuditoryManager.cpp.s
-
-src/aarnn/AuditoryProcessor.o: src/aarnn/AuditoryProcessor.cpp.o
-.PHONY : src/aarnn/AuditoryProcessor.o
-
-# target to build an object file
-src/aarnn/AuditoryProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditoryProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditoryProcessor.cpp.o
-.PHONY : src/aarnn/AuditoryProcessor.cpp.o
-
-src/aarnn/AuditoryProcessor.i: src/aarnn/AuditoryProcessor.cpp.i
-.PHONY : src/aarnn/AuditoryProcessor.i
-
-# target to preprocess a source file
-src/aarnn/AuditoryProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditoryProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditoryProcessor.cpp.i
-.PHONY : src/aarnn/AuditoryProcessor.cpp.i
-
-src/aarnn/AuditoryProcessor.s: src/aarnn/AuditoryProcessor.cpp.s
-.PHONY : src/aarnn/AuditoryProcessor.s
-
-# target to generate assembly for a file
-src/aarnn/AuditoryProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditoryProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditoryProcessor.cpp.s
-.PHONY : src/aarnn/AuditoryProcessor.cpp.s
-
-src/aarnn/AuditorySolution.o: src/aarnn/AuditorySolution.cpp.o
-.PHONY : src/aarnn/AuditorySolution.o
-
-# target to build an object file
-src/aarnn/AuditorySolution.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditorySolution.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditorySolution.cpp.o
-.PHONY : src/aarnn/AuditorySolution.cpp.o
-
-src/aarnn/AuditorySolution.i: src/aarnn/AuditorySolution.cpp.i
-.PHONY : src/aarnn/AuditorySolution.i
-
-# target to preprocess a source file
-src/aarnn/AuditorySolution.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditorySolution.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditorySolution.cpp.i
-.PHONY : src/aarnn/AuditorySolution.cpp.i
-
-src/aarnn/AuditorySolution.s: src/aarnn/AuditorySolution.cpp.s
-.PHONY : src/aarnn/AuditorySolution.s
-
-# target to generate assembly for a file
-src/aarnn/AuditorySolution.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AuditorySolution.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AuditorySolution.cpp.s
-.PHONY : src/aarnn/AuditorySolution.cpp.s
-
 src/aarnn/Axon.o: src/aarnn/Axon.cpp.o
 .PHONY : src/aarnn/Axon.o
 
 # target to build an object file
 src/aarnn/Axon.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Axon.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Axon.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Axon.cpp.o
 .PHONY : src/aarnn/Axon.cpp.o
 
 src/aarnn/Axon.i: src/aarnn/Axon.cpp.i
@@ -257,8 +207,7 @@ src/aarnn/Axon.i: src/aarnn/Axon.cpp.i
 
 # target to preprocess a source file
 src/aarnn/Axon.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Axon.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Axon.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Axon.cpp.i
 .PHONY : src/aarnn/Axon.cpp.i
 
 src/aarnn/Axon.s: src/aarnn/Axon.cpp.s
@@ -266,8 +215,7 @@ src/aarnn/Axon.s: src/aarnn/Axon.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/Axon.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Axon.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Axon.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Axon.cpp.s
 .PHONY : src/aarnn/Axon.cpp.s
 
 src/aarnn/AxonBouton.o: src/aarnn/AxonBouton.cpp.o
@@ -275,8 +223,7 @@ src/aarnn/AxonBouton.o: src/aarnn/AxonBouton.cpp.o
 
 # target to build an object file
 src/aarnn/AxonBouton.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonBouton.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonBouton.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonBouton.cpp.o
 .PHONY : src/aarnn/AxonBouton.cpp.o
 
 src/aarnn/AxonBouton.i: src/aarnn/AxonBouton.cpp.i
@@ -284,8 +231,7 @@ src/aarnn/AxonBouton.i: src/aarnn/AxonBouton.cpp.i
 
 # target to preprocess a source file
 src/aarnn/AxonBouton.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonBouton.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonBouton.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonBouton.cpp.i
 .PHONY : src/aarnn/AxonBouton.cpp.i
 
 src/aarnn/AxonBouton.s: src/aarnn/AxonBouton.cpp.s
@@ -293,8 +239,7 @@ src/aarnn/AxonBouton.s: src/aarnn/AxonBouton.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/AxonBouton.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonBouton.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonBouton.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonBouton.cpp.s
 .PHONY : src/aarnn/AxonBouton.cpp.s
 
 src/aarnn/AxonBranch.o: src/aarnn/AxonBranch.cpp.o
@@ -302,8 +247,7 @@ src/aarnn/AxonBranch.o: src/aarnn/AxonBranch.cpp.o
 
 # target to build an object file
 src/aarnn/AxonBranch.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonBranch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonBranch.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonBranch.cpp.o
 .PHONY : src/aarnn/AxonBranch.cpp.o
 
 src/aarnn/AxonBranch.i: src/aarnn/AxonBranch.cpp.i
@@ -311,8 +255,7 @@ src/aarnn/AxonBranch.i: src/aarnn/AxonBranch.cpp.i
 
 # target to preprocess a source file
 src/aarnn/AxonBranch.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonBranch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonBranch.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonBranch.cpp.i
 .PHONY : src/aarnn/AxonBranch.cpp.i
 
 src/aarnn/AxonBranch.s: src/aarnn/AxonBranch.cpp.s
@@ -320,8 +263,7 @@ src/aarnn/AxonBranch.s: src/aarnn/AxonBranch.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/AxonBranch.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonBranch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonBranch.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonBranch.cpp.s
 .PHONY : src/aarnn/AxonBranch.cpp.s
 
 src/aarnn/AxonHillock.o: src/aarnn/AxonHillock.cpp.o
@@ -329,8 +271,7 @@ src/aarnn/AxonHillock.o: src/aarnn/AxonHillock.cpp.o
 
 # target to build an object file
 src/aarnn/AxonHillock.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonHillock.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonHillock.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonHillock.cpp.o
 .PHONY : src/aarnn/AxonHillock.cpp.o
 
 src/aarnn/AxonHillock.i: src/aarnn/AxonHillock.cpp.i
@@ -338,8 +279,7 @@ src/aarnn/AxonHillock.i: src/aarnn/AxonHillock.cpp.i
 
 # target to preprocess a source file
 src/aarnn/AxonHillock.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonHillock.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonHillock.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonHillock.cpp.i
 .PHONY : src/aarnn/AxonHillock.cpp.i
 
 src/aarnn/AxonHillock.s: src/aarnn/AxonHillock.cpp.s
@@ -347,8 +287,7 @@ src/aarnn/AxonHillock.s: src/aarnn/AxonHillock.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/AxonHillock.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/AxonHillock.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/AxonHillock.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/AxonHillock.cpp.s
 .PHONY : src/aarnn/AxonHillock.cpp.s
 
 src/aarnn/BladderBowelProcessor.o: src/aarnn/BladderBowelProcessor.cpp.o
@@ -356,8 +295,7 @@ src/aarnn/BladderBowelProcessor.o: src/aarnn/BladderBowelProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/BladderBowelProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BladderBowelProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BladderBowelProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BladderBowelProcessor.cpp.o
 .PHONY : src/aarnn/BladderBowelProcessor.cpp.o
 
 src/aarnn/BladderBowelProcessor.i: src/aarnn/BladderBowelProcessor.cpp.i
@@ -365,8 +303,7 @@ src/aarnn/BladderBowelProcessor.i: src/aarnn/BladderBowelProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/BladderBowelProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BladderBowelProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BladderBowelProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BladderBowelProcessor.cpp.i
 .PHONY : src/aarnn/BladderBowelProcessor.cpp.i
 
 src/aarnn/BladderBowelProcessor.s: src/aarnn/BladderBowelProcessor.cpp.s
@@ -374,8 +311,7 @@ src/aarnn/BladderBowelProcessor.s: src/aarnn/BladderBowelProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/BladderBowelProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BladderBowelProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BladderBowelProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BladderBowelProcessor.cpp.s
 .PHONY : src/aarnn/BladderBowelProcessor.cpp.s
 
 src/aarnn/BodyComponent.o: src/aarnn/BodyComponent.cpp.o
@@ -383,8 +319,7 @@ src/aarnn/BodyComponent.o: src/aarnn/BodyComponent.cpp.o
 
 # target to build an object file
 src/aarnn/BodyComponent.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BodyComponent.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BodyComponent.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BodyComponent.cpp.o
 .PHONY : src/aarnn/BodyComponent.cpp.o
 
 src/aarnn/BodyComponent.i: src/aarnn/BodyComponent.cpp.i
@@ -392,8 +327,7 @@ src/aarnn/BodyComponent.i: src/aarnn/BodyComponent.cpp.i
 
 # target to preprocess a source file
 src/aarnn/BodyComponent.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BodyComponent.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BodyComponent.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BodyComponent.cpp.i
 .PHONY : src/aarnn/BodyComponent.cpp.i
 
 src/aarnn/BodyComponent.s: src/aarnn/BodyComponent.cpp.s
@@ -401,8 +335,7 @@ src/aarnn/BodyComponent.s: src/aarnn/BodyComponent.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/BodyComponent.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BodyComponent.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BodyComponent.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BodyComponent.cpp.s
 .PHONY : src/aarnn/BodyComponent.cpp.s
 
 src/aarnn/BodyShapeComponent.o: src/aarnn/BodyShapeComponent.cpp.o
@@ -410,8 +343,7 @@ src/aarnn/BodyShapeComponent.o: src/aarnn/BodyShapeComponent.cpp.o
 
 # target to build an object file
 src/aarnn/BodyShapeComponent.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BodyShapeComponent.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BodyShapeComponent.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BodyShapeComponent.cpp.o
 .PHONY : src/aarnn/BodyShapeComponent.cpp.o
 
 src/aarnn/BodyShapeComponent.i: src/aarnn/BodyShapeComponent.cpp.i
@@ -419,8 +351,7 @@ src/aarnn/BodyShapeComponent.i: src/aarnn/BodyShapeComponent.cpp.i
 
 # target to preprocess a source file
 src/aarnn/BodyShapeComponent.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BodyShapeComponent.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BodyShapeComponent.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BodyShapeComponent.cpp.i
 .PHONY : src/aarnn/BodyShapeComponent.cpp.i
 
 src/aarnn/BodyShapeComponent.s: src/aarnn/BodyShapeComponent.cpp.s
@@ -428,8 +359,7 @@ src/aarnn/BodyShapeComponent.s: src/aarnn/BodyShapeComponent.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/BodyShapeComponent.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/BodyShapeComponent.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/BodyShapeComponent.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/BodyShapeComponent.cpp.s
 .PHONY : src/aarnn/BodyShapeComponent.cpp.s
 
 src/aarnn/ChemoreceptionProcessor.o: src/aarnn/ChemoreceptionProcessor.cpp.o
@@ -437,8 +367,7 @@ src/aarnn/ChemoreceptionProcessor.o: src/aarnn/ChemoreceptionProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/ChemoreceptionProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ChemoreceptionProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ChemoreceptionProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ChemoreceptionProcessor.cpp.o
 .PHONY : src/aarnn/ChemoreceptionProcessor.cpp.o
 
 src/aarnn/ChemoreceptionProcessor.i: src/aarnn/ChemoreceptionProcessor.cpp.i
@@ -446,8 +375,7 @@ src/aarnn/ChemoreceptionProcessor.i: src/aarnn/ChemoreceptionProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/ChemoreceptionProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ChemoreceptionProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ChemoreceptionProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ChemoreceptionProcessor.cpp.i
 .PHONY : src/aarnn/ChemoreceptionProcessor.cpp.i
 
 src/aarnn/ChemoreceptionProcessor.s: src/aarnn/ChemoreceptionProcessor.cpp.s
@@ -455,8 +383,7 @@ src/aarnn/ChemoreceptionProcessor.s: src/aarnn/ChemoreceptionProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/ChemoreceptionProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ChemoreceptionProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ChemoreceptionProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ChemoreceptionProcessor.cpp.s
 .PHONY : src/aarnn/ChemoreceptionProcessor.cpp.s
 
 src/aarnn/Cluster.o: src/aarnn/Cluster.cpp.o
@@ -464,8 +391,7 @@ src/aarnn/Cluster.o: src/aarnn/Cluster.cpp.o
 
 # target to build an object file
 src/aarnn/Cluster.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Cluster.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Cluster.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Cluster.cpp.o
 .PHONY : src/aarnn/Cluster.cpp.o
 
 src/aarnn/Cluster.i: src/aarnn/Cluster.cpp.i
@@ -473,8 +399,7 @@ src/aarnn/Cluster.i: src/aarnn/Cluster.cpp.i
 
 # target to preprocess a source file
 src/aarnn/Cluster.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Cluster.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Cluster.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Cluster.cpp.i
 .PHONY : src/aarnn/Cluster.cpp.i
 
 src/aarnn/Cluster.s: src/aarnn/Cluster.cpp.s
@@ -482,8 +407,7 @@ src/aarnn/Cluster.s: src/aarnn/Cluster.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/Cluster.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Cluster.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Cluster.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Cluster.cpp.s
 .PHONY : src/aarnn/Cluster.cpp.s
 
 src/aarnn/Dendrite.o: src/aarnn/Dendrite.cpp.o
@@ -491,8 +415,7 @@ src/aarnn/Dendrite.o: src/aarnn/Dendrite.cpp.o
 
 # target to build an object file
 src/aarnn/Dendrite.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Dendrite.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Dendrite.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Dendrite.cpp.o
 .PHONY : src/aarnn/Dendrite.cpp.o
 
 src/aarnn/Dendrite.i: src/aarnn/Dendrite.cpp.i
@@ -500,8 +423,7 @@ src/aarnn/Dendrite.i: src/aarnn/Dendrite.cpp.i
 
 # target to preprocess a source file
 src/aarnn/Dendrite.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Dendrite.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Dendrite.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Dendrite.cpp.i
 .PHONY : src/aarnn/Dendrite.cpp.i
 
 src/aarnn/Dendrite.s: src/aarnn/Dendrite.cpp.s
@@ -509,8 +431,7 @@ src/aarnn/Dendrite.s: src/aarnn/Dendrite.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/Dendrite.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Dendrite.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Dendrite.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Dendrite.cpp.s
 .PHONY : src/aarnn/Dendrite.cpp.s
 
 src/aarnn/DendriteBouton.o: src/aarnn/DendriteBouton.cpp.o
@@ -518,8 +439,7 @@ src/aarnn/DendriteBouton.o: src/aarnn/DendriteBouton.cpp.o
 
 # target to build an object file
 src/aarnn/DendriteBouton.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/DendriteBouton.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/DendriteBouton.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/DendriteBouton.cpp.o
 .PHONY : src/aarnn/DendriteBouton.cpp.o
 
 src/aarnn/DendriteBouton.i: src/aarnn/DendriteBouton.cpp.i
@@ -527,8 +447,7 @@ src/aarnn/DendriteBouton.i: src/aarnn/DendriteBouton.cpp.i
 
 # target to preprocess a source file
 src/aarnn/DendriteBouton.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/DendriteBouton.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/DendriteBouton.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/DendriteBouton.cpp.i
 .PHONY : src/aarnn/DendriteBouton.cpp.i
 
 src/aarnn/DendriteBouton.s: src/aarnn/DendriteBouton.cpp.s
@@ -536,8 +455,7 @@ src/aarnn/DendriteBouton.s: src/aarnn/DendriteBouton.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/DendriteBouton.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/DendriteBouton.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/DendriteBouton.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/DendriteBouton.cpp.s
 .PHONY : src/aarnn/DendriteBouton.cpp.s
 
 src/aarnn/DendriteBranch.o: src/aarnn/DendriteBranch.cpp.o
@@ -545,8 +463,7 @@ src/aarnn/DendriteBranch.o: src/aarnn/DendriteBranch.cpp.o
 
 # target to build an object file
 src/aarnn/DendriteBranch.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/DendriteBranch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/DendriteBranch.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/DendriteBranch.cpp.o
 .PHONY : src/aarnn/DendriteBranch.cpp.o
 
 src/aarnn/DendriteBranch.i: src/aarnn/DendriteBranch.cpp.i
@@ -554,8 +471,7 @@ src/aarnn/DendriteBranch.i: src/aarnn/DendriteBranch.cpp.i
 
 # target to preprocess a source file
 src/aarnn/DendriteBranch.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/DendriteBranch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/DendriteBranch.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/DendriteBranch.cpp.i
 .PHONY : src/aarnn/DendriteBranch.cpp.i
 
 src/aarnn/DendriteBranch.s: src/aarnn/DendriteBranch.cpp.s
@@ -563,8 +479,7 @@ src/aarnn/DendriteBranch.s: src/aarnn/DendriteBranch.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/DendriteBranch.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/DendriteBranch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/DendriteBranch.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/DendriteBranch.cpp.s
 .PHONY : src/aarnn/DendriteBranch.cpp.s
 
 src/aarnn/Effector.o: src/aarnn/Effector.cpp.o
@@ -572,8 +487,7 @@ src/aarnn/Effector.o: src/aarnn/Effector.cpp.o
 
 # target to build an object file
 src/aarnn/Effector.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Effector.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Effector.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Effector.cpp.o
 .PHONY : src/aarnn/Effector.cpp.o
 
 src/aarnn/Effector.i: src/aarnn/Effector.cpp.i
@@ -581,8 +495,7 @@ src/aarnn/Effector.i: src/aarnn/Effector.cpp.i
 
 # target to preprocess a source file
 src/aarnn/Effector.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Effector.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Effector.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Effector.cpp.i
 .PHONY : src/aarnn/Effector.cpp.i
 
 src/aarnn/Effector.s: src/aarnn/Effector.cpp.s
@@ -590,8 +503,7 @@ src/aarnn/Effector.s: src/aarnn/Effector.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/Effector.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Effector.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Effector.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Effector.cpp.s
 .PHONY : src/aarnn/Effector.cpp.s
 
 src/aarnn/ElectroreceptionProcessor.o: src/aarnn/ElectroreceptionProcessor.cpp.o
@@ -599,8 +511,7 @@ src/aarnn/ElectroreceptionProcessor.o: src/aarnn/ElectroreceptionProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/ElectroreceptionProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ElectroreceptionProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ElectroreceptionProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ElectroreceptionProcessor.cpp.o
 .PHONY : src/aarnn/ElectroreceptionProcessor.cpp.o
 
 src/aarnn/ElectroreceptionProcessor.i: src/aarnn/ElectroreceptionProcessor.cpp.i
@@ -608,8 +519,7 @@ src/aarnn/ElectroreceptionProcessor.i: src/aarnn/ElectroreceptionProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/ElectroreceptionProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ElectroreceptionProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ElectroreceptionProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ElectroreceptionProcessor.cpp.i
 .PHONY : src/aarnn/ElectroreceptionProcessor.cpp.i
 
 src/aarnn/ElectroreceptionProcessor.s: src/aarnn/ElectroreceptionProcessor.cpp.s
@@ -617,8 +527,7 @@ src/aarnn/ElectroreceptionProcessor.s: src/aarnn/ElectroreceptionProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/ElectroreceptionProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ElectroreceptionProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ElectroreceptionProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ElectroreceptionProcessor.cpp.s
 .PHONY : src/aarnn/ElectroreceptionProcessor.cpp.s
 
 src/aarnn/GustatoryProcessor.o: src/aarnn/GustatoryProcessor.cpp.o
@@ -626,8 +535,7 @@ src/aarnn/GustatoryProcessor.o: src/aarnn/GustatoryProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/GustatoryProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/GustatoryProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/GustatoryProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/GustatoryProcessor.cpp.o
 .PHONY : src/aarnn/GustatoryProcessor.cpp.o
 
 src/aarnn/GustatoryProcessor.i: src/aarnn/GustatoryProcessor.cpp.i
@@ -635,8 +543,7 @@ src/aarnn/GustatoryProcessor.i: src/aarnn/GustatoryProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/GustatoryProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/GustatoryProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/GustatoryProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/GustatoryProcessor.cpp.i
 .PHONY : src/aarnn/GustatoryProcessor.cpp.i
 
 src/aarnn/GustatoryProcessor.s: src/aarnn/GustatoryProcessor.cpp.s
@@ -644,8 +551,7 @@ src/aarnn/GustatoryProcessor.s: src/aarnn/GustatoryProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/GustatoryProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/GustatoryProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/GustatoryProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/GustatoryProcessor.cpp.s
 .PHONY : src/aarnn/GustatoryProcessor.cpp.s
 
 src/aarnn/HeartbeatRespirationProcessor.o: src/aarnn/HeartbeatRespirationProcessor.cpp.o
@@ -653,8 +559,7 @@ src/aarnn/HeartbeatRespirationProcessor.o: src/aarnn/HeartbeatRespirationProcess
 
 # target to build an object file
 src/aarnn/HeartbeatRespirationProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.o
 .PHONY : src/aarnn/HeartbeatRespirationProcessor.cpp.o
 
 src/aarnn/HeartbeatRespirationProcessor.i: src/aarnn/HeartbeatRespirationProcessor.cpp.i
@@ -662,8 +567,7 @@ src/aarnn/HeartbeatRespirationProcessor.i: src/aarnn/HeartbeatRespirationProcess
 
 # target to preprocess a source file
 src/aarnn/HeartbeatRespirationProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.i
 .PHONY : src/aarnn/HeartbeatRespirationProcessor.cpp.i
 
 src/aarnn/HeartbeatRespirationProcessor.s: src/aarnn/HeartbeatRespirationProcessor.cpp.s
@@ -671,8 +575,7 @@ src/aarnn/HeartbeatRespirationProcessor.s: src/aarnn/HeartbeatRespirationProcess
 
 # target to generate assembly for a file
 src/aarnn/HeartbeatRespirationProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/HeartbeatRespirationProcessor.cpp.s
 .PHONY : src/aarnn/HeartbeatRespirationProcessor.cpp.s
 
 src/aarnn/HungerThirstProcessor.o: src/aarnn/HungerThirstProcessor.cpp.o
@@ -680,8 +583,7 @@ src/aarnn/HungerThirstProcessor.o: src/aarnn/HungerThirstProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/HungerThirstProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/HungerThirstProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/HungerThirstProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/HungerThirstProcessor.cpp.o
 .PHONY : src/aarnn/HungerThirstProcessor.cpp.o
 
 src/aarnn/HungerThirstProcessor.i: src/aarnn/HungerThirstProcessor.cpp.i
@@ -689,8 +591,7 @@ src/aarnn/HungerThirstProcessor.i: src/aarnn/HungerThirstProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/HungerThirstProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/HungerThirstProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/HungerThirstProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/HungerThirstProcessor.cpp.i
 .PHONY : src/aarnn/HungerThirstProcessor.cpp.i
 
 src/aarnn/HungerThirstProcessor.s: src/aarnn/HungerThirstProcessor.cpp.s
@@ -698,8 +599,7 @@ src/aarnn/HungerThirstProcessor.s: src/aarnn/HungerThirstProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/HungerThirstProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/HungerThirstProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/HungerThirstProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/HungerThirstProcessor.cpp.s
 .PHONY : src/aarnn/HungerThirstProcessor.cpp.s
 
 src/aarnn/InteroceptiveProcessor.o: src/aarnn/InteroceptiveProcessor.cpp.o
@@ -707,8 +607,7 @@ src/aarnn/InteroceptiveProcessor.o: src/aarnn/InteroceptiveProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/InteroceptiveProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/InteroceptiveProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/InteroceptiveProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/InteroceptiveProcessor.cpp.o
 .PHONY : src/aarnn/InteroceptiveProcessor.cpp.o
 
 src/aarnn/InteroceptiveProcessor.i: src/aarnn/InteroceptiveProcessor.cpp.i
@@ -716,8 +615,7 @@ src/aarnn/InteroceptiveProcessor.i: src/aarnn/InteroceptiveProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/InteroceptiveProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/InteroceptiveProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/InteroceptiveProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/InteroceptiveProcessor.cpp.i
 .PHONY : src/aarnn/InteroceptiveProcessor.cpp.i
 
 src/aarnn/InteroceptiveProcessor.s: src/aarnn/InteroceptiveProcessor.cpp.s
@@ -725,8 +623,7 @@ src/aarnn/InteroceptiveProcessor.s: src/aarnn/InteroceptiveProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/InteroceptiveProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/InteroceptiveProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/InteroceptiveProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/InteroceptiveProcessor.cpp.s
 .PHONY : src/aarnn/InteroceptiveProcessor.cpp.s
 
 src/aarnn/LustProcessor.o: src/aarnn/LustProcessor.cpp.o
@@ -734,8 +631,7 @@ src/aarnn/LustProcessor.o: src/aarnn/LustProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/LustProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/LustProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/LustProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/LustProcessor.cpp.o
 .PHONY : src/aarnn/LustProcessor.cpp.o
 
 src/aarnn/LustProcessor.i: src/aarnn/LustProcessor.cpp.i
@@ -743,8 +639,7 @@ src/aarnn/LustProcessor.i: src/aarnn/LustProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/LustProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/LustProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/LustProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/LustProcessor.cpp.i
 .PHONY : src/aarnn/LustProcessor.cpp.i
 
 src/aarnn/LustProcessor.s: src/aarnn/LustProcessor.cpp.s
@@ -752,8 +647,7 @@ src/aarnn/LustProcessor.s: src/aarnn/LustProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/LustProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/LustProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/LustProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/LustProcessor.cpp.s
 .PHONY : src/aarnn/LustProcessor.cpp.s
 
 src/aarnn/MagnetoceptionProcessor.o: src/aarnn/MagnetoceptionProcessor.cpp.o
@@ -761,8 +655,7 @@ src/aarnn/MagnetoceptionProcessor.o: src/aarnn/MagnetoceptionProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/MagnetoceptionProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/MagnetoceptionProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/MagnetoceptionProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/MagnetoceptionProcessor.cpp.o
 .PHONY : src/aarnn/MagnetoceptionProcessor.cpp.o
 
 src/aarnn/MagnetoceptionProcessor.i: src/aarnn/MagnetoceptionProcessor.cpp.i
@@ -770,8 +663,7 @@ src/aarnn/MagnetoceptionProcessor.i: src/aarnn/MagnetoceptionProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/MagnetoceptionProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/MagnetoceptionProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/MagnetoceptionProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/MagnetoceptionProcessor.cpp.i
 .PHONY : src/aarnn/MagnetoceptionProcessor.cpp.i
 
 src/aarnn/MagnetoceptionProcessor.s: src/aarnn/MagnetoceptionProcessor.cpp.s
@@ -779,8 +671,7 @@ src/aarnn/MagnetoceptionProcessor.s: src/aarnn/MagnetoceptionProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/MagnetoceptionProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/MagnetoceptionProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/MagnetoceptionProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/MagnetoceptionProcessor.cpp.s
 .PHONY : src/aarnn/MagnetoceptionProcessor.cpp.s
 
 src/aarnn/NetworkClient.o: src/aarnn/NetworkClient.cpp.o
@@ -788,8 +679,7 @@ src/aarnn/NetworkClient.o: src/aarnn/NetworkClient.cpp.o
 
 # target to build an object file
 src/aarnn/NetworkClient.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NetworkClient.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NetworkClient.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkClient.cpp.o
 .PHONY : src/aarnn/NetworkClient.cpp.o
 
 src/aarnn/NetworkClient.i: src/aarnn/NetworkClient.cpp.i
@@ -797,8 +687,7 @@ src/aarnn/NetworkClient.i: src/aarnn/NetworkClient.cpp.i
 
 # target to preprocess a source file
 src/aarnn/NetworkClient.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NetworkClient.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NetworkClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkClient.cpp.i
 .PHONY : src/aarnn/NetworkClient.cpp.i
 
 src/aarnn/NetworkClient.s: src/aarnn/NetworkClient.cpp.s
@@ -806,8 +695,7 @@ src/aarnn/NetworkClient.s: src/aarnn/NetworkClient.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/NetworkClient.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NetworkClient.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NetworkClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkClient.cpp.s
 .PHONY : src/aarnn/NetworkClient.cpp.s
 
 src/aarnn/NetworkServer.o: src/aarnn/NetworkServer.cpp.o
@@ -815,8 +703,7 @@ src/aarnn/NetworkServer.o: src/aarnn/NetworkServer.cpp.o
 
 # target to build an object file
 src/aarnn/NetworkServer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NetworkServer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NetworkServer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkServer.cpp.o
 .PHONY : src/aarnn/NetworkServer.cpp.o
 
 src/aarnn/NetworkServer.i: src/aarnn/NetworkServer.cpp.i
@@ -824,8 +711,7 @@ src/aarnn/NetworkServer.i: src/aarnn/NetworkServer.cpp.i
 
 # target to preprocess a source file
 src/aarnn/NetworkServer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NetworkServer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NetworkServer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkServer.cpp.i
 .PHONY : src/aarnn/NetworkServer.cpp.i
 
 src/aarnn/NetworkServer.s: src/aarnn/NetworkServer.cpp.s
@@ -833,8 +719,7 @@ src/aarnn/NetworkServer.s: src/aarnn/NetworkServer.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/NetworkServer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NetworkServer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NetworkServer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkServer.cpp.s
 .PHONY : src/aarnn/NetworkServer.cpp.s
 
 src/aarnn/Neuron.o: src/aarnn/Neuron.cpp.o
@@ -842,8 +727,7 @@ src/aarnn/Neuron.o: src/aarnn/Neuron.cpp.o
 
 # target to build an object file
 src/aarnn/Neuron.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Neuron.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Neuron.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Neuron.cpp.o
 .PHONY : src/aarnn/Neuron.cpp.o
 
 src/aarnn/Neuron.i: src/aarnn/Neuron.cpp.i
@@ -851,8 +735,7 @@ src/aarnn/Neuron.i: src/aarnn/Neuron.cpp.i
 
 # target to preprocess a source file
 src/aarnn/Neuron.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Neuron.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Neuron.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Neuron.cpp.i
 .PHONY : src/aarnn/Neuron.cpp.i
 
 src/aarnn/Neuron.s: src/aarnn/Neuron.cpp.s
@@ -860,8 +743,7 @@ src/aarnn/Neuron.s: src/aarnn/Neuron.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/Neuron.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Neuron.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Neuron.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Neuron.cpp.s
 .PHONY : src/aarnn/Neuron.cpp.s
 
 src/aarnn/NeuronParameters.o: src/aarnn/NeuronParameters.cpp.o
@@ -869,8 +751,7 @@ src/aarnn/NeuronParameters.o: src/aarnn/NeuronParameters.cpp.o
 
 # target to build an object file
 src/aarnn/NeuronParameters.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NeuronParameters.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NeuronParameters.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NeuronParameters.cpp.o
 .PHONY : src/aarnn/NeuronParameters.cpp.o
 
 src/aarnn/NeuronParameters.i: src/aarnn/NeuronParameters.cpp.i
@@ -878,8 +759,7 @@ src/aarnn/NeuronParameters.i: src/aarnn/NeuronParameters.cpp.i
 
 # target to preprocess a source file
 src/aarnn/NeuronParameters.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NeuronParameters.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NeuronParameters.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NeuronParameters.cpp.i
 .PHONY : src/aarnn/NeuronParameters.cpp.i
 
 src/aarnn/NeuronParameters.s: src/aarnn/NeuronParameters.cpp.s
@@ -887,8 +767,7 @@ src/aarnn/NeuronParameters.s: src/aarnn/NeuronParameters.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/NeuronParameters.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NeuronParameters.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NeuronParameters.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NeuronParameters.cpp.s
 .PHONY : src/aarnn/NeuronParameters.cpp.s
 
 src/aarnn/NeuronalComponent.o: src/aarnn/NeuronalComponent.cpp.o
@@ -896,8 +775,7 @@ src/aarnn/NeuronalComponent.o: src/aarnn/NeuronalComponent.cpp.o
 
 # target to build an object file
 src/aarnn/NeuronalComponent.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NeuronalComponent.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NeuronalComponent.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NeuronalComponent.cpp.o
 .PHONY : src/aarnn/NeuronalComponent.cpp.o
 
 src/aarnn/NeuronalComponent.i: src/aarnn/NeuronalComponent.cpp.i
@@ -905,8 +783,7 @@ src/aarnn/NeuronalComponent.i: src/aarnn/NeuronalComponent.cpp.i
 
 # target to preprocess a source file
 src/aarnn/NeuronalComponent.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NeuronalComponent.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NeuronalComponent.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NeuronalComponent.cpp.i
 .PHONY : src/aarnn/NeuronalComponent.cpp.i
 
 src/aarnn/NeuronalComponent.s: src/aarnn/NeuronalComponent.cpp.s
@@ -914,8 +791,7 @@ src/aarnn/NeuronalComponent.s: src/aarnn/NeuronalComponent.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/NeuronalComponent.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/NeuronalComponent.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/NeuronalComponent.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NeuronalComponent.cpp.s
 .PHONY : src/aarnn/NeuronalComponent.cpp.s
 
 src/aarnn/OlfactoryProcessor.o: src/aarnn/OlfactoryProcessor.cpp.o
@@ -923,8 +799,7 @@ src/aarnn/OlfactoryProcessor.o: src/aarnn/OlfactoryProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/OlfactoryProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/OlfactoryProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/OlfactoryProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/OlfactoryProcessor.cpp.o
 .PHONY : src/aarnn/OlfactoryProcessor.cpp.o
 
 src/aarnn/OlfactoryProcessor.i: src/aarnn/OlfactoryProcessor.cpp.i
@@ -932,8 +807,7 @@ src/aarnn/OlfactoryProcessor.i: src/aarnn/OlfactoryProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/OlfactoryProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/OlfactoryProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/OlfactoryProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/OlfactoryProcessor.cpp.i
 .PHONY : src/aarnn/OlfactoryProcessor.cpp.i
 
 src/aarnn/OlfactoryProcessor.s: src/aarnn/OlfactoryProcessor.cpp.s
@@ -941,8 +815,7 @@ src/aarnn/OlfactoryProcessor.s: src/aarnn/OlfactoryProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/OlfactoryProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/OlfactoryProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/OlfactoryProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/OlfactoryProcessor.cpp.s
 .PHONY : src/aarnn/OlfactoryProcessor.cpp.s
 
 src/aarnn/Position.o: src/aarnn/Position.cpp.o
@@ -950,8 +823,7 @@ src/aarnn/Position.o: src/aarnn/Position.cpp.o
 
 # target to build an object file
 src/aarnn/Position.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Position.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Position.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Position.cpp.o
 .PHONY : src/aarnn/Position.cpp.o
 
 src/aarnn/Position.i: src/aarnn/Position.cpp.i
@@ -959,8 +831,7 @@ src/aarnn/Position.i: src/aarnn/Position.cpp.i
 
 # target to preprocess a source file
 src/aarnn/Position.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Position.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Position.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Position.cpp.i
 .PHONY : src/aarnn/Position.cpp.i
 
 src/aarnn/Position.s: src/aarnn/Position.cpp.s
@@ -968,8 +839,7 @@ src/aarnn/Position.s: src/aarnn/Position.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/Position.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Position.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Position.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Position.cpp.s
 .PHONY : src/aarnn/Position.cpp.s
 
 src/aarnn/PressureProcessor.o: src/aarnn/PressureProcessor.cpp.o
@@ -977,8 +847,7 @@ src/aarnn/PressureProcessor.o: src/aarnn/PressureProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/PressureProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PressureProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PressureProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/PressureProcessor.cpp.o
 .PHONY : src/aarnn/PressureProcessor.cpp.o
 
 src/aarnn/PressureProcessor.i: src/aarnn/PressureProcessor.cpp.i
@@ -986,8 +855,7 @@ src/aarnn/PressureProcessor.i: src/aarnn/PressureProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/PressureProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PressureProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PressureProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/PressureProcessor.cpp.i
 .PHONY : src/aarnn/PressureProcessor.cpp.i
 
 src/aarnn/PressureProcessor.s: src/aarnn/PressureProcessor.cpp.s
@@ -995,8 +863,7 @@ src/aarnn/PressureProcessor.s: src/aarnn/PressureProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/PressureProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PressureProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PressureProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/PressureProcessor.cpp.s
 .PHONY : src/aarnn/PressureProcessor.cpp.s
 
 src/aarnn/ProprioceptiveProcessor.o: src/aarnn/ProprioceptiveProcessor.cpp.o
@@ -1004,8 +871,7 @@ src/aarnn/ProprioceptiveProcessor.o: src/aarnn/ProprioceptiveProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/ProprioceptiveProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ProprioceptiveProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ProprioceptiveProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ProprioceptiveProcessor.cpp.o
 .PHONY : src/aarnn/ProprioceptiveProcessor.cpp.o
 
 src/aarnn/ProprioceptiveProcessor.i: src/aarnn/ProprioceptiveProcessor.cpp.i
@@ -1013,8 +879,7 @@ src/aarnn/ProprioceptiveProcessor.i: src/aarnn/ProprioceptiveProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/ProprioceptiveProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ProprioceptiveProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ProprioceptiveProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ProprioceptiveProcessor.cpp.i
 .PHONY : src/aarnn/ProprioceptiveProcessor.cpp.i
 
 src/aarnn/ProprioceptiveProcessor.s: src/aarnn/ProprioceptiveProcessor.cpp.s
@@ -1022,8 +887,7 @@ src/aarnn/ProprioceptiveProcessor.s: src/aarnn/ProprioceptiveProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/ProprioceptiveProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/ProprioceptiveProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/ProprioceptiveProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ProprioceptiveProcessor.cpp.s
 .PHONY : src/aarnn/ProprioceptiveProcessor.cpp.s
 
 src/aarnn/PruriceptionProcessor.o: src/aarnn/PruriceptionProcessor.cpp.o
@@ -1031,8 +895,7 @@ src/aarnn/PruriceptionProcessor.o: src/aarnn/PruriceptionProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/PruriceptionProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PruriceptionProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PruriceptionProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/PruriceptionProcessor.cpp.o
 .PHONY : src/aarnn/PruriceptionProcessor.cpp.o
 
 src/aarnn/PruriceptionProcessor.i: src/aarnn/PruriceptionProcessor.cpp.i
@@ -1040,8 +903,7 @@ src/aarnn/PruriceptionProcessor.i: src/aarnn/PruriceptionProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/PruriceptionProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PruriceptionProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PruriceptionProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/PruriceptionProcessor.cpp.i
 .PHONY : src/aarnn/PruriceptionProcessor.cpp.i
 
 src/aarnn/PruriceptionProcessor.s: src/aarnn/PruriceptionProcessor.cpp.s
@@ -1049,44 +911,15 @@ src/aarnn/PruriceptionProcessor.s: src/aarnn/PruriceptionProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/PruriceptionProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PruriceptionProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PruriceptionProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/PruriceptionProcessor.cpp.s
 .PHONY : src/aarnn/PruriceptionProcessor.cpp.s
-
-src/aarnn/PulseAudioMic.o: src/aarnn/PulseAudioMic.cpp.o
-.PHONY : src/aarnn/PulseAudioMic.o
-
-# target to build an object file
-src/aarnn/PulseAudioMic.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PulseAudioMic.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PulseAudioMic.cpp.o
-.PHONY : src/aarnn/PulseAudioMic.cpp.o
-
-src/aarnn/PulseAudioMic.i: src/aarnn/PulseAudioMic.cpp.i
-.PHONY : src/aarnn/PulseAudioMic.i
-
-# target to preprocess a source file
-src/aarnn/PulseAudioMic.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PulseAudioMic.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PulseAudioMic.cpp.i
-.PHONY : src/aarnn/PulseAudioMic.cpp.i
-
-src/aarnn/PulseAudioMic.s: src/aarnn/PulseAudioMic.cpp.s
-.PHONY : src/aarnn/PulseAudioMic.s
-
-# target to generate assembly for a file
-src/aarnn/PulseAudioMic.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/PulseAudioMic.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/PulseAudioMic.cpp.s
-.PHONY : src/aarnn/PulseAudioMic.cpp.s
 
 src/aarnn/SatietyProcessor.o: src/aarnn/SatietyProcessor.cpp.o
 .PHONY : src/aarnn/SatietyProcessor.o
 
 # target to build an object file
 src/aarnn/SatietyProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SatietyProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SatietyProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SatietyProcessor.cpp.o
 .PHONY : src/aarnn/SatietyProcessor.cpp.o
 
 src/aarnn/SatietyProcessor.i: src/aarnn/SatietyProcessor.cpp.i
@@ -1094,8 +927,7 @@ src/aarnn/SatietyProcessor.i: src/aarnn/SatietyProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/SatietyProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SatietyProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SatietyProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SatietyProcessor.cpp.i
 .PHONY : src/aarnn/SatietyProcessor.cpp.i
 
 src/aarnn/SatietyProcessor.s: src/aarnn/SatietyProcessor.cpp.s
@@ -1103,8 +935,7 @@ src/aarnn/SatietyProcessor.s: src/aarnn/SatietyProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/SatietyProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SatietyProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SatietyProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SatietyProcessor.cpp.s
 .PHONY : src/aarnn/SatietyProcessor.cpp.s
 
 src/aarnn/SensoryReceptor.o: src/aarnn/SensoryReceptor.cpp.o
@@ -1112,8 +943,7 @@ src/aarnn/SensoryReceptor.o: src/aarnn/SensoryReceptor.cpp.o
 
 # target to build an object file
 src/aarnn/SensoryReceptor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SensoryReceptor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SensoryReceptor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SensoryReceptor.cpp.o
 .PHONY : src/aarnn/SensoryReceptor.cpp.o
 
 src/aarnn/SensoryReceptor.i: src/aarnn/SensoryReceptor.cpp.i
@@ -1121,8 +951,7 @@ src/aarnn/SensoryReceptor.i: src/aarnn/SensoryReceptor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/SensoryReceptor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SensoryReceptor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SensoryReceptor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SensoryReceptor.cpp.i
 .PHONY : src/aarnn/SensoryReceptor.cpp.i
 
 src/aarnn/SensoryReceptor.s: src/aarnn/SensoryReceptor.cpp.s
@@ -1130,8 +959,7 @@ src/aarnn/SensoryReceptor.s: src/aarnn/SensoryReceptor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/SensoryReceptor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SensoryReceptor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SensoryReceptor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SensoryReceptor.cpp.s
 .PHONY : src/aarnn/SensoryReceptor.cpp.s
 
 src/aarnn/SensoryReceptorServer.o: src/aarnn/SensoryReceptorServer.cpp.o
@@ -1139,8 +967,7 @@ src/aarnn/SensoryReceptorServer.o: src/aarnn/SensoryReceptorServer.cpp.o
 
 # target to build an object file
 src/aarnn/SensoryReceptorServer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SensoryReceptorServer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SensoryReceptorServer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SensoryReceptorServer.cpp.o
 .PHONY : src/aarnn/SensoryReceptorServer.cpp.o
 
 src/aarnn/SensoryReceptorServer.i: src/aarnn/SensoryReceptorServer.cpp.i
@@ -1148,8 +975,7 @@ src/aarnn/SensoryReceptorServer.i: src/aarnn/SensoryReceptorServer.cpp.i
 
 # target to preprocess a source file
 src/aarnn/SensoryReceptorServer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SensoryReceptorServer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SensoryReceptorServer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SensoryReceptorServer.cpp.i
 .PHONY : src/aarnn/SensoryReceptorServer.cpp.i
 
 src/aarnn/SensoryReceptorServer.s: src/aarnn/SensoryReceptorServer.cpp.s
@@ -1157,8 +983,7 @@ src/aarnn/SensoryReceptorServer.s: src/aarnn/SensoryReceptorServer.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/SensoryReceptorServer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SensoryReceptorServer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SensoryReceptorServer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SensoryReceptorServer.cpp.s
 .PHONY : src/aarnn/SensoryReceptorServer.cpp.s
 
 src/aarnn/Soma.o: src/aarnn/Soma.cpp.o
@@ -1166,8 +991,7 @@ src/aarnn/Soma.o: src/aarnn/Soma.cpp.o
 
 # target to build an object file
 src/aarnn/Soma.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Soma.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Soma.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Soma.cpp.o
 .PHONY : src/aarnn/Soma.cpp.o
 
 src/aarnn/Soma.i: src/aarnn/Soma.cpp.i
@@ -1175,8 +999,7 @@ src/aarnn/Soma.i: src/aarnn/Soma.cpp.i
 
 # target to preprocess a source file
 src/aarnn/Soma.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Soma.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Soma.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Soma.cpp.i
 .PHONY : src/aarnn/Soma.cpp.i
 
 src/aarnn/Soma.s: src/aarnn/Soma.cpp.s
@@ -1184,8 +1007,7 @@ src/aarnn/Soma.s: src/aarnn/Soma.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/Soma.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/Soma.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/Soma.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/Soma.cpp.s
 .PHONY : src/aarnn/Soma.cpp.s
 
 src/aarnn/SomatosensoryProcessor.o: src/aarnn/SomatosensoryProcessor.cpp.o
@@ -1193,8 +1015,7 @@ src/aarnn/SomatosensoryProcessor.o: src/aarnn/SomatosensoryProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/SomatosensoryProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SomatosensoryProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SomatosensoryProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SomatosensoryProcessor.cpp.o
 .PHONY : src/aarnn/SomatosensoryProcessor.cpp.o
 
 src/aarnn/SomatosensoryProcessor.i: src/aarnn/SomatosensoryProcessor.cpp.i
@@ -1202,8 +1023,7 @@ src/aarnn/SomatosensoryProcessor.i: src/aarnn/SomatosensoryProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/SomatosensoryProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SomatosensoryProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SomatosensoryProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SomatosensoryProcessor.cpp.i
 .PHONY : src/aarnn/SomatosensoryProcessor.cpp.i
 
 src/aarnn/SomatosensoryProcessor.s: src/aarnn/SomatosensoryProcessor.cpp.s
@@ -1211,8 +1031,7 @@ src/aarnn/SomatosensoryProcessor.s: src/aarnn/SomatosensoryProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/SomatosensoryProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SomatosensoryProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SomatosensoryProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SomatosensoryProcessor.cpp.s
 .PHONY : src/aarnn/SomatosensoryProcessor.cpp.s
 
 src/aarnn/StretchProcessor.o: src/aarnn/StretchProcessor.cpp.o
@@ -1220,8 +1039,7 @@ src/aarnn/StretchProcessor.o: src/aarnn/StretchProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/StretchProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/StretchProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/StretchProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/StretchProcessor.cpp.o
 .PHONY : src/aarnn/StretchProcessor.cpp.o
 
 src/aarnn/StretchProcessor.i: src/aarnn/StretchProcessor.cpp.i
@@ -1229,8 +1047,7 @@ src/aarnn/StretchProcessor.i: src/aarnn/StretchProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/StretchProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/StretchProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/StretchProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/StretchProcessor.cpp.i
 .PHONY : src/aarnn/StretchProcessor.cpp.i
 
 src/aarnn/StretchProcessor.s: src/aarnn/StretchProcessor.cpp.s
@@ -1238,8 +1055,7 @@ src/aarnn/StretchProcessor.s: src/aarnn/StretchProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/StretchProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/StretchProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/StretchProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/StretchProcessor.cpp.s
 .PHONY : src/aarnn/StretchProcessor.cpp.s
 
 src/aarnn/SynapticGap.o: src/aarnn/SynapticGap.cpp.o
@@ -1247,8 +1063,7 @@ src/aarnn/SynapticGap.o: src/aarnn/SynapticGap.cpp.o
 
 # target to build an object file
 src/aarnn/SynapticGap.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SynapticGap.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SynapticGap.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SynapticGap.cpp.o
 .PHONY : src/aarnn/SynapticGap.cpp.o
 
 src/aarnn/SynapticGap.i: src/aarnn/SynapticGap.cpp.i
@@ -1256,8 +1071,7 @@ src/aarnn/SynapticGap.i: src/aarnn/SynapticGap.cpp.i
 
 # target to preprocess a source file
 src/aarnn/SynapticGap.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SynapticGap.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SynapticGap.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SynapticGap.cpp.i
 .PHONY : src/aarnn/SynapticGap.cpp.i
 
 src/aarnn/SynapticGap.s: src/aarnn/SynapticGap.cpp.s
@@ -1265,8 +1079,7 @@ src/aarnn/SynapticGap.s: src/aarnn/SynapticGap.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/SynapticGap.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/SynapticGap.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/SynapticGap.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/SynapticGap.cpp.s
 .PHONY : src/aarnn/SynapticGap.cpp.s
 
 src/aarnn/VisualProcessor.o: src/aarnn/VisualProcessor.cpp.o
@@ -1274,8 +1087,7 @@ src/aarnn/VisualProcessor.o: src/aarnn/VisualProcessor.cpp.o
 
 # target to build an object file
 src/aarnn/VisualProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/VisualProcessor.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/VisualProcessor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/VisualProcessor.cpp.o
 .PHONY : src/aarnn/VisualProcessor.cpp.o
 
 src/aarnn/VisualProcessor.i: src/aarnn/VisualProcessor.cpp.i
@@ -1283,8 +1095,7 @@ src/aarnn/VisualProcessor.i: src/aarnn/VisualProcessor.cpp.i
 
 # target to preprocess a source file
 src/aarnn/VisualProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/VisualProcessor.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/VisualProcessor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/VisualProcessor.cpp.i
 .PHONY : src/aarnn/VisualProcessor.cpp.i
 
 src/aarnn/VisualProcessor.s: src/aarnn/VisualProcessor.cpp.s
@@ -1292,44 +1103,15 @@ src/aarnn/VisualProcessor.s: src/aarnn/VisualProcessor.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/VisualProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/VisualProcessor.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/VisualProcessor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/VisualProcessor.cpp.s
 .PHONY : src/aarnn/VisualProcessor.cpp.s
-
-src/aarnn/avTimerCallback.o: src/aarnn/avTimerCallback.cpp.o
-.PHONY : src/aarnn/avTimerCallback.o
-
-# target to build an object file
-src/aarnn/avTimerCallback.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/avTimerCallback.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/avTimerCallback.cpp.o
-.PHONY : src/aarnn/avTimerCallback.cpp.o
-
-src/aarnn/avTimerCallback.i: src/aarnn/avTimerCallback.cpp.i
-.PHONY : src/aarnn/avTimerCallback.i
-
-# target to preprocess a source file
-src/aarnn/avTimerCallback.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/avTimerCallback.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/avTimerCallback.cpp.i
-.PHONY : src/aarnn/avTimerCallback.cpp.i
-
-src/aarnn/avTimerCallback.s: src/aarnn/avTimerCallback.cpp.s
-.PHONY : src/aarnn/avTimerCallback.s
-
-# target to generate assembly for a file
-src/aarnn/avTimerCallback.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/avTimerCallback.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/avTimerCallback.cpp.s
-.PHONY : src/aarnn/avTimerCallback.cpp.s
 
 src/aarnn/config.o: src/aarnn/config.cpp.o
 .PHONY : src/aarnn/config.o
 
 # target to build an object file
 src/aarnn/config.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/config.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/config.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/config.cpp.o
 .PHONY : src/aarnn/config.cpp.o
 
 src/aarnn/config.i: src/aarnn/config.cpp.i
@@ -1337,8 +1119,7 @@ src/aarnn/config.i: src/aarnn/config.cpp.i
 
 # target to preprocess a source file
 src/aarnn/config.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/config.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/config.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/config.cpp.i
 .PHONY : src/aarnn/config.cpp.i
 
 src/aarnn/config.s: src/aarnn/config.cpp.s
@@ -1346,8 +1127,7 @@ src/aarnn/config.s: src/aarnn/config.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/config.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/config.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/config.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/config.cpp.s
 .PHONY : src/aarnn/config.cpp.s
 
 src/aarnn/database.o: src/aarnn/database.cpp.o
@@ -1355,8 +1135,7 @@ src/aarnn/database.o: src/aarnn/database.cpp.o
 
 # target to build an object file
 src/aarnn/database.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/database.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/database.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/database.cpp.o
 .PHONY : src/aarnn/database.cpp.o
 
 src/aarnn/database.i: src/aarnn/database.cpp.i
@@ -1364,8 +1143,7 @@ src/aarnn/database.i: src/aarnn/database.cpp.i
 
 # target to preprocess a source file
 src/aarnn/database.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/database.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/database.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/database.cpp.i
 .PHONY : src/aarnn/database.cpp.i
 
 src/aarnn/database.s: src/aarnn/database.cpp.s
@@ -1373,8 +1151,7 @@ src/aarnn/database.s: src/aarnn/database.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/database.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/database.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/database.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/database.cpp.s
 .PHONY : src/aarnn/database.cpp.s
 
 src/aarnn/main.o: src/aarnn/main.cpp.o
@@ -1382,7 +1159,7 @@ src/aarnn/main.o: src/aarnn/main.cpp.o
 
 # target to build an object file
 src/aarnn/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/main.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/main.cpp.o
 .PHONY : src/aarnn/main.cpp.o
 
@@ -1391,7 +1168,7 @@ src/aarnn/main.i: src/aarnn/main.cpp.i
 
 # target to preprocess a source file
 src/aarnn/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/main.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/main.cpp.i
 .PHONY : src/aarnn/main.cpp.i
 
@@ -1400,7 +1177,7 @@ src/aarnn/main.s: src/aarnn/main.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/main.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/main.cpp.s
 .PHONY : src/aarnn/main.cpp.s
 
@@ -1409,8 +1186,7 @@ src/aarnn/portaudioMicThread.o: src/aarnn/portaudioMicThread.cpp.o
 
 # target to build an object file
 src/aarnn/portaudioMicThread.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/portaudioMicThread.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/portaudioMicThread.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/portaudioMicThread.cpp.o
 .PHONY : src/aarnn/portaudioMicThread.cpp.o
 
 src/aarnn/portaudioMicThread.i: src/aarnn/portaudioMicThread.cpp.i
@@ -1418,8 +1194,7 @@ src/aarnn/portaudioMicThread.i: src/aarnn/portaudioMicThread.cpp.i
 
 # target to preprocess a source file
 src/aarnn/portaudioMicThread.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/portaudioMicThread.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/portaudioMicThread.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/portaudioMicThread.cpp.i
 .PHONY : src/aarnn/portaudioMicThread.cpp.i
 
 src/aarnn/portaudioMicThread.s: src/aarnn/portaudioMicThread.cpp.s
@@ -1427,72 +1202,138 @@ src/aarnn/portaudioMicThread.s: src/aarnn/portaudioMicThread.cpp.s
 
 # target to generate assembly for a file
 src/aarnn/portaudioMicThread.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/portaudioMicThread.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/portaudioMicThread.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/portaudioMicThread.cpp.s
 .PHONY : src/aarnn/portaudioMicThread.cpp.s
 
-src/aarnn/timer.o: src/aarnn/timer.cpp.o
-.PHONY : src/aarnn/timer.o
+src/audio/AuditoryManager.o: src/audio/AuditoryManager.cpp.o
+.PHONY : src/audio/AuditoryManager.o
 
 # target to build an object file
-src/aarnn/timer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/timer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/timer.cpp.o
-.PHONY : src/aarnn/timer.cpp.o
+src/audio/AuditoryManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditoryManager.cpp.o
+.PHONY : src/audio/AuditoryManager.cpp.o
 
-src/aarnn/timer.i: src/aarnn/timer.cpp.i
-.PHONY : src/aarnn/timer.i
+src/audio/AuditoryManager.i: src/audio/AuditoryManager.cpp.i
+.PHONY : src/audio/AuditoryManager.i
 
 # target to preprocess a source file
-src/aarnn/timer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/timer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/timer.cpp.i
-.PHONY : src/aarnn/timer.cpp.i
+src/audio/AuditoryManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditoryManager.cpp.i
+.PHONY : src/audio/AuditoryManager.cpp.i
 
-src/aarnn/timer.s: src/aarnn/timer.cpp.s
-.PHONY : src/aarnn/timer.s
+src/audio/AuditoryManager.s: src/audio/AuditoryManager.cpp.s
+.PHONY : src/audio/AuditoryManager.s
 
 # target to generate assembly for a file
-src/aarnn/timer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/timer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/timer.cpp.s
-.PHONY : src/aarnn/timer.cpp.s
+src/audio/AuditoryManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditoryManager.cpp.s
+.PHONY : src/audio/AuditoryManager.cpp.s
 
-src/aarnn/utils.o: src/aarnn/utils.cpp.o
-.PHONY : src/aarnn/utils.o
+src/audio/AuditoryProcessor.o: src/audio/AuditoryProcessor.cpp.o
+.PHONY : src/audio/AuditoryProcessor.o
 
 # target to build an object file
-src/aarnn/utils.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/utils.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/utils.cpp.o
-.PHONY : src/aarnn/utils.cpp.o
+src/audio/AuditoryProcessor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditoryProcessor.cpp.o
+.PHONY : src/audio/AuditoryProcessor.cpp.o
 
-src/aarnn/utils.i: src/aarnn/utils.cpp.i
-.PHONY : src/aarnn/utils.i
+src/audio/AuditoryProcessor.i: src/audio/AuditoryProcessor.cpp.i
+.PHONY : src/audio/AuditoryProcessor.i
 
 # target to preprocess a source file
-src/aarnn/utils.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/utils.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/utils.cpp.i
-.PHONY : src/aarnn/utils.cpp.i
+src/audio/AuditoryProcessor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditoryProcessor.cpp.i
+.PHONY : src/audio/AuditoryProcessor.cpp.i
 
-src/aarnn/utils.s: src/aarnn/utils.cpp.s
-.PHONY : src/aarnn/utils.s
+src/audio/AuditoryProcessor.s: src/audio/AuditoryProcessor.cpp.s
+.PHONY : src/audio/AuditoryProcessor.s
 
 # target to generate assembly for a file
-src/aarnn/utils.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/aarnn/utils.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/aarnn/utils.cpp.s
-.PHONY : src/aarnn/utils.cpp.s
+src/audio/AuditoryProcessor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditoryProcessor.cpp.s
+.PHONY : src/audio/AuditoryProcessor.cpp.s
+
+src/audio/AuditorySolution.o: src/audio/AuditorySolution.cpp.o
+.PHONY : src/audio/AuditorySolution.o
+
+# target to build an object file
+src/audio/AuditorySolution.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditorySolution.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/audio/AuditorySolution.cpp.o
+.PHONY : src/audio/AuditorySolution.cpp.o
+
+src/audio/AuditorySolution.i: src/audio/AuditorySolution.cpp.i
+.PHONY : src/audio/AuditorySolution.i
+
+# target to preprocess a source file
+src/audio/AuditorySolution.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditorySolution.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/audio/AuditorySolution.cpp.i
+.PHONY : src/audio/AuditorySolution.cpp.i
+
+src/audio/AuditorySolution.s: src/audio/AuditorySolution.cpp.s
+.PHONY : src/audio/AuditorySolution.s
+
+# target to generate assembly for a file
+src/audio/AuditorySolution.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/AuditorySolution.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/audio/AuditorySolution.cpp.s
+.PHONY : src/audio/AuditorySolution.cpp.s
+
+src/audio/PulseAudioMic.o: src/audio/PulseAudioMic.cpp.o
+.PHONY : src/audio/PulseAudioMic.o
+
+# target to build an object file
+src/audio/PulseAudioMic.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/PulseAudioMic.cpp.o
+.PHONY : src/audio/PulseAudioMic.cpp.o
+
+src/audio/PulseAudioMic.i: src/audio/PulseAudioMic.cpp.i
+.PHONY : src/audio/PulseAudioMic.i
+
+# target to preprocess a source file
+src/audio/PulseAudioMic.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/PulseAudioMic.cpp.i
+.PHONY : src/audio/PulseAudioMic.cpp.i
+
+src/audio/PulseAudioMic.s: src/audio/PulseAudioMic.cpp.s
+.PHONY : src/audio/PulseAudioMic.s
+
+# target to generate assembly for a file
+src/audio/PulseAudioMic.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/PulseAudioMic.cpp.s
+.PHONY : src/audio/PulseAudioMic.cpp.s
+
+src/audio/avTimerCallback.o: src/audio/avTimerCallback.cpp.o
+.PHONY : src/audio/avTimerCallback.o
+
+# target to build an object file
+src/audio/avTimerCallback.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/avTimerCallback.cpp.o
+.PHONY : src/audio/avTimerCallback.cpp.o
+
+src/audio/avTimerCallback.i: src/audio/avTimerCallback.cpp.i
+.PHONY : src/audio/avTimerCallback.i
+
+# target to preprocess a source file
+src/audio/avTimerCallback.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/avTimerCallback.cpp.i
+.PHONY : src/audio/avTimerCallback.cpp.i
+
+src/audio/avTimerCallback.s: src/audio/avTimerCallback.cpp.s
+.PHONY : src/audio/avTimerCallback.s
+
+# target to generate assembly for a file
+src/audio/avTimerCallback.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/avTimerCallback.cpp.s
+.PHONY : src/audio/avTimerCallback.cpp.s
 
 src/shared_libs/Logger.o: src/shared_libs/Logger.cpp.o
 .PHONY : src/shared_libs/Logger.o
 
 # target to build an object file
 src/shared_libs/Logger.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/shared_libs/Logger.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/shared_libs/Logger.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visualiser.dir/build.make CMakeFiles/Visualiser.dir/src/shared_libs/Logger.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/Logger.cpp.o
 .PHONY : src/shared_libs/Logger.cpp.o
 
 src/shared_libs/Logger.i: src/shared_libs/Logger.cpp.i
@@ -1500,9 +1341,7 @@ src/shared_libs/Logger.i: src/shared_libs/Logger.cpp.i
 
 # target to preprocess a source file
 src/shared_libs/Logger.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/shared_libs/Logger.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/shared_libs/Logger.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visualiser.dir/build.make CMakeFiles/Visualiser.dir/src/shared_libs/Logger.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/Logger.cpp.i
 .PHONY : src/shared_libs/Logger.cpp.i
 
 src/shared_libs/Logger.s: src/shared_libs/Logger.cpp.s
@@ -1510,19 +1349,63 @@ src/shared_libs/Logger.s: src/shared_libs/Logger.cpp.s
 
 # target to generate assembly for a file
 src/shared_libs/Logger.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/shared_libs/Logger.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/shared_libs/Logger.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visualiser.dir/build.make CMakeFiles/Visualiser.dir/src/shared_libs/Logger.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/Logger.cpp.s
 .PHONY : src/shared_libs/Logger.cpp.s
+
+src/shared_libs/timer.o: src/shared_libs/timer.cpp.o
+.PHONY : src/shared_libs/timer.o
+
+# target to build an object file
+src/shared_libs/timer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/timer.cpp.o
+.PHONY : src/shared_libs/timer.cpp.o
+
+src/shared_libs/timer.i: src/shared_libs/timer.cpp.i
+.PHONY : src/shared_libs/timer.i
+
+# target to preprocess a source file
+src/shared_libs/timer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/timer.cpp.i
+.PHONY : src/shared_libs/timer.cpp.i
+
+src/shared_libs/timer.s: src/shared_libs/timer.cpp.s
+.PHONY : src/shared_libs/timer.s
+
+# target to generate assembly for a file
+src/shared_libs/timer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/timer.cpp.s
+.PHONY : src/shared_libs/timer.cpp.s
+
+src/shared_libs/utils.o: src/shared_libs/utils.cpp.o
+.PHONY : src/shared_libs/utils.o
+
+# target to build an object file
+src/shared_libs/utils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/utils.cpp.o
+.PHONY : src/shared_libs/utils.cpp.o
+
+src/shared_libs/utils.i: src/shared_libs/utils.cpp.i
+.PHONY : src/shared_libs/utils.i
+
+# target to preprocess a source file
+src/shared_libs/utils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/utils.cpp.i
+.PHONY : src/shared_libs/utils.cpp.i
+
+src/shared_libs/utils.s: src/shared_libs/utils.cpp.s
+.PHONY : src/shared_libs/utils.s
+
+# target to generate assembly for a file
+src/shared_libs/utils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/utils.cpp.s
+.PHONY : src/shared_libs/utils.cpp.s
 
 src/shared_libs/vclient.o: src/shared_libs/vclient.cpp.o
 .PHONY : src/shared_libs/vclient.o
 
 # target to build an object file
 src/shared_libs/vclient.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/shared_libs/vclient.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/shared_libs/vclient.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visualiser.dir/build.make CMakeFiles/Visualiser.dir/src/shared_libs/vclient.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/vclient.cpp.o
 .PHONY : src/shared_libs/vclient.cpp.o
 
 src/shared_libs/vclient.i: src/shared_libs/vclient.cpp.i
@@ -1530,9 +1413,7 @@ src/shared_libs/vclient.i: src/shared_libs/vclient.cpp.i
 
 # target to preprocess a source file
 src/shared_libs/vclient.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/shared_libs/vclient.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/shared_libs/vclient.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visualiser.dir/build.make CMakeFiles/Visualiser.dir/src/shared_libs/vclient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/vclient.cpp.i
 .PHONY : src/shared_libs/vclient.cpp.i
 
 src/shared_libs/vclient.s: src/shared_libs/vclient.cpp.s
@@ -1540,9 +1421,7 @@ src/shared_libs/vclient.s: src/shared_libs/vclient.cpp.s
 
 # target to generate assembly for a file
 src/shared_libs/vclient.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Audio.dir/build.make CMakeFiles/Audio.dir/src/shared_libs/vclient.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AARNN.dir/build.make CMakeFiles/AARNN.dir/src/shared_libs/vclient.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visualiser.dir/build.make CMakeFiles/Visualiser.dir/src/shared_libs/vclient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/vclient.cpp.s
 .PHONY : src/shared_libs/vclient.cpp.s
 
 src/visualiser/visualiser.o: src/visualiser/visualiser.cpp.o
@@ -1599,21 +1478,14 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... codegen"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... AARNN"
 	@echo "... Audio"
 	@echo "... Visualiser"
-	@echo "... src/aarnn/AuditoryManager.o"
-	@echo "... src/aarnn/AuditoryManager.i"
-	@echo "... src/aarnn/AuditoryManager.s"
-	@echo "... src/aarnn/AuditoryProcessor.o"
-	@echo "... src/aarnn/AuditoryProcessor.i"
-	@echo "... src/aarnn/AuditoryProcessor.s"
-	@echo "... src/aarnn/AuditorySolution.o"
-	@echo "... src/aarnn/AuditorySolution.i"
-	@echo "... src/aarnn/AuditorySolution.s"
+	@echo "... aarnn_core"
+	@echo "... audio_lib"
+	@echo "... common"
 	@echo "... src/aarnn/Axon.o"
 	@echo "... src/aarnn/Axon.i"
 	@echo "... src/aarnn/Axon.s"
@@ -1704,9 +1576,6 @@ help:
 	@echo "... src/aarnn/PruriceptionProcessor.o"
 	@echo "... src/aarnn/PruriceptionProcessor.i"
 	@echo "... src/aarnn/PruriceptionProcessor.s"
-	@echo "... src/aarnn/PulseAudioMic.o"
-	@echo "... src/aarnn/PulseAudioMic.i"
-	@echo "... src/aarnn/PulseAudioMic.s"
 	@echo "... src/aarnn/SatietyProcessor.o"
 	@echo "... src/aarnn/SatietyProcessor.i"
 	@echo "... src/aarnn/SatietyProcessor.s"
@@ -1731,9 +1600,6 @@ help:
 	@echo "... src/aarnn/VisualProcessor.o"
 	@echo "... src/aarnn/VisualProcessor.i"
 	@echo "... src/aarnn/VisualProcessor.s"
-	@echo "... src/aarnn/avTimerCallback.o"
-	@echo "... src/aarnn/avTimerCallback.i"
-	@echo "... src/aarnn/avTimerCallback.s"
 	@echo "... src/aarnn/config.o"
 	@echo "... src/aarnn/config.i"
 	@echo "... src/aarnn/config.s"
@@ -1746,15 +1612,30 @@ help:
 	@echo "... src/aarnn/portaudioMicThread.o"
 	@echo "... src/aarnn/portaudioMicThread.i"
 	@echo "... src/aarnn/portaudioMicThread.s"
-	@echo "... src/aarnn/timer.o"
-	@echo "... src/aarnn/timer.i"
-	@echo "... src/aarnn/timer.s"
-	@echo "... src/aarnn/utils.o"
-	@echo "... src/aarnn/utils.i"
-	@echo "... src/aarnn/utils.s"
+	@echo "... src/audio/AuditoryManager.o"
+	@echo "... src/audio/AuditoryManager.i"
+	@echo "... src/audio/AuditoryManager.s"
+	@echo "... src/audio/AuditoryProcessor.o"
+	@echo "... src/audio/AuditoryProcessor.i"
+	@echo "... src/audio/AuditoryProcessor.s"
+	@echo "... src/audio/AuditorySolution.o"
+	@echo "... src/audio/AuditorySolution.i"
+	@echo "... src/audio/AuditorySolution.s"
+	@echo "... src/audio/PulseAudioMic.o"
+	@echo "... src/audio/PulseAudioMic.i"
+	@echo "... src/audio/PulseAudioMic.s"
+	@echo "... src/audio/avTimerCallback.o"
+	@echo "... src/audio/avTimerCallback.i"
+	@echo "... src/audio/avTimerCallback.s"
 	@echo "... src/shared_libs/Logger.o"
 	@echo "... src/shared_libs/Logger.i"
 	@echo "... src/shared_libs/Logger.s"
+	@echo "... src/shared_libs/timer.o"
+	@echo "... src/shared_libs/timer.i"
+	@echo "... src/shared_libs/timer.s"
+	@echo "... src/shared_libs/utils.o"
+	@echo "... src/shared_libs/utils.i"
+	@echo "... src/shared_libs/utils.s"
 	@echo "... src/shared_libs/vclient.o"
 	@echo "... src/shared_libs/vclient.i"
 	@echo "... src/shared_libs/vclient.s"

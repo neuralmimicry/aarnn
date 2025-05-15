@@ -11,7 +11,7 @@ HungerThirstProcessor::~HungerThirstProcessor() {
 }
 
 bool HungerThirstProcessor::initialise() {
-    // Initialize simulation parameters
+    // Initialise simulation parameters
     return true;
 }
 

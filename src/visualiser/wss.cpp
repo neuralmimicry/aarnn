@@ -1,7 +1,7 @@
 #include "wss.h"
 
 WebSocketServer::WebSocketServer() {
-    // Initialize Asio Transport
+    // Initialise Asio Transport
     ws_server_.init_asio();
 
     // Register handler callbacks

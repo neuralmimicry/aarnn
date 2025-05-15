@@ -1,9 +1,11 @@
 #include "vclient.h"
 #include <curl/curl.h>
-#include <json/json.h> // Include a JSON library, such as jsoncpp
+#include <nlohmann/json.hpp>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+
+using json = nlohmann::json;
 
 // Function to handle the write callback for CURL
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
@@ -45,24 +47,40 @@ bool getPostgresCredentials(const std::string& vault_api_addr, const std::string
         curl_easy_cleanup(curl);
 
         // Parse the JSON response
-        Json::Value jsonData;
-        Json::CharReaderBuilder readerBuilder;
-        std::string errs;
-        std::istringstream iss(response_string);
-        if (!Json::parseFromStream(readerBuilder, iss, &jsonData, &errs)) {
-            std::cerr << "Failed to parse JSON: " << errs << std::endl;
+        json jsonData;
+        try {
+            jsonData = json::parse(response_string);
+        }
+        catch (const json::parse_error& e) {
+            std::cerr << "Failed to parse JSON: " << e.what() << "\n";
             return false;
         }
 
-        // Extract the credentials from the JSON response
+        // Vault wraps your secret under data.data
+        // like { "data": { "data": { "POSTGRES_USERNAME": "...", … } } }
+        if (!jsonData.contains("data") ||
+            !jsonData["data"].is_object() ||
+            !jsonData["data"].contains("data") ||
+            !jsonData["data"]["data"].is_object())
+        {
+            std::cerr << "Unexpected JSON structure in Vault response\n";
+            return false;
+        }
+
+        auto creds = jsonData["data"]["data"];
         try {
-            username = jsonData["data"]["data"]["POSTGRES_USERNAME"].asString();
-            password = jsonData["data"]["data"]["POSTGRES_PASSWORD"].asString();
-            database = jsonData["data"]["data"]["POSTGRES_DB"].asString();
-            database_host = jsonData["data"]["data"]["POSTGRES_HOST"].asString();
-            database_port = jsonData["data"]["data"]["POSTGRES_PORT"].asString();
-        } catch (const std::exception& e) {
-            std::cerr << "Error extracting credentials: " << e.what() << std::endl;
+            username      = creds.at("POSTGRES_USERNAME").get<std::string>();
+            password      = creds.at("POSTGRES_PASSWORD").get<std::string>();
+            database      = creds.at("POSTGRES_DB").       get<std::string>();
+            database_host = creds.at("POSTGRES_HOST").     get<std::string>();
+            database_port = creds.at("POSTGRES_PORT").     get<std::string>();
+        }
+        catch (const json::out_of_range& e) {
+            std::cerr << "Missing key in Vault JSON: " << e.what() << "\n";
+            return false;
+        }
+        catch (const json::type_error& e) {
+            std::cerr << "Type error in Vault JSON: " << e.what() << "\n";
             return false;
         }
 
@@ -72,7 +90,7 @@ bool getPostgresCredentials(const std::string& vault_api_addr, const std::string
     return false;
 }
 
-// Function to initialize the database connection
+// Function to initialise the database connection
 bool initialiseDatabaseConnection(std::string& connection_string) {
     const char* vault_addr_env = std::getenv("VAULT_ADDR");
     const char* vault_api_addr_env = std::getenv("VAULT_API_ADDR");
@@ -126,7 +144,7 @@ bool initialiseDatabaseConnection(std::string& connection_string) {
         return false;
     }
 
-    // Initialize database connection using the retrieved credentials
+    // Initialise database connection using the retrieved credentials
     connection_string = "dbname=" + database + " user=" + username + " password=" + password + " host=" + database_host + " port=" + database_port;
     return true;
 }

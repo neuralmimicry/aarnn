@@ -9,16 +9,23 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 #include <curl/curl.h> // For YouTube Data API
-#include <jsoncpp/json/json.h> // For JSON parsing
+#include <nlohmann/json.hpp>
 #include "SensoryReceptor.h"   // <— for std::shared_ptr<SensoryReceptor>
 #include <sstream>             // <— for istringstream in YouTube JSON parse
 
+using json = nlohmann::json;
+
 AuditoryManager::AuditoryManager() : capturing(false), inputSource(InputSource::None) {
-    gst_init(nullptr, nullptr); // Initialize GStreamer
+    gst_init(nullptr, nullptr); // Initialise GStreamer
 }
 
 AuditoryManager::~AuditoryManager() {
     stopCapture();
+}
+
+bool AuditoryManager::initialise() {
+    // Initialise ALSA or any other required components here
+    return true;
 }
 
 bool AuditoryManager::selectYouTubeInput(const std::string& apiKey, const std::string& searchQuery) {
@@ -198,7 +205,7 @@ void AuditoryManager::captureFromRTSP() {
 
 void AuditoryManager::captureFromMicrophone() {
     if (!mic) {
-        std::cerr << "Microphone not initialized." << std::endl;
+        std::cerr << "Microphone not initialised." << std::endl;
         return;
     }
 
@@ -267,55 +274,72 @@ void AuditoryManager::captureFromFile() {
     sf_close(sndFile);
 }
 
-std::string AuditoryManager::searchYouTubeVideo(const std::string& apiKey, const std::string& searchQuery) {
+std::string AuditoryManager::searchYouTubeVideo(
+        const std::string& apiKey,
+        const std::string& searchQuery
+) {
     CURL* curl = curl_easy_init();
     if (!curl) {
-        std::cerr << "Failed to initialize CURL." << std::endl;
+        std::cerr << "Failed to initialise CURL.\n";
         return "";
     }
 
-    std::string base = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=";
-        char* esc = curl_easy_escape(curl, searchQuery.c_str(), searchQuery.length());
-        std::string url = base + esc + "&key=" + apiKey;
-        curl_free(esc);
+    // Build URL
+    std::string base =
+            "https://www.googleapis.com/youtube/v3/search?"
+            "part=snippet&type=video&maxResults=1&q=";
+    char* esc = curl_easy_escape(curl, searchQuery.c_str(), searchQuery.length());
+    std::string url = base + esc + "&key=" + apiKey;
+    curl_free(esc);
 
+    // Perform request
     std::string response;
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-
-    // Set up callback to capture response data
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, [](char* ptr, size_t size, size_t nmemb, std::string* userdata) -> size_t {
-        userdata->append(ptr, size * nmemb);
-        return size * nmemb;
-    });
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION,
+                     +[](char* ptr, size_t size, size_t nmemb, std::string* out) -> size_t {
+                         out->append(ptr, size * nmemb);
+                         return size * nmemb;
+                     }
+    );
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
-    CURLcode res = curl_easy_perform(curl);
+    if (curl_easy_perform(curl) != CURLE_OK) {
+        std::cerr << "CURL request failed: "
+                  << curl_easy_strerror(curl_easy_perform(curl))
+                  << "\n";
+        curl_easy_cleanup(curl);
+        return "";
+    }
     curl_easy_cleanup(curl);
 
-    if (res != CURLE_OK) {
-        std::cerr << "CURL request failed: " << curl_easy_strerror(res) << std::endl;
+    // —— nlohmann/json parsing starts here —— //
+
+    json root;
+    try {
+        // parse throws on error
+        root = json::parse(response);
+    }
+    catch (const json::parse_error& e) {
+        std::cerr << "Failed to parse JSON response: "
+                  << e.what() << "\n";
         return "";
     }
 
-    // Parse JSON response
-    Json::Value root;
-    Json::CharReaderBuilder builder;
-    std::string errs;
-
-    std::istringstream iss(response);
-    if (!Json::parseFromStream(builder, iss, &root, &errs)) {
-        std::cerr << "Failed to parse JSON response: " << errs << std::endl;
-        return "";
-    }
-
-    if (root["items"].isArray() && root["items"].size() > 0) {
-        std::string videoId = root["items"][0]["id"]["videoId"].asString();
-        if (!videoId.empty()) {
-            // Construct YouTube video URL
-            return "https://www.youtube.com/watch?v=" + videoId;
+    // drill into items[0].id.videoId
+    if (root.contains("items") && root["items"].is_array() &&
+        !root["items"].empty())
+    {
+        const auto& first = root["items"][0];
+        if (first.contains("id") && first["id"].contains("videoId"))
+        {
+            // get<string>() will throw if it's not actually a string
+            std::string videoId = first["id"]["videoId"].get<std::string>();
+            if (!videoId.empty()) {
+                return "https://www.youtube.com/watch?v=" + videoId;
+            }
         }
     }
 
+    // no valid result
     return "";
 }
 
@@ -497,7 +521,12 @@ void AuditoryManager::processAuditoryData() {
     audioBuffer.reserve(FFT_SIZE);
 
     while (processing.load()) {
-        auto audioData = audioQueue.pop();
+        std::vector<std::tuple<double,double>> audioData;
+        if (!audioQueue.pop(audioData)) {
+            // queue was empty or shutting down; back off slightly
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            continue;
+        }
         // Extract the audio samples (assuming mono audio)
         for (const auto& sample : audioData) {
             double leftSample = std::get<0>(sample);

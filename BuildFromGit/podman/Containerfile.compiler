@@ -96,6 +96,7 @@ RUN git clone $REPO_URL source
 RUN mkdir -p /app/source/thirdparty
 RUN git clone https://github.com/zaphoyd/websocketpp.git /app/source/thirdparty/websocketpp
 RUN git clone https://github.com/nlohmann/json.git /app/source/thirdparty/json
+RUN git clone https://github.com/libsndfile/libsndfile.git /app/source/thirdparty/libsndfile
 ARG POSTGRES_USERNAME
 ARG POSTGRES_PASSWORD
 ARG POSTGRES_DB

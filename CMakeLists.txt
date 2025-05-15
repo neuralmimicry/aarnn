@@ -1,353 +1,147 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.15)
+project(AARNN VERSION 1.0 LANGUAGES C CXX)
 
-project(AARNN)
-
-file(GLOB AARNN_SRC
-    "src/aarnn/*.cpp"
-)
-file(GLOB AUDIO_SRC
-        "src/aarnn/*.cpp"
-)
-file(GLOB VISUALISER_SRC
-        "src/visualiser/*.cpp"
-)
-
-# Set the build type to Debug to include debugging symbols
-set(CMAKE_BUILD_TYPE Debug)
-#set(CMAKE_BUILD_TYPE Release)
-
-# Add AddressSanitizer flags
-#set(SANITIZER_FLAGS "-fsanitize=address -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined")
-set(SANITIZER_FLAGS "")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
-set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
-
-list(APPEND CMAKE_MODULE_PATH "/usr/local/share/cmake-4.0/Modules")
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
+#––– 1) GLOBAL CONFIGURATION –––––––––––––––––––––––––––––––––––––––––––
+# C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CGAL_DIR "/usr/lib/x86_64-linux-gnu/cmake/CGAL/")
-set(PostgreSQL_ROOT "/usr/include/postgresql/14/server")
+cmake_policy(SET CMP0135 NEW)            # for DOWNLOAD_EXTRACT_TIMESTAMP
+set(FETCHCONTENT_DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+cmake_policy(SET CMP0167 NEW)            # to silence the FindBoost warning
 
-find_package(PostgreSQL REQUIRED)
-find_library(PQXX_LIB pqxx HINTS /usr/lib64)
-if(NOT PQXX_LIB)
-    message(FATAL_ERROR "pqxx library not found")
+# Default build type (can be overridden by -DCMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type (Debug, Release, etc.)" FORCE)
+endif()
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+# Enable AddressSanitizer and UndefinedBehaviorSanitizer if requested
+option(ENABLE_SANITIZERS "Enable Address/Undefined Behavior Sanitizers" OFF)
+if(ENABLE_SANITIZERS)
+    message(STATUS "Sanitizers: Address, Undefined")
+    add_compile_options(-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address -fsanitize=undefined)
 endif()
 
-set(OpenGL_GL_PREFERENCE GLVND)
-find_package(OpenGL REQUIRED)
-if(NOT OPENGL_FOUND)
-    message(FATAL_ERROR "OpenGL library not found")
-endif()
-
-find_package(Freetype REQUIRED)
-if(NOT FREETYPE_FOUND)
-    message(FATAL_ERROR "Freetype library not found")
-endif()
-
-if(FREETYPE_INCLUDE_DIRS)
-    message(STATUS "Freetype include dir: ${FREETYPE_INCLUDE_DIRS}")
-else()
-    set(FREETYPE_INCLUDE_DIRS "/usr/include/freetype2")
-    message(STATUS "Using default Freetype include dir: ${FREETYPE_INCLUDE_DIRS}")
-endif ()
-
+#––– 2) FETCH & PROVIDE HEADER-ONLY LIBRARIES –––––––––––––––––––––––––––
 include(FetchContent)
+FetchContent_Declare(
+        nlohmann_json
+        URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+)
+FetchContent_MakeAvailable(nlohmann_json)
 
-FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
-FetchContent_MakeAvailable(json)
-
-# Check if JsonCpp target does not exist and then create it manually
-if(NOT TARGET JsonCpp::JsonCpp)
-    # Attempt to find JsonCpp library - modify paths as needed
-    find_library(JSONCPP_LIBRARY NAMES jsoncpp PATHS /usr/lib/x86_64-linux-gnu/cmake/jsoncpp)
-    find_path(JSONCPP_INCLUDE_DIR NAMES json/json.h PATHS /usr/include)
-
-    # Create an imported target
-    add_library(JsonCpp::JsonCpp SHARED IMPORTED)
-    set_target_properties(JsonCpp::JsonCpp PROPERTIES
-            IMPORTED_LOCATION "${JSONCPP_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${JSONCPP_INCLUDE_DIR}")
-endif()
-
-find_package(VTK REQUIRED
-    COMPONENTS
+#––– 3) DEPENDENCY RESOLUTION –––––––––––––––––––––––––––––––––––––––––––
+find_package(Threads    REQUIRED)
+find_package(MPI        REQUIRED)
+find_package(PkgConfig  REQUIRED)
+find_package(PostgreSQL REQUIRED)
+find_package(OpenGL     REQUIRED)
+find_package(GLEW       REQUIRED)
+find_package(Freetype   REQUIRED)
+find_package(SndFile    CONFIG REQUIRED)
+find_package(VTK REQUIRED COMPONENTS
         RenderingOpenGL2
         InteractionStyle
         RenderingFreeType
-    )
-if(NOT VTK_FOUND)
-    message(FATAL_ERROR "VTK library not found")
-endif()
-
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost CONFIG REQUIRED COMPONENTS system filesystem)
-
-if(NOT Boost_FOUND)
-    message(FATAL_ERROR "Boost library not found")
-endif()
-
-# Find FFmpeg using pkg-config
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(FFmpeg REQUIRED libavcodec libavformat libavutil libswscale libswresample)
-
-if(NOT FFmpeg_FOUND)
-    message(FATAL_ERROR "FFmpeg libraries not found")
-endif()
-
-# Include directories
-include_directories(${FFmpeg_INCLUDE_DIRS})
-
-# Libraries
-set(FFmpeg_LIBRARIES ${FFmpeg_LIBRARIES})
-
-# Find OpenSSL
+        FiltersSources
+)
+find_package(Boost   REQUIRED COMPONENTS system filesystem)
 find_package(OpenSSL REQUIRED)
-if(NOT OpenSSL_FOUND)
-    message(FATAL_ERROR "OpenSSL library not found")
-endif()
+find_package(CURL    REQUIRED)
+find_package(OpenCV  REQUIRED COMPONENTS core imgproc highgui)
 
-# Find OpenMP
-find_package(OpenMP REQUIRED)
-if(NOT OpenMP_CXX_FOUND)
-    message(FATAL_ERROR "OpenMP library not found")
-endif()
+find_library(PQXX_LIB pqxx HINTS /usr/lib64)
 
-# Find gStreamer
-find_package(PkgConfig REQUIRED)
+# ALSA, PortAudio, FFmpeg, GStreamer via pkg-config
+pkg_check_modules(ALSA      REQUIRED alsa)
+pkg_check_modules(PORTAUDIO REQUIRED portaudio-2.0)
+pkg_check_modules(PULSE     REQUIRED libpulse libpulse-simple)
+pkg_check_modules(FFMPEG    REQUIRED libavcodec libavformat libavutil libswscale libswresample)
 pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0 gstreamer-audio-1.0)
-if(NOT GSTREAMER_FOUND)
-    message(FATAL_ERROR "gStreamer library not found")
-endif()
+pkg_check_modules(FFTW3     REQUIRED fftw3)
+pkg_check_modules(GMP       REQUIRED   gmp)
 
-# Use pkg-config to get the necessary flags
-#execute_process(
-#    COMMAND pkg-config --cflags --libs portaudio-2.0
-#    OUTPUT_VARIABLE PORTAUDIO_PKG_CONFIG
-#    OUTPUT_STRIP_TRAILING_WHITESPACE
-#)
-
-# Set PortAudio_LIBRARIES and PORTAUDIO_INCLUDE_DIRS using the pkg-config output
-#string(REGEX MATCHALL "-I([^ \t\n]*)"
-#    PORTAUDIO_INCLUDE_DIRS ${PORTAUDIO_PKG_CONFIG})
-
-#set(PORTAUDIO_LIBRARIES ${PORTAUDIO_PKG_CONFIG})
-#message(STATUS "PortAudio Libraries: ${PORTAUDIO_LIBRARIES}")
-
-#if(NOT PORTAUDIO_LIBRARIES)
-#    message(FATAL_ERROR "PortAudio library not found")
-#endif()
-
-#message(STATUS "PortAudio Include Dirs: ${PORTAUDIO_INCLUDE_DIRS}")
-
-# PulseAudio directories
-set(PULSEAUDIO_INCLUDE_DIRS "/usr/include/pulseaudio")
-set(PULSEAUDIO_LIBRARY_DIRS "/usr/lib/x86_64-linux-gnu")
-
-# PulseAudio libraries
-#set(PULSEAUDIO_LIBRARIES "-lpulse -lpulse-simple")
-set(PULSEAUDIO_LIBRARIES pulse pulse-simple)
-
-message(STATUS "PulseAudio Include Dirs: ${PULSEAUDIO_INCLUDE_DIRS}")
-message(STATUS "PulseAudio Library Dirs: ${PULSEAUDIO_LIBRARY_DIRS}")
-message(STATUS "PulseAudio Libraries: ${PULSEAUDIO_LIBRARIES}")
-
-find_package(OpenCV REQUIRED)
-message(STATUS "OpenCV include dirs: ${OpenCV_INCLUDE_DIRS}")
-message(STATUS "OpenCV libraries: ${OpenCV_LIBS}")
-
-# Find CURL
-find_package(CURL REQUIRED)
-if(NOT CURL_FOUND)
-    message(FATAL_ERROR "CURL library not found")
-endif()
-
-# Find CGAL
-find_package(CGAL REQUIRED)
-if(NOT CGAL_FOUND)
-    message(FATAL_ERROR "CGAL library not found")
-endif()
-
-# Find FFTW
-#find_package(FFTW3 REQUIRED)
-#if(NOT FFTW3_FOUND)
-#    message(FATAL_ERROR "FFTW3 library not found")
-#endif()
-message(STATUS "FFTW3 Include Dirs: ${FFTW3_INCLUDE_DIRS}")
-message(STATUS "FFTW3 Library Dirs: ${FFTW3_LIBRARY_DIRS}")
-message(STATUS "FFTW3 Libraries: ${FFTW3_LIBRARIES}")
-if(NOT FFTW3_INCLUDE_DIRS)
-    set(FFTW3_INCLUDE_DIRS "/usr/local/include")
-    message(STATUS "Using default FFTW3 include dir: ${FFTW3_INCLUDE_DIRS}")
-endif()
-if(NOT FFTW3_LIBRARY_DIRS)
-    set(FFTW3_LIBRARY_DIRS "/usr/local/lib")
-    message(STATUS "Using default FFTW3 library dir: ${FFTW3_LIBRARY_DIRS}")
-endif()
-if(NOT FFTW3_LIBRARIES)
-    set(FFTW3_LIBRARIES "-lfftw3")
-    message(STATUS "Using default FFTW3 libraries: ${FFTW3_LIBRARIES}")
-endif()
-
-# Add the src subdirectory to the include paths
-include_directories(include)
-include_directories(src)
-include_directories(thirdparty/websocketpp)
-include_directories(${PostgreSQL_INCLUDE_DIR})
-include_directories(${VTK_INCLUDE_DIRS})  # Add VTK include directories
-include_directories(${Boost_INCLUDE_DIRS})  # Add Boost include directories
-include_directories(${OpenSSL_INCLUDE_DIRS})  # Add OpenSSL include directories
-include_directories(${FFmpeg_INCLUDE_DIRS})  # Add FFmpeg include directories
-include_directories(${PulseAudio_INCLUDE_DIRS}) # Add PulseAudio include directories
-include_directories(${FFTW3_INCLUDE_DIRS}) # Add FFTW3 include directories
-include_directories(${CURL_INCLUDE_DIRS}) # Add CURL include directories
-include_directories(${CGAL_INCLUDE_DIRS}) # Add CGAL include directories
-include_directories(${GSTREAMER_INCLUDE_DIRS})
-
-link_directories(${PostgreSQL_LIBRARY_DIR})
-link_directories(${PulseAudio_LIBRARY_DIRS})
-link_directories(${FFTW3_LIBRARY_DIRS})
-link_directories(${LOCAL_LIB64})
-link_directories(${GSTREAMER_LIBRARY_DIRS})
-link_directories(${OpenCV_LIBRARY_DIRS})
-
-add_executable(Audio ${AARNN_SRC}
-        include/vclient.h
-        src/shared_libs/vclient.cpp
-        include/utils.h
-        include/avTimerCallback.h
-        include/boostincludes.h
-        include/Logger.h
-        include/msock.h
-        include/PulseAudioMic.h
-        include/ThreadSafeQueue.h
-        include/timer.h
-        src/shared_libs/Logger.cpp
-        src/aarnn/timer.cpp
-        src/aarnn/AuditorySolution.cpp
-        src/aarnn/utils.cpp
-        include/globals.h
-)
-
-target_link_libraries(Audio PRIVATE
-        Freetype::Freetype
+#––– 4) COMMON MODULE –––––––––––––––––––––––––––––––––––––––––––––––––
+file(GLOB_RECURSE COMMON_SRCS src/shared_libs/*.cpp)
+add_library(common STATIC ${COMMON_SRCS})
+target_include_directories(common PUBLIC include ${GMP_INCLUDE_DIRS})
+target_link_libraries(common PUBLIC
+        Threads::Threads
         nlohmann_json::nlohmann_json
-        ${VTK_LIBRARIES}
-        ${Boost_LIBRARIES}
-        ${OpenSSL_LIBRARIES}
-        ${FFmpeg_LIBRARIES}
-        ${PULSEAUDIO_LIBRARIES}
-        ${FFTW3_LIBRARIES}
-        ${CURL_LIBRARIES}
-        ${CGAL_LIBRARIES}
-        ${GSTREAMER_LIBRARIES}
-        ${OpenCV_LIBS}
+        VTK::RenderingOpenGL2
+        VTK::InteractionStyle
+        VTK::RenderingFreeType
+        VTK::FiltersSources
+        ${GMP_LIBRARIES}
+        ${GMP_LDFLAGS_OTHER}
 )
 
-# If you still need vtkAutoInit.h for legacy code, enable autoinit:
-if (VTK_VERSION VERSION_GREATER "8.90.0")
-    # This will generate the proper VTK_MODULE_INIT calls under the hood
-    vtk_module_autoinit(
-            TARGETS Audio
-            MODULES ${VTK_LIBRARIES}
-    )
-endif()
-
-add_executable(AARNN ${AARNN_SRC}
-        include/vclient.h
-        src/shared_libs/vclient.cpp
-        include/Neuron.h
-        include/utils.h
-        include/abstractObject.h
-        include/avTimerCallback.h
-        include/Axon.h
-        include/AxonBouton.h
-        include/AxonBranch.h
-        include/AxonHillock.h
-        include/BodyComponent.h
-        include/BodyShapeComponent.h
-        include/boostincludes.h
-        include/Dendrite.h
-        include/DendriteBouton.h
-        include/DendriteBranch.h
-        include/Effector.h
-        include/Logger.h
-        include/msock.h
-        include/NeuronalComponent.h
-        include/NeuronParameters.h
-        include/nvTimerCallback.h
-        include/Position.h
-        include/PulseAudioMic.h
-        include/SensoryReceptor.h
-        include/Shape3D.h
-        include/Soma.h
-        include/SynapticGap.h
-        include/ThreadSafeQueue.h
-        include/vtkincludes.h
-        src/aarnn/config.cpp
-        include/config.h
-        include/database.h
-        include/timer.h
-        src/aarnn/database.cpp
-        src/shared_libs/Logger.cpp
-        src/aarnn/timer.cpp
-        src/aarnn/main.cpp
-        src/aarnn/utils.cpp
-        include/globals.h
-)
-
-target_link_libraries(AARNN PRIVATE
-        Freetype::Freetype
-        nlohmann_json::nlohmann_json
-        ${VTK_LIBRARIES}
-        ${PostgreSQL_LIBRARIES}
-        ${Boost_LIBRARIES}
-        ${OpenSSL_LIBRARIES}
-        ${FFmpeg_LIBRARIES}
-        ${PULSEAUDIO_LIBRARIES}
-        ${FFTW3_LIBRARIES}
+#––– 5) CORE NEURON MODEL ––––––––––––––––––––––––––––––––––––––––––––––
+file(GLOB_RECURSE CORE_SRCS src/aarnn/*.cpp)
+list(REMOVE_ITEM CORE_SRCS src/aarnn/main.cpp)
+add_library(aarnn_core STATIC ${CORE_SRCS})
+target_include_directories(aarnn_core PUBLIC include ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(aarnn_core PUBLIC
+        common
+        Boost::filesystem Boost::system
+        OpenSSL::SSL OpenSSL::Crypto
         ${PQXX_LIB}
-        ${CURL_LIBRARIES}
-        ${CGAL_LIBRARIES}
-        ${GSTREAMER_LIBRARIES}
+        PostgreSQL::PostgreSQL
         ${OpenCV_LIBS}
 )
 
-# Copy simulation.conf into the same directory as the AARNN executable
-add_custom_command(TARGET AARNN POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/configure/simulation.conf"
-        "$<TARGET_FILE_DIR:AARNN>/simulation.conf"
+#––– 6) AUDIO PROCESSING MODULE ––––––––––––––––––––––––––––––––––––––––
+file(GLOB_RECURSE AUDIO_SRCS src/audio/*.cpp)
+list(REMOVE_ITEM AUDIO_SRCS src/audio/AuditorySolution.cpp)
+add_library(audio_lib STATIC ${AUDIO_SRCS})
+target_include_directories(audio_lib PUBLIC
+        src/audio
+        include
+        ${GSTREAMER_INCLUDE_DIRS}
+        ${FFTW3_INCLUDE_DIRS}
+        ${PULSE_INCLUDE_DIRS})
+target_link_libraries(audio_lib PUBLIC
+        aarnn_core
+        common
+        Threads::Threads
+        nlohmann_json::nlohmann_json
+        SndFile::sndfile
+        ${ALSA_LIBRARIES}
+        ${PORTAUDIO_LIBRARIES}
+        ${FFMPEG_LIBRARIES}
+        ${GSTREAMER_LIBRARIES}
+        CURL::libcurl
+        ${FFTW3_LIBRARIES}
+        ${PULSE_LIBRARIES}
+        ${PULSE_LDFLAGS_OTHER}
 )
 
-add_executable(Visualiser ${VISUALISER_SRC}
-        include/vclient.h
-        include/Logger.h
-        src/shared_libs/Logger.cpp
-        src/shared_libs/vclient.cpp
+#––– 7) EXECUTABLE TARGETS –––––––––––––––––––––––––––––––––––––––––––––
+add_executable(Audio src/audio/AuditorySolution.cpp)
+target_link_libraries(Audio PRIVATE audio_lib)
+
+add_executable(AARNN src/aarnn/main.cpp)
+target_link_libraries(AARNN PRIVATE aarnn_core audio_lib)
+
+add_executable(Visualiser
+        src/visualiser/visualiser.cpp
         src/visualiser/wss.cpp
 )
-
 target_link_libraries(Visualiser PRIVATE
-        nlohmann_json::nlohmann_json
-        ${VTK_LIBRARIES}
-        ${PostgreSQL_LIBRARIES}
-        ${Boost_LIBRARIES}
-        ${OpenSSL_LIBRARIES}
-        ${FFTW3_LIBRARIES}
-        ${PQXX_LIB}
-        ${CURL_LIBRARIES}
-        ${CGAL_LIBRARIES}
-        ${OpenCV_LIBS}
+        common aarnn_core
+        Boost::filesystem
+        OpenGL::GL GLEW::GLEW
 )
 
-# Copy simulation.conf into the same directory as the AARNN executable
-add_custom_command(TARGET Visualiser POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/configure/db_connection.conf"
-        "$<TARGET_FILE_DIR:Visualiser>/db_connection.conf"
-)
+#––– 8) POST-BUILD CONFIG COPY –––––––––––––––––––––––––––––––––––––––––
+foreach(_exe IN ITEMS Audio AARNN Visualiser)
+    set(_src_conf ${CMAKE_SOURCE_DIR}/configure/${_exe}.conf)
+    if(EXISTS ${_src_conf})
+        add_custom_command(TARGET ${_exe} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${_src_conf}
+                $<TARGET_FILE_DIR:${_exe}>/${_exe}.conf
+        )
+    endif()
+endforeach()

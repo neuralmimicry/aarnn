@@ -208,7 +208,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
     fi
 
     if [ "$IMAGE_NAME" == "vault-image" ]; then
-        # Wait for the Vault container to initialize and extract the token
+        # Wait for the Vault container to initialise and extract the token
         # --- Start the Vault Container ---
         echo "Starting temporary Vault container..."
         CONTAINER_NAME="vault"

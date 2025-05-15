@@ -34,9 +34,9 @@ configure_postgres() {
   sed -i "s/port = 5434/port = $POSTGRES_PORT_EXPOSE/" "$POSTGRESQL_CONF"
 }
 
-# Initialize the database if not already initialized
+# Initialise the database if not already initialised
 if [ ! -s "$PGDATA/PG_VERSION" ]; then
-  # Run the original entrypoint script to initialize the database
+  # Run the original entrypoint script to initialise the database
   docker-entrypoint.sh postgres &
 
   # Wait for PostgreSQL to be ready

@@ -104,7 +104,7 @@ ENV DEBIAN_FRONTEND=dialog
 COPY --from=builder /app/bin .
 
 #Database configuration connection information
-COPY ./configure/db_connection.conf /app/db_connection.conf
+COPY ./configure/AARNN.conf /app/AARNN.conf
 
 #Simulation data
 COPY ./configure/simulation.conf /app/simulation.conf

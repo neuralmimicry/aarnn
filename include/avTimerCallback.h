@@ -23,7 +23,14 @@ class avTimerCallback : public vtkCommand
             ++this->avTimerCount;
         }
 
-        capturedAuditory = avQueue->pop();
+        {
+            std::vector<std::tuple<double,double>> data;
+            if (!avQueue->pop(data)) {
+                // no new data this tick
+                return;
+            }
+            capturedAuditory = std::move(data);
+        }
         // avPolyData->SetLines(nullptr);
         // avPolyData->SetPoints(nullptr);
         std::cout << ".";

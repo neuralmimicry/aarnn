@@ -50,12 +50,28 @@ void AuditoryProcessor::processAudioDataLoop() {
     audioBuffer.reserve(FFT_SIZE);
 
     while (processing.load()) {
-        auto audioData = audioDataQueue.pop();
+        // 1) Pop into a local vector
+        std::vector<double> audioData;
+        if (!audioDataQueue.pop(audioData)) {
+            // No data available: wait a bit then retry
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            continue;
+        }
+
+        // 2) Append to our buffer
         audioBuffer.insert(audioBuffer.end(), audioData.begin(), audioData.end());
+
+        // 3) Process full FFT_SIZE chunks
         while (audioBuffer.size() >= FFT_SIZE) {
-            std::vector<double> fftInput(audioBuffer.begin(), audioBuffer.begin() + FFT_SIZE);
+            std::vector<double> fftInput(
+                audioBuffer.begin(),
+                audioBuffer.begin() + FFT_SIZE
+            );
             performFFTAndSend(fftInput);
-            audioBuffer.erase(audioBuffer.begin(), audioBuffer.begin() + FFT_SIZE);
+            audioBuffer.erase(
+                audioBuffer.begin(),
+                audioBuffer.begin() + FFT_SIZE
+            );
         }
     }
 }

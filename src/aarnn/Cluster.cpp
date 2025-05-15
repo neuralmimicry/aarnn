@@ -8,7 +8,7 @@
 #include <omp.h>
 #include <random>
 
-// Initialize static member
+// Initialise static member
 int Cluster::nextClusterId = 0;
 std::vector<std::shared_ptr<Position>> Cluster::existingClusterPositions;
 
@@ -91,7 +91,7 @@ void Cluster::initialise(int create_new_neurons, int neuron_points_per_layer, do
         // Create neurons
         createNeurons(create_new_neurons, neuron_points_per_layer);
 
-        // Initialize each neuron in parallel
+        // Initialise each neuron in parallel
         size_t num_neurons = neurons.size();
 
         // Use OpenMP for parallel processing

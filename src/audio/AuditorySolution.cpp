@@ -7,7 +7,7 @@ int main() {
     unsigned short port = 12345;
     AuditoryProcessor auditoryProcessor(host, port);
     if (!auditoryProcessor.initialise()) {
-        std::cerr << "Failed to initialize AuditoryProcessor." << std::endl;
+        std::cerr << "Failed to initialise AuditoryProcessor." << std::endl;
         return -1;
     }
     auditoryProcessor.startProcessing();
@@ -15,7 +15,7 @@ int main() {
     // Create AuditoryManager
     AuditoryManager auditoryManager;
     if (!auditoryManager.initialise()) {
-        std::cerr << "Failed to initialize AuditoryManager." << std::endl;
+        std::cerr << "Failed to initialise AuditoryManager." << std::endl;
         return -1;
     }
 

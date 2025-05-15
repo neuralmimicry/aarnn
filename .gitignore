@@ -9,3 +9,4 @@ bin
 *.tar
 errors.log
 thirdparty
+.env

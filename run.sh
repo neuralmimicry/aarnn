@@ -34,7 +34,7 @@ echo "Found $total_scripts scripts to run."
 # Sort the numbers and execute the scripts in order
 sorted_numbers=($(printf '%s\n' "${!file_map[@]}" | sort -n))
 
-# Initialize a counter
+# Initialise a counter
 counter=1
 
 # Execute the scripts in order

@@ -44,7 +44,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/pbisaacs/Developer/aarnn/cmake-build-debug/_deps/json-build/cmake_install.cmake")
+  include("/home/pbisaacs/Developer/aarnn/cmake-build-debug/_deps/nlohmann_json-build/cmake_install.cmake")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT

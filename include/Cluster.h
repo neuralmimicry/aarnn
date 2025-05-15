@@ -27,7 +27,7 @@ public:
     explicit Cluster(const std::shared_ptr<Position>& position, std::weak_ptr<NeuronalComponent> parent = {});
 
     /**
-     * @brief Initializes the cluster and its neurons.
+     * @brief Initialises the cluster and its neurons.
      */
     void initialise(int num_neurons, int neuron_points_per_layer, double proximityThreshold);
 

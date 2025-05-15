@@ -10,7 +10,7 @@ VisualProcessor::~VisualProcessor() {
 }
 
 bool VisualProcessor::initialise() {
-    // Initialize camera or image source
+    // Initialise camera or image source
     // For example, open a video capture device
     return true;
 }

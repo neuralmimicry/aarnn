@@ -11,7 +11,7 @@ NetworkServer::~NetworkServer() {
 }
 
 bool NetworkServer::start() {
-    // Initialize and start the server...
+    // Initialise and start the server...
     running = true;
     return true;
 }

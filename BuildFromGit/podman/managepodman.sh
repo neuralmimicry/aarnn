@@ -55,7 +55,7 @@ start_containers() {
                --env-file ./.env \
                vault /bin/bash -c "bash /usr/local/bin/start_vault.sh"
 
-    # Wait for the Vault container to initialize and extract the token
+    # Wait for the Vault container to initialise and extract the token
     echo "Waiting for Vault to start..."
     sleep 30
     podman exec vault cat /opt/vault/logs/vault_env.sh > vault_env.sh

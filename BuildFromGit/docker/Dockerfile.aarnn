@@ -8,8 +8,8 @@ WORKDIR /app
 COPY ./bin/AARNN /app/AARNN
 
 
-#Database configuration connection infromation
-COPY ./configure/db_connection.conf /app/db_connection.conf 
+#Database configuration connection information
+COPY ./configure/AARNN.conf /app/AARNN.conf
 
 #Simulation data
 COPY ./configure//simulation.conf /app/simulation.conf 

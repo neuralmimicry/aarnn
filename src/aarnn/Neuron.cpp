@@ -4,7 +4,7 @@
 #include <mutex>
 #include <omp.h>
 
-// Initialize static member
+// Initialise static member
 int Neuron::nextNeuronId = 0;
 
 // Mutexes for thread safety
@@ -23,7 +23,7 @@ std::shared_ptr<Soma> Neuron::getSoma()
     return this->soma;
 }
 
-// Initialize the neuron
+// Initialise the neuron
 void Neuron::initialise()
 {
     NeuronalComponent::initialise(); // Call base class initialise

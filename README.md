@@ -45,8 +45,7 @@ cd build
 cmake ..
 make
 
-copy db_configuration.conf -> build/db_configuration.conf
-copy simulation.conf -> build/simulation.com
+copy *.conf -> build/
 
 ```
 
@@ -73,7 +72,7 @@ When you build the Docker image using the docker build command, you can pass in 
 so for the aarnn db:
 
 ```
-POSTGRES_USER=postgres
+POSTGRES_USER=neuron
 POSTGRES_PASSWORD=password
 ```
 
