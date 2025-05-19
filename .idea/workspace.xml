@@ -33,35 +33,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change afterPath="$PROJECT_DIR$/include/AsyncNetworkClient.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/AsyncNetworkServer.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/ProcessorManager.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/aarnn/ProcessorManager.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/shared_libs/AsyncNetworkServer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.aarnnFullBuild" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.aarnnFullBuild" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.build" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.build" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/run003.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run003.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/run004.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run004.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/run005.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run005.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/nlohmann_json-subbuild/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/nlohmann_json-subbuild/.ninja_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/nlohmann_json-build/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/nlohmann_json-build/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/AuditoryProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AuditoryProcessor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/NetworkClient.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/NetworkServer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/SensoryReceptorServer.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SensoryReceptorServer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/VisualProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/VisualProcessor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/NetworkClient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/AsyncNetworkClient.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/NetworkServer.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/SensoryReceptorServer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptorServer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/VisualProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/VisualProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/audio/AuditoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/AuditoryProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/audio/AuditorySolution.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/AuditorySolution.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -362,7 +334,7 @@
       <workItem from="1747226387598" duration="213000" />
       <workItem from="1747226627231" duration="41456000" />
       <workItem from="1747642384387" duration="151000" />
-      <workItem from="1747642550683" duration="18869000" />
+      <workItem from="1747642550683" duration="20531000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

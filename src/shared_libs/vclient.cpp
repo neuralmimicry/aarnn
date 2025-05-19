@@ -112,7 +112,7 @@ bool initialiseDatabaseConnection(std::string& connection_string) {
     std::string vault_token = vault_token_env;
     std::cout << "Vault API Address: " << vault_api_addr << std::endl;
     std::cout << "Vault Token: " << vault_token << std::endl;
-    std::string secret_path = "secret/postgres"; // Adjust this path based on your Vault setup
+    std::string secret_path = "secret/data/postgres"; // Adjust this path based on your Vault setup
     std::string username, password, database, database_host, database_port;
 
     if (getPostgresCredentials(vault_api_addr, vault_token, secret_path, username, password, database, database_host, database_port)) {
