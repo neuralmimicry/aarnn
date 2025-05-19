@@ -62,10 +62,10 @@ bool getPostgresCredentials(const std::string& vault_api_addr, const std::string
             std::cerr << "Unexpected JSON structure in Vault response\n";
             return false;
         }
-        auto creds = jsonData["data"]["data"];
+        json creds;
         auto outer = jsonData.find("data");
         if (outer != jsonData.end()) {
-            if (outer->contains("data")) {
+            if (outer->contains("data") && (*outer)["data"].is_object()) {
                 creds = (*outer)["data"]; // KV v2
             } else {
                 creds = *outer; // KV v1
