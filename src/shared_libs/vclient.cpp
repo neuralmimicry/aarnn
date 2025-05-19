@@ -50,43 +50,28 @@ bool getPostgresCredentials(const std::string& vault_api_addr, const std::string
         json jsonData;
         try {
             jsonData = json::parse(response_string);
-        }
-        catch (const json::parse_error& e) {
+        } catch (const json::parse_error& e) {
             std::cerr << "Failed to parse JSON: " << e.what() << "\n";
             return false;
         }
 
-        // Vault wraps your secret under data.data
-        // like { "data": { "data": { "POSTGRES_USERNAME": "...", … } } }
+        // Properly extract KV v2
         if (!jsonData.contains("data") || !jsonData["data"].contains("data") || !jsonData["data"]["data"].is_object()) {
             std::cerr << "Unexpected JSON structure in Vault response\n";
             return false;
         }
-        json creds;
-        auto outer = jsonData.find("data");
-        if (outer != jsonData.end()) {
-            if (outer->contains("data") && (*outer)["data"].is_object()) {
-                creds = (*outer)["data"]; // KV v2
-            } else {
-                creds = *outer; // KV v1
-            }
-        } else {
-            std::cerr << "Invalid Vault response: no 'data' field\n";
-            return false;
-        }
+        json creds = jsonData["data"]["data"];  // ← THIS is all you need
 
         try {
             username      = creds.at("POSTGRES_USERNAME").get<std::string>();
             password      = creds.at("POSTGRES_PASSWORD").get<std::string>();
-            database      = creds.at("POSTGRES_DB").       get<std::string>();
-            database_host = creds.at("POSTGRES_HOST").     get<std::string>();
-            database_port = creds.at("POSTGRES_PORT").     get<std::string>();
-        }
-        catch (const json::out_of_range& e) {
+            database      = creds.at("POSTGRES_DB").get<std::string>();
+            database_host = creds.at("POSTGRES_HOST").get<std::string>();
+            database_port = creds.at("POSTGRES_PORT").get<std::string>();
+        } catch (const json::out_of_range& e) {
             std::cerr << "Missing key in Vault JSON: " << e.what() << "\n";
             return false;
-        }
-        catch (const json::type_error& e) {
+        } catch (const json::type_error& e) {
             std::cerr << "Type error in Vault JSON: " << e.what() << "\n";
             return false;
         }
