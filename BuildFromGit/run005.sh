@@ -24,6 +24,8 @@ if [ -z "$CLOUD_PROVIDER" ]; then
     exit 1
 fi
 
+echo "Cleaning up old containers..."
+
 # Define the image names
 IMAGES=("vault-image" "postgres-image" "compiler-image" "aarnn-image" "visualiser-image")
 
@@ -48,6 +50,16 @@ case "$CLOUD_PROVIDER" in
                 fi
             done
         done
+
+        echo "Remaining pods:"
+        podman pod ps
+
+        echo "Remaining containers:"
+        podman ps -a
+
+        echo "Remaining images:"
+        podman images
+
         ;;
     openstack)
         echo "CLOUD_PROVIDER is 'openstack'. Deleting older images from OpenStack registry..."

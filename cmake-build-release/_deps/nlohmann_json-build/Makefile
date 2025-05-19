@@ -92,6 +92,13 @@ all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles 0
 .PHONY : all
 
+# The main codegen target
+codegen: cmake_check_build_system
+	cd /home/pbisaacs/Developer/aarnn/cmake-build-release && $(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles /home/pbisaacs/Developer/aarnn/cmake-build-release/_deps/nlohmann_json-build//CMakeFiles/progress.marks
+	cd /home/pbisaacs/Developer/aarnn/cmake-build-release && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 _deps/nlohmann_json-build/codegen
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles 0
+.PHONY : codegen
+
 # The main clean target
 clean:
 	cd /home/pbisaacs/Developer/aarnn/cmake-build-release && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 _deps/nlohmann_json-build/clean
@@ -122,6 +129,7 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... codegen"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 .PHONY : help

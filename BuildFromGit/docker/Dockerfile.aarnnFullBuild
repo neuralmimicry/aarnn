@@ -12,7 +12,7 @@ RUN apt-get update
 
 RUN apt install -y git
 
-RUN git clone -b $BRANCH_RELEASE https://$GIT_USERNAME:$GIT_PAT@gitlab.com/city-plumbing-supplies-limited/pnh/digital/applications/microservices/backend/automation/neuralmimicry/aarnn.git   $WORKDIR
+RUN git clone -b $BRANCH_RELEASE https://$GIT_USERNAME:$GIT_PAT@gitlab.com/neuralmimicry/aarnn.git   $WORKDIR
 
 # Install necessary libraries for running the application
 RUN apt-get update

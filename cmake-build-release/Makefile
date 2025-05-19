@@ -92,6 +92,13 @@ all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles 0
 .PHONY : all
 
+# The main codegen target
+codegen: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles /home/pbisaacs/Developer/aarnn/cmake-build-release//CMakeFiles/progress.marks
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 codegen
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pbisaacs/Developer/aarnn/cmake-build-release/CMakeFiles 0
+.PHONY : codegen
+
 # The main clean target
 clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clean
@@ -674,54 +681,6 @@ src/aarnn/MagnetoceptionProcessor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/MagnetoceptionProcessor.cpp.s
 .PHONY : src/aarnn/MagnetoceptionProcessor.cpp.s
 
-src/aarnn/NetworkClient.o: src/aarnn/NetworkClient.cpp.o
-.PHONY : src/aarnn/NetworkClient.o
-
-# target to build an object file
-src/aarnn/NetworkClient.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkClient.cpp.o
-.PHONY : src/aarnn/NetworkClient.cpp.o
-
-src/aarnn/NetworkClient.i: src/aarnn/NetworkClient.cpp.i
-.PHONY : src/aarnn/NetworkClient.i
-
-# target to preprocess a source file
-src/aarnn/NetworkClient.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkClient.cpp.i
-.PHONY : src/aarnn/NetworkClient.cpp.i
-
-src/aarnn/NetworkClient.s: src/aarnn/NetworkClient.cpp.s
-.PHONY : src/aarnn/NetworkClient.s
-
-# target to generate assembly for a file
-src/aarnn/NetworkClient.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkClient.cpp.s
-.PHONY : src/aarnn/NetworkClient.cpp.s
-
-src/aarnn/NetworkServer.o: src/aarnn/NetworkServer.cpp.o
-.PHONY : src/aarnn/NetworkServer.o
-
-# target to build an object file
-src/aarnn/NetworkServer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkServer.cpp.o
-.PHONY : src/aarnn/NetworkServer.cpp.o
-
-src/aarnn/NetworkServer.i: src/aarnn/NetworkServer.cpp.i
-.PHONY : src/aarnn/NetworkServer.i
-
-# target to preprocess a source file
-src/aarnn/NetworkServer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkServer.cpp.i
-.PHONY : src/aarnn/NetworkServer.cpp.i
-
-src/aarnn/NetworkServer.s: src/aarnn/NetworkServer.cpp.s
-.PHONY : src/aarnn/NetworkServer.s
-
-# target to generate assembly for a file
-src/aarnn/NetworkServer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/NetworkServer.cpp.s
-.PHONY : src/aarnn/NetworkServer.cpp.s
-
 src/aarnn/Neuron.o: src/aarnn/Neuron.cpp.o
 .PHONY : src/aarnn/Neuron.o
 
@@ -865,6 +824,30 @@ src/aarnn/PressureProcessor.s: src/aarnn/PressureProcessor.cpp.s
 src/aarnn/PressureProcessor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/PressureProcessor.cpp.s
 .PHONY : src/aarnn/PressureProcessor.cpp.s
+
+src/aarnn/ProcessorManager.o: src/aarnn/ProcessorManager.cpp.o
+.PHONY : src/aarnn/ProcessorManager.o
+
+# target to build an object file
+src/aarnn/ProcessorManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ProcessorManager.cpp.o
+.PHONY : src/aarnn/ProcessorManager.cpp.o
+
+src/aarnn/ProcessorManager.i: src/aarnn/ProcessorManager.cpp.i
+.PHONY : src/aarnn/ProcessorManager.i
+
+# target to preprocess a source file
+src/aarnn/ProcessorManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ProcessorManager.cpp.i
+.PHONY : src/aarnn/ProcessorManager.cpp.i
+
+src/aarnn/ProcessorManager.s: src/aarnn/ProcessorManager.cpp.s
+.PHONY : src/aarnn/ProcessorManager.s
+
+# target to generate assembly for a file
+src/aarnn/ProcessorManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/aarnn_core.dir/build.make CMakeFiles/aarnn_core.dir/src/aarnn/ProcessorManager.cpp.s
+.PHONY : src/aarnn/ProcessorManager.cpp.s
 
 src/aarnn/ProprioceptiveProcessor.o: src/aarnn/ProprioceptiveProcessor.cpp.o
 .PHONY : src/aarnn/ProprioceptiveProcessor.o
@@ -1328,6 +1311,54 @@ src/audio/avTimerCallback.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_lib.dir/build.make CMakeFiles/audio_lib.dir/src/audio/avTimerCallback.cpp.s
 .PHONY : src/audio/avTimerCallback.cpp.s
 
+src/shared_libs/AsyncNetworkClient.o: src/shared_libs/AsyncNetworkClient.cpp.o
+.PHONY : src/shared_libs/AsyncNetworkClient.o
+
+# target to build an object file
+src/shared_libs/AsyncNetworkClient.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/AsyncNetworkClient.cpp.o
+.PHONY : src/shared_libs/AsyncNetworkClient.cpp.o
+
+src/shared_libs/AsyncNetworkClient.i: src/shared_libs/AsyncNetworkClient.cpp.i
+.PHONY : src/shared_libs/AsyncNetworkClient.i
+
+# target to preprocess a source file
+src/shared_libs/AsyncNetworkClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/AsyncNetworkClient.cpp.i
+.PHONY : src/shared_libs/AsyncNetworkClient.cpp.i
+
+src/shared_libs/AsyncNetworkClient.s: src/shared_libs/AsyncNetworkClient.cpp.s
+.PHONY : src/shared_libs/AsyncNetworkClient.s
+
+# target to generate assembly for a file
+src/shared_libs/AsyncNetworkClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/AsyncNetworkClient.cpp.s
+.PHONY : src/shared_libs/AsyncNetworkClient.cpp.s
+
+src/shared_libs/AsyncNetworkServer.o: src/shared_libs/AsyncNetworkServer.cpp.o
+.PHONY : src/shared_libs/AsyncNetworkServer.o
+
+# target to build an object file
+src/shared_libs/AsyncNetworkServer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/AsyncNetworkServer.cpp.o
+.PHONY : src/shared_libs/AsyncNetworkServer.cpp.o
+
+src/shared_libs/AsyncNetworkServer.i: src/shared_libs/AsyncNetworkServer.cpp.i
+.PHONY : src/shared_libs/AsyncNetworkServer.i
+
+# target to preprocess a source file
+src/shared_libs/AsyncNetworkServer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/AsyncNetworkServer.cpp.i
+.PHONY : src/shared_libs/AsyncNetworkServer.cpp.i
+
+src/shared_libs/AsyncNetworkServer.s: src/shared_libs/AsyncNetworkServer.cpp.s
+.PHONY : src/shared_libs/AsyncNetworkServer.s
+
+# target to generate assembly for a file
+src/shared_libs/AsyncNetworkServer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/shared_libs/AsyncNetworkServer.cpp.s
+.PHONY : src/shared_libs/AsyncNetworkServer.cpp.s
+
 src/shared_libs/Logger.o: src/shared_libs/Logger.cpp.o
 .PHONY : src/shared_libs/Logger.o
 
@@ -1478,6 +1509,7 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... codegen"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... AARNN"
@@ -1546,12 +1578,6 @@ help:
 	@echo "... src/aarnn/MagnetoceptionProcessor.o"
 	@echo "... src/aarnn/MagnetoceptionProcessor.i"
 	@echo "... src/aarnn/MagnetoceptionProcessor.s"
-	@echo "... src/aarnn/NetworkClient.o"
-	@echo "... src/aarnn/NetworkClient.i"
-	@echo "... src/aarnn/NetworkClient.s"
-	@echo "... src/aarnn/NetworkServer.o"
-	@echo "... src/aarnn/NetworkServer.i"
-	@echo "... src/aarnn/NetworkServer.s"
 	@echo "... src/aarnn/Neuron.o"
 	@echo "... src/aarnn/Neuron.i"
 	@echo "... src/aarnn/Neuron.s"
@@ -1570,6 +1596,9 @@ help:
 	@echo "... src/aarnn/PressureProcessor.o"
 	@echo "... src/aarnn/PressureProcessor.i"
 	@echo "... src/aarnn/PressureProcessor.s"
+	@echo "... src/aarnn/ProcessorManager.o"
+	@echo "... src/aarnn/ProcessorManager.i"
+	@echo "... src/aarnn/ProcessorManager.s"
 	@echo "... src/aarnn/ProprioceptiveProcessor.o"
 	@echo "... src/aarnn/ProprioceptiveProcessor.i"
 	@echo "... src/aarnn/ProprioceptiveProcessor.s"
@@ -1627,6 +1656,12 @@ help:
 	@echo "... src/audio/avTimerCallback.o"
 	@echo "... src/audio/avTimerCallback.i"
 	@echo "... src/audio/avTimerCallback.s"
+	@echo "... src/shared_libs/AsyncNetworkClient.o"
+	@echo "... src/shared_libs/AsyncNetworkClient.i"
+	@echo "... src/shared_libs/AsyncNetworkClient.s"
+	@echo "... src/shared_libs/AsyncNetworkServer.o"
+	@echo "... src/shared_libs/AsyncNetworkServer.i"
+	@echo "... src/shared_libs/AsyncNetworkServer.s"
 	@echo "... src/shared_libs/Logger.o"
 	@echo "... src/shared_libs/Logger.i"
 	@echo "... src/shared_libs/Logger.s"

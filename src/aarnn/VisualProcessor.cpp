@@ -1,18 +1,24 @@
 // VisualProcessor.cpp
-
 #include "VisualProcessor.h"
-#include <opencv2/opencv.hpp> // OpenCV library for image processing
+#include "StimuliData.h"
+#include <opencv2/opencv.hpp>
+#include <iostream>
 
-VisualProcessor::VisualProcessor() : processing(false) {}
+VisualProcessor::VisualProcessor(const std::string& host, unsigned short port, const std::string& id)
+        : id(id), processing(false), healthy(false) {
+    networkClient = std::make_unique<AsyncNetworkClient>(host, port);
+}
 
 VisualProcessor::~VisualProcessor() {
     stopProcessing();
 }
 
 bool VisualProcessor::initialise() {
-    // Initialise camera or image source
-    // For example, open a video capture device
-    return true;
+    healthy = networkClient->connect();
+    if (!healthy) {
+        std::cerr << "VisualProcessor: Failed to connect to sensory receptor server." << std::endl;
+    }
+    return healthy;
 }
 
 void VisualProcessor::startProcessing() {
@@ -28,7 +34,12 @@ void VisualProcessor::stopProcessing() {
         if (processingThread.joinable()) {
             processingThread.join();
         }
+        networkClient->disconnect();
     }
+}
+
+bool VisualProcessor::isHealthy() const {
+    return healthy.load();
 }
 
 void VisualProcessor::setVisualReceptors(const std::vector<std::shared_ptr<SensoryReceptor>>& receptors) {
@@ -36,8 +47,7 @@ void VisualProcessor::setVisualReceptors(const std::vector<std::shared_ptr<Senso
 }
 
 void VisualProcessor::captureVisualData() {
-    // Example using OpenCV to capture frames from a camera
-    cv::VideoCapture cap(0); // Open default camera
+    cv::VideoCapture cap(0);
     if (!cap.isOpened()) {
         processing = false;
         return;
@@ -49,28 +59,33 @@ void VisualProcessor::captureVisualData() {
             continue;
         }
 
-        // Process the captured frame
         processVisualData(frame);
-
-        // Sleep briefly to simulate real-time processing
-        std::this_thread::sleep_for(std::chrono::milliseconds(30)); // ~33 FPS
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
     }
 }
 
 void VisualProcessor::processVisualData(cv::Mat& frame) {
-    // Convert frame to grayscale
     cv::Mat gray;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
-    // For simplicity, we'll average the intensity and stimulate receptors accordingly
     double averageIntensity = cv::mean(gray)[0];
-
-    // Stimulate receptors based on intensity
     stimulateReceptors(averageIntensity);
+
+    StimuliData data;
+    data.receptorType = "Visual:" + id;
+    data.values = { averageIntensity };
+
+    std::string json = serializeStimuliData(data);
+    try {
+        networkClient->send(json);
+        healthy = true;
+    } catch (...) {
+        std::cerr << "VisualProcessor: Failed to send data. Marking as unhealthy." << std::endl;
+        healthy = false;
+    }
 }
 
 void VisualProcessor::stimulateReceptors(double intensity) {
-    // Map intensity to receptors
     for (auto& receptor : visualReceptors) {
         receptor->stimulate(intensity);
     }

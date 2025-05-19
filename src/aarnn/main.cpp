@@ -150,10 +150,10 @@ int main() {
     const int FFT_SIZE = 1024;
     const int NUM_RECEPTORS = FFT_SIZE / 2 + 1;
 
-    // Initialise AuditoryManager
-    AuditoryManager audioManager;
-    if (!audioManager.initialise()) {
-        std::cerr << "Failed to initialise AuditoryManager." << std::endl;
+    // Initialise SensoryReceptorServer
+    SensoryReceptorServer receptorServer;
+    if (!receptorServer.initialise()) {
+        std::cerr << "Failed to initialise Sensory Receptor Server." << std::endl;
         return -1;
     }
 
@@ -508,7 +508,6 @@ int main() {
     }
 
     // Initialise and start the SensoryReceptorServer
-    SensoryReceptorServer receptorServer;
     receptorServer.registerReceptors("Auditory_Left", auditoryReceptors[0]);
     receptorServer.registerReceptors("Auditory_Right", auditoryReceptors[1]);
 //    std::vector<std::shared_ptr<SensoryReceptor>> &bladderBowelReceptors;

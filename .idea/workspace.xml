@@ -33,59 +33,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change afterPath="$PROJECT_DIR$/CMakeLists.txt.old" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configure/Audio.conf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/configure/Visualiser.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/AsyncNetworkClient.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/AsyncNetworkServer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/ProcessorManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/aarnn/ProcessorManager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared_libs/AsyncNetworkServer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.aarnn" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.aarnn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.aarnnFullBuild" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.aarnnFullBuild" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.visualiserFullBuild" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.visualiserFullBuild" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/generic/start_vault.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/generic/start_vault.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.build" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.build" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/managepodman.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/managepodman.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BuildFromGit/run003.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run003.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/run004.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run004.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/run005.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run005.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/_deps/nlohmann_json-subbuild/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/_deps/nlohmann_json-subbuild/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-release/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-release/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/cmake_install.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/db_connection.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configure/AARNN.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/configure/entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Cluster.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Cluster.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/StimuliData.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/StimuliData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/avTimerCallback.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/avTimerCallback.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/AuditoryManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/AuditoryManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/AuditoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/AuditoryProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/AuditorySolution.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/AuditorySolution.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/ChemoreceptionProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/ChemoreceptionProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Cluster.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Cluster.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/ElectroreceptionProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/ElectroreceptionProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/GustatoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/GustatoryProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/HungerThirstProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/HungerThirstProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/InteroceptiveProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/InteroceptiveProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/MagnetoceptionProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/MagnetoceptionProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/NetworkServer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/NetworkServer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/Neuron.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/OlfactoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/OlfactoryProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/PressureProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/PressureProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/ProprioceptiveProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/ProprioceptiveProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/PruriceptionProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/PruriceptionProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/PulseAudioMic.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/PulseAudioMic.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/SomatosensoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SomatosensoryProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/StretchProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/StretchProcessor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-release/_deps/nlohmann_json-build/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-release/_deps/nlohmann_json-build/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/AuditoryProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/AuditoryProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/NetworkClient.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/NetworkServer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/SensoryReceptorServer.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SensoryReceptorServer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/VisualProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/VisualProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/NetworkClient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/AsyncNetworkClient.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/NetworkServer.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/SensoryReceptorServer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/SensoryReceptorServer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/VisualProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/VisualProcessor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/avTimerCallback.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/avTimerCallback.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/timer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/timer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/utils.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/audio/AuditoryProcessor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/AuditoryProcessor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/audio/AuditorySolution.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/audio/AuditorySolution.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/visualiser/wss.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/wss.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,44 +104,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "CMake Application.AARNN.executor": "Run",
-    "Database Script.debug_database.sql.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.west.config.association.type.startup.service": "true",
-    "SHELLCHECK.PATH": "/home/pbisaacs/.local/share/JetBrains/CLion2024.1/Shell Script/shellcheck",
-    "Shell Script.ComposeContainers.sh.executor": "Run",
-    "Shell Script.RunContainers.executor": "Run",
-    "cf.advertisement.text.has.clang-format": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "devcontainer.show.open.project.notification": "false",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/pbisaacs/Developer/aarnn/configure",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "CMakeSettings",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;CMake Application.AARNN.executor&quot;: &quot;Run&quot;,
+    &quot;Database Script.debug_database.sql.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;/home/pbisaacs/.local/share/JetBrains/CLion2024.1/Shell Script/shellcheck&quot;,
+    &quot;Shell Script.ComposeContainers.sh.executor&quot;: &quot;Run&quot;,
+    &quot;Shell Script.RunContainers.executor&quot;: &quot;Run&quot;,
+    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;devcontainer.show.open.project.notification&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/pbisaacs/Developer/aarnn/configure&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ],
-    "RunConfigurationTargetLRU": [
-      "baacce9a-d183-41f9-ad6d-ea8cf8c0e36b/database/\"neurons\""
+    &quot;RunConfigurationTargetLRU&quot;: [
+      &quot;baacce9a-d183-41f9-ad6d-ea8cf8c0e36b/database/\&quot;neurons\&quot;&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/configure" />
@@ -175,8 +151,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/audio" />
       <recent name="$PROJECT_DIR$/src/shared_libs" />
+      <recent name="$PROJECT_DIR$/src/audio" />
       <recent name="$PROJECT_DIR$/include" />
       <recent name="$PROJECT_DIR$/BuildFromGit/generic" />
       <recent name="$PROJECT_DIR$/BuildFromGit/podman" />
@@ -245,8 +221,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="CMake Application.aarnn_core" />
       <item itemvalue="CMake Application.Audio" />
+      <item itemvalue="CMake Application.aarnn_core" />
       <item itemvalue="CMake Application.audio_lib" />
       <item itemvalue="CMake Application.common" />
       <item itemvalue="Database Script.debug_database.sql" />
@@ -384,7 +360,9 @@
       <workItem from="1745787175716" duration="13232000" />
       <workItem from="1745913216673" duration="604000" />
       <workItem from="1747226387598" duration="213000" />
-      <workItem from="1747226627231" duration="17990000" />
+      <workItem from="1747226627231" duration="41456000" />
+      <workItem from="1747642384387" duration="151000" />
+      <workItem from="1747642550683" duration="18869000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

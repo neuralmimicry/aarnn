@@ -5,7 +5,7 @@ int main() {
     // Create AuditoryProcessor
     std::string host = "sensory_receptor_host";
     unsigned short port = 12345;
-    AuditoryProcessor auditoryProcessor(host, port);
+    AuditoryProcessor auditoryProcessor(host, port, "auditory_processor_1");
     if (!auditoryProcessor.initialise()) {
         std::cerr << "Failed to initialise AuditoryProcessor." << std::endl;
         return -1;

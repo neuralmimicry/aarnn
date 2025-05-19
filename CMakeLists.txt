@@ -1,13 +1,18 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.31.6)
 project(AARNN VERSION 1.0 LANGUAGES C CXX)
 
 #––– 1) GLOBAL CONFIGURATION –––––––––––––––––––––––––––––––––––––––––––
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-cmake_policy(SET CMP0135 NEW)            # for DOWNLOAD_EXTRACT_TIMESTAMP
+# Only set these policies if they exist in this CMake version
+if(POLICY CMP0135)
+    cmake_policy(SET CMP0135 NEW)            # for DOWNLOAD_EXTRACT_TIMESTAMP
+endif()
+if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)            # to silence the FindBoost warning
+endif()
 set(FETCHCONTENT_DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
-cmake_policy(SET CMP0167 NEW)            # to silence the FindBoost warning
 
 # Default build type (can be overridden by -DCMAKE_BUILD_TYPE)
 if(NOT CMAKE_BUILD_TYPE)
@@ -80,7 +85,8 @@ target_link_libraries(common PUBLIC
 #––– 5) CORE NEURON MODEL ––––––––––––––––––––––––––––––––––––––––––––––
 file(GLOB_RECURSE CORE_SRCS src/aarnn/*.cpp)
 list(REMOVE_ITEM CORE_SRCS src/aarnn/main.cpp)
-add_library(aarnn_core STATIC ${CORE_SRCS})
+add_library(aarnn_core STATIC ${CORE_SRCS}
+        src/aarnn/ProcessorManager.cpp)
 target_include_directories(aarnn_core PUBLIC include ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(aarnn_core PUBLIC
         common

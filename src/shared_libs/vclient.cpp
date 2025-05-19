@@ -58,16 +58,23 @@ bool getPostgresCredentials(const std::string& vault_api_addr, const std::string
 
         // Vault wraps your secret under data.data
         // like { "data": { "data": { "POSTGRES_USERNAME": "...", … } } }
-        if (!jsonData.contains("data") ||
-            !jsonData["data"].is_object() ||
-            !jsonData["data"].contains("data") ||
-            !jsonData["data"]["data"].is_object())
-        {
+        if (!jsonData.contains("data") || !jsonData["data"].contains("data") || !jsonData["data"]["data"].is_object()) {
             std::cerr << "Unexpected JSON structure in Vault response\n";
             return false;
         }
-
         auto creds = jsonData["data"]["data"];
+        auto outer = jsonData.find("data");
+        if (outer != jsonData.end()) {
+            if (outer->contains("data")) {
+                creds = (*outer)["data"]; // KV v2
+            } else {
+                creds = *outer; // KV v1
+            }
+        } else {
+            std::cerr << "Invalid Vault response: no 'data' field\n";
+            return false;
+        }
+
         try {
             username      = creds.at("POSTGRES_USERNAME").get<std::string>();
             password      = creds.at("POSTGRES_PASSWORD").get<std::string>();
@@ -105,7 +112,7 @@ bool initialiseDatabaseConnection(std::string& connection_string) {
     std::string vault_token = vault_token_env;
     std::cout << "Vault API Address: " << vault_api_addr << std::endl;
     std::cout << "Vault Token: " << vault_token << std::endl;
-    std::string secret_path = "secret/data/postgres"; // Adjust this path based on your Vault setup
+    std::string secret_path = "secret/postgres"; // Adjust this path based on your Vault setup
     std::string username, password, database, database_host, database_port;
 
     if (getPostgresCredentials(vault_api_addr, vault_token, secret_path, username, password, database, database_host, database_port)) {

@@ -34,7 +34,7 @@ CONTAINERFILE_PATHS=(
     "./BuildFromGit/podman/Containerfile.visualiser"
 )
 BUILD_ARGS=(
-    "--build-arg REPO_URL=https://github.com/neuralmimicry/aarnn.git --build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_DB=${POSTGRES_DB} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_HOST=${POSTGRES_HOST}"  # compiler-image
+    "--build-arg REPO_URL=neuralmimicry/aarnn.git --build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_DB=${POSTGRES_DB} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_HOST=${POSTGRES_HOST}"  # compiler-image
     ""  # vault-image has no build args
     "--build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_DB=${POSTGRES_DB} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}"  # postgres-image
     ""  # aarnn-image has no build args. Vault token will be added later
@@ -172,7 +172,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
 
     # Build the image using Buildah
     echo "Building image $LOCAL_IMAGE using Buildah..."
-    buildah bud -f "$CONTAINERFILE_PATH" -t "$LOCAL_IMAGE" $BUILD_ARG
+    buildah bud --ssh default -f "$CONTAINERFILE_PATH" -t "$LOCAL_IMAGE" $BUILD_ARG
 
     if [ $? -ne 0 ]; then
         echo "Failed to build the image $LOCAL_IMAGE."
@@ -205,6 +205,11 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         esac
 
         push_image "$LOCAL_IMAGE" "$REGISTRY_IMAGE"
+    fi
+
+    if podman container exists vault; then
+        echo "Removing existing 'vault' container..."
+        podman rm -f vault
     fi
 
     if [ "$IMAGE_NAME" == "vault-image" ]; then
