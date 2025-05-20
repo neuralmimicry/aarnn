@@ -217,7 +217,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # --- Start the Vault Container ---
         echo "Starting temporary Vault container..."
         CONTAINER_NAME="vault"
-        podman run -d --name "$CONTAINER_NAME" -p 8200:8200 -v vault-data:/opt/vault/data "$LOCAL_IMAGE"
+        podman run -d --name "$CONTAINER_NAME" -p 8200:8200 -v vault-data:/opt/vault/data -v vault-logs:/opt/vault/logs "$LOCAL_IMAGE"
 
         # Wait for Vault to be ready
         echo "Waiting for Vault to be ready..."
@@ -239,7 +239,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # --- Retrieve Information from Vault ---
         echo "Retrieving information from Vault..."
         # Retrieve the root token from the .vault-token file
-        export VAULT_TOKEN=$(podman exec "$CONTAINER_NAME" cat /home/vault/.vault-token)
+        export VAULT_TOKEN=$(podman exec "$CONTAINER_NAME" cat /opt/vault/logs/.vault-token)
 
         if [ -z "$VAULT_TOKEN" ]; then
            echo "Failed to retrieve Vault token."

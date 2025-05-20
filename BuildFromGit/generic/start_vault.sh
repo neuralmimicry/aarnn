@@ -2,6 +2,7 @@
 set -e
 
 source /.env
+export VAULT_ADDR=http://127.0.0.1:8200
 
 vault server -config=/etc/vault.d/vault.hcl -log-level=info > /opt/vault/logs/vault_output.log 2>&1 &
 VAULT_PID=$!
@@ -11,28 +12,32 @@ for i in {1..30}; do
     if curl -s http://127.0.0.1:8200/v1/sys/health | grep -q "initialized"; then
         echo "Vault is responding."
         break
-    else
-        echo "Waiting... ($i)"
-        sleep 2
     fi
+    echo "Waiting... ($i)"
+    sleep 2
 done
-
-export VAULT_ADDR=http://127.0.0.1:8200
 
 # Check if Vault is initialized
 if vault status | grep -q 'Initialized.*false'; then
-    echo "Initializing Vault..."
+    echo "Vault is not initialized. Initializing..."
 
     vault operator init -format=json > /opt/vault/logs/init.json
     VAULT_TOKEN=$(jq -r '.root_token' /opt/vault/logs/init.json)
     jq -r '.unseal_keys_b64[]' /opt/vault/logs/init.json > /opt/vault/logs/unseal-keys.txt
-    echo "$VAULT_TOKEN" > /home/vault/.vault-token
+
+    echo "$VAULT_TOKEN" > /opt/vault/logs/.vault-token
 else
     echo "Vault already initialized"
-    VAULT_TOKEN=$(cat /home/vault/.vault-token)
+
+    if [ -f /opt/vault/logs/.vault-token ]; then
+        VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
+    else
+        echo "Vault token file missing! Cannot proceed."
+        exit 1
+    fi
 fi
 
-# Unseal Vault (assumes default 3 keys required)
+# Unseal Vault
 if vault status | grep -q 'Sealed.*true'; then
     echo "Unsealing Vault..."
     while read -r key; do
@@ -40,19 +45,19 @@ if vault status | grep -q 'Sealed.*true'; then
         sleep 1
     done < /opt/vault/logs/unseal-keys.txt
 else
-    echo "Vault already unsealed"
+    echo "Vault already unsealed."
 fi
 
+echo "Vault token: $VAULT_TOKEN"
 export VAULT_TOKEN
-echo "Vault root token: $VAULT_TOKEN"
 
-# Save for future containers
+# Save for other containers
 cat <<EOF > /opt/vault/logs/vault_env.sh
 export VAULT_ADDR=$VAULT_ADDR
 export VAULT_TOKEN=$VAULT_TOKEN
 EOF
 
-# Seed secrets
+# Seed the secret store
 /usr/local/bin/init_vault.sh
 
 wait $VAULT_PID
