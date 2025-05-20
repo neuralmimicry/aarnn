@@ -1,59 +1,60 @@
 #!/bin/bash
-set -euo pipefail
+set -e
 
-export VAULT_ADDR=http://vault:8200
+VAULT_LOG_DIR="/opt/vault/logs"
+UNSEAL_KEYS_FILE="${VAULT_LOG_DIR}/unseal-keys.txt"
+TOKEN_FILE="${VAULT_LOG_DIR}/.vault-token"
 
-# Start Vault in the background
-vault server -config=/etc/vault.d/vault.hcl > /opt/vault/logs/vault_output.log 2>&1 &
+# Start Vault server in background
+vault server -config=/etc/vault.d/vault.hcl &
 VAULT_PID=$!
 
-# Wait for Vault to respond to /sys/health
-echo "Waiting for Vault to respond..."
-for i in {1..30}; do
-  status=$(curl -s http://vault:8200/v1/sys/health || echo "")
-  if echo "$status" | grep -q '"initialized":'; then
-    echo "Vault is reachable."
-    break
-  fi
+# Wait for Vault to respond
+echo "Waiting for Vault to be reachable..."
+until curl -s http://localhost:8200/v1/sys/health >/dev/null 2>&1; do
   sleep 1
 done
 
-# Check init state
-if ! vault status | grep -q "Initialized.*true"; then
+sleep 2
+
+# Initialize Vault if not already initialized
+if vault status | grep -q "Initialized.*false"; then
   echo "Vault is not initialized. Initializing..."
-  vault operator init -format=json > /opt/vault/logs/init.json
-  jq -r '.root_token' /opt/vault/logs/init.json > /opt/vault/logs/.vault-token
-  jq -r '.unseal_keys_b64[]' /opt/vault/logs/init.json > /opt/vault/logs/unseal-keys.txt
-else
-  echo "Vault already initialized."
+  vault operator init -key-shares=5 -key-threshold=3 \
+    -format=json > "${VAULT_LOG_DIR}/init.json"
+
+  jq -r '.unseal_keys_b64[]' "${VAULT_LOG_DIR}/init.json" > "${UNSEAL_KEYS_FILE}"
+  jq -r '.root_token' "${VAULT_LOG_DIR}/init.json" > "${TOKEN_FILE}"
 fi
 
 # Unseal Vault if sealed
 if vault status | grep -q "Sealed.*true"; then
-  echo "Vault is sealed. Unsealing..."
-  for key in $(cat /opt/vault/logs/unseal-keys.txt); do
-    vault operator unseal "$key" || true
+  echo "Unsealing Vault..."
+  while IFS= read -r key; do
+    vault operator unseal "$key"
     sleep 1
     if ! vault status | grep -q "Sealed.*true"; then
-      echo "Vault is now unsealed."
       break
     fi
-  done
+  done < "$UNSEAL_KEYS_FILE"
 fi
 
-# Double-check before continuing
+# Confirm it's unsealed
 if vault status | grep -q "Sealed.*true"; then
-  echo "Vault is still sealed after attempted unseal. Aborting init script."
+  echo "Vault failed to unseal. Aborting."
   exit 1
 fi
 
-# Load token
-export VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
+echo "Vault is initialized and unsealed."
 
+# Export token so init script can use it
+export VAULT_TOKEN=$(< "$TOKEN_FILE")
+
+# Run post-init script
 if [ -x /usr/local/bin/init_vault.sh ]; then
   echo "Running init_vault.sh..."
   /usr/local/bin/init_vault.sh || echo "init_vault.sh failed (non-fatal)"
 fi
 
-echo "Vault ready."
+# Wait on Vault PID
 wait $VAULT_PID
