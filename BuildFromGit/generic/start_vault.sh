@@ -1,59 +1,58 @@
 #!/bin/bash
+set -e
 
 source /.env
 
-vault server \
-  -config=/etc/vault.d/vault.hcl \
-  -log-level=info | tee /opt/vault/logs/vault_output.log 2>&1 &
+vault server -config=/etc/vault.d/vault.hcl -log-level=info > /opt/vault/logs/vault_output.log 2>&1 &
 VAULT_PID=$!
 
-# Wait for a few seconds to allow Vault to initialise
-sleep 5
-
-# Debugging
-cat /opt/vault/logs/vault_output.log
-
-# Check if Vault is initialised and running
-for i in {1..60}; do
-    if grep -q 'Root Token' /opt/vault/logs/vault_output.log; then
-        echo "Vault is initialised and running."
+echo "Waiting for Vault to be reachable..."
+for i in {1..30}; do
+    if curl -s http://127.0.0.1:8200/v1/sys/health | grep -q "initialized"; then
+        echo "Vault is responding."
         break
     else
-        echo "Waiting for Vault to initialise... ($i)"
+        echo "Waiting... ($i)"
         sleep 2
-    fi
-
-    if [ "$i" -eq 60 ]; then
-        echo "Vault did not initialise in time."
-        cat /opt/vault/logs/vault_output.log
-        exit 1
     fi
 done
 
-# Extract the first matching VAULT_ADDR and truncate if longer than 25 characters
-# VAULT_ADDR=$(grep -m 1 '127.0.0.1' /opt/vault/logs/vault_output.log | grep -o 'http://127.0.0.1:[0-9]*' | cut -c 1-25)
-VAULT_ADDR=http://vault:8200
-VAULT_API_ADDR=http://vault:8200
-VAULT_TOKEN=$(grep 'Root Token' /opt/vault/logs/vault_output.log | awk '{print $3}')
+export VAULT_ADDR=http://127.0.0.1:8200
 
-# Export VAULT_ADDR and VAULT_TOKEN as environment variables
-export VAULT_ADDR
-export VAULT_API_ADDR
+# Check if Vault is initialized
+if vault status | grep -q 'Initialized.*false'; then
+    echo "Initializing Vault..."
+
+    vault operator init -format=json > /opt/vault/logs/init.json
+    VAULT_TOKEN=$(jq -r '.root_token' /opt/vault/logs/init.json)
+    jq -r '.unseal_keys_b64[]' /opt/vault/logs/init.json > /opt/vault/logs/unseal-keys.txt
+    echo "$VAULT_TOKEN" > /home/vault/.vault-token
+else
+    echo "Vault already initialized"
+    VAULT_TOKEN=$(cat /home/vault/.vault-token)
+fi
+
+# Unseal Vault (assumes default 3 keys required)
+if vault status | grep -q 'Sealed.*true'; then
+    echo "Unsealing Vault..."
+    while read -r key; do
+        vault operator unseal "$key"
+        sleep 1
+    done < /opt/vault/logs/unseal-keys.txt
+else
+    echo "Vault already unsealed"
+fi
+
 export VAULT_TOKEN
-
-echo "Vault server started with address: $VAULT_ADDR"
-echo "Vault API address: $VAULT_API_ADDR"
 echo "Vault root token: $VAULT_TOKEN"
 
-# Save these variables to a file for later use
-cat <<EOL > /opt/vault/logs/vault_env.sh
-VAULT_ADDR=$VAULT_ADDR
-VAULT_API_ADDR=$VAULT_API_ADDR
-VAULT_TOKEN=$VAULT_TOKEN
-EOL
+# Save for future containers
+cat <<EOF > /opt/vault/logs/vault_env.sh
+export VAULT_ADDR=$VAULT_ADDR
+export VAULT_TOKEN=$VAULT_TOKEN
+EOF
 
-# Initialise Vault with secrets
+# Seed secrets
 /usr/local/bin/init_vault.sh
 
-# Wait for the Vault server process to exit
 wait $VAULT_PID

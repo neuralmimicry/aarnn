@@ -61,6 +61,7 @@ RUN apt-get update && \
   freeglut3-dev \
   git \
   iputils-ping \
+  jq \
   libasound2-dev \
   libavcodec-dev \
   libavdevice-dev \
