@@ -30,6 +30,11 @@ if [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_DB" ] || [ -z "$POSTGRES_USERN
     exit 1
 fi
 
+if vault kv get secret/postgres &>/dev/null; then
+    echo "Postgres secret already exists. Skipping reinitialisation."
+    exit 0
+fi
+
 # Update Vault with PostgreSQL credentials
 vault kv put secret/postgres \
     POSTGRES_HOST="$POSTGRES_HOST" \

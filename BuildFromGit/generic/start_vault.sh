@@ -2,23 +2,10 @@
 
 source /.env
 
-# Check if VAULT_DEV_ROOT_TOKEN_ID is set
-if [ -n "$VAULT_DEV_ROOT_TOKEN_ID" ]; then
-    echo "Starting Vault with pre-existing token."
-    export VAULT_DEV_ROOT_TOKEN_ID
-    # Start Vault in development mode with the specified or default token
-    vault server -dev \
-        -dev-root-token-id="${VAULT_DEV_ROOT_TOKEN_ID:-root}" \
-        -dev-listen-address="${VAULT_DEV_LISTEN_ADDRESS:-0.0.0.0:8200}" \
-        -log-level=info | tee /opt/vault/logs/vault_output.log 2>&1 &
-    VAULT_PID=$!
-else
-    echo "Starting Vault without a pre-existing token."
-    # Start Vault in development mode with the specified or default token
-    vault server -dev \
-        -log-level=info | tee /opt/vault/logs/vault_output.log 2>&1 &
-    VAULT_PID=$!
-fi
+vault server \
+  -config=/etc/vault.d/vault.hcl \
+  -log-level=info | tee /opt/vault/logs/vault_output.log 2>&1 &
+VAULT_PID=$!
 
 # Wait for a few seconds to allow Vault to initialise
 sleep 5
