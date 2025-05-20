@@ -43,6 +43,10 @@ BUILD_ARGS=(
 
 IMAGE_TAG="latest"
 
+podman volume rm vault-data vault-logs
+podman volume create vault-data
+podman volume create vault-logs
+
 # Function to push the image to a registry
 push_image() {
     local local_image="$1"

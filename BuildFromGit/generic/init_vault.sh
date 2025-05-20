@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Load .env file
+if [ -f /.env ]; then
+    . /.env
+else
+    echo ".env file not found!"
+    exit 1
+fi
+
 # Check if Vault address and token are set
 if [ -z "$VAULT_ADDR" ]; then
     echo "VAULT_ADDR is not set. Please set it and try again."
@@ -11,16 +19,16 @@ if [ -z "$VAULT_API_ADDR" ]; then
     exit 1
 fi
 
-if [ -z "$VAULT_TOKEN" ]; then
-    echo "VAULT_TOKEN is not set. Please set it and try again."
+# Load root token from persistent file
+if [ -f /opt/vault/logs/.vault-token ]; then
+    export VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
+else
+    echo "Vault token not found!"
     exit 1
 fi
 
-# Load .env file
-if [ -f /.env ]; then
-    . /.env
-else
-    echo ".env file not found!"
+if [ -z "$VAULT_TOKEN" ]; then
+    echo "VAULT_TOKEN is not set. Please set it and try again."
     exit 1
 fi
 
@@ -30,8 +38,10 @@ if [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_DB" ] || [ -z "$POSTGRES_USERN
     exit 1
 fi
 
-if vault kv get secret/postgres &>/dev/null; then
-    echo "Postgres secret already exists. Skipping reinitialisation."
+# Confirm access before proceeding
+vault kv get secret/postgres >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "Postgres secret already exists. Skipping."
     exit 0
 fi
 
@@ -51,3 +61,7 @@ else
 fi
 
 cat /opt/vault/logs/vault_output.log
+cat /opt/vault/logs/.vault-token
+
+vault token lookup
+vault status
