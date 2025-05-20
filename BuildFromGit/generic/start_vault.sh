@@ -31,12 +31,9 @@ fi
 IS_INITIALIZED=$(vault status -format=json | jq -r '.initialized')
 IS_SEALED=$(vault status -format=json | jq -r '.sealed')
 
-# -------------------------------
-# Only initialize if not already
-# -------------------------------
+# Initialization block — only if not initialized
 if [ "$IS_INITIALIZED" == "false" ]; then
     echo "Vault is not initialized. Initializing..."
-
     vault operator init -format=json > /opt/vault/logs/init.json || {
         echo "Vault initialization failed."
         exit 1
@@ -49,40 +46,35 @@ elif [ ! -s /opt/vault/logs/init.json ]; then
     echo "Vault is already initialized but init.json is empty — cannot recover."
     vault status
     exit 1
-
 else
     echo "Vault is already initialized."
 fi
 
-ls -la /opt/vault/logs/
-
-# Always try to load the token
-if [ -f /opt/vault/logs/.vault-token ]; then
-    VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
-elif [ -f /opt/vault/logs/init.json ]; then
-    VAULT_TOKEN=$(jq -r '.root_token' /opt/vault/logs/init.json)
+# Token recovery (order matters)
+if [ -s /opt/vault/logs/.vault-token ]; then
+    export VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
+elif [ -s /opt/vault/logs/init.json ]; then
+    export VAULT_TOKEN=$(jq -r '.root_token' /opt/vault/logs/init.json)
     echo "$VAULT_TOKEN" > /opt/vault/logs/.vault-token
 else
-    echo "Vault is initialized but token files are missing and unrecoverable."
-    vault status
+    echo "Vault token not found and cannot be recovered."
     exit 1
 fi
 
-export VAULT_TOKEN
-
-# Case 2: Unseal if needed
+# Unseal logic
 if [ "$IS_SEALED" == "true" ]; then
     echo "Unsealing Vault..."
-    if [ ! -f /opt/vault/logs/unseal-keys.txt ]; then
+    if [ ! -s /opt/vault/logs/unseal-keys.txt ]; then
         echo "Missing unseal-keys.txt. Cannot unseal."
         vault status
         exit 1
     fi
+
     while read -r key; do
         vault operator unseal "$key"
     done < /opt/vault/logs/unseal-keys.txt
 else
-    echo "Vault already unsealed."
+    echo "Vault is already unsealed."
 fi
 
 # Save env file for other containers
