@@ -28,18 +28,28 @@ else
   echo "Vault already initialized."
 fi
 
-# Load token
-export VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
-
-# Unseal if necessary
+# Unseal Vault if sealed
 if vault status | grep -q "Sealed.*true"; then
   echo "Vault is sealed. Unsealing..."
   for key in $(cat /opt/vault/logs/unseal-keys.txt); do
-    vault operator unseal "$key"
+    vault operator unseal "$key" || true
+    sleep 1
+    if ! vault status | grep -q "Sealed.*true"; then
+      echo "Vault is now unsealed."
+      break
+    fi
   done
 fi
 
-# Run post-init script if present
+# Double-check before continuing
+if vault status | grep -q "Sealed.*true"; then
+  echo "Vault is still sealed after attempted unseal. Aborting init script."
+  exit 1
+fi
+
+# Load token
+export VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
+
 if [ -x /usr/local/bin/init_vault.sh ]; then
   echo "Running init_vault.sh..."
   /usr/local/bin/init_vault.sh || echo "init_vault.sh failed (non-fatal)"

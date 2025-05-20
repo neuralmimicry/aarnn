@@ -43,7 +43,7 @@ BUILD_ARGS=(
 
 IMAGE_TAG="latest"
 
-podman volume rm vault-data vault-logs
+podman volume rm -f vault-data vault-logs
 podman volume create vault-data
 podman volume create vault-logs
 
