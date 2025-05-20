@@ -21,12 +21,14 @@ IS_INITIALIZED=$(vault status -format=json | jq -r '.initialized')
 IS_SEALED=$(vault status -format=json | jq -r '.sealed')
 
 # Case 1: First run
-if [ "$IS_INITIALIZED" == "false" ]; then
+#if [ "$IS_INITIALIZED" == "false" ]; then
     echo "Vault is not initialized. Initializing..."
     vault operator init -format=json > /opt/vault/logs/init.json
     jq -r '.root_token' /opt/vault/logs/init.json > /opt/vault/logs/.vault-token
     jq -r '.unseal_keys_b64[]' /opt/vault/logs/init.json > /opt/vault/logs/unseal-keys.txt
-fi
+#fi
+
+ls -l /opt/vault/logs/
 
 # Always try to load the token
 if [ -f /opt/vault/logs/.vault-token ]; then
