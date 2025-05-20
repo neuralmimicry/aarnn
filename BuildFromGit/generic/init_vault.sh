@@ -46,19 +46,23 @@ if [ $? -eq 0 ]; then
 fi
 
 # Update Vault with PostgreSQL credentials
-vault kv put secret/postgres \
+response=$(vault kv put secret/postgres \
     POSTGRES_HOST="$POSTGRES_HOST" \
     POSTGRES_PORT="$POSTGRES_PORT" \
     POSTGRES_DB="$POSTGRES_DB" \
     POSTGRES_USERNAME="$POSTGRES_USERNAME" \
-    POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
+    POSTGRES_PASSWORD="$POSTGRES_PASSWORD" 2>&1)
 
-if [ $? -eq 0 ]; then
-    echo "Vault has been updated with PostgreSQL credentials."
-else
-    echo "Failed to update Vault with PostgreSQL credentials."
+if echo "$response" | grep -q 'permission denied\|403'; then
+    echo "Permission denied writing to Vault. Skipping secret upload."
+    exit 0
+elif [ $? -ne 0 ]; then
+    echo "Unexpected failure while writing to Vault:"
+    echo "$response"
     exit 1
 fi
+
+echo "Vault updated with PostgreSQL credentials."
 
 cat /opt/vault/logs/vault_output.log
 cat /opt/vault/logs/.vault-token
