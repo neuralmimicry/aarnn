@@ -217,7 +217,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # --- Start the Vault Container ---
         echo "Starting temporary Vault container..."
         CONTAINER_NAME="vault"
-        podman run -d --name "$CONTAINER_NAME" -p 8200:8200 "$LOCAL_IMAGE"
+        podman run -d --name "$CONTAINER_NAME" -p 8200:8200 -v vault-data:/opt/vault/data "$LOCAL_IMAGE"
 
         # Wait for Vault to be ready
         echo "Waiting for Vault to be ready..."
@@ -239,7 +239,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # --- Retrieve Information from Vault ---
         echo "Retrieving information from Vault..."
         # Retrieve the root token from the .vault-token file
-        VAULT_TOKEN=$(podman exec "$CONTAINER_NAME" cat /home/vault/.vault-token)
+        export VAULT_TOKEN=$(podman exec "$CONTAINER_NAME" cat /home/vault/.vault-token)
 
         if [ -z "$VAULT_TOKEN" ]; then
            echo "Failed to retrieve Vault token."
@@ -250,21 +250,21 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         echo "Vault token retrieved: $VAULT_TOKEN"
 
         # Extract VAULT_ADDR from the vault container
-        VAULT_ADDR=$(podman exec "$CONTAINER_NAME" printenv VAULT_ADDR)
+        export VAULT_ADDR=$(podman exec "$CONTAINER_NAME" printenv VAULT_ADDR)
 
         if [ -z "$VAULT_ADDR" ]; then
             echo "Failed to retrieve VAULT_ADDR from the vault container. Setting to default."
-            VAULT_ADDR="http://vault:8200"
+            export VAULT_ADDR="http://vault:8200"
         fi
 
         echo "VAULT_ADDR retrieved: $VAULT_ADDR"
 
         # Extract VAULT_API_ADDR from the vault container
-        VAULT_API_ADDR=$(podman exec "$CONTAINER_NAME" printenv VAULT_API_ADDR)
+        export VAULT_API_ADDR=$(podman exec "$CONTAINER_NAME" printenv VAULT_API_ADDR)
 
         if [ -z "$VAULT_API_ADDR" ]; then
             echo "Failed to retrieve VAULT_API_ADDR from the vault container. Setting to default."
-            VAULT_API_ADDR="$VAULT_ADDR"
+            export VAULT_API_ADDR="$VAULT_ADDR"
         fi
 
         echo "VAULT_API_ADDR retrieved: $VAULT_API_ADDR"
