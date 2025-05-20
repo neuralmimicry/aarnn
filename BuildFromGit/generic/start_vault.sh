@@ -31,8 +31,11 @@ else
 
     if [ -f /opt/vault/logs/.vault-token ]; then
         VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
+    elif [ -f /opt/vault/logs/init.json ]; then
+        VAULT_TOKEN=$(jq -r '.root_token' /opt/vault/logs/init.json)
+        echo "$VAULT_TOKEN" > /opt/vault/logs/.vault-token
     else
-        echo "Vault token file missing! Cannot proceed."
+        echo "Vault token file and init.json are both missing! Cannot proceed."
         exit 1
     fi
 fi
@@ -55,6 +58,7 @@ export VAULT_TOKEN
 cat <<EOF > /opt/vault/logs/vault_env.sh
 export VAULT_ADDR=$VAULT_ADDR
 export VAULT_TOKEN=$VAULT_TOKEN
+export VAULT_API_ADDR=$VAULT_API_ADDR
 EOF
 
 # Seed the secret store
