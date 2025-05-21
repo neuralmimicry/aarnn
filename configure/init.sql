@@ -58,12 +58,16 @@ CREATE TABLE IF NOT EXISTS neurons (
 );
 
 -- Grant table-level privileges
+-- Switch to table owner before granting
+SET ROLE neuron;
+
 GRANT SELECT ON TABLE neurons TO neurons_read;
 GRANT SELECT ON TABLE clusters TO neurons_read;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE neurons TO neurons_rw;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE clusters TO neurons_rw;
 
--- Grant access to sequences (for SERIAL columns)
 GRANT USAGE, SELECT ON SEQUENCE neurons_neuron_id_seq TO neurons_rw;
 GRANT USAGE, SELECT ON SEQUENCE clusters_cluster_id_seq TO neurons_rw;
+
+RESET ROLE;
