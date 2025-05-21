@@ -50,6 +50,11 @@ if ! curl -s -H "X-Vault-Token: $VAULT_TOKEN" "http://localhost:8200/v1/sys/seal
   exit 1
 fi
 
+# Ensure KV v2 enabled at `secret/`
+vault secrets list | grep -q "^secret/" || vault secrets enable -path=secret kv-v2
+
+vault token lookup | grep -q '"root"' || { echo "Token is not root."; exit 1; }
+
 if curl -s -H "X-Vault-Token: $VAULT_TOKEN" "http://localhost:8200/v1/sys/internal/ui/mounts/$SECRETS_PATH" | grep -q "403"; then
   echo "Vault token doesn't have access to $SECRETS_PATH — check policies"
   exit 1
