@@ -14,9 +14,9 @@ SensoryReceptorServer::~SensoryReceptorServer() {
 }
 
 bool SensoryReceptorServer::initialise() {
-    const char* portStr = std::getenv("SERVER_PORT");
+    const char* portStr = std::getenv("SENSORY_SERVER_PORT");
     if (!portStr) {
-        std::cerr << "Environment variable SERVER_PORT is not set." << std::endl;
+        std::cerr << "Environment variable SENSORY_SERVER_PORT is not set." << std::endl;
         return false;
     }
 
@@ -25,28 +25,35 @@ bool SensoryReceptorServer::initialise() {
     long portLong = std::strtol(portStr, &endPtr, 10);
 
     if (errno != 0 || endPtr == portStr || *endPtr != '\0') {
-        std::cerr << "Invalid SERVER_PORT: '" << portStr << "' is not a valid number." << std::endl;
+        std::cerr << "Invalid SENSORY_SERVER_PORT: '" << portStr << "' is not a valid number." << std::endl;
         return false;
     }
 
     if (portLong <= 0 || portLong > 65535) {
-        std::cerr << "SERVER_PORT out of valid TCP port range: " << portLong << std::endl;
+        std::cerr << "SENSORY_SERVER_PORT out of valid TCP port range: " << portLong << std::endl;
         return false;
     }
 
-    int port = static_cast<int>(portLong);
+    server_port = static_cast<int>(portLong);
 
-    networkServer = std::make_unique<AsyncNetworkServer>(port);
+    networkServer = std::make_unique<AsyncNetworkServer>(server_port);
     if (!networkServer->initialise()) {
         std::cerr << "Failed to initialise network server." << std::endl;
-        return false;
+        server_initialised = false;
+    }
+    else {
+        server_initialised = true;
     }
 
-    return true;
+    return server_initialised;
 }
 
-bool SensoryReceptorServer::startServer(int port) {
-    networkServer = std::make_unique<AsyncNetworkServer>(port);
+bool SensoryReceptorServer::startServer() {
+
+    if (!server_initialised) {
+        std::cerr << "Server not initialised. Cannot start." << std::endl;
+        return false;
+    }
 
     networkServer->setOnMessage([this](int clientId, const std::string& message) {
         processStimuliData(message);

@@ -157,7 +157,6 @@ int main() {
         return -1;
     }
 
-    int port = std::stoi(config["server_port"]);
     int num_clusters = std::stoi(config["num_clusters"]);
     int num_neurons = std::stoi(config["num_neurons"]);
     int num_pixels = std::stoi(config["num_pixels"]);
@@ -532,7 +531,7 @@ int main() {
     receptorServer.registerReceptors("Visual_Left", visualReceptors[0]);
     receptorServer.registerReceptors("Visual_Right", visualReceptors[1]);
 
-    if (!receptorServer.startServer(port)) {
+    if (!receptorServer.startServer()) {
         std::cerr << "Failed to start SensoryReceptor server." << std::endl;
         return -1;
     }

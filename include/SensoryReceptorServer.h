@@ -13,7 +13,7 @@ public:
 
     // Initialise the server
     bool initialise();
-    bool startServer(int port);
+    bool startServer();
     void stopServer();
 
     void registerReceptors(const std::string& receptorType,
@@ -22,7 +22,8 @@ public:
 private:
     std::unique_ptr<AsyncNetworkServer> networkServer{};
     std::atomic<bool> running;
-
+    int server_port;
+    bool server_initialised = false;
     // Map receptor type to receptors
     std::map<std::string, std::vector<std::shared_ptr<SensoryReceptor>>> receptorMap;
 
