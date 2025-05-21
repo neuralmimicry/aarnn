@@ -6,7 +6,7 @@ UNSEAL_KEYS_FILE="${VAULT_LOG_DIR}/unseal-keys.txt"
 TOKEN_FILE="${VAULT_LOG_DIR}/.vault-token"
 
 # Start Vault server in background
-vault server -config=/etc/vault.d/vault.hcl &
+exec vault server -config=/etc/vault.d/vault.hcl 2>&1 | tee /opt/vault/logs/vault_output.log
 VAULT_PID=$!
 
 # Wait for Vault to respond
@@ -55,6 +55,9 @@ if [ -x /usr/local/bin/init_vault.sh ]; then
   echo "Running init_vault.sh..."
   /usr/local/bin/init_vault.sh || echo "init_vault.sh failed (non-fatal)"
 fi
+
+curl -H "X-Vault-Token: $VAULT_TOKEN" \
+  http://localhost:8200/v1/secret/data/postgres
 
 # Wait on Vault PID
 wait $VAULT_PID

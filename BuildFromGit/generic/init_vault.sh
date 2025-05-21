@@ -40,6 +40,11 @@ fi
 
 SECRETS_PATH="secret/postgres"
 
+# Check Vault is reachable
+curl -s "$VAULT_ADDR/v1/sys/health" | grep '"initialized":true' || {
+  echo "Vault not initialized"; exit 1;
+}
+
 if ! curl -s -H "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/sys/seal-status" | grep -q '"sealed":false'; then
   echo "Vault is sealed, cannot proceed"
   exit 1
