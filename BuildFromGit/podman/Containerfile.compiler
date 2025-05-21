@@ -101,6 +101,7 @@ RUN apt-get update && \
   openssh-client \
   pkg-config \
   portaudio19-dev \
+  postgresql-client \
   pulseaudio \
   pulseaudio-utils \
   python3-vtk9 \

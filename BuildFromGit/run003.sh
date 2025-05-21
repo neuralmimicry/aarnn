@@ -222,7 +222,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         # --- Start the Vault Container ---
         echo "Starting temporary Vault container..."
         CONTAINER_NAME="vault"
-        podman run -d --name "$CONTAINER_NAME" -p 8200:8200 -v vault-data:/opt/vault/data -v vault-logs:/opt/vault/logs "$LOCAL_IMAGE"
+        podman run -d --name "$CONTAINER_NAME" -p 8200:8200 -v vault-data:/opt/vault/data -v vault-logs:/opt/vault/logs -v postgres-data:/var/lib/postgresql/data "$LOCAL_IMAGE"
 
         # Wait for Vault to be ready
         echo "Waiting for Vault container to report it's initialized and unsealed..."
