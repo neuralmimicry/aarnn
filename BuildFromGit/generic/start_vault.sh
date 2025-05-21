@@ -6,7 +6,7 @@ UNSEAL_KEYS_FILE="${VAULT_LOG_DIR}/unseal-keys.txt"
 TOKEN_FILE="${VAULT_LOG_DIR}/.vault-token"
 
 # Start Vault server in background
-exec vault server -config=/etc/vault.d/vault.hcl 2>&1 | tee /opt/vault/logs/vault_output.log
+vault server -config=/etc/vault.d/vault.hcl 2>&1 | tee /opt/vault/logs/vault_output.log &
 VAULT_PID=$!
 
 # Wait for Vault to respond
