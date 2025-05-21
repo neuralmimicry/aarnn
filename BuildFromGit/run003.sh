@@ -224,20 +224,19 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         podman run -d --name "$CONTAINER_NAME" -p 8200:8200 -v vault-data:/opt/vault/data -v vault-logs:/opt/vault/logs "$LOCAL_IMAGE"
 
         # Wait for Vault to be ready
-        echo "Waiting for Vault to be ready..."
-        for i in {1..30}; do
-           if podman exec "$CONTAINER_NAME" vault status -address=http://vault:8200 >/dev/null 2>&1; then
-               echo "Vault is ready."
-               break
-           else
-               echo "Waiting for Vault to be ready... ($i)"
-               sleep 2
-           fi
-           if [ "$i" -eq 30 ]; then
-               echo "Vault did not become ready in time."
-               podman logs "$CONTAINER_NAME"
-               exit 1
-           fi
+        echo "Waiting for Vault container to report it's initialized and unsealed..."
+        for i in {1..60}; do
+          if podman logs "$CONTAINER_NAME" 2>&1 | grep -q "Vault is initialized and unsealed."; then
+            echo "Vault is ready."
+            break
+          fi
+          echo "Waiting for Vault to be ready... ($i)"
+          sleep 2
+          if [ "$i" -eq 60 ]; then
+            echo "Vault did not become ready in time."
+            podman logs "$CONTAINER_NAME"
+            exit 1
+          fi
         done
 
         # --- Retrieve Information from Vault ---

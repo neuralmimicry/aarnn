@@ -41,16 +41,16 @@ fi
 SECRETS_PATH="secret/postgres"
 
 # Check Vault is reachable
-curl -s "$VAULT_ADDR/v1/sys/health" | grep '"initialized":true' || {
+curl -s "http://localhost:8200/v1/sys/health" | grep '"initialized":true' || {
   echo "Vault not initialized"; exit 1;
 }
 
-if ! curl -s -H "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/sys/seal-status" | grep -q '"sealed":false'; then
+if ! curl -s -H "X-Vault-Token: $VAULT_TOKEN" "http://localhost:8200/v1/sys/seal-status" | grep -q '"sealed":false'; then
   echo "Vault is sealed, cannot proceed"
   exit 1
 fi
 
-if curl -s -H "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/sys/internal/ui/mounts/$SECRETS_PATH" | grep -q "403"; then
+if curl -s -H "X-Vault-Token: $VAULT_TOKEN" "http://localhost:8200/v1/sys/internal/ui/mounts/$SECRETS_PATH" | grep -q "403"; then
   echo "Vault token doesn't have access to $SECRETS_PATH — check policies"
   exit 1
 fi
