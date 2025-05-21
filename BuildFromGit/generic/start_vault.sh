@@ -22,7 +22,7 @@ if vault status | grep -q "Initialized.*false"; then
   echo "Vault is not initialized. Initializing..."
   vault operator init -key-shares=5 -key-threshold=3 \
     -format=json > "${VAULT_LOG_DIR}/init.json"
-
+  sleep 2
   jq -r '.unseal_keys_b64[]' "${VAULT_LOG_DIR}/init.json" > "${UNSEAL_KEYS_FILE}"
   jq -r '.root_token' "${VAULT_LOG_DIR}/init.json" > "${TOKEN_FILE}"
 fi
