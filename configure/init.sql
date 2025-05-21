@@ -59,7 +59,7 @@ END IF;
 
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'visualiser') THEN
         CREATE USER visualiser WITH PASSWORD 'change_this_password';
-GRANT neurons_read TO visualiser;
+GRANT neurons_rw TO visualiser;
 END IF;
 END
 $$;
