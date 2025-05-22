@@ -1,8 +1,8 @@
 version: '3.8'
 services:
   builder:
-    container_name: compiler-image
-    image: compiler-image
+    container_name: compiler
+    image: compiler
     build:
       dockerfile: ./Containerfile.compiler
     deploy:

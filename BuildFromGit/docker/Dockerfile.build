@@ -57,4 +57,4 @@ RUN mkdir build
 WORKDIR /app/build
 
 RUN cmake ..
-RUN make -j $(nprocs)
+RUN make -j$(nproc)

@@ -27,7 +27,7 @@ fi
 echo "Cleaning up old containers..."
 
 # Define the image names
-IMAGES=("vault-image" "postgres-image" "compiler-image" "aarnn-image" "visualiser-image")
+IMAGES=("vault" "postgres" "compiler" "aarnn" "visualiser")
 
 # Define the image tag to keep (assuming 'latest')
 IMAGE_TAG="latest"

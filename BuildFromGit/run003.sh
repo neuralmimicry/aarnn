@@ -25,7 +25,7 @@ if [ -z "$CLOUD_PROVIDER" ]; then
 fi
 
 # Define the image names, tags, containerfile paths, and build args
-IMAGE_NAMES=("compiler-image" "vault-image" "postgres-image" "aarnn-image" "visualiser-image")
+IMAGE_NAMES=("compiler" "vault" "postgres" "aarnn" "visualiser")
 CONTAINERFILE_PATHS=(
     "./BuildFromGit/podman/Containerfile.compiler"
     "./BuildFromGit/podman/Containerfile.vault"
@@ -34,11 +34,11 @@ CONTAINERFILE_PATHS=(
     "./BuildFromGit/podman/Containerfile.visualiser"
 )
 BUILD_ARGS=(
-    "--build-arg REPO_URL=neuralmimicry/aarnn.git --build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_DB=${POSTGRES_DB} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_HOST=${POSTGRES_HOST}"  # compiler-image
-    ""  # vault-image has no build args
-    "--build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_DB=${POSTGRES_DB} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}"  # postgres-image
-    ""  # aarnn-image has no build args. Vault token will be added later
-    ""  # visualiser-image has no build args. Vault token will be added later
+    "--build-arg REPO_URL=neuralmimicry/aarnn.git --build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_DB=${POSTGRES_DB} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_HOST=${POSTGRES_HOST}"  # compiler
+    ""  # vault has no build args
+    "--build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_DB=${POSTGRES_DB} --build-arg POSTGRES_PORT=${POSTGRES_PORT} --build-arg POSTGRES_PORT_EXPOSE=${POSTGRES_PORT_EXPOSE}"  # postgres
+    ""  # aarnn has no build args. Vault token will be added later
+    ""  # visualiser has no build args. Vault token will be added later
 )
 
 IMAGE_TAG="latest"
@@ -217,7 +217,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
         podman rm -f vault
     fi
 
-    if [ "$IMAGE_NAME" == "vault-image" ]; then
+    if [ "$IMAGE_NAME" == "vault" ]; then
         # Wait for the Vault container to initialise and extract the token
         # --- Start the Vault Container ---
         echo "Starting temporary Vault container..."
@@ -275,8 +275,8 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
 
         # --- Use Retrieved Information in Build Args ---
         # Append the VAULT_TOKEN as a build argument for dependent images
-        BUILD_ARGS[3]="--build-arg VAULT_TOKEN=${VAULT_TOKEN} --build-arg VAULT_API_ADDR=${VAULT_API_ADDR} --build-arg VAULT_ADDR=${VAULT_ADDR}"  # aarnn-image
-        BUILD_ARGS[4]="--build-arg VAULT_TOKEN=${VAULT_TOKEN} --build-arg VAULT_API_ADDR=${VAULT_API_ADDR} --build-arg VAULT_ADDR=${VAULT_ADDR}"  # visualiser-image
+        BUILD_ARGS[3]="--build-arg VAULT_TOKEN=${VAULT_TOKEN} --build-arg VAULT_API_ADDR=${VAULT_API_ADDR} --build-arg VAULT_ADDR=${VAULT_ADDR}"  # aarnn
+        BUILD_ARGS[4]="--build-arg VAULT_TOKEN=${VAULT_TOKEN} --build-arg VAULT_API_ADDR=${VAULT_API_ADDR} --build-arg VAULT_ADDR=${VAULT_ADDR}"  # visualiser
 
         podman stop "$CONTAINER_NAME"
         podman rm "$CONTAINER_NAME"

@@ -54,7 +54,7 @@ wait_for_container() {
 }
 
 # Retrieve POSTGRES_ variables from the latest aarnn image
-AARNN_IMAGE="aarnn-image:latest"
+AARNN_IMAGE="aarnn:latest"
 TEMP_CONTAINER_NAME="aarnn_temp_container"
 
 echo "Creating temporary container from $AARNN_IMAGE to extract /app/.env..."
@@ -144,7 +144,7 @@ else
         -p 8200:8200 \
         -e VAULT_DEV_LISTEN_ADDRESS="0.0.0.0:8200" \
         -e VAULT_API_ADDR="${VAULT_API_ADDR}" \
-        vault-image:latest
+        vault:latest
 fi
 
 # Wait for Vault to be ready
@@ -197,7 +197,7 @@ else
         -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
         -e POSTGRES_DB="${POSTGRES_DB}" \
         -p "${POSTGRES_PORT}":"${POSTGRES_PORT_EXPOSE}" \
-        postgres-image:latest
+        postgres:latest
 fi
 
 # Wait for Postgres to be ready
