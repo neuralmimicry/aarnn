@@ -3,12 +3,12 @@ DO
 $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'neurons_read') THEN
-CREATE ROLE neurons_read;
-END IF;
+        CREATE ROLE neurons_read;
+    END IF;
 
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'neurons_rw') THEN
-CREATE ROLE neurons_rw;
-END IF;
+        CREATE ROLE neurons_rw;
+    END IF;
 END
 $$;
 
@@ -18,21 +18,21 @@ $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'aarnn') THEN
         CREATE USER aarnn WITH PASSWORD 'change_this_password';
-GRANT neurons_rw TO aarnn;
-ALTER ROLE aarnn SET search_path TO public;
-END IF;
+        GRANT neurons_rw TO aarnn;
+        ALTER ROLE aarnn SET search_path TO public;
+    END IF;
 
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'audio') THEN
         CREATE USER audio WITH PASSWORD 'change_this_password';
-GRANT neurons_rw TO audio;
-ALTER ROLE audio SET search_path TO public;
-END IF;
+        GRANT neurons_rw TO audio;
+        ALTER ROLE audio SET search_path TO public;
+    END IF;
 
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'visualiser') THEN
         CREATE USER visualiser WITH PASSWORD 'change_this_password';
-GRANT neurons_read TO visualiser;
-ALTER ROLE visualiser SET search_path TO public;
-END IF;
+        GRANT neurons_read TO visualiser;
+        ALTER ROLE visualiser SET search_path TO public;
+    END IF;
 END
 $$;
 
