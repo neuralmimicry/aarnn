@@ -121,7 +121,7 @@ RUN apt-get update && \
 RUN mkdir -p /root/.ssh \
     && ssh-keyscan github.com >> /root/.ssh/known_hosts
 ARG REPO_URL
-RUN --mount=type=ssh git clone git@github.com:$REPO_URL source
+RUN --mount=type=ssh git clone git@github.com:neuralmimicry/aarnn.git source
 RUN mkdir -p /app/source/thirdparty
 RUN --mount=type=ssh git clone git@github.com:zaphoyd/websocketpp.git /app/source/thirdparty/websocketpp
 RUN --mount=type=ssh git clone git@github.com:nlohmann/json.git /app/source/thirdparty/json
