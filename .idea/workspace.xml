@@ -34,19 +34,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.aarnnFullBuild" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.aarnnFullBuild" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.build" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.build" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.visualiserFullBuild" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.visualiserFullBuild" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.aarnn" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.aarnn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.postgres" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.postgres" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.vault" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.vault" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.visualiser" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.visualiser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/run003.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run003.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/run004.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run004.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/run005.sh" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/run005.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_local.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run_local.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,11 +132,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Database Script.debug_database.sql">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Audio" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="AARNN" TARGET_NAME="Audio" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="AARNN" RUN_TARGET_NAME="Audio">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -347,7 +330,9 @@
       <workItem from="1747226387598" duration="213000" />
       <workItem from="1747226627231" duration="41456000" />
       <workItem from="1747642384387" duration="151000" />
-      <workItem from="1747642550683" duration="100306000" />
+      <workItem from="1747642550683" duration="100994000" />
+      <workItem from="1747932254314" duration="5088000" />
+      <workItem from="1748003339541" duration="1573000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
