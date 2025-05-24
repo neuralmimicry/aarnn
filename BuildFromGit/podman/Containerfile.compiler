@@ -123,8 +123,8 @@ RUN apt-get update && \
 RUN mkdir -p /root/.ssh \
     && ssh-keyscan github.com >> /root/.ssh/known_hosts
 ARG REPO_URL
-ARG SSH_AUTH_SOCK
-RUN echo "Socket: $SSH_AUTH_SOCK"
+#ARG SSH_AUTH_SOCK
+#RUN echo "Socket: $SSH_AUTH_SOCK"
 RUN --mount=type=ssh git clone git@github.com:neuralmimicry/aarnn.git source
 RUN mkdir -p /app/source/thirdparty
 RUN --mount=type=ssh git clone git@github.com:zaphoyd/websocketpp.git /app/source/thirdparty/websocketpp
