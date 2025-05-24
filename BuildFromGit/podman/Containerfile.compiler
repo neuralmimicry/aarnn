@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.2
 # Use an official build image with CMake and Git
 FROM ubuntu:24.04
 
