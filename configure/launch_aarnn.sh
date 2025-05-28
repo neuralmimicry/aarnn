@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source /app/.env
+# Don't source a .env from /app unless you only want pre-stored values at the Build, not Run time.
+# source /app/.env
 
 # Function to check required environment variables
 check_variables() {
