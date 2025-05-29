@@ -32,7 +32,7 @@ if vault status | grep -q "Sealed.*true"; then
   echo "Unsealing Vault..."
   while IFS= read -r key; do
     vault operator unseal "$key"
-    sleep 1
+    sleep 5
     if ! vault status | grep -q "Sealed.*true"; then
       break
     fi

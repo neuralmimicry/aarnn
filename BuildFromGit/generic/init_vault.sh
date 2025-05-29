@@ -88,6 +88,7 @@ echo "Vault updated with PostgreSQL credentials."
 
 cat /opt/vault/logs/vault_output.log
 cat /opt/vault/logs/.vault-token
+export VAULT_TOKEN=$(cat /opt/vault/logs/.vault-token)
 
 vault token lookup
 vault status
