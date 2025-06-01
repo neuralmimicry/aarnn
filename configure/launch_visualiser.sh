@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /app/.env
+# source /app/.env
 
 # Function to check required environment variables
 check_variables() {
