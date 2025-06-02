@@ -5,7 +5,7 @@
 
 # Function to check required environment variables
 check_variables() {
-    required_vars=("POSTGRES_DB" "POSTGRES_HOST" "POSTGRES_PORT" "PULSE_SERVER" "PULSE_COOKIE" "PULSE_SINK" "PULSE_SOURCE" "VAULT_ADDR" "VAULT_API_ADDR" "VAULT_TOKEN")
+    required_vars=("POSTGRES_DB" "POSTGRES_HOST" "POSTGRES_PORT" "PULSE_SERVER" "PULSE_COOKIE" "PULSE_SINK" "PULSE_SOURCE" "VAULT_ADDR" "VAULT_API_ADDR" "VAULT_TOKEN" "SENSORY_SERVER_PORT")
     for var in "${required_vars[@]}"; do
       # Remove quotes from the variable value
       value=$(echo "${!var}" | sed 's/^"//; s/"$//')
@@ -23,7 +23,7 @@ check_variables
 echo "VAULT_ADDR: $VAULT_ADDR"
 echo "VAULT_API_ADDR: $VAULT_API_ADDR"
 echo "VAULT_TOKEN: $VAULT_TOKEN"
-
+echo "SENSORY_SERVER_PORT: $SENSORY_SERVER_PORT"
 # Set the PulseAudio sink and source
 echo "Configuring PulseAudio..."
 pactl set-default-sink "$PULSE_SINK"
