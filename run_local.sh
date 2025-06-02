@@ -172,7 +172,7 @@ POSTGRES_CONTAINER_NAME="postgres"
 # POSTGRES_* variables are already exported from the aarnn_container.env
 
 # Ensure POSTGRES_HOST and POSTGRES_PORT are set
-export POSTGRES_HOST="${POSTGRES_HOST:-127.0.0.1}"
+export POSTGRES_HOST="${POSTGRES_HOST:-postgres}"
 export POSTGRES_PORT="${POSTGRES_PORT:-5432}"
 
 echo "POSTGRES_USERNAME: ${POSTGRES_USERNAME}"
