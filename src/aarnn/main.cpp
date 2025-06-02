@@ -141,10 +141,21 @@ int main() {
     auto config = read_config(config_filenames);
 
     std::string connection_string;
+    bool dbAvailable = false;
 
+    // Attempt to initialise database connection
     if (!initialiseDatabaseConnection(connection_string)) {
-        std::cerr << "Failed to initialise database connection." << std::endl;
-        return 1;
+        std::cerr << "[WARNING] Failed to initialise database connection. Continuing without database." << std::endl;
+    } else {
+        try {
+            // Wrap pqxx::connection construction in try/catch
+            // so that if the connection fails, we disable database usage but do not crash
+            pqxx::connection conn_test(connection_string);
+            conn_test.close();
+            dbAvailable = true;
+        } catch (const std::exception& e) {
+            std::cerr << "[WARNING] Cannot connect to PostgreSQL (" << e.what() << "). Continuing without database." << std::endl;
+        }
     }
 
     const int FFT_SIZE = 1024;
@@ -154,7 +165,6 @@ int main() {
     SensoryReceptorServer receptorServer;
     if (!receptorServer.initialise()) {
         std::cerr << "Failed to initialise Sensory Receptor Server." << std::endl;
-        return -1;
     }
 
     int num_clusters = std::stoi(config["num_clusters"]);
@@ -172,11 +182,26 @@ int main() {
     bool useDatabase = convertStringToBool(config["use_database"]);
     double deltaTime = 0.1; // Time step in seconds (100 milliseconds)
 
-    pqxx::connection conn(connection_string);
-    initialise_database(conn);
-    pqxx::work txn(conn);
-    txn.exec("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
-    txn.exec("SET lock_timeout = '5s';");
+    // If the user requested database but it's unavailable, log a warning
+    if (convertStringToBool(config["use_database"]) && !dbAvailable) {
+        std::cerr << "[WARNING] Database operations are disabled; 'use_database' is true but connection failed." << std::endl;
+    }
+
+    // Only set up database if available
+    std::unique_ptr<pqxx::connection> conn_ptr;
+    if (useDatabase) {
+        try {
+            conn_ptr = std::make_unique<pqxx::connection>(connection_string);
+            initialise_database(*conn_ptr);
+
+            // Begin first transaction
+            // We create an explicit work txn pointer so that later code can check if it's valid
+        } catch (const std::exception& e) {
+            std::cerr << "[WARNING] Exception during database setup: " << e.what() << ". Disabling database." << std::endl;
+            useDatabase = false;
+            conn_ptr.reset();
+        }
+    }
 
     // Create clusters
     std::vector<std::shared_ptr<Cluster>> clusters;
@@ -490,20 +515,23 @@ int main() {
 
     std::cout << "The total propagation rate is " << totalPropagationRate << std::endl;
 
-    try {
-        batch_insert_clusters(txn, clusters);
-        std::cout << "Batch insertion completed." << std::endl;
-        std::cout << "Total Propagation Rate: " << totalPropagationRate << std::endl;
-        if (totalPropagationRate != 0) {
-            txn.commit();
-        } else {
-            std::cout << "Propagation rate is zero. Aborting transaction." << std::endl;
-            throw std::runtime_error("The propagation rate is not valid. Skipping database insertion.");
+    // Perform batch insertion only if database is available
+    if (useDatabase && conn_ptr) {
+        try {
+            pqxx::work txn(*conn_ptr);
+            batch_insert_clusters(txn, clusters);
+            std::cout << "Batch insertion completed." << std::endl;
+            std::cout << "Total Propagation Rate: " << totalPropagationRate << std::endl;
+            if (totalPropagationRate != 0) {
+                txn.commit();
+            } else {
+                std::cout << "Propagation rate is zero. Aborting transaction." << std::endl;
+                throw std::runtime_error("The propagation rate is not valid. Skipping database insertion.");
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "[ERROR] Database error during initial insert: " << e.what() << std::endl;
+            // No need to abort explicitly; destructor of txn rolls back
         }
-    } catch (const std::exception &e) {
-        std::cerr << "Database error: " << e.what() << std::endl;
-        txn.abort();
-        std::cout << "Transaction aborted." << std::endl;
     }
 
     // Initialise and start the SensoryReceptorServer
@@ -532,8 +560,7 @@ int main() {
     receptorServer.registerReceptors("Visual_Right", visualReceptors[1]);
 
     if (!receptorServer.startServer()) {
-        std::cerr << "Failed to start SensoryReceptor server." << std::endl;
-        return -1;
+        std::cerr << "[WARNING] Failed to start SensoryReceptor server. Continuing without sensory server." << std::endl;
     }
 
     // Start threads for input and database updates (if applicable)
@@ -541,7 +568,12 @@ int main() {
     //std::thread avThread(runInteractor, std::ref(emptyNeurons), std::ref(empty_neuron_mutex), std::ref(audioQueue), 1);
     std::thread inputThread(checkForQuit);
     std::thread clusterUpdateThread(updateClusters, std::ref(clusters), std::ref(running));
-    std::thread dbThread(updateDatabase, std::ref(conn), std::ref(clusters));
+    std::thread dbThread;
+    if (useDatabase && conn_ptr) {
+        // Launch the database-update thread only if database is available
+        dbThread = std::thread(updateDatabase, std::ref(*conn_ptr), std::ref(clusters));
+    }
+
     // Main loop
     while (running) {
         /* compute delta time */
@@ -677,9 +709,22 @@ int main() {
         //avThread.join();
         //mic->micStop();
         //micThread.join();
-        inputThread.join();
-        dbThread.join();
-        clusterUpdateThread.join();
+        // Once running == false, join all threads
+        if (inputThread.joinable()) {
+            inputThread.join();
+        }
+        if (clusterUpdateThread.joinable()) {
+            clusterUpdateThread.join();
+        }
+        if (dbThread.joinable()) {
+            // Signal updateDatabase thread to exit if needed
+            {
+                std::lock_guard<std::mutex> lock(changedNeuronsMutex);
+                dbUpdateReady = true;
+            }
+            cv.notify_all();
+            dbThread.join();
+        }
 
         return 0;
     }

@@ -34,7 +34,8 @@
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/launch_aarnn.sh" beforeDir="false" afterPath="$PROJECT_DIR$/configure/launch_aarnn.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared_libs/vclient.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -333,7 +334,7 @@
       <workItem from="1747642550683" duration="100994000" />
       <workItem from="1747932254314" duration="5088000" />
       <workItem from="1748003339541" duration="17321000" />
-      <workItem from="1748730105600" duration="4992000" />
+      <workItem from="1748730105600" duration="8893000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

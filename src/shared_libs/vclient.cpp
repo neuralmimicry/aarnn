@@ -138,5 +138,6 @@ bool initialiseDatabaseConnection(std::string& connection_string) {
 
     // Initialise database connection using the retrieved credentials
     connection_string = "dbname=" + database + " user=" + username + " password=" + password + " host=" + database_host + " port=" + database_port;
+    std::cout << "Database connection string: " << connection_string << std::endl;
     return true;
 }
