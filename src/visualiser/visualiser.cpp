@@ -837,7 +837,7 @@ int main() {
         std::vector<std::string> config_files = {"Visualiser.conf", "simulation.conf"};
         auto config = read_config(config_files);
         std::string connection_str = build_connection_string(config);
-
+        std::cout << "Using connection string: " << connection_str << std::endl;
         // Initialise Database Connection
         std::shared_ptr<pqxx::connection> conn = std::make_shared<pqxx::connection>(connection_str);
         if (!conn->is_open()) {
