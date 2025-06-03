@@ -32,14 +32,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/generic/vault_output.log" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/generic/vault_output.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/AARNN.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configure/AARNN.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/Audio.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configure/Audio.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/Visualiser.conf" beforeDir="false" afterPath="$PROJECT_DIR$/configure/Visualiser.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_local.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run_local.sh" afterDir="false" />
-    </list>
+    <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -337,7 +330,7 @@
       <workItem from="1747642550683" duration="100994000" />
       <workItem from="1747932254314" duration="5088000" />
       <workItem from="1748003339541" duration="17321000" />
-      <workItem from="1748730105600" duration="9684000" />
+      <workItem from="1748730105600" duration="10543000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

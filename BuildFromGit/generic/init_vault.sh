@@ -63,8 +63,8 @@ fi
 # Confirm access before proceeding
 vault kv get secret/postgres >/dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "Postgres secret already exists. Skipping."
-    exit 0
+    echo "Postgres secret already exists. Overwriting it."
+    #exit 0
 fi
 
 # Update Vault with PostgreSQL credentials
