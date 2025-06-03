@@ -809,6 +809,8 @@ void Visualiser::visualise() {
             renderer->RemoveAllViewProps();
             renderer->AddActor(lineActor);
             renderer->AddActor(glyphActor);
+            // Tell VTK to move the camera so that all actors are visible
+            renderer->ResetCamera();
             renderWindow->Render();
 
             // Start Interactor
