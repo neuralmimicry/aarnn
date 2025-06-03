@@ -9,6 +9,24 @@ ARG VAULT_ADDR
 ARG VAULT_API_ADDR
 ARG VAULT_TOKEN
 
+# Install X11 client + Mesa/OpenGL so that VTK can actually open an X window
+RUN apt-get update && apt-get install -y \
+        libx11-6 \
+        libxt6 \
+        libxrender1 \
+        libxext6 \
+        libxrandr2 \
+        libxcursor1 \
+        libxi6 \
+        libsm6 \
+        libice6 \
+        libglu1-mesa \
+        libgl1 \
+        libegl-mesa0 \
+        libglx-mesa0 \
+        x11-apps \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the compiled executable from your host to the current location in your docker image
 COPY --from=compiler /app/source/build .
 
