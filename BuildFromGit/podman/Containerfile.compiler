@@ -128,7 +128,7 @@ ARG REPO_URL
 RUN --mount=type=ssh git clone git@github.com:neuralmimicry/aarnn.git source
 RUN mkdir -p /app/source/thirdparty
 RUN --mount=type=ssh git clone git@github.com:zaphoyd/websocketpp.git /app/source/thirdparty/websocketpp
-RUN --mount=type=ssh git clone git@github.com:nlohmann/json.git /app/source/thirdparty/json
+#RUN --mount=type=ssh git clone git@github.com:nlohmann/json.git /app/source/thirdparty/json
 RUN --mount=type=ssh git clone git@github.com:libsndfile/libsndfile.git /app/source/thirdparty/libsndfile
 RUN cd /app/source/thirdparty/libsndfile && \
     git checkout 1.2.2 && \

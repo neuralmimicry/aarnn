@@ -1,11 +1,11 @@
 #include "vclient.h"
 #include <curl/curl.h>
-#include <nlohmann/json.hpp>
+#include <boost/json.hpp>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
-using json = nlohmann::json;
+namespace json = boost::json;
 
 // Function to handle the write callback for CURL
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
@@ -14,72 +14,87 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 }
 
 // Function to retrieve Postgres credentials from Vault
-bool getPostgresCredentials(const std::string& vault_api_addr, const std::string& vault_token,
-                            const std::string& secret_path, std::string& username,
-                            std::string& password, std::string& database, std::string& database_host, std::string& database_port) {
-    CURL* curl;
-    CURLcode res;
-    curl = curl_easy_init();
-    if(curl) {
-        std::string url = vault_api_addr + "/v1/" + secret_path;
-        std::string response_string;
-        std::cout << "Vault API URL: " << url << std::endl;
-
-        // Set the URL and headers
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        struct curl_slist* headers = nullptr;
-        headers = curl_slist_append(headers, ("X-Vault-Token: " + vault_token).c_str());
-        std::cout << "Vault Token: " << vault_token << std::endl;
-        std::cout << "Headers: " << headers << std::endl;
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
-
-        // Perform the request
-        res = curl_easy_perform(curl);
-        if(res != CURLE_OK) {
-            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-            curl_easy_cleanup(curl);
-            return false;
-        }
-
-        // Cleanup
-        curl_easy_cleanup(curl);
-
-        // Parse the JSON response
-        json jsonData;
-        try {
-            jsonData = json::parse(response_string);
-        } catch (const json::parse_error& e) {
-            std::cerr << "Failed to parse JSON: " << e.what() << "\n";
-            return false;
-        }
-
-        // Properly extract KV v2
-        if (!jsonData.contains("data") || !jsonData["data"].contains("data") || !jsonData["data"]["data"].is_object()) {
-            std::cerr << "Unexpected JSON structure in Vault response\n";
-            return false;
-        }
-        json creds = jsonData["data"]["data"];  // ← THIS is all you need
-
-        try {
-            username      = creds.at("POSTGRES_USERNAME").get<std::string>();
-            password      = creds.at("POSTGRES_PASSWORD").get<std::string>();
-            database      = creds.at("POSTGRES_DB").get<std::string>();
-            database_host = creds.at("POSTGRES_HOST").get<std::string>();
-            database_port = creds.at("POSTGRES_PORT").get<std::string>();
-        } catch (const json::out_of_range& e) {
-            std::cerr << "Missing key in Vault JSON: " << e.what() << "\n";
-            return false;
-        } catch (const json::type_error& e) {
-            std::cerr << "Type error in Vault JSON: " << e.what() << "\n";
-            return false;
-        }
-
-        return true;
+bool getPostgresCredentials(const std::string& vault_api_addr,
+                            const std::string& vault_token,
+                            const std::string& secret_path,
+                            std::string& username,
+                            std::string& password,
+                            std::string& database,
+                            std::string& database_host,
+                            std::string& database_port)
+{
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        return false;
     }
 
-    return false;
+    std::string url = vault_api_addr + "/v1/" + secret_path;
+    std::string response_string;
+    std::cout << "Vault API URL: " << url << std::endl;
+
+    // Set up CURL
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, ("X-Vault-Token: " + vault_token).c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
+
+    CURLcode res = curl_easy_perform(curl);
+    if (res != CURLE_OK) {
+        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        curl_easy_cleanup(curl);
+        return false;
+    }
+
+    curl_easy_cleanup(curl);
+
+    // Parse the JSON response with Boost.JSON
+    json::value jsonData;
+    try {
+        jsonData = json::parse(response_string);
+    }
+    catch (const json::system_error& e) {
+        std::cerr << "Failed to parse JSON: " << e.what() << "\n";
+        return false;
+    }
+
+    if (!jsonData.is_object()) {
+        std::cerr << "Unexpected JSON structure: top‐level is not an object\n";
+        return false;
+    }
+    json::object& topObj = jsonData.as_object();
+
+    // Drill down into data.data for KV v2
+    if (!topObj.contains("data") || !topObj["data"].is_object()) {
+        std::cerr << "Unexpected JSON structure in Vault response: missing top‐level \"data\"\n";
+        return false;
+    }
+    json::object& dataObj = topObj["data"].as_object();
+
+    if (!dataObj.contains("data") || !dataObj["data"].is_object()) {
+        std::cerr << "Unexpected JSON structure in Vault response: missing nested \"data\"\n";
+        return false;
+    }
+    json::object& credsObj = dataObj["data"].as_object();
+
+    try {
+        username      = std::string(credsObj.at("POSTGRES_USERNAME").as_string());
+        password      = std::string(credsObj.at("POSTGRES_PASSWORD").as_string());
+        database      = std::string(credsObj.at("POSTGRES_DB").as_string());
+        database_host = std::string(credsObj.at("POSTGRES_HOST").as_string());
+        database_port = std::string(credsObj.at("POSTGRES_PORT").as_string());
+    }
+    catch (const std::out_of_range& e) {
+        std::cerr << "Missing key in Vault JSON: " << e.what() << "\n";
+        return false;
+    }
+    catch (const json::system_error& e) {
+        std::cerr << "Type error in Vault JSON: " << e.what() << "\n";
+        return false;
+    }
+
+    return true;
 }
 
 // Function to initialise the database connection

@@ -9,11 +9,11 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 #include <curl/curl.h> // For YouTube Data API
-#include <nlohmann/json.hpp>
+#include <boost/json.hpp>
 #include "SensoryReceptor.h"   // <— for std::shared_ptr<SensoryReceptor>
 #include <sstream>             // <— for istringstream in YouTube JSON parse
 
-using json = nlohmann::json;
+namespace json = boost::json;
 
 AuditoryManager::AuditoryManager() : capturing(false), inputSource(InputSource::None) {
     gst_init(nullptr, nullptr); // Initialise GStreamer
@@ -311,35 +311,41 @@ std::string AuditoryManager::searchYouTubeVideo(
     }
     curl_easy_cleanup(curl);
 
-    // —— nlohmann/json parsing starts here —— //
-
-    json root;
+    json::value root;
     try {
-        // parse throws on error
         root = json::parse(response);
     }
-    catch (const json::parse_error& e) {
-        std::cerr << "Failed to parse JSON response: "
-                  << e.what() << "\n";
+    catch (const json::system_error& e) {
+        std::cerr << "Failed to parse JSON response: " << e.what() << "\n";
         return "";
     }
 
-    // drill into items[0].id.videoId
-    if (root.contains("items") && root["items"].is_array() &&
-        !root["items"].empty())
-    {
-        const auto& first = root["items"][0];
-        if (first.contains("id") && first["id"].contains("videoId"))
-        {
-            // get<string>() will throw if it's not actually a string
-            std::string videoId = first["id"]["videoId"].get<std::string>();
-            if (!videoId.empty()) {
-                return "https://www.youtube.com/watch?v=" + videoId;
+    // Ensure the top‐level value is an object
+    if (!root.is_object()) {
+        return "";
+    }
+    json::object& obj = root.as_object();
+
+    // Drill into items[0].id.videoId
+    if (obj.contains("items") && obj["items"].is_array()) {
+        json::array& items = obj["items"].as_array();
+        if (!items.empty() && items[0].is_object()) {
+            json::object& first = items[0].as_object();
+
+            if (first.contains("id") && first["id"].is_object()) {
+                json::object& id_obj = first["id"].as_object();
+
+                if (id_obj.contains("videoId") && id_obj["videoId"].is_string()) {
+                    std::string videoId = id_obj["videoId"].as_string().c_str();
+                    if (!videoId.empty()) {
+                        return "https://www.youtube.com/watch?v=" + videoId;
+                    }
+                }
             }
         }
     }
 
-    // no valid result
+    // No valid result
     return "";
 }
 

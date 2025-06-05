@@ -9,9 +9,10 @@
 #include <mutex>
 #include <atomic>
 #include <chrono>
-#include <nlohmann/json.hpp>
+#include <boost/json.hpp>
 #include "AuditoryProcessor.h"
 #include "VisualProcessor.h"
+
 
 // Manages a group of sensory processors (e.g. Auditory, Visual).
 // Handles lifecycle (initialise, start, stop), health monitoring,
@@ -30,7 +31,7 @@ public:
 
     void monitorHealth(); // Optional background health checker
     // Query the current status of all processors (auditory and visual)
-    nlohmann::json getProcessorStatuses() const;
+    boost::json::object getProcessorStatuses() const;
 
 private:
     std::unordered_map<std::string, std::shared_ptr<AuditoryProcessor>> auditoryProcessors;

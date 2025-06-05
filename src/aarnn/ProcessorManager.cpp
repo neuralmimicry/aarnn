@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-using json = nlohmann::json;
+namespace json = boost::json;
 
 ProcessorManager::ProcessorManager() {}
 
@@ -31,6 +31,9 @@ void ProcessorManager::registerVisualProcessor(const std::string& id, const std:
     }
 }
 
+// ------------------------------------------------------------------------------------------------
+// void ProcessorManager::loadFromJsonConfig(const std::string& filePath)
+// ------------------------------------------------------------------------------------------------
 void ProcessorManager::loadFromJsonConfig(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -38,21 +41,83 @@ void ProcessorManager::loadFromJsonConfig(const std::string& filePath) {
         return;
     }
 
-    json config;
-    file >> config;
-
-    for (const auto& processor : config["auditory"]) {
-        std::string id = processor["id"];
-        std::string host = processor["host"];
-        unsigned short port = processor["port"];
-        registerAuditoryProcessor(id, host, port);
+    // Read entire file into a string
+    std::string jsonText;
+    {
+        std::ostringstream ss;
+        ss << file.rdbuf();
+        jsonText = ss.str();
     }
 
-    for (const auto& processor : config["visual"]) {
-        std::string id = processor["id"];
-        std::string host = processor["host"];
-        unsigned short port = processor["port"];
-        registerVisualProcessor(id, host, port);
+    // Parse into a boost::json::value and get the root object
+    boost::json::error_code ec;
+    boost::json::value parsed = boost::json::parse(jsonText, ec);
+    if (ec) {
+        std::cerr << "Failed to parse JSON config: " << ec.message() << std::endl;
+        return;
+    }
+    const auto& rootObj = parsed.as_object();
+
+    // Handle "auditory" array, if present
+    if (rootObj.if_contains("auditory") && rootObj.at("auditory").is_array()) {
+        const auto& auditoryArray = rootObj.at("auditory").as_array();
+        for (const auto& element : auditoryArray) {
+            if (!element.is_object()) {
+                continue; // skip non-object entries
+            }
+            const auto& procObj = element.as_object();
+
+            // Extract "id"
+            if (!procObj.if_contains("id") || !procObj.at("id").is_string()) {
+                continue;
+            }
+            std::string id = procObj.at("id").as_string().c_str();
+
+            // Extract "host"
+            if (!procObj.if_contains("host") || !procObj.at("host").is_string()) {
+                continue;
+            }
+            std::string host = procObj.at("host").as_string().c_str();
+
+            // Extract "port"
+            if (!procObj.if_contains("port") || !procObj.at("port").is_int64()) {
+                continue;
+            }
+            unsigned short port = static_cast<unsigned short>(procObj.at("port").as_int64());
+
+            registerAuditoryProcessor(id, host, port);
+        }
+    }
+
+    // Handle "visual" array, if present
+    if (rootObj.if_contains("visual") && rootObj.at("visual").is_array()) {
+        const auto& visualArray = rootObj.at("visual").as_array();
+        for (const auto& element : visualArray) {
+            if (!element.is_object()) {
+                continue; // skip non-object entries
+            }
+            const auto& procObj = element.as_object();
+
+            // Extract "id"
+            if (!procObj.if_contains("id") || !procObj.at("id").is_string()) {
+                continue;
+            }
+            std::string id = procObj.at("id").as_string().c_str();
+
+            // Extract "host"
+            if (!procObj.if_contains("host") || !procObj.at("host").is_string()) {
+                continue;
+            }
+            std::string host = procObj.at("host").as_string().c_str();
+
+            // Extract "port"
+            if (!procObj.if_contains("port") || !procObj.at("port").is_int64()) {
+                continue;
+            }
+            unsigned short port = static_cast<unsigned short>(procObj.at("port").as_int64());
+
+            registerVisualProcessor(id, host, port);
+        }
     }
 }
 
@@ -117,23 +182,32 @@ void ProcessorManager::monitorHealth() {
     }
 }
 
-nlohmann::json ProcessorManager::getProcessorStatuses() const {
-    nlohmann::json result;
+// ------------------------------------------------------------------------------------------------
+// boost::json::object ProcessorManager::getProcessorStatuses() const
+// ------------------------------------------------------------------------------------------------
+boost::json::object ProcessorManager::getProcessorStatuses() const {
+    boost::json::object result;
     std::lock_guard<std::mutex> lock(processorMutex);
 
+    // Build an array of auditory statuses
+    boost::json::array auditoryArray;
     for (const auto& [id, processor] : auditoryProcessors) {
-        result["auditory"].push_back({
-                                             {"id", id},
-                                             {"healthy", processor->isHealthy()}
-                                     });
+        boost::json::object entry;
+        entry["id"] = id;
+        entry["healthy"] = processor->isHealthy();
+        auditoryArray.push_back(std::move(entry));
     }
+    result["auditory"] = std::move(auditoryArray);
 
+    // Build an array of visual statuses
+    boost::json::array visualArray;
     for (const auto& [id, processor] : visualProcessors) {
-        result["visual"].push_back({
-                                           {"id", id},
-                                           {"healthy", processor->isHealthy()}
-                                   });
+        boost::json::object entry;
+        entry["id"] = id;
+        entry["healthy"] = processor->isHealthy();
+        visualArray.push_back(std::move(entry));
     }
+    result["visual"] = std::move(visualArray);
 
     return result;
 }
