@@ -1,0 +1,54 @@
+FROM compiler
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Set the environment variables
+ARG VAULT_ADDR
+ARG VAULT_API_ADDR
+ARG VAULT_TOKEN
+
+# Copy the compiled executable from your host to the current location in your docker image
+COPY --from=compiler /app/source/build .
+
+# Database configuration connection information and Simulation data
+COPY --from=compiler /app/source/configure .
+
+COPY --from=compiler /app/source/.env .
+
+# Use the VAULT_ADDR in your build
+RUN echo "VAULT_ADDR=$VAULT_ADDR" >> /app/.env
+
+# Use the VAULT_API_ADDR in your build
+RUN echo "VAULT_API_ADDR=$VAULT_API_ADDR" >> /app/.env
+
+# Use the VAULT_TOKEN in your build
+RUN echo "VAULT_TOKEN=$VAULT_TOKEN" >> /app/.env
+
+# Debugging
+RUN cat /app/.env
+
+# Create a new user 'aarnn' with a home directory and bash shell
+RUN useradd -m -s /bin/bash aarnn
+
+# Optionally, add the user to the sudo group if administrative privileges are needed
+RUN usermod -aG sudo aarnn
+
+# Allow the aarnn user to use sudo without a password
+RUN echo "aarnn ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/aarnn
+
+RUN chown -R aarnn:aarnn /app
+
+# Configure necessary libraries for running the application
+RUN mkdir -p /etc/pulse && \
+  mv /app/client.conf /etc/pulse/client.conf && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* && \
+  chmod +x /app/AARNN && \
+  chmod +x /app/launch_aarnn.sh
+
+USER aarnn
+
+# Run the application when the container launches
+ENTRYPOINT ["/app/launch_aarnn.sh"]
+

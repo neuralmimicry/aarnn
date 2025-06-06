@@ -1,0 +1,73 @@
+# Use an official C++ runtime as a parent image
+FROM compiler
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Set the environment variables
+ARG VAULT_ADDR
+ARG VAULT_API_ADDR
+ARG VAULT_TOKEN
+
+# Install X11 client + Mesa/OpenGL so that VTK can actually open an X window
+RUN apt-get update && apt-get install -y \
+        libx11-6 \
+        libxt6 \
+        libxrender1 \
+        libxext6 \
+        libxrandr2 \
+        libxcursor1 \
+        libxi6 \
+        libsm6 \
+        libice6 \
+        libglu1-mesa \
+        libgl1 \
+        libegl-mesa0 \
+        libglx-mesa0 \
+        x11-apps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the compiled executable from your host to the current location in your docker image
+COPY --from=compiler /app/source/build .
+
+# Database configuration connection information and Simulation data
+COPY --from=compiler /app/source/configure .
+
+COPY --from=compiler /app/source/.env .
+
+# Use the VAULT_ADDR in your build
+RUN echo "VAULT_ADDR=$VAULT_ADDR" >> /app/.env
+
+# Use the VAULT_API_ADDR in your build
+RUN echo "VAULT_API_ADDR=$VAULT_API_ADDR" >> /app/.env
+
+# Use the VAULT_TOKEN in your build
+RUN echo "VAULT_TOKEN=$VAULT_TOKEN" >> /app/.env
+
+# Debugging
+RUN cat /app/.env
+
+# Create a new user 'visualiser' with a home directory and bash shell
+RUN useradd -m -s /bin/bash visualiser
+
+# Optionally, add the user to the sudo group if administrative privileges are needed
+RUN usermod -aG sudo visualiser
+
+# Allow the visualiser user to use sudo without a password
+RUN echo "visualiser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/visualiser
+
+RUN chown -R visualiser:visualiser /app
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Configure necessary libraries for running the application
+RUN apt-get clean && \
+  rm -rf /var/lib/apt/lists/* && \
+  chmod +x /app/Visualiser && \
+  chmod +x /app/launch_visualiser.sh
+
+USER visualiser
+
+# Run the application when the container launches
+ENTRYPOINT ["/app/launch_visualiser.sh"]
