@@ -133,7 +133,7 @@ int main() {
     Logger logger("errors_aarnn.log");
     std::thread t1(logMessages, std::ref(logger), 1);
 
-    std::string input = "Hello, World!";
+    std::string input = "AARNN Starting up...";
     std::string encoded = base64_encode(reinterpret_cast<const unsigned char *>(input.c_str()), input.length());
     std::cout << "Base64 Encoded: " << encoded << std::endl;
 
@@ -180,7 +180,7 @@ int main() {
     int vocel_points_per_layer = std::stoi(config["vocel_points_per_layer"]);
     double proximityThreshold = std::stod(config["proximity_threshold"]);
     bool useDatabase = convertStringToBool(config["use_database"]);
-    double deltaTime = 0.1; // Time step in seconds (100 milliseconds)
+    double deltaTime = 0.01; // Time step in seconds (10 milliseconds)
 
     // If the user requested database but it's unavailable, log a warning
     if (convertStringToBool(config["use_database"]) && !dbAvailable) {

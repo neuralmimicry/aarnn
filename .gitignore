@@ -12,3 +12,5 @@ thirdparty
 .env
 cmake-build-debug/
 cmake-build-release/
+node_modules/
+build/*

@@ -1,7 +1,9 @@
 #include "NeuronalComponent.h"
 
+#include <utility>
+
 NeuronalComponent::NeuronalComponent(std::shared_ptr<Position> position, std::weak_ptr<NeuronalComponent> parent)
-        : position(position), parent(parent),
+        : position(std::move(position)), parent(std::move(parent)),
           energyLevel(100.0),
           maxEnergyLevel(100.0),
           energyConsumptionRate(0.005),
@@ -21,7 +23,7 @@ std::shared_ptr<Position> NeuronalComponent::getPosition() const
 
 void NeuronalComponent::setParent(std::weak_ptr<NeuronalComponent> parentComponent)
 {
-    parent = parentComponent;
+    parent = std::move(parentComponent);
 
 }
 
@@ -30,13 +32,56 @@ void NeuronalComponent::initialise()
     if (!instanceInitialised)
     {
         // Initialization logic if needed
-        // instanceInitialised = true;
+        instanceInitialised = true;
     }
 }
 
 double NeuronalComponent::getEnergyLevel() const
 {
     return energyLevel;
+}
+
+double NeuronalComponent::getMaxEnergyLevel() const
+{
+    return maxEnergyLevel;
+}
+
+double NeuronalComponent::getEnergyConsumptionRate() const
+{
+    return energyConsumptionRate;
+}
+
+double NeuronalComponent::getEnergyReplenishRate() const
+{
+    return energyReplenishRate;
+}
+
+void NeuronalComponent::setEnergyLevel(double energy)
+{
+    energyLevel = energy;
+    if (energyLevel > maxEnergyLevel)
+    {
+        energyLevel = maxEnergyLevel;
+    }
+}
+
+void NeuronalComponent::setMaxEnergyLevel(double maxEnergy)
+{
+    maxEnergyLevel = maxEnergy;
+    if (energyLevel > maxEnergyLevel)
+    {
+        energyLevel = maxEnergyLevel;
+    }
+}
+
+void NeuronalComponent::setEnergyConsumptionRate(double rate)
+{
+    energyConsumptionRate = rate;
+}
+
+void NeuronalComponent::setEnergyReplenishRate(double rate)
+{
+    energyReplenishRate = rate;
 }
 
 void NeuronalComponent::energyTopup(double amount)

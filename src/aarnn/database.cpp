@@ -42,7 +42,8 @@ void initialise_database(pqxx::connection& conn) {
                 "z REAL NOT NULL,"
                 "propagation_rate REAL,"
                 "cluster_type INTEGER,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Neurons Table
                 "CREATE TABLE neurons ("
@@ -53,7 +54,8 @@ void initialise_database(pqxx::connection& conn) {
                 "z REAL NOT NULL,"
                 "propagation_rate REAL,"
                 "neuron_type INTEGER,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Somas Table
                 "CREATE TABLE somas ("
@@ -62,7 +64,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Axon Hillocks Table
                 "CREATE TABLE axonhillocks ("
@@ -71,7 +74,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Axon Branches Table
                 "CREATE TABLE axonbranches ("
@@ -81,7 +85,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Axons Table
                 "CREATE TABLE axons ("
@@ -91,7 +96,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Axon Boutons Table
                 "CREATE TABLE axonboutons ("
@@ -100,7 +106,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Synaptic Gaps Table
                 "CREATE TABLE synapticgaps ("
@@ -109,7 +116,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Dendrite Branches Table
                 "CREATE TABLE dendritebranches ("
@@ -119,7 +127,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Dendrites Table
                 "CREATE TABLE dendrites ("
@@ -128,7 +137,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
                 // Dendrite Boutons Table
                 "CREATE TABLE dendriteboutons ("
@@ -137,7 +147,8 @@ void initialise_database(pqxx::connection& conn) {
                 "x REAL NOT NULL,"
                 "y REAL NOT NULL,"
                 "z REAL NOT NULL,"
-                "energy_level REAL NOT NULL"
+                "energy_level REAL NOT NULL,"
+                "max_energy_level REAL NOT NULL"
                 ");"
         );
 
@@ -193,12 +204,13 @@ void insertDendriteBranches(pqxx::transaction_base& txn, const std::shared_ptr<D
     if (parent_is_soma) {
         // Insert Dendrite Branch connected to Soma
         pqxx::result branch_result = txn.exec_params(
-                "INSERT INTO dendritebranches (soma_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING dendrite_branch_id",
+                "INSERT INTO dendritebranches (soma_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING dendrite_branch_id",
                 parent_id,
                 dendriteBranch->getPosition()->x,
                 dendriteBranch->getPosition()->y,
                 dendriteBranch->getPosition()->z,
-                dendriteBranch->getEnergyLevel()
+                dendriteBranch->getEnergyLevel(),
+                dendriteBranch->getMaxEnergyLevel()
         );
         dendrite_branch_id = branch_result[0][0].as<int>();
         dendriteBranch->setDendriteBranchId(dendrite_branch_id);
@@ -206,12 +218,13 @@ void insertDendriteBranches(pqxx::transaction_base& txn, const std::shared_ptr<D
     } else {
         // Insert Dendrite Branch connected to Dendrite
         pqxx::result branch_result = txn.exec_params(
-                "INSERT INTO dendritebranches (dendrite_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING dendrite_branch_id",
+                "INSERT INTO dendritebranches (dendrite_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING dendrite_branch_id",
                 parent_id,
                 dendriteBranch->getPosition()->x,
                 dendriteBranch->getPosition()->y,
                 dendriteBranch->getPosition()->z,
-                dendriteBranch->getEnergyLevel()
+                dendriteBranch->getEnergyLevel(),
+                dendriteBranch->getMaxEnergyLevel()
         );
         dendrite_branch_id = branch_result[0][0].as<int>();
         dendriteBranch->setDendriteBranchId(dendrite_branch_id);
@@ -222,12 +235,13 @@ void insertDendriteBranches(pqxx::transaction_base& txn, const std::shared_ptr<D
     for (const auto& dendrite : dendriteBranch->getDendrites()) {
         // Insert Dendrite and get dendrite_id
         pqxx::result dendrite_result = txn.exec_params(
-                "INSERT INTO dendrites (dendrite_branch_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING dendrite_id",
+                "INSERT INTO dendrites (dendrite_branch_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING dendrite_id",
                 dendrite_branch_id,
                 dendrite->getPosition()->x,
                 dendrite->getPosition()->y,
                 dendrite->getPosition()->z,
-                dendrite->getEnergyLevel()
+                dendrite->getEnergyLevel(),
+                dendrite->getMaxEnergyLevel()
         );
         int dendrite_id = dendrite_result[0][0].as<int>();
         dendrite->setDendriteId(dendrite_id);
@@ -235,12 +249,13 @@ void insertDendriteBranches(pqxx::transaction_base& txn, const std::shared_ptr<D
 
         // Insert Dendrite Bouton and get dendrite_bouton_id
         pqxx::result bouton_result = txn.exec_params(
-                "INSERT INTO dendriteboutons (dendrite_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING dendrite_bouton_id",
+                "INSERT INTO dendriteboutons (dendrite_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING dendrite_bouton_id",
                 dendrite_id,
                 dendrite->getDendriteBouton()->getPosition()->x,
                 dendrite->getDendriteBouton()->getPosition()->y,
                 dendrite->getDendriteBouton()->getPosition()->z,
-                dendrite->getDendriteBouton()->getEnergyLevel()
+                dendrite->getDendriteBouton()->getEnergyLevel(),
+                dendrite->getDendriteBouton()->getMaxEnergyLevel()
         );
         int dendrite_bouton_id = bouton_result[0][0].as<int>();
         dendrite->getDendriteBouton()->setDendriteBoutonId(dendrite_bouton_id);
@@ -263,12 +278,13 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
     if (parent_is_axon_hillock) {
         // Insert Axon Branch connected to Axon Hillock
         pqxx::result branch_result = txn.exec_params(
-                "INSERT INTO axonbranches (parent_axon_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING axon_branch_id",
+                "INSERT INTO axonbranches (parent_axon_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING axon_branch_id",
                 parent_id,
                 axonBranch->getPosition()->x,
                 axonBranch->getPosition()->y,
                 axonBranch->getPosition()->z,
-                axonBranch->getEnergyLevel()
+                axonBranch->getEnergyLevel(),
+                axonBranch->getMaxEnergyLevel()
         );
         axon_branch_id = branch_result[0][0].as<int>();
         axonBranch->setAxonBranchId(axon_branch_id);
@@ -276,12 +292,13 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
     } else {
         // Insert Axon Branch connected to another Axon Branch
         pqxx::result branch_result = txn.exec_params(
-                "INSERT INTO axonbranches (parent_axon_branch_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING axon_branch_id",
+                "INSERT INTO axonbranches (parent_axon_branch_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING axon_branch_id",
                 parent_id,
                 axonBranch->getPosition()->x,
                 axonBranch->getPosition()->y,
                 axonBranch->getPosition()->z,
-                axonBranch->getEnergyLevel()
+                axonBranch->getEnergyLevel(),
+                axonBranch->getMaxEnergyLevel()
         );
         axon_branch_id = branch_result[0][0].as<int>();
         axonBranch->setAxonBranchId(axon_branch_id);
@@ -292,12 +309,13 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
     for (const auto& axon : axonBranch->getAxons()) {
         // Insert Axon and get axon_id
         pqxx::result axon_result = txn.exec_params(
-                "INSERT INTO axons (axon_branch_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING axon_id",
+                "INSERT INTO axons (axon_branch_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING axon_id",
                 axon_branch_id,
                 axon->getPosition()->x,
                 axon->getPosition()->y,
                 axon->getPosition()->z,
-                axon->getEnergyLevel()
+                axon->getEnergyLevel(),
+                axon->getMaxEnergyLevel()
         );
         int axon_id = axon_result[0][0].as<int>();
         axon->setAxonId(axon_id);
@@ -305,12 +323,13 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
 
         // Insert Axon Bouton and get axon_bouton_id
         pqxx::result bouton_result = txn.exec_params(
-                "INSERT INTO axonboutons (axon_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING axon_bouton_id",
+                "INSERT INTO axonboutons (axon_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING axon_bouton_id",
                 axon_id,
                 axon->getAxonBouton()->getPosition()->x,
                 axon->getAxonBouton()->getPosition()->y,
                 axon->getAxonBouton()->getPosition()->z,
-                axon->getAxonBouton()->getEnergyLevel()
+                axon->getAxonBouton()->getEnergyLevel(),
+                axon->getAxonBouton()->getMaxEnergyLevel()
         );
         int axon_bouton_id = bouton_result[0][0].as<int>();
         axon->getAxonBouton()->setAxonBoutonId(axon_bouton_id);
@@ -318,12 +337,13 @@ void insertAxonBranches(pqxx::transaction_base& txn, const std::shared_ptr<AxonB
 
         // Insert Synaptic Gap
         pqxx::result synaptic_gap_result = txn.exec_params(
-                "INSERT INTO synapticgaps (axon_bouton_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING synaptic_gap_id",
+                "INSERT INTO synapticgaps (axon_bouton_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING synaptic_gap_id",
                 axon_bouton_id,
                 axon->getAxonBouton()->getSynapticGap()->getPosition()->x,
                 axon->getAxonBouton()->getSynapticGap()->getPosition()->y,
                 axon->getAxonBouton()->getSynapticGap()->getPosition()->z,
-                axon->getAxonBouton()->getSynapticGap()->getEnergyLevel()
+                axon->getAxonBouton()->getSynapticGap()->getEnergyLevel(),
+                axon->getAxonBouton()->getSynapticGap()->getMaxEnergyLevel()
         );
         int synaptic_gap_id = synaptic_gap_result[0][0].as<int>();
         axon->getAxonBouton()->getSynapticGap()->setSynapticGapId(synaptic_gap_id);
@@ -349,13 +369,14 @@ void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::s
 
             // Insert Cluster and get cluster_id
             pqxx::result cluster_result = txn.exec_params(
-                    "INSERT INTO clusters (x, y, z, propagation_rate, cluster_type, energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING cluster_id",
+                    "INSERT INTO clusters (x, y, z, propagation_rate, cluster_type, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING cluster_id",
                     cluster->getPosition()->x,
                     cluster->getPosition()->y,
                     cluster->getPosition()->z,
                     cluster->getPropagationRate(),
                     cluster->getClusterType(),
-                    cluster->getEnergyLevel()
+                    cluster->getEnergyLevel(),
+                    cluster->getMaxEnergyLevel()
             );
             int cluster_id = cluster_result[0][0].as<int>();
             cluster->setClusterId(cluster_id);
@@ -381,14 +402,15 @@ void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::s
 
                     // Insert Neuron and get neuron_id
                     pqxx::result neuron_result = txn.exec_params(
-                            "INSERT INTO neurons (cluster_id, x, y, z, propagation_rate, neuron_type, energy_level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING neuron_id",
+                            "INSERT INTO neurons (cluster_id, x, y, z, propagation_rate, neuron_type, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING neuron_id",
                             cluster_id,
                             neuron->getPosition()->x,
                             neuron->getPosition()->y,
                             neuron->getPosition()->z,
                             neuron->getPropagationRate(),
                             neuron->getNeuronType(),
-                            neuron->getEnergyLevel()
+                            neuron->getEnergyLevel(),
+                            neuron->getMaxEnergyLevel()
                     );
                     int neuron_id = neuron_result[0][0].as<int>();
                     neuron->setNeuronId(neuron_id);
@@ -396,12 +418,13 @@ void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::s
 
                     // Insert Soma and get soma_id
                     pqxx::result soma_result = txn.exec_params(
-                            "INSERT INTO somas (neuron_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING soma_id",
+                            "INSERT INTO somas (neuron_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING soma_id",
                             neuron_id,
                             neuron->getSoma()->getPosition()->x,
                             neuron->getSoma()->getPosition()->y,
                             neuron->getSoma()->getPosition()->z,
-                            neuron->getSoma()->getEnergyLevel()
+                            neuron->getSoma()->getEnergyLevel(),
+                            neuron->getSoma()->getMaxEnergyLevel()
                     );
                     int soma_id = soma_result[0][0].as<int>();
                     neuron->getSoma()->setSomaId(soma_id);
@@ -411,12 +434,13 @@ void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::s
                     auto axonHillock = neuron->getSoma()->getAxonHillock();
                     if (axonHillock) {
                         pqxx::result axon_hillock_result = txn.exec_params(
-                                "INSERT INTO axonhillocks (soma_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING axon_hillock_id",
+                                "INSERT INTO axonhillocks (soma_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING axon_hillock_id",
                                 soma_id,
                                 axonHillock->getPosition()->x,
                                 axonHillock->getPosition()->y,
                                 axonHillock->getPosition()->z,
-                                axonHillock->getEnergyLevel()
+                                axonHillock->getEnergyLevel(),
+                                axonHillock->getMaxEnergyLevel()
                         );
                         int axon_hillock_id = axon_hillock_result[0][0].as<int>();
                         axonHillock->setAxonHillockId(axon_hillock_id);
@@ -426,12 +450,13 @@ void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::s
                         auto axon = axonHillock->getAxon();
                         if (axon) {
                             pqxx::result axon_result = txn.exec_params(
-                                    "INSERT INTO axons (axon_hillock_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING axon_id",
+                                    "INSERT INTO axons (axon_hillock_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING axon_id",
                                     axon_hillock_id,
                                     axon->getPosition()->x,
                                     axon->getPosition()->y,
                                     axon->getPosition()->z,
-                                    axon->getEnergyLevel()
+                                    axon->getEnergyLevel(),
+                                    axon->getMaxEnergyLevel()
                             );
                             int axon_id = axon_result[0][0].as<int>();
                             axon->setAxonId(axon_id);
@@ -441,12 +466,13 @@ void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::s
                             auto axonBouton = axon->getAxonBouton();
                             if (axonBouton) {
                                 pqxx::result axon_bouton_result = txn.exec_params(
-                                        "INSERT INTO axonboutons (axon_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING axon_bouton_id",
+                                        "INSERT INTO axonboutons (axon_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING axon_bouton_id",
                                         axon_id,
                                         axonBouton->getPosition()->x,
                                         axonBouton->getPosition()->y,
                                         axonBouton->getPosition()->z,
-                                        axonBouton->getEnergyLevel()
+                                        axonBouton->getEnergyLevel(),
+                                        axonBouton->getMaxEnergyLevel()
                                 );
                                 int axon_bouton_id = axon_bouton_result[0][0].as<int>();
                                 axonBouton->setAxonBoutonId(axon_bouton_id);
@@ -456,12 +482,13 @@ void batch_insert_clusters(pqxx::transaction_base& txn, const std::vector<std::s
                                 auto synapticGap = axonBouton->getSynapticGap();
                                 if (synapticGap) {
                                     pqxx::result synaptic_gap_result = txn.exec_params(
-                                            "INSERT INTO synapticgaps (axon_bouton_id, x, y, z, energy_level) VALUES ($1, $2, $3, $4, $5) RETURNING synaptic_gap_id",
+                                            "INSERT INTO synapticgaps (axon_bouton_id, x, y, z, energy_level, max_energy_level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING synaptic_gap_id",
                                             axon_bouton_id,
                                             synapticGap->getPosition()->x,
                                             synapticGap->getPosition()->y,
                                             synapticGap->getPosition()->z,
-                                            synapticGap->getEnergyLevel()
+                                            synapticGap->getEnergyLevel(),
+                                            synapticGap->getMaxEnergyLevel()
                                     );
                                     int synaptic_gap_id = synaptic_gap_result[0][0].as<int>();
                                     synapticGap->setSynapticGapId(synaptic_gap_id);
@@ -497,11 +524,12 @@ void updateAxonBranch(pqxx::work& txn, const std::shared_ptr<AxonBranch>& axonBr
     double axon_branch_y = axonBranch->getPosition()->y;
     double axon_branch_z = axonBranch->getPosition()->z;
     double axon_branch_energy_level = axonBranch->getEnergyLevel();
+    double axon_branch_max_energy_level = axonBranch->getMaxEnergyLevel();
     int axon_branch_id = axonBranch->getAxonBranchId();
 
     txn.exec_params(
-            "UPDATE axonbranches SET x = $1, y = $2, z = $3, energy_level = $4 WHERE axon_branch_id = $5",
-            axon_branch_x, axon_branch_y, axon_branch_z, axon_branch_energy_level, axon_branch_id
+            "UPDATE axonbranches SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE axon_branch_id = $6",
+            axon_branch_x, axon_branch_y, axon_branch_z, axon_branch_energy_level, axon_branch_max_energy_level, axon_branch_id
     );
 
     // Update Axons in the Branch
@@ -518,11 +546,12 @@ void updateAxon(pqxx::work& txn, const std::shared_ptr<Axon>& axon) {
     double axon_y = axon->getPosition()->y;
     double axon_z = axon->getPosition()->z;
     double axon_energy_level = axon->getEnergyLevel();
+    double axon_max_energy_level = axon->getMaxEnergyLevel();
     int axon_id = axon->getAxonId();
 
     txn.exec_params(
-            "UPDATE axons SET x = $1, y = $2, z = $3, energy_level = $4 WHERE axon_id = $5",
-            axon_x, axon_y, axon_z, axon_energy_level, axon_id
+            "UPDATE axons SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE axon_id = $6",
+            axon_x, axon_y, axon_z, axon_energy_level, axon_max_energy_level, axon_id
     );
 
     // Update Axon Bouton
@@ -532,11 +561,12 @@ void updateAxon(pqxx::work& txn, const std::shared_ptr<Axon>& axon) {
         double axon_bouton_y = axonBouton->getPosition()->y;
         double axon_bouton_z = axonBouton->getPosition()->z;
         double axon_bouton_energy_level = axonBouton->getEnergyLevel();
+        double axon_bouton_max_energy_level = axonBouton->getMaxEnergyLevel();
         int axon_bouton_id = axonBouton->getAxonBoutonId();
 
         txn.exec_params(
-                "UPDATE axonboutons SET x = $1, y = $2, z = $3, energy_level = $4 WHERE axon_bouton_id = $5",
-                axon_bouton_x, axon_bouton_y, axon_bouton_z, axon_bouton_energy_level, axon_bouton_id
+                "UPDATE axonboutons SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE axon_bouton_id = $6",
+                axon_bouton_x, axon_bouton_y, axon_bouton_z, axon_bouton_energy_level, axon_bouton_max_energy_level, axon_bouton_id
         );
 
         // Update Synaptic Gap
@@ -546,11 +576,12 @@ void updateAxon(pqxx::work& txn, const std::shared_ptr<Axon>& axon) {
             double synaptic_gap_y = synapticGap->getPosition()->y;
             double synaptic_gap_z = synapticGap->getPosition()->z;
             double synaptic_gap_energy_level = synapticGap->getEnergyLevel();
+            double synaptic_gap_max_energy_level = synapticGap->getMaxEnergyLevel();
             int synaptic_gap_id = synapticGap->getSynapticGapId();
 
             txn.exec_params(
-                    "UPDATE synapticgaps SET x = $1, y = $2, z = $3, energy_level = $4 WHERE synaptic_gap_id = $5",
-                    synaptic_gap_x, synaptic_gap_y, synaptic_gap_z, synaptic_gap_energy_level, synaptic_gap_id
+                    "UPDATE synapticgaps SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE synaptic_gap_id = $6",
+                    synaptic_gap_x, synaptic_gap_y, synaptic_gap_z, synaptic_gap_energy_level, synaptic_gap_max_energy_level, synaptic_gap_id
             );
         }
     }
@@ -569,11 +600,12 @@ void updateDendriteBranch(pqxx::work& txn, const std::shared_ptr<DendriteBranch>
     double dendrite_branch_y = dendriteBranch->getPosition()->y;
     double dendrite_branch_z = dendriteBranch->getPosition()->z;
     double dendrite_branch_energy_level = dendriteBranch->getEnergyLevel();
+    double dendrite_branch_max_energy_level = dendriteBranch->getMaxEnergyLevel();
     int dendrite_branch_id = dendriteBranch->getDendriteBranchId();
 
     txn.exec_params(
-            "UPDATE dendritebranches SET x = $1, y = $2, z = $3, energy_level = $4 WHERE dendrite_branch_id = $5",
-            dendrite_branch_x, dendrite_branch_y, dendrite_branch_z, dendrite_branch_energy_level, dendrite_branch_id
+            "UPDATE dendritebranches SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE dendrite_branch_id = $6",
+            dendrite_branch_x, dendrite_branch_y, dendrite_branch_z, dendrite_branch_energy_level, dendrite_branch_max_energy_level, dendrite_branch_id
     );
 
     // Update Dendrites in the Branch
@@ -585,11 +617,12 @@ void updateDendriteBranch(pqxx::work& txn, const std::shared_ptr<DendriteBranch>
         double dendrite_y = dendrite->getPosition()->y;
         double dendrite_z = dendrite->getPosition()->z;
         double dendrite_energy_level = dendrite->getEnergyLevel();
+        double dendrite_max_energy_level = dendrite->getMaxEnergyLevel();
         int dendrite_id = dendrite->getDendriteId();
 
         txn.exec_params(
-                "UPDATE dendrites SET x = $1, y = $2, z = $3, energy_level = $4 WHERE dendrite_id = $5",
-                dendrite_x, dendrite_y, dendrite_z, dendrite_energy_level, dendrite_id
+                "UPDATE dendrites SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE dendrite_id = $6",
+                dendrite_x, dendrite_y, dendrite_z, dendrite_energy_level, dendrite_max_energy_level, dendrite_id
         );
 
         // Update Dendrite Bouton
@@ -599,11 +632,12 @@ void updateDendriteBranch(pqxx::work& txn, const std::shared_ptr<DendriteBranch>
             double dendrite_bouton_y = dendriteBouton->getPosition()->y;
             double dendrite_bouton_z = dendriteBouton->getPosition()->z;
             double dendrite_bouton_energy_level = dendriteBouton->getEnergyLevel();
+            double dendrite_bouton_max_energy_level = dendriteBouton->getMaxEnergyLevel();
             int dendrite_bouton_id = dendriteBouton->getDendriteBoutonId();
 
             txn.exec_params(
-                    "UPDATE dendriteboutons SET x = $1, y = $2, z = $3, energy_level = $4 WHERE dendrite_bouton_id = $5",
-                    dendrite_bouton_x, dendrite_bouton_y, dendrite_bouton_z, dendrite_bouton_energy_level, dendrite_bouton_id
+                    "UPDATE dendriteboutons SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE dendrite_bouton_id = $6",
+                    dendrite_bouton_x, dendrite_bouton_y, dendrite_bouton_z, dendrite_bouton_energy_level, dendrite_bouton_max_energy_level, dendrite_bouton_id
             );
         }
 
@@ -643,11 +677,12 @@ void updateDatabase(pqxx::connection& conn, const std::vector<std::shared_ptr<Cl
                     double z = cluster->getPosition()->z;
                     double propagation_rate = cluster->getPropagationRate();
                     double energy_level = cluster->getEnergyLevel();
+                    double max_energy_level = cluster->getMaxEnergyLevel();
                     int cluster_id = cluster->getClusterId();
 
                     txn.exec_params(
-                            "UPDATE clusters SET x = $1, y = $2, z = $3, propagation_rate = $4, energy_level = $5 WHERE cluster_id = $6",
-                            x, y, z, propagation_rate, energy_level, cluster_id
+                            "UPDATE clusters SET x = $1, y = $2, z = $3, propagation_rate = $4, energy_level = $5, max_energy_level = $6 WHERE cluster_id = $7",
+                            x, y, z, propagation_rate, energy_level, max_energy_level, cluster_id
                     );
 
                     // Update all neurons in the cluster
@@ -660,11 +695,12 @@ void updateDatabase(pqxx::connection& conn, const std::vector<std::shared_ptr<Cl
                         double neuron_z = neuron->getPosition()->z;
                         double neuron_propagation_rate = neuron->getPropagationRate();
                         double neuron_energy_level = neuron->getEnergyLevel();
+                        double neuron_max_energy_level = neuron->getMaxEnergyLevel();
                         int neuron_id = neuron->getNeuronId();
 
                         txn.exec_params(
-                                "UPDATE neurons SET x = $1, y = $2, z = $3, propagation_rate = $4, energy_level = $5 WHERE neuron_id = $6",
-                                neuron_x, neuron_y, neuron_z, neuron_propagation_rate, neuron_energy_level, neuron_id
+                                "UPDATE neurons SET x = $1, y = $2, z = $3, propagation_rate = $4, energy_level = $5, max_energy_level = $6 WHERE neuron_id = $7",
+                                neuron_x, neuron_y, neuron_z, neuron_propagation_rate, neuron_energy_level, neuron_max_energy_level, neuron_id
                         );
 
                         // Update Soma
@@ -674,11 +710,12 @@ void updateDatabase(pqxx::connection& conn, const std::vector<std::shared_ptr<Cl
                             double soma_y = soma->getPosition()->y;
                             double soma_z = soma->getPosition()->z;
                             double soma_energy_level = soma->getEnergyLevel();
+                            double soma_max_energy_level = soma->getMaxEnergyLevel();
                             int soma_id = soma->getSomaId();
 
                             txn.exec_params(
-                                    "UPDATE somas SET x = $1, y = $2, z = $3, energy_level = $4 WHERE soma_id = $5",
-                                    soma_x, soma_y, soma_z, soma_energy_level, soma_id
+                                    "UPDATE somas SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE soma_id = $6",
+                                    soma_x, soma_y, soma_z, soma_energy_level, soma_max_energy_level, soma_id
                             );
 
                             // Update Axon Hillock
@@ -688,11 +725,12 @@ void updateDatabase(pqxx::connection& conn, const std::vector<std::shared_ptr<Cl
                                 double axon_hillock_y = axonHillock->getPosition()->y;
                                 double axon_hillock_z = axonHillock->getPosition()->z;
                                 double axon_hillock_energy_level = axonHillock->getEnergyLevel();
+                                double axon_hillock_max_energy_level = axonHillock->getMaxEnergyLevel();
                                 int axon_hillock_id = axonHillock->getAxonHillockId();
 
                                 txn.exec_params(
-                                        "UPDATE axonhillocks SET x = $1, y = $2, z = $3, energy_level = $4 WHERE axon_hillock_id = $5",
-                                        axon_hillock_x, axon_hillock_y, axon_hillock_z, axon_hillock_energy_level, axon_hillock_id
+                                        "UPDATE axonhillocks SET x = $1, y = $2, z = $3, energy_level = $4, max_energy_level = $5 WHERE axon_hillock_id = $6",
+                                        axon_hillock_x, axon_hillock_y, axon_hillock_z, axon_hillock_energy_level, axon_hillock_max_energy_level, axon_hillock_id
                                 );
 
                                 // Update Axon and its components

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Content Security Policy: adjust for production -->
+    <meta
+            http-equiv="Content-Security-Policy"
+            content="
+      default-src 'self';
+      script-src 'self' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      connect-src 'self' ws://localhost:9002;
+    "
+    />
+    <meta charset="UTF-8">
+    <title>Neuronal Network Visualiser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Favicon & Manifest (you can adjust or remove if not needed) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+
+    <style>
+        /* ===== Reset & Basic Layout ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #222;
+            color: #EEE;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+        }
+        header, footer {
+            background-color: #1a1a1a;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #FFD54F;
+        }
+        main {
+            position: relative;
+            width: 100%;
+            height: calc(100% -  (2.5rem + 2rem)); /* header + footer height */
+        }
+
+        /* ===== Three.js Container ===== */
+        #threeContainer {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* ===== Loading Overlay ===== */
+        #loadingOverlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(34, 34, 34, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+            z-index: 100;
+        }
+        /* Simple CSS spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid #FFD54F;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        /* ===== Footer status text ===== */
+        #statusMessage {
+            font-size: 0.9rem;
+            color: #BBB;
+        }
+    </style>
+</head>
+<body>
+<header role="banner">
+    AARNN Network Visualiser
+    <div style="font-size:0.8rem; color:#CCC; margin-top:0.2rem;">
+        Use mouse/touch to rotate, scroll to zoom, drag to pan.
+    </div>
+</header>
+
+<main>
+    <!-- Loading overlay until first frame arrives (hidden on first draw) -->
+    <div id="loadingOverlay" role="status" aria-live="polite" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="spinner" aria-hidden="true"></div>
+        <div id="loadingText">Connecting to server...</div>
+        <!-- PROGRESS BAR: hidden until we start loading actual JSON -->
+        <div id="progressContainer" style="display: none; margin-top: 1rem; align-items: center;">
+            <progress id="dataProgress" max="100" value="0" style="width: 200px; height: 1rem;"></progress>
+            <span id="progressText" style="margin-left: 0.5rem; font-size: 0.9rem; color: #EEE;">0%</span>
+        </div>
+    </div>
+
+    <!-- Three.js will inject a <canvas> inside this container -->
+    <div id="threeContainer" aria-label="3D rendering area"></div>
+</main>
+
+<footer role="contentinfo">
+    <span id="statusMessage">Status: Not connected</span>
+</footer>
+
+<!-- Three.js (ESM build) -->
+<script type="module" src="./visualiser.js"></script>
+</body>
+</html>

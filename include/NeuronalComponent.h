@@ -30,6 +30,13 @@ public:
 
     // Energy management
     virtual double getEnergyLevel() const;
+    virtual double getMaxEnergyLevel() const;
+    virtual double getEnergyConsumptionRate() const;
+    virtual double getEnergyReplenishRate() const;
+    virtual void setEnergyLevel(double energy);
+    virtual void setMaxEnergyLevel(double maxEnergy);
+    virtual void setEnergyConsumptionRate(double rate);
+    virtual void setEnergyReplenishRate(double rate);
     virtual void energyTopup(double amount);
     virtual void energyDrain(double amount);
     virtual void useEnergy(double amount);

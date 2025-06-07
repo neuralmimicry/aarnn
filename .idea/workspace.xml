@@ -35,7 +35,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
+      <change afterPath="$PROJECT_DIR$/webviewer/client/android-chrome-192x192.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/android-chrome-512x512.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/apple-touch-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/favicon-16x16.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/favicon-32x32.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/jsm/controls/OrbitControls.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/jsm/three.module.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/libs/three.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/site.webmanifest" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/visualiser-nomodule.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/client/visualiser.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/clientserver.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/server/AARNN.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/server/Audio.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/server/Visualiser.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/server/client.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/server/errors_visualiser.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/server/simulation.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webviewer/server/visualiser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/NeuronalComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/NeuronalComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/NeuronalComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/NeuronalComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/aarnn.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/aarnn.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/aarnn/database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/database.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,58 +106,58 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;CMake Application.AARNN.executor&quot;: &quot;Run&quot;,
-    &quot;Database Script.debug_database.sql.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;/home/pbisaacs/.local/share/JetBrains/CLion2024.1/Shell Script/shellcheck&quot;,
-    &quot;Shell Script.ComposeContainers.sh.executor&quot;: &quot;Run&quot;,
-    &quot;Shell Script.RunContainers.executor&quot;: &quot;Run&quot;,
-    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;devcontainer.show.open.project.notification&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/pbisaacs/Developer/aarnn/configure&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "CMake Application.AARNN.executor": "Run",
+    "Database Script.debug_database.sql.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "SHELLCHECK.PATH": "/home/pbisaacs/.local/share/JetBrains/CLion2024.1/Shell Script/shellcheck",
+    "Shell Script.ComposeContainers.sh.executor": "Run",
+    "Shell Script.RunContainers.executor": "Run",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "devcontainer.show.open.project.notification": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/pbisaacs/Developer/aarnn/BuildFromGit/podman",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "CMakeSettings",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ],
-    &quot;RunConfigurationTargetLRU&quot;: [
-      &quot;baacce9a-d183-41f9-ad6d-ea8cf8c0e36b/database/\&quot;neurons\&quot;&quot;
+    "RunConfigurationTargetLRU": [
+      "baacce9a-d183-41f9-ad6d-ea8cf8c0e36b/database/\"neurons\""
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/BuildFromGit/podman" />
       <recent name="$PROJECT_DIR$/configure" />
       <recent name="$PROJECT_DIR$/include" />
       <recent name="$PROJECT_DIR$/src/aarnn" />
       <recent name="$PROJECT_DIR$/src/visualiser" />
-      <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/webviewer" />
+      <recent name="$PROJECT_DIR$/webviewer/client/libs" />
       <recent name="$PROJECT_DIR$/src/shared_libs" />
       <recent name="$PROJECT_DIR$/src/audio" />
       <recent name="$PROJECT_DIR$/include" />
-      <recent name="$PROJECT_DIR$/BuildFromGit/generic" />
-      <recent name="$PROJECT_DIR$/BuildFromGit/podman" />
     </key>
   </component>
   <component name="RunManager" selected="Database Script.debug_database.sql">
@@ -355,7 +383,7 @@
       <workItem from="1748968257082" duration="18147000" />
       <workItem from="1749062085826" duration="2571000" />
       <workItem from="1749065664467" duration="21317000" />
-      <workItem from="1749196490286" duration="2000" />
+      <workItem from="1749196490286" duration="27797000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
