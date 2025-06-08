@@ -144,7 +144,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
         if (parent_dendrite_id != -1) {
             // Dendrite branches attached to another dendrite
             dendritebranches = txn.exec_params(
-                    "SELECT dendrite_branch_id, dendrite_id, x, y, z, energy_level "
+                    "SELECT dendrite_branch_id, dendrite_id, x, y, z, energy_level, max_energy_level "
                     "FROM dendritebranches "
                     "WHERE dendrite_id = $1 ORDER BY dendrite_branch_id ASC",
                     parent_dendrite_id
@@ -153,7 +153,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
         else if (parent_soma_id != -1) {
             // Dendrite branches attached to a soma
             dendritebranches = txn.exec_params(
-                    "SELECT dendrite_branch_id, dendrite_id, x, y, z, energy_level "
+                    "SELECT dendrite_branch_id, dendrite_id, x, y, z, energy_level, max_energy_level "
                     "FROM dendritebranches "
                     "WHERE soma_id = $1 ORDER BY dendrite_branch_id ASC",
                     parent_soma_id
@@ -172,6 +172,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
             double y               = branch[3].as<double>();
             double z               = branch[4].as<double>();
             double energy_level    = branch[5].as<double>();
+            double max_energy_level = branch[6].is_null() ? 100.0 : branch[6].as<double>();
 
             // 1) Insert branch endpoint into 'points'
             points->InsertNextPoint(x, y, z);
@@ -183,15 +184,16 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
             glyphTypes->InsertNextValue(branchGlyphType);
 
             // Compute RGB color based on energy_level [0..100]
-            unsigned char R = static_cast<unsigned char>((energy_level / 100.0) * 255);
+            double speedCalculation = (255.0 / max_energy_level) * energy_level; // Scale to 255
+            unsigned char R = static_cast<unsigned char>(speedCalculation);
             unsigned char G = 0;
-            unsigned char B = static_cast<unsigned char>((1.0 - energy_level / 100.0) * 255);
+            unsigned char B = static_cast<unsigned char>(255.0 - speedCalculation);
             unsigned char color[3] = { R, G, B };
             glyphColors->InsertNextTypedTuple(color);
 
             // 3) Now fetch all dendrites under this branch
             pqxx::result dendrites = txn.exec_params(
-                    "SELECT dendrite_id, x, y, z, energy_level "
+                    "SELECT dendrite_id, x, y, z, energy_level, max_energy_level "
                     "FROM dendrites "
                     "WHERE dendrite_branch_id = $1 ORDER BY dendrite_id ASC",
                     dendrite_branch_id
@@ -203,6 +205,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                 double dy = dendrite[2].as<double>();
                 double dz = dendrite[3].as<double>();
                 double denergy_level = dendrite[4].as<double>();
+                double dmax_energy_level = dendrite[5].is_null() ? 100.0 : dendrite[5].as<double>();
 
                 // Insert dendrite endpoint
                 points->InsertNextPoint(dx, dy, dz);
@@ -219,15 +222,16 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                 glyphVectors->InsertNextTuple3(dx - x, dy - y, dz - z);
                 glyphTypes->InsertNextValue(2); // Glyph type index for dendrite
 
-                unsigned char R_d = static_cast<unsigned char>((denergy_level / 100.0) * 255);
+                double speedCalculation = (255.0 / dmax_energy_level) * denergy_level; // Scale to 255
+                unsigned char R_d = static_cast<unsigned char>(speedCalculation);
                 unsigned char G_d = 0;
-                unsigned char B_d = static_cast<unsigned char>((1.0 - denergy_level / 100.0) * 255);
+                unsigned char B_d = static_cast<unsigned char>(255.0 - speedCalculation);
                 unsigned char color_d[3] = { R_d, G_d, B_d };
                 glyphColors->InsertNextTypedTuple(color_d);
 
                 // 4) Fetch all dendrite boutons under this dendrite
                 pqxx::result boutons = txn.exec_params(
-                        "SELECT dendrite_bouton_id, x, y, z, energy_level "
+                        "SELECT dendrite_bouton_id, x, y, z, energy_level, max_energy_level "
                         "FROM dendriteboutons "
                         "WHERE dendrite_id = $1 ORDER BY dendrite_bouton_id ASC",
                         dendrite_id_new
@@ -239,6 +243,7 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                     double by           = bouton[2].as<double>();
                     double bz           = bouton[3].as<double>();
                     double benergy_level = bouton[4].as<double>();
+                    double bmax_energy_level = bouton[5].is_null() ? 100.0 : bouton[5].as<double>();
 
                     // Insert bouton point
                     points->InsertNextPoint(bx, by, bz);
@@ -255,9 +260,10 @@ void Visualiser::insertDendriteBranches(pqxx::transaction_base& txn,
                     glyphVectors->InsertNextTuple3(bx - dx, by - dy, bz - dz);
                     glyphTypes->InsertNextValue(2); // reuse bouton glyph index (could be distinct)
 
-                    unsigned char R_b = static_cast<unsigned char>((benergy_level / 100.0) * 255);
+                    double speedCalculation = (255.0 / bmax_energy_level) * benergy_level; // Scale to 255
+                    unsigned char R_b = static_cast<unsigned char>(speedCalculation);
                     unsigned char G_b = 0;
-                    unsigned char B_b = static_cast<unsigned char>((1.0 - benergy_level / 100.0) * 255);
+                    unsigned char B_b = static_cast<unsigned char>(255.0 - speedCalculation);
                     unsigned char color_b[3] = { R_b, G_b, B_b };
                     glyphColors->InsertNextTypedTuple(color_b);
                 }
@@ -302,7 +308,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
         if (parent_axon_branch_id != -1) {
             // Axon branches under another axon branch
             axonbranches = txn.exec_params(
-                    "SELECT axon_branch_id, x, y, z, energy_level "
+                    "SELECT axon_branch_id, x, y, z, energy_level, max_energy_level "
                     "FROM axonbranches "
                     "WHERE parent_axon_branch_id = $1 ORDER BY axon_branch_id ASC",
                     parent_axon_branch_id
@@ -311,7 +317,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
         else if (parent_axon_id != -1) {
             // Axon branches directly under an axon
             axonbranches = txn.exec_params(
-                    "SELECT axon_branch_id, x, y, z, energy_level "
+                    "SELECT axon_branch_id, x, y, z, energy_level, max_energy_level "
                     "FROM axonbranches "
                     "WHERE parent_axon_id = $1 ORDER BY axon_branch_id ASC",
                     parent_axon_id
@@ -320,7 +326,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
         else if (parent_axon_hillock_id != -1) {
             // Axon branches under an axon hillock
             axonbranches = txn.exec_params(
-                    "SELECT ab.axon_branch_id, ab.x, ab.y, ab.z, ab.energy_level "
+                    "SELECT ab.axon_branch_id, ab.x, ab.y, ab.z, ab.energy_level, ab.max_energy_level "
                     "FROM axonbranches AS ab "
                     "JOIN axons ON ab.parent_axon_id = axons.axon_id "
                     "WHERE axons.axon_hillock_id = $1 ORDER BY ab.axon_branch_id ASC",
@@ -339,6 +345,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
             double y           = branch[2].as<double>();
             double z           = branch[3].as<double>();
             double energy_level = branch[4].as<double>();
+            double max_energy_level = branch[5].is_null() ? 100.0 : branch[5].as<double>(); // default to 100 if null
 
             // 1) Insert branch point
             points->InsertNextPoint(x, y, z);
@@ -349,15 +356,16 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
             glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0); // no vector for branch
             glyphTypes->InsertNextValue(7); // glyph index for axon branch
 
-            unsigned char R = static_cast<unsigned char>((energy_level / 100.0) * 255);
+            double speedCalculation = (255.0 / max_energy_level) * energy_level; // Scale to 255
+            unsigned char R = static_cast<unsigned char>(speedCalculation);
             unsigned char G = 0;
-            unsigned char B = static_cast<unsigned char>((1.0 - energy_level / 100.0) * 255);
+            unsigned char B = static_cast<unsigned char>(255.0 - speedCalculation);
             unsigned char color[3] = { R, G, B };
             glyphColors->InsertNextTypedTuple(color);
 
             // 3) Query all axons under this branch
             pqxx::result axons = txn.exec_params(
-                    "SELECT axon_id, x, y, z, energy_level "
+                    "SELECT axon_id, x, y, z, energy_level, max_energy_level "
                     "FROM axons "
                     "WHERE axon_branch_id = $1 ORDER BY axon_id ASC",
                     axon_branch_id
@@ -369,6 +377,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                 double ay              = axon[2].as<double>();
                 double az              = axon[3].as<double>();
                 double aenergy_level   = axon[4].as<double>();
+                double amax_energy_level = axon[5].is_null() ? 100.0 : axon[5].as<double>(); // default to 100 if null
 
                 // Insert axon endpoint
                 points->InsertNextPoint(ax, ay, az);
@@ -385,15 +394,16 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                 glyphVectors->InsertNextTuple3(ax - x, ay - y, az - z);
                 glyphTypes->InsertNextValue(8); // glyph index for axon
 
-                unsigned char R_a = static_cast<unsigned char>((aenergy_level / 100.0) * 255);
+                double speedCalculation = (255.0 / amax_energy_level) * aenergy_level; // Scale to 255
+                unsigned char R_a = static_cast<unsigned char>(speedCalculation);
                 unsigned char G_a = 0;
-                unsigned char B_a = static_cast<unsigned char>((1.0 - aenergy_level / 100.0) * 255);
+                unsigned char B_a = static_cast<unsigned char>(255.0 - speedCalculation);
                 unsigned char color_a[3] = { R_a, G_a, B_a };
                 glyphColors->InsertNextTypedTuple(color_a);
 
                 // 4) Query all axon boutons under this axon
                 pqxx::result boutons = txn.exec_params(
-                        "SELECT axon_bouton_id, x, y, z, energy_level "
+                        "SELECT axon_bouton_id, x, y, z, energy_level, max_energy_level "
                         "FROM axonboutons "
                         "WHERE axon_id = $1 ORDER BY axon_bouton_id ASC",
                         axon_id_new
@@ -405,6 +415,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                     double by            = bouton[2].as<double>();
                     double bz            = bouton[3].as<double>();
                     double benergy_level  = bouton[4].as<double>();
+                    double bmax_energy_level = bouton[5].is_null() ? 100.0 : bouton[5].as<double>(); // default to 100 if null
 
                     // Insert bouton point
                     points->InsertNextPoint(bx, by, bz);
@@ -421,15 +432,16 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                     glyphVectors->InsertNextTuple3(bx - ax, by - ay, bz - az);
                     glyphTypes->InsertNextValue(9); // glyph index for axon bouton
 
-                    unsigned char R_b = static_cast<unsigned char>((benergy_level / 100.0) * 255);
+                    double speedCalculation = (255.0 / bmax_energy_level) * benergy_level; // Scale to 255
+                    unsigned char R_b = static_cast<unsigned char>(speedCalculation);
                     unsigned char G_b = 0;
-                    unsigned char B_b = static_cast<unsigned char>((1.0 - benergy_level / 100.0) * 255);
+                    unsigned char B_b = static_cast<unsigned char>(255.0 - speedCalculation);
                     unsigned char color_b[3] = { R_b, G_b, B_b };
                     glyphColors->InsertNextTypedTuple(color_b);
 
                     // 5) Query all synaptic gaps under this bouton
                     pqxx::result synapticgaps = txn.exec_params(
-                            "SELECT synaptic_gap_id, x, y, z, energy_level "
+                            "SELECT synaptic_gap_id, x, y, z, energy_level, max_energy_level "
                             "FROM synapticgaps "
                             "WHERE axon_bouton_id = $1 ORDER BY synaptic_gap_id ASC",
                             bouton_id
@@ -441,6 +453,7 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                         double gy            = gap[2].as<double>();
                         double gz            = gap[3].as<double>();
                         double genergy_level = gap[4].as<double>();
+                        double gmax_energy_level = gap[5].is_null() ? 100.0 : gap[5].as<double>(); // default to 100 if null
 
                         // Insert synaptic gap point
                         points->InsertNextPoint(gx, gy, gz);
@@ -457,9 +470,10 @@ void Visualiser::insertAxons(pqxx::transaction_base& txn,
                         glyphVectors->InsertNextTuple3(0.0, 0.0, 0.0);
                         glyphTypes->InsertNextValue(10); // glyph index for synaptic gap
 
-                        unsigned char R_g = static_cast<unsigned char>((genergy_level / 100.0) * 255);
+                        double speedCalculation = (255.0 / gmax_energy_level) * genergy_level; // Scale to 255
+                        unsigned char R_g = static_cast<unsigned char>(speedCalculation);
                         unsigned char G_g = 0;
-                        unsigned char B_g = static_cast<unsigned char>((1.0 - genergy_level / 100.0) * 255);
+                        unsigned char B_g = static_cast<unsigned char>(255.0 - speedCalculation);
                         unsigned char color_g[3] = { R_g, G_g, B_g };
                         glyphColors->InsertNextTypedTuple(color_g);
                     }
@@ -506,7 +520,7 @@ void Visualiser::buildAndRenderFrame() {
 
         // 3) Query top-level neurons (limit 10 for demo)
         pqxx::result neurons = txn.exec(
-                "SELECT neuron_id, x, y, z, propagation_rate, neuron_type, energy_level "
+                "SELECT neuron_id, x, y, z, propagation_rate, neuron_type, energy_level, max_energy_level "
                 "FROM neurons ORDER BY neuron_id ASC LIMIT 10"
         );
 
@@ -516,7 +530,7 @@ void Visualiser::buildAndRenderFrame() {
             }
             if (neuron[0].is_null() || neuron[1].is_null() || neuron[2].is_null() ||
                 neuron[3].is_null() || neuron[4].is_null() || neuron[5].is_null() ||
-                neuron[6].is_null()) {
+                neuron[6].is_null() || neuron[7].is_null()) {
                 continue;
             }
 
@@ -527,21 +541,23 @@ void Visualiser::buildAndRenderFrame() {
             double propagation   = neuron[4].as<double>(); // unused for drawing
             int neuron_type      = neuron[5].as<int>();    // unused for drawing
             double nenergy_level = neuron[6].as<double>();
+            double nmax_energy_level = neuron[7].is_null() ? 100.0 : neuron[7].as<double>(); // default to 100 if null
 
             // 1) Insert the neuron’s center as a glyph point
             glyphPoints_->InsertNextPoint(nx, ny, nz);
             glyphVectors_->InsertNextTuple3(0.0, 0.0, 0.0);
             glyphTypes_->InsertNextValue(1); // glyph index for neuron
 
-            unsigned char R = static_cast<unsigned char>((nenergy_level / 100.0) * 255);
+            double speedCalculation = (255.0 / nmax_energy_level) * nenergy_level; // Scale to 255
+            unsigned char R = static_cast<unsigned char>(speedCalculation);
             unsigned char G = 0;
-            unsigned char B = static_cast<unsigned char>((1.0 - nenergy_level / 100.0) * 255);
+            unsigned char B = static_cast<unsigned char>(255.0 - speedCalculation);
             unsigned char color[3] = { R, G, B };
             glyphColors_->InsertNextTypedTuple(color);
 
             // 2) Fetch all somas for this neuron
             pqxx::result somas = txn.exec_params(
-                    "SELECT soma_id, x, y, z, energy_level "
+                    "SELECT soma_id, x, y, z, energy_level, max_energy_level "
                     "FROM somas "
                     "WHERE neuron_id = $1 ORDER BY soma_id ASC",
                     neuron_id
@@ -552,7 +568,7 @@ void Visualiser::buildAndRenderFrame() {
                     continue;
                 }
                 if (soma[0].is_null() || soma[1].is_null() || soma[2].is_null() ||
-                    soma[3].is_null() || soma[4].is_null()) {
+                    soma[3].is_null() || soma[4].is_null() || soma[5].is_null()) {
                     continue;
                 }
 
@@ -561,15 +577,17 @@ void Visualiser::buildAndRenderFrame() {
                 double sy          = soma[2].as<double>();
                 double sz          = soma[3].as<double>();
                 double senergy     = soma[4].as<double>();
+                double smax_energy_level = soma[5].is_null() ? 100.0 : soma[5].as<double>(); // default to 100 if null
 
                 // Insert soma glyph
                 glyphPoints_->InsertNextPoint(sx, sy, sz);
                 glyphVectors_->InsertNextTuple3(0.0, 0.0, 0.0);
                 glyphTypes_->InsertNextValue(4); // glyph index for soma
 
-                unsigned char R_s = static_cast<unsigned char>((senergy / 100.0) * 255);
+                double speedCalculation = (255.0 / smax_energy_level) * senergy; // Scale to 255
+                unsigned char R_s = static_cast<unsigned char>(speedCalculation);
                 unsigned char G_s = 0;
-                unsigned char B_s = static_cast<unsigned char>((1.0 - senergy / 100.0) * 255);
+                unsigned char B_s = static_cast<unsigned char>(255.0 - speedCalculation);
                 unsigned char color_s[3] = { R_s, G_s, B_s };
                 glyphColors_->InsertNextTypedTuple(color_s);
 
@@ -583,7 +601,7 @@ void Visualiser::buildAndRenderFrame() {
 
                 // 4) Fetch all axon hillocks for this soma
                 pqxx::result axonhillocks = txn.exec_params(
-                        "SELECT axon_hillock_id, x, y, z, energy_level "
+                        "SELECT axon_hillock_id, x, y, z, energy_level, max_energy_level "
                         "FROM axonhillocks "
                         "WHERE soma_id = $1 ORDER BY axon_hillock_id ASC",
                         soma_id
@@ -594,7 +612,7 @@ void Visualiser::buildAndRenderFrame() {
                         continue;
                     }
                     if (hillock[0].is_null() || hillock[1].is_null() || hillock[2].is_null() ||
-                        hillock[3].is_null() || hillock[4].is_null()) {
+                        hillock[3].is_null() || hillock[4].is_null() || hillock[5].is_null()) {
                         continue;
                     }
 
@@ -603,21 +621,23 @@ void Visualiser::buildAndRenderFrame() {
                     double ahy            = hillock[2].as<double>();
                     double ahz            = hillock[3].as<double>();
                     double ahenergy       = hillock[4].as<double>();
+                    double ahmax_energy_level = hillock[5].is_null() ? 100.0 : hillock[5].as<double>(); // default to 100 if null
 
                     // Insert axon hillock glyph
                     glyphPoints_->InsertNextPoint(ahx, ahy, ahz);
                     glyphVectors_->InsertNextTuple3(0.0, 0.0, 0.0);
                     glyphTypes_->InsertNextValue(5); // glyph index for axon hillock
 
-                    unsigned char R_ah = static_cast<unsigned char>((ahenergy / 100.0) * 255);
+                    double speedCalculation = (255.0 / ahmax_energy_level) * ahenergy; // Scale to 255
+                    unsigned char R_ah = static_cast<unsigned char>(speedCalculation);
                     unsigned char G_ah = 0;
-                    unsigned char B_ah = static_cast<unsigned char>((1.0 - ahenergy / 100.0) * 255);
+                    unsigned char B_ah = static_cast<unsigned char>(255.0 - speedCalculation);
                     unsigned char color_ah[3] = { R_ah, G_ah, B_ah };
                     glyphColors_->InsertNextTypedTuple(color_ah);
 
                     // 5) Query all axons under this hillock
                     pqxx::result axons = txn.exec_params(
-                            "SELECT axon_id, x, y, z, energy_level "
+                            "SELECT axon_id, x, y, z, energy_level, max_energy_level "
                             "FROM axons "
                             "WHERE axon_hillock_id = $1 ORDER BY axon_id ASC",
                             hillock_id
@@ -628,7 +648,7 @@ void Visualiser::buildAndRenderFrame() {
                             continue;
                         }
                         if (axon[0].is_null() || axon[1].is_null() || axon[2].is_null() ||
-                            axon[3].is_null() || axon[4].is_null()) {
+                            axon[3].is_null() || axon[4].is_null() || axon[5].is_null()) {
                             continue;
                         }
 
@@ -637,6 +657,7 @@ void Visualiser::buildAndRenderFrame() {
                         double ay            = axon[2].as<double>();
                         double az            = axon[3].as<double>();
                         double aenergy       = axon[4].as<double>();
+                        double amax_energy_level = axon[5].is_null() ? 100.0 : axon[5].as<double>(); // default to 100 if null
 
                         // Insert axon endpoint
                         points_->InsertNextPoint(ax, ay, az);
@@ -653,9 +674,10 @@ void Visualiser::buildAndRenderFrame() {
                         glyphVectors_->InsertNextTuple3(ax - ahx, ay - ahy, az - ahz);
                         glyphTypes_->InsertNextValue(8); // glyph index for axon
 
-                        unsigned char R_a = static_cast<unsigned char>((aenergy / 100.0) * 255);
+                        double speedCalculation = (255.0 / amax_energy_level) * aenergy; // Scale to 255
+                        unsigned char R_a = static_cast<unsigned char>(speedCalculation);
                         unsigned char G_a = 0;
-                        unsigned char B_a = static_cast<unsigned char>((1.0 - aenergy / 100.0) * 255);
+                        unsigned char B_a = static_cast<unsigned char>(255.0 - speedCalculation);
                         unsigned char color_a[3] = { R_a, G_a, B_a };
                         glyphColors_->InsertNextTypedTuple(color_a);
 

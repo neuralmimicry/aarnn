@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS clusters (
                                         z REAL NOT NULL,
                                         propagation_rate REAL,
                                         cluster_type INTEGER,
-                                        energy_level REAL NOT NULL
+                                        energy_level REAL NOT NULL,
+                                        max_energy_level REAL NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS neurons (
@@ -54,7 +55,8 @@ CREATE TABLE IF NOT EXISTS neurons (
                                        z REAL NOT NULL,
                                        propagation_rate REAL,
                                        neuron_type INTEGER,
-                                       energy_level REAL NOT NULL
+                                       energy_level REAL NOT NULL,
+                                       max_energy_level REAL NOT NULL
 );
 
 -- Grant table-level privileges
