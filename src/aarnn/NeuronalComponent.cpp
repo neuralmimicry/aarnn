@@ -32,7 +32,7 @@ void NeuronalComponent::initialise()
     if (!instanceInitialised)
     {
         // Initialization logic if needed
-        instanceInitialised = true;
+        // instanceInitialised = true;
     }
 }
 

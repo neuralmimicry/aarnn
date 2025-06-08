@@ -224,6 +224,7 @@ int main() {
         allNeurons.insert(allNeurons.end(), neuronsInCluster.begin(), neuronsInCluster.end());
     }
 
+    std::cout << "Debug Step 1." << std::endl;
     // Create visual inputs
     std::vector<std::vector<std::shared_ptr<SensoryReceptor>>> visualReceptors(2);
     visualReceptors[0].reserve(num_pixels / 2);
@@ -231,6 +232,7 @@ int main() {
 
     double shiftX, shiftY, shiftZ;
     double newPositionX, newPositionY, newPositionZ;
+    std::cout << "Debug Step 2." << std::endl;
 
     for (int j = 0; j < 2; ++j) {
         for (int i = 0; i < (num_pixels / 2); ++i) {
@@ -250,12 +252,15 @@ int main() {
                 // Calculate the neuron index to connect to
                 int neuronIndex = (i + ((num_pixels / 2) * j)) % allNeurons.size();
                 auto neuron = allNeurons[neuronIndex];
+                std::cout << "Debug Step 3." << std::endl;
 
                 // Adjust positions for connection
                 PositionPtr currentDendriteBoutonPosition = neuron->getSoma()->getDendriteBranches()[0]
                         ->getDendrites()[0]->getDendriteBouton()->getPosition();
+                std::cout << "Debug Step 3a." << std::endl;
                 PositionPtr currentSynapticGapPosition = receptor->getSynapticGaps()[0]->getPosition();
 
+                std::cout << "Debug Step 4." << std::endl;
                 newPositionX = currentSynapticGapPosition->x + 0.4;
                 newPositionY = currentSynapticGapPosition->y + 0.4;
                 newPositionZ = currentSynapticGapPosition->z + 0.4;
@@ -274,6 +279,7 @@ int main() {
                 currentDendritePosition->x = newPositionX;
                 currentDendritePosition->y = newPositionY;
                 currentDendritePosition->z = newPositionZ;
+                std::cout << "Debug Step 5." << std::endl;
 
                 // Associate synaptic gap
                 associateSynapticGap(*receptor, *neuron, proximityThreshold);
