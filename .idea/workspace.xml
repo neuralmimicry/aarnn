@@ -34,26 +34,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/android-chrome-192x192.png" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/android-chrome-192x192.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/android-chrome-512x512.png" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/android-chrome-512x512.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/apple-touch-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/apple-touch-icon.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/favicon-16x16.png" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/favicon-16x16.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/favicon-32x32.png" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/favicon-32x32.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/jsm/controls/OrbitControls.js" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/jsm/controls/OrbitControls.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/jsm/three.module.js" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/jsm/three.module.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/libs/three.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/site.webmanifest" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/site.webmanifest" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/visualiser-nomodule.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/visualiser.js" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/visualiser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/clientserver.js" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/clientserver.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/package.json" afterDir="false" />
-    </list>
+    <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -372,7 +353,7 @@
       <workItem from="1748968257082" duration="18147000" />
       <workItem from="1749062085826" duration="2571000" />
       <workItem from="1749065664467" duration="21317000" />
-      <workItem from="1749196490286" duration="34105000" />
+      <workItem from="1749196490286" duration="35066000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
