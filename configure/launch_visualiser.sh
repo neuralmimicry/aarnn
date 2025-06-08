@@ -25,7 +25,7 @@ trap cleanup EXIT
 
 # 3) Launch your Node.js pieces in the background
 echo "▶ Starting Node client-server…"
-node /app/webviewer/clientserver.js & CLIENT_PID=$!
+node /app/webviewer/client/clientserver.js & CLIENT_PID=$!
 
 echo "▶ Starting Node visualiser server…"
 node /app/webviewer/server/visualiser.js & SERVER_PID=$!
