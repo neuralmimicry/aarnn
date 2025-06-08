@@ -1,32 +1,40 @@
 #!/bin/bash
+set -e
 
-# source /app/.env
-
-# Function to check required environment variables
+# 1) Check required env vars
 check_variables() {
-    required_vars=("POSTGRES_DB" "POSTGRES_HOST" "POSTGRES_PORT" "PULSE_SERVER" "PULSE_COOKIE" "PULSE_SINK" "PULSE_SOURCE" "VAULT_ADDR" "VAULT_API_ADDR" "VAULT_TOKEN")
-    for var in "${required_vars[@]}"; do
-      # Remove quotes from the variable value
-      value=$(echo "${!var}" | sed 's/^"//; s/"$//')
-      export "$var"="$value"
-
-      if [ -z "$value" ]; then
-        echo "Error: Environment variable $var is not set."
-        exit 1
-      fi
-    done
+  required_vars=(
+    POSTGRES_DB POSTGRES_HOST POSTGRES_PORT
+    PULSE_SERVER PULSE_COOKIE PULSE_SINK PULSE_SOURCE
+    VAULT_ADDR VAULT_API_ADDR VAULT_TOKEN
+  )
+  for v in "${required_vars[@]}"; do
+    val=$(echo "${!v}" | sed 's/^"//; s/"$//')
+    [[ -z "$val" ]] && echo "Error: $v is not set." && exit 1
+    export "$v"="$val"
+  done
 }
-
-# Check if the environment variables are set
 check_variables
 
+# 2) Ensure background Node processes are cleaned up on exit
+cleanup() {
+  echo "Shutting down Node processes…"
+  kill "${CLIENT_PID}" "${SERVER_PID}" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+# 3) Launch your Node.js pieces in the background
+echo "▶ Starting Node client-server…"
+node /app/webviewer/clientserver.js & CLIENT_PID=$!
+
+echo "▶ Starting Node visualiser server…"
+node /app/webviewer/server/visualiser.js & SERVER_PID=$!
+
+# 4) (Optional) Dump Vault info for debug
 echo "VAULT_ADDR: $VAULT_ADDR"
 echo "VAULT_API_ADDR: $VAULT_API_ADDR"
 echo "VAULT_TOKEN: $VAULT_TOKEN"
 
-echo "Starting Visualiser..."
-# Start gdb with the program and capture the backtrace on crash
-#gdb -ex "set pagination off" -ex "run" -ex "bt" -ex "quit" /app/Visualiser > /app/gdb_backtrace.txt 2>&1
+# 5) Finally boot the C++ Visualiser (will block until it exits)
+echo "▶ Launching C++ Visualiser…"
 /app/Visualiser
-# Print the backtrace to stdout
-#cat /app/gdb_backtrace.txt

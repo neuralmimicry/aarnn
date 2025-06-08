@@ -17,11 +17,11 @@ app.use((req, res, next) => {
 });
 
 // 2) Serve everything under ./client as static:
-app.use(express.static(path.join(__dirname, 'client')));
+app.use(express.static(path.join(__dirname, 'pages')));
 
 // 3) Fallback: if someone hits “/” without a filename, serve index.html:
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'index.html'));
+    res.sendFile(path.join(__dirname, 'pages', 'index.html'));
 });
 
 // 4) Start listening (8080, or whatever you prefer)

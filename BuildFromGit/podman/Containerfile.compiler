@@ -159,3 +159,21 @@ WORKDIR /app/source
 RUN mkdir build && cd build && cmake --version && cmake .. && make -j$(nproc)
 
 # The compiled binaries are now in /app/source/build
+
+# -------------------------------
+# Install the latest Node.js
+# -------------------------------
+# pulls in NodeSource’s setup script for “current” (or use setup_lts.x for LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# -------------------------------
+# Build the Webviewer JS assets
+# -------------------------------
+WORKDIR /app/source/webviewer
+RUN cd client && npm install && npm run build && cd ../server && npm install && npm run build
+
+# back to your default
+WORKDIR /app
