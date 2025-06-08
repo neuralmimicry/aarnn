@@ -1,7 +1,7 @@
 /**
  * client/visualiser.js (ES Module)
  *
- * • Connects to ws://localhost:9003
+ * • Connects to ws://visualiser:9003
  * • Receives JSON frames with: { points: [...], lines: [...], glyphs: [...] }
  * • Renders them via Three.js + OrbitControls in a single canvas.
  *
@@ -266,7 +266,7 @@ function webgl_support() {
     // ===========================================================================
     // 11) WEBSOCKET: CONNECT & HANDLE MESSAGES
     // ===========================================================================
-    const WS_URL = 'ws://localhost:9003';
+    const WS_URL = 'ws://visualiser:9003';
     let socket;
 
     try {
@@ -327,7 +327,7 @@ function webgl_support() {
         loadingOverlay.innerHTML = `
       <div style="color: #FF6666; font-size:1.2rem;">
         Could not connect to server.<br>
-        Check that ws://localhost:9003 is running.
+        Check that ws://visualiser:9003 is running.
       </div>
     `;
     }

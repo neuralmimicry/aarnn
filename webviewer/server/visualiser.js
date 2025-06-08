@@ -746,7 +746,7 @@ class Visualiser {
                 });
             });
 
-            console.log('WebSocket server listening on ws://localhost:9003');
+            console.log('WebSocket server listening on ws://visualiser:9003');
             this.logger.log('WebSocket server listening on port 9003.');
 
             // Immediately build & broadcast an initial frame:
