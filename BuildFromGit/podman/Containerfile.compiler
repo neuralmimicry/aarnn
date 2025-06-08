@@ -144,6 +144,7 @@ ARG POSTGRES_PORT
 
 # Check the ARGs are set and update the .env file
 RUN set -eux; \
+    touch /app/source/.env || true; \
     for VAR_NAME in POSTGRES_USERNAME POSTGRES_PASSWORD POSTGRES_DB POSTGRES_HOST POSTGRES_PORT; do \
         VAR_VALUE="$(eval echo \$$VAR_NAME)"; \
         if [ -n "$VAR_VALUE" ]; then \
