@@ -35,6 +35,8 @@ COPY --from=compiler /app/source/configure .
 
 COPY --from=compiler /app/source/.env .
 
+COPY --from=compiler /app/source/webviewer    /app/webviewer
+
 # Use the VAULT_ADDR in your build
 RUN echo "VAULT_ADDR=$VAULT_ADDR" >> /app/.env
 
@@ -58,8 +60,8 @@ RUN echo "visualiser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/visualiser
 
 RUN chown -R visualiser:visualiser /app
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+# Make port 8080 available to the world outside this container
+EXPOSE 8080
 
 # Configure necessary libraries for running the application
 RUN apt-get clean && \
