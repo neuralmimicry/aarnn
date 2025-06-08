@@ -4,7 +4,7 @@
 // “Equivalent” of visualiser.cpp in Node.js + pg + ws.
 // - Reads config files (key=value) to build a connection string
 // - Connects to PostgreSQL via `pg`
-// - Spawns a WebSocket server on port 9002
+// - Spawns a WebSocket server on port 9003
 // - Every 5 seconds, queries exactly the same tables/columns as C++ did
 // - Builds a single JSON object containing all points, lines, glyphs, colors, etc.
 // - Broadcasts that JSON to all connected WebSocket clients
@@ -726,7 +726,7 @@ class Visualiser {
     //--------------------------------------------------------------------------
     // start():
     //   - Connect to DB
-    //   - When DB is ready, spawn WS server on port 9002
+    //   - When DB is ready, spawn WS server on port 9003
     //   - Every 5 seconds, call buildAndBroadcastFrame()
     //--------------------------------------------------------------------------
     async start() {
@@ -746,8 +746,8 @@ class Visualiser {
                 });
             });
 
-            console.log('WebSocket server listening on ws://localhost:9002');
-            this.logger.log('WebSocket server listening on port 9002.');
+            console.log('WebSocket server listening on ws://localhost:9003');
+            this.logger.log('WebSocket server listening on port 9003.');
 
             // Immediately build & broadcast an initial frame:
             await this.buildAndBroadcastFrame();
@@ -797,8 +797,8 @@ async function main() {
             port:     parseInt(configMap.port, 10),
         });
 
-        // 4) Launch WebSocket server on port 9002
-        const wsServer = new WebSocket.Server({ port: 9002 });
+        // 4) Launch WebSocket server on port 9003
+        const wsServer = new WebSocket.Server({ port: 9003 });
 
         // 5) Create & run Visualiser
         const vis = new Visualiser(pgClient, logger, wsServer);

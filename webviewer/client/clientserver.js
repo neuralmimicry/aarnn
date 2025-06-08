@@ -11,7 +11,7 @@ app.use((req, res, next) => {
         "default-src 'self'; " +
         "script-src 'self' 'unsafe-eval'; " +
         "style-src 'self' 'unsafe-inline'; " +
-        "connect-src 'self' ws://localhost:9002"
+        "connect-src 'self' ws://localhost:9003"
     );
     next();
 });
