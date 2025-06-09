@@ -35,19 +35,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change afterPath="$PROJECT_DIR$/webviewer/client/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configure/launch_visualiser.sh" beforeDir="false" afterPath="$PROJECT_DIR$/configure/launch_visualiser.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/wss.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/wss.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aarnn/database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/aarnn/database.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/visualiser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/visualiser/wss.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualiser/wss.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/clientserver.js" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/clientserver.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/pages/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/client/pages/visualiser.js" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/client/pages/visualiser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/server/Visualiser.conf" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/server/Visualiser.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/server/errors_visualiser.log" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/server/errors_visualiser.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webviewer/server/visualiser.js" beforeDir="false" afterPath="$PROJECT_DIR$/webviewer/server/visualiser.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -367,7 +355,7 @@
       <workItem from="1748968257082" duration="18147000" />
       <workItem from="1749062085826" duration="2571000" />
       <workItem from="1749065664467" duration="21317000" />
-      <workItem from="1749196490286" duration="57540000" />
+      <workItem from="1749196490286" duration="62926000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

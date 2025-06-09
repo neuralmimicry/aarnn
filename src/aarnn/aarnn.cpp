@@ -189,10 +189,13 @@ int main() {
 
     // Only set up database if available
     std::unique_ptr<pqxx::connection> conn_ptr;
+    std::unique_ptr<pqxx::connection> conn_ptr_updates;
     if (useDatabase) {
         try {
+            // Separate connections for updates and initial setup
             conn_ptr = std::make_unique<pqxx::connection>(connection_string);
             initialise_database(*conn_ptr);
+            conn_ptr_updates = std::make_unique<pqxx::connection>(connection_string);
 
             // Begin first transaction
             // We create an explicit work txn pointer so that later code can check if it's valid
@@ -200,6 +203,7 @@ int main() {
             std::cerr << "[WARNING] Exception during database setup: " << e.what() << ". Disabling database." << std::endl;
             useDatabase = false;
             conn_ptr.reset();
+            conn_ptr_updates.reset();
         }
     }
 
@@ -575,9 +579,9 @@ int main() {
     std::thread inputThread(checkForQuit);
     std::thread clusterUpdateThread(updateClusters, std::ref(clusters), std::ref(running));
     std::thread dbThread;
-    if (useDatabase && conn_ptr) {
+    if (useDatabase && conn_ptr_updates) {
         // Launch the database-update thread only if database is available
-        dbThread = std::thread(updateDatabase, std::ref(*conn_ptr), std::ref(clusters));
+        dbThread = std::thread(updateDatabase, std::ref(*conn_ptr_updates), std::ref(clusters));
     }
 
     // Main loop
@@ -727,6 +731,8 @@ int main() {
             {
                 std::lock_guard<std::mutex> lock(changedNeuronsMutex);
                 dbUpdateReady = true;
+                conn_ptr.reset(); // Reset connection pointer to close the connection
+                conn_ptr_updates.reset(); // Reset updates connection pointer
             }
             cv.notify_all();
             dbThread.join();
