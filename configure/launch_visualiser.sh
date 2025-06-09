@@ -28,7 +28,7 @@ echo "▶ Starting Node client-server…"
 node /app/webviewer/client/clientserver.js & CLIENT_PID=$!
 
 echo "▶ Starting Node visualiser server…"
-node /app/webviewer/server/visualiser.js & SERVER_PID=$!
+# node /app/webviewer/server/visualiser.js & SERVER_PID=$!
 
 # 4) (Optional) Dump Vault info for debug
 echo "VAULT_ADDR: $VAULT_ADDR"

@@ -68,3 +68,26 @@ Logger initialized at 2025-06-06T20:18:00.409Z
 [2025-06-06T20:18:00.434Z] WebSocket server listening on port 9002.
 [2025-06-06T20:18:11.824Z] Client connected to WS.
 Logger initialized at 2025-06-08T13:26:19.164Z
+
+---- Logger initialized 2025-06-09T08:49:02.992Z ----
+
+---- Logger initialized 2025-06-09T08:50:30.935Z ----
+
+---- Logger initialized 2025-06-09T08:53:40.156Z ----
+
+---- Logger initialized 2025-06-09T09:11:38.503Z ----
+[2025-06-09T09:11:38.530Z] Connected to PostgreSQL
+[2025-06-09T09:11:38.531Z] WebSocket server started
+[2025-06-09T09:11:38.605Z] Frame build error: column "axon_hillock_id" does not exist
+[2025-06-09T09:11:43.638Z] Frame build error: column "axon_hillock_id" does not exist
+[2025-06-09T09:11:48.643Z] Frame build error: column "axon_hillock_id" does not exist
+[2025-06-09T09:11:53.647Z] Frame build error: column "axon_hillock_id" does not exist
+[2025-06-09T09:11:58.651Z] Frame build error: column "axon_hillock_id" does not exist
+[2025-06-09T09:12:03.655Z] Frame build error: column "axon_hillock_id" does not exist
+[2025-06-09T09:12:08.659Z] Frame build error: column "axon_hillock_id" does not exist
+[2025-06-09T09:12:13.664Z] Frame build error: column "axon_hillock_id" does not exist
+
+---- Logger initialized 2025-06-09T09:18:58.219Z ----
+[2025-06-09T09:18:58.242Z] Connected to PostgreSQL
+[2025-06-09T09:18:58.242Z] WebSocket listening on port 9002
+[2025-06-09T09:21:10.943Z] WS client connected

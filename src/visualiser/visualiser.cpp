@@ -732,6 +732,45 @@ void Visualiser::buildAndRenderFrame() {
 
     // 7) Finally, re-render the window
     renderWindow_->Render();
+    // Build JSON frame using Boost.JSON
+    json::object j;
+
+    // Points array
+    json::array pointsJson;
+    for (vtkIdType i = 0; i < points_->GetNumberOfPoints(); ++i) {
+        double p[3]; points_->GetPoint(i, p);
+        pointsJson.push_back({p[0], p[1], p[2]});
+    }
+    j["points"] = pointsJson;
+
+    // Lines array (pairs of point indices)
+    json::array linesJson;
+    vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+    lines_->InitTraversal();
+    while (lines_->GetNextCell(idList)) {
+        if (idList->GetNumberOfIds() == 2) {
+            linesJson.push_back({idList->GetId(0), idList->GetId(1)});
+        }
+    }
+    j["lines"] = linesJson;
+
+    // Glyphs array
+    json::array glyphsJson;
+    for (vtkIdType i = 0; i < glyphPoints_->GetNumberOfPoints(); ++i) {
+        double pos[3]; glyphPoints_->GetPoint(i, pos);
+        unsigned char type = glyphTypes_->GetValue(i);
+        unsigned char rgba[3]; glyphColors_->GetTypedTuple(i, rgba);
+        json::object ge;
+        ge["pos"]   = {pos[0], pos[1], pos[2]};
+        ge["type"]  = static_cast<int>(type);
+        ge["color"] = { rgba[0], rgba[1], rgba[2] };
+        glyphsJson.push_back(ge);
+    }
+    j["glyphs"] = glyphsJson;
+
+    // Serialize and broadcast
+    std::string msg = json::serialize(j);
+    ws_server_.broadcast(msg);
 }
 
 //------------------------------------------------------------------------------
