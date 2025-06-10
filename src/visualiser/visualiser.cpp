@@ -116,6 +116,7 @@ void Visualiser::visualise() {
         return;
     }
 
+    logger_ << "Visualiser started. Initializing VTK components...\n";
     // Install VTK error observer
     {
         vtkSmartPointer<VTKErrorObserver> errObs = vtkSmartPointer<VTKErrorObserver>::New();
@@ -125,29 +126,66 @@ void Visualiser::visualise() {
         outWin->AddObserver(vtkCommand::WarningEvent, errObs);
     }
 
+    logger_ << "Initializing VTK pipeline...\n";
     initializeVTKPipeline();
 
     // Setup timer callback
+    logger_ << "Setting up timer callback...\n";
     vtkSmartPointer<UpdateTimerCallback> timerCb = vtkSmartPointer<UpdateTimerCallback>::New();
     timerCb->SetVisualiser(this);
 
+    logger_ << "Adding actors to renderer...\n";
     renderer_->AddActor(lineActor_);
     renderer_->AddActor(glyphActor_);
     renderWindow_->AddRenderer(renderer_);
     interactor_->SetRenderWindow(renderWindow_);
+
     logger_ << "About to initialize interactor\n";
     interactor_->Initialize();
     logger_ << "Interactor initialized\n";
     interactor_->AddObserver(vtkCommand::TimerEvent, timerCb);
 
-    logger_ << "Starting VTK render loop. Close window to exit.\n";
-    buildAndRenderFrame();           // initial draw + broadcast
-    logger_ << "Initial frame built and rendered.\n";
+    logger_ << "Starting VTK render loop. Close window to exit or if unavailable, it will exit immediately.\n";
+    // Initial build & render & broadcast
+    buildAndRenderFrame();
+    logger_ << "Initial frame built and broadcast.\n";
     interactor_->CreateRepeatingTimer(update_interval_ms_);
     renderWindow_->Render();
     logger_ << "Render window created and initial render done. Starting interactor.\n";
+
+    // Record time before Start
+    auto t0 = std::chrono::steady_clock::now();
     interactor_->Start();
-    logger_ << "Render loop exited.\n";
+    // When Start returns, either user closed the window or VTK could not open it.
+    auto t1 = std::chrono::steady_clock::now();
+    auto dur_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+
+    logger_ << "interactor_->Start() returned after " << dur_ms << " ms.\n";
+
+    // If the interactor ran only very briefly (e.g. < some threshold) or always when it returns:
+    logger_ << "VTK interactor loop exited or unavailable. Switching to headless broadcast mode.\n";
+
+    // Start a background thread to continue periodic JSON broadcasts
+    std::thread([this]() {
+        logger_ << "Headless loop: entering periodic buildAndRenderFrame every "
+                << update_interval_ms_ << " ms.\n";
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(update_interval_ms_));
+            try {
+                buildAndRenderFrame();
+            } catch (const std::exception& e) {
+                logger_ << "Error in periodic buildAndRenderFrame: " << e.what() << "\n";
+            }
+        }
+    }).detach();
+
+    // Keep the main thread alive indefinitely so the process does not exit.
+    // For example, block here on a condition variable or similar.
+    logger_ << "Visualiser main thread now blocking indefinitely to keep WebSocket alive.\n";
+    std::mutex mtx;
+    std::unique_lock<std::mutex> lk(mtx);
+    std::condition_variable cv;
+    cv.wait(lk);  // Wait forever (or until you signal shutdown externally)
 }
 
 void Visualiser::buildAndRenderFrame() {

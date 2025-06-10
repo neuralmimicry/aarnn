@@ -7,11 +7,16 @@ const app = express();
 app.use((req, res, next) => {
     res.setHeader(
         'Content-Security-Policy',
-        // match the meta‐tag you had in index.html:
         "default-src 'self'; " +
-        "script-src 'self' 'unsafe-eval'; " +
-        "style-src 'self' 'unsafe-inline'; " +
-        "connect-src 'self' ws://visualiser:9002"
+        "script-src 'self'; " + // Removed 'unsafe-eval'
+        "style-src 'self'; " +   // Removed 'unsafe-inline'
+        "connect-src 'self' ws://visualiser:9002; " +
+        "img-src 'self' data:; " + // If you use any base64 encoded images or external images
+        "font-src 'self'; " +     // If you use custom fonts
+        "object-src 'none'; " +   // Prevents Flash/Java applets
+        "base-uri 'self';" +      // Restricts base URL for relative URLs
+        "form-action 'self';" +   // Restricts URLs that can be used as the target of form submissions
+        "frame-ancestors 'none';" // Prevents clickjacking
     );
     next();
 });
