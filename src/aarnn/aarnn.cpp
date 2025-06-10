@@ -195,8 +195,9 @@ int main() {
             // Separate connections for updates and initial setup
             conn_ptr = std::make_unique<pqxx::connection>(connection_string);
             initialise_database(*conn_ptr);
+            prepareAllStatements(*conn_ptr);
             conn_ptr_updates = std::make_unique<pqxx::connection>(connection_string);
-
+            prepareAllStatements(*conn_ptr_updates);
             // Begin first transaction
             // We create an explicit work txn pointer so that later code can check if it's valid
         } catch (const std::exception& e) {

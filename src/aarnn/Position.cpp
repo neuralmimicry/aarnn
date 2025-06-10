@@ -10,7 +10,7 @@ Position::Position(double x, double y, double z) : x(x), y(y), z(z) {}
 }
 
 // Function to set the position coordinates
-void Position::set(double newX, double newY, double newZ) {
+void Position::setPosition(double newX, double newY, double newZ) {
     x = newX;
     y = newY;
     z = newZ;
