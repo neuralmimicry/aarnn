@@ -135,13 +135,17 @@ void Visualiser::visualise() {
     renderer_->AddActor(glyphActor_);
     renderWindow_->AddRenderer(renderer_);
     interactor_->SetRenderWindow(renderWindow_);
+    logger_ << "About to initialize interactor\n";
     interactor_->Initialize();
+    logger_ << "Interactor initialized\n";
     interactor_->AddObserver(vtkCommand::TimerEvent, timerCb);
 
     logger_ << "Starting VTK render loop. Close window to exit.\n";
     buildAndRenderFrame();           // initial draw + broadcast
+    logger_ << "Initial frame built and rendered.\n";
     interactor_->CreateRepeatingTimer(update_interval_ms_);
     renderWindow_->Render();
+    logger_ << "Render window created and initial render done. Starting interactor.\n";
     interactor_->Start();
     logger_ << "Render loop exited.\n";
 }
