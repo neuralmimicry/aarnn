@@ -191,7 +191,7 @@ void Visualiser::visualise() {
 void Visualiser::buildAndRenderFrame() {
     std::lock_guard<std::mutex> lock(pipelineMutex_);
 
-    points_->Reset(); lines_->Reset(); glyphPoints_->Reset();
+    points_->Reset(); lines_->Reset(); glyphOriginalIds_.clear(); glyphPoints_->Reset();
     glyphVectors_->Reset(); glyphTypes_->Reset(); glyphColors_->Reset();
 
     try {
@@ -205,6 +205,7 @@ void Visualiser::buildAndRenderFrame() {
             vtkIdType somaPt = points_->InsertNextPoint(soma.pos.data());
             unsigned char* c = computeColor(soma.energy, soma.max_energy);
             glyphColors_->InsertNextTypedTuple(c);
+            glyphOriginalIds_.push_back(soma_id);
             if (soma_to_hillock_.count(soma_id)) buildAxonTree(soma_to_hillock_[soma_id], somaPt);
             if (soma_to_dendrite_branches_.count(soma_id)) {
                 for (int bid : soma_to_dendrite_branches_[soma_id])
@@ -246,6 +247,7 @@ void Visualiser::buildAndRenderFrame() {
             int type = glyphTypes_->GetValue(i);
             unsigned char col[3]; glyphColors_->GetTypedTuple(i,col);
             json::object ge;
+            ge["id"] = glyphOriginalIds_[i];
             ge["pos"] = json::array{p[0],p[1],p[2]};
             ge["type"] = type;
             ge["color"] = json::array{col[0],col[1],col[2]};
@@ -613,6 +615,7 @@ void Visualiser::buildAxonBranch(int branch_id, vtkIdType parent_point_id) {
                 const auto& axon_data = axons_.at(axon_id);
                 glyphPoints_->InsertNextPoint(axon_data.pos.data());
                 glyphTypes_->InsertNextValue(AXON_GLYPH);
+                glyphOriginalIds_.push_back(axon_id);
                 vtkIdType axon_point_id = points_->InsertNextPoint(axon_data.pos.data());
                 createLine(branch_point_id, axon_point_id);
             }

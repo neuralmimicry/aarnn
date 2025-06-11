@@ -146,6 +146,7 @@ private:
     std::map<int,std::vector<int>> dendrite_to_branches_;
     std::map<int,std::vector<int>> branch_to_dendrites_;
     std::map<int,std::vector<int>> dendrite_to_boutons_;
+    std::vector<int> glyphOriginalIds_; // To store the DB ID for each glyph
 };
 
 #endif // AARNN_VISUALISER_H
