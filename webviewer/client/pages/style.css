@@ -1,0 +1,110 @@
+/* ===== Reset & Basic Layout ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #222;
+    color: #EEE;
+    font-family: -apple-system, BlinkMacMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+}
+header, footer {
+    background-color: #1a1a1a;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #FFD54F;
+}
+header .subtitle { /* New class for the subtitle text */
+    font-size: 0.8rem;
+    color: #CCC;
+    margin-top: 0.2rem;
+}
+main {
+    position: relative;
+    width: 100%;
+    height: calc(100% -  (2.5rem + 2rem)); /* header + footer height */
+}
+
+/* ===== Three.js Container ===== */
+#threeContainer {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Utility classes for display control */
+.d-flex {
+    display: flex;
+}
+.d-none {
+    display: none;
+}
+
+/* Style for error messages in the overlay */
+.error-message-text {
+    color: #FF6666;
+    font-size: 1.2rem;
+}
+
+/* Adjust base styles for loadingOverlay and progressContainer */
+#loadingOverlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(34, 34, 34, 0.9);
+    /* Initial display handled by .d-flex or .d-none classes in JS */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.1rem;
+    z-index: 100;
+}
+#progressContainer {
+    /* Initial display handled by .d-flex or .d-none classes in JS */
+    margin-top: 1rem; /* Moved from inline style */
+    align-items: center; /* Moved from inline style */
+}
+
+/* Simple CSS spinner */
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top: 4px solid #FFD54F;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Styles for progress bar and text */
+#dataProgress {
+    width: 200px; /* Moved from inline style */
+    height: 1rem; /* Moved from inline style */
+}
+#progressText {
+    margin-left: 0.5rem; /* Moved from inline style */
+    font-size: 0.9rem; /* Moved from inline style */
+    color: #EEE; /* Moved from inline style */
+}
+
+
+/* ===== Footer status text ===== */
+#statusMessage {
+    font-size: 0.9rem;
+    color: #BBB;
+}

@@ -43,6 +43,12 @@ function webgl_support() {
     const progressTextEl    = document.getElementById('progressText');
     const statusMessageEl   = document.getElementById('statusMessage');
 
+    // Create a dedicated div for error messages within the loading overlay
+    const errorMessageEl = document.createElement('div');
+    errorMessageEl.classList.add('error-message-text'); // Apply the CSS class
+    errorMessageEl.classList.add('d-none'); // Hidden by default
+    loadingOverlay.appendChild(errorMessageEl); // Add it to the loading overlay
+
     // Flag to track if the first full frame has been drawn, used to hide loading overlay.
     let firstFrameDrawn = false;
 
@@ -64,13 +70,17 @@ function webgl_support() {
     // 2) CHECK WEBGL SUPPORT
     // ===========================================================================
     if (!webgl_support()) {
-        loadingOverlay.style.display = 'flex';
-        loadingOverlay.innerHTML = `
-      <div style="color: #FF6666; font-size:1.2rem;">
-        WebGL not supported in your browser.<br>
-        Please try a modern browser or update your graphics drivers.
-      </div>
-    `;
+        // Ensure loading overlay is visible and set error message using a CSS class
+        loadingOverlay.classList.remove('d-none');
+        loadingOverlay.classList.add('d-flex');
+
+        // Hide other elements and show error message
+        loadingTextEl.classList.add('d-none');
+        progressContainer.classList.add('d-none');
+        errorMessageEl.classList.remove('d-none');
+        errorMessageEl.classList.add('d-flex');
+        errorMessageEl.textContent = 'WebGL not supported in your browser. Please try a modern browser or update your graphics drivers.';
+
         console.error('WebGL not supported');
         return;
     }
@@ -287,11 +297,6 @@ function webgl_support() {
         });
 
         // Add or UPDATE glyphs present in the incoming data
-        // We track a "total steps" for potential progress updates,
-        // though for frequent small updates, a progress bar might be overkill.
-        const totalGlyphsToProcess = incomingGlyphMap.size;
-        let completedGlyphSteps = 0;
-
         for (const [id, incomingGlyph] of incomingGlyphMap) {
             const existingMesh = activeGlyphMeshes.get(id);
 
@@ -305,39 +310,31 @@ function webgl_support() {
 
                 // If glyph type changes, we must replace the mesh entirely as geometry changes.
                 // This assumes buildSingleGlyph returns a mesh with the correct geometry type.
-                // Currently, buildSingleGlyph uses type, but we don't store the type with the mesh
-                // directly for easy comparison without re-parsing.
-                // A more robust solution might store the 'type' on the mesh.userData
-                // For now, if the original mesh was created with a different type (based on a new entry),
-                // we'll dispose and recreate. This is a simplification.
-                // (Advanced: you could store `existingMesh.userData.type = entry.type;` during creation)
-                // For now, we assume `type` for a given ID usually doesn't change, or if it does,
-                // the old entry is effectively "removed" and a new one "added" for simplicity.
-
+                // (Advanced: you could store `existingMesh.userData.type = entry.type;` during creation
+                // and compare `existingMesh.userData.type !== incomingGlyph.type` here to trigger recreation)
             } else {
                 // ADD new glyph
                 const newMesh = buildSingleGlyph(incomingGlyph);
                 rootGroup.add(newMesh);
                 activeGlyphMeshes.set(id, newMesh);
             }
-
-            completedGlyphSteps += 1;
-            // Potentially update progress bar here if a large batch of updates
-            // is expected within a single incoming frame, after the first load.
-            // For general updates, we skip granular progress bar updates.
         }
-
 
         // --- 10.3) First-frame housekeeping & Status Update ---
         if (!firstFrameDrawn) {
-            loadingOverlay.style.display     = 'none';
-            progressContainer.style.display  = 'none';
+            // Hide loading overlay and progress container on first frame
+            loadingOverlay.classList.remove('d-flex');
+            loadingOverlay.classList.add('d-none');
+            progressContainer.classList.remove('d-flex');
+            progressContainer.classList.add('d-none');
             firstFrameDrawn                  = true;
             statusMessageEl.textContent      = `Status: Rendering initial data (${activeGlyphMeshes.size} glyphs)`;
         } else {
             statusMessageEl.textContent      = `Status: Rendering updates (${activeGlyphMeshes.size} glyphs)`;
+            // Ensure progress bar is hidden after initial load
+            progressContainer.classList.remove('d-flex');
+            progressContainer.classList.add('d-none');
         }
-
 
         // --- 10.4) Render Scene ---
         renderer.render(scene, camera);
@@ -359,8 +356,9 @@ function webgl_support() {
 
             // Only show loading progress on initial connection if no data yet
             if (!firstFrameDrawn) {
-                loadingTextEl.textContent       = 'Loading data…';
-                progressContainer.style.display = 'flex';
+                loadingTextEl.textContent = 'Loading data…';
+                progressContainer.classList.remove('d-none');
+                progressContainer.classList.add('d-flex');
                 dataProgress.value        = 0;
                 progressTextEl.textContent = '0%';
             }
@@ -397,24 +395,30 @@ function webgl_support() {
             console.warn('WebSocket closed');
             statusMessageEl.textContent = 'Status: Connection closed';
             if (!firstFrameDrawn) {
-                loadingOverlay.style.display = 'flex';
-                loadingOverlay.innerHTML = `
-          <div style="color: #FF6666; font-size:1.2rem;">
-            Connection lost.<br>
-            Please refresh the page.
-          </div>
-        `;
+                // Show loading overlay with error message if connection closes before first frame
+                loadingOverlay.classList.remove('d-none');
+                loadingOverlay.classList.add('d-flex');
+
+                // Hide other elements and show error message
+                loadingTextEl.classList.add('d-none');
+                progressContainer.classList.add('d-none');
+                errorMessageEl.classList.remove('d-none');
+                errorMessageEl.classList.add('d-flex');
+                errorMessageEl.textContent = 'Connection lost. Please refresh the page.';
             }
         });
     } catch (err) {
         console.error('Failed to open WebSocket:', err);
-        loadingOverlay.style.display = 'flex';
-        loadingOverlay.innerHTML = `
-      <div style="color: #FF6666; font-size:1.2rem;">
-        Could not connect to server.<br>
-        Check that ws://visualiser:9002 is running.
-      </div>
-    `;
+        // Show loading overlay with error message if WebSocket connection fails
+        loadingOverlay.classList.remove('d-none');
+        loadingOverlay.classList.add('d-flex');
+
+        // Hide other elements and show error message
+        loadingTextEl.classList.add('d-none');
+        progressContainer.classList.add('d-none');
+        errorMessageEl.classList.remove('d-none');
+        errorMessageEl.classList.add('d-flex');
+        errorMessageEl.textContent = 'Could not connect to server. Check that ws://visualiser:9002 is running.';
     }
 
     // ===========================================================================
