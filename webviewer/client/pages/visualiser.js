@@ -521,11 +521,20 @@ function webgl_support() {
     let isDragging = false, dragOffset = { x: 0, y: 0 };
     miniHeader.addEventListener('mousedown', e => {
         isDragging = true;
-        // Clear anchors so left/top positioning takes effect
+        // 1) Compute current bounding rect
+        const rect = miniContainer.getBoundingClientRect();
+        // 2) Set style.left/top so it stays visually in place
+        //    We subtract the offsetParent's clientLeft/clientTop if needed; using getBoundingClientRect() is simplest:
+        miniContainer.style.left = rect.left + 'px';
+        miniContainer.style.top  = rect.top + 'px';
+        // 3) Now clear anchors
         miniContainer.style.right = 'auto';
         miniContainer.style.bottom = 'auto';
-        dragOffset.x = e.clientX - miniContainer.offsetLeft;
-        dragOffset.y = e.clientY - miniContainer.offsetTop;
+        // 4) Compute dragOffset relative to those now‐set left/top
+        dragOffset.x = e.clientX - rect.left;
+        dragOffset.y = e.clientY - rect.top;
+        // Optionally: set pointer capture or prevent text selection
+        e.preventDefault();
     });
 
     window.addEventListener('mousemove', e => {

@@ -107,7 +107,7 @@ Visualiser::Visualiser(std::shared_ptr<pqxx::connection> conn,
         : conn_(std::move(conn)),
           logger_(logger),
           ws_server_(ws_server),
-          update_interval_ms_(5000)
+          update_interval_ms_(500) // Default update interval in milliseconds
 {}
 
 void Visualiser::visualise() {
