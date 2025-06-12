@@ -141,6 +141,49 @@ function webgl_support() {
     const rootGroup = new THREE.Group();
     scene.add(rootGroup);
 
+    // ——— Graphic‐equaliser setup ———
+    const EQUALISER_BARS = 20;
+    const equaliserEl = document.getElementById('dataEqualiser');
+    const bars = [];
+    for (let i = 0; i < EQUALISER_BARS; i++) {
+        const b = document.createElement('div');
+        b.className = 'eq-bar';
+        equaliserEl.appendChild(b);
+        bars.push(b);
+    }
+
+    // Counters for incoming vs rendered frames
+    let incomingCount = 0, renderedCount = 0;
+
+    // Every 100ms update the equaliser display
+    setInterval(() => {
+        // Compute rates over the last interval
+        const inRate  = incomingCount;   // how many arrived
+        const outRate = renderedCount;   // how many rendered
+
+        // Reset counters for next window
+        incomingCount = 0;
+        renderedCount = 0;
+
+        // Normalize to bar counts
+        // greenBars = proportion of maxExpectedRate
+        // redBars   = proportion of backlog = inRate - outRate
+        const maxExpected = 50;  // e.g. your target frames/sec × 0.1s
+        const backlog     = Math.max(0, inRate - outRate);
+        const greenCount  = Math.min(EQUALISER_BARS, Math.floor((inRate / maxExpected) * EQUALISER_BARS));
+        const redCount    = Math.min(EQUALISER_BARS, Math.floor((backlog / maxExpected) * EQUALISER_BARS));
+
+        // Update each bar's background-size: bottom X% red, above it green
+        for (let i = 0; i < EQUALISER_BARS; i++) {
+            const bar = bars[i];
+            let redPct   = 0, greenPct = 0;
+            if (i < redCount)   redPct = 100;
+            if (i < greenCount) greenPct = 100;
+            // the gradient stops: first redPct% red, then from redPct to greenPct is green
+            bar.style.backgroundSize = `100% ${redPct}% , 100% ${greenPct}%`;
+        }
+    }, 100);
+
     // ===========================================================================
     // 7) UTIL: DISPOSE MESH RESOURCES
     //
@@ -378,6 +421,7 @@ function webgl_support() {
 
         socket.addEventListener('message', async (evt) => {
             try {
+                incomingCount++;
                 const data = JSON.parse(evt.data);
 
                 // Ensure data has expected array structures and glyphs have IDs
@@ -388,6 +432,7 @@ function webgl_support() {
                     data.glyphs.every(g => g.id !== undefined && g.id !== null) // Ensure all glyphs have an ID
                 ) {
                     await updateSceneWithData(data); // Call the updated scene update function
+                    renderedCount++;
                 } else {
                     console.warn('Received unexpected frame format or missing glyph IDs:', data);
                     statusMessageEl.textContent = 'Status: Invalid data received';

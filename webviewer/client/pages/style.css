@@ -19,6 +19,10 @@ header, footer {
     line-height: 1.4;
 }
 header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1.25rem;
     font-weight: 600;
     color: #FFD54F;
@@ -28,6 +32,19 @@ header .subtitle { /* New class for the subtitle text */
     color: #CCC;
     margin-top: 0.2rem;
 }
+
+header .logo-link {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+}
+
+header .logo-link img {
+    display: block;
+}
+
 main {
     position: relative;
     width: 100%;
@@ -141,4 +158,20 @@ main {
 #statusMessage {
     font-size: 0.9rem;
     color: #BBB;
+}
+
+/* ===== Graphic Equaliser ===== */
+#dataEqualiser {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 3rem;
+    padding: 0.5rem;
+}
+#dataEqualiser .eq-bar {
+    flex: 1;
+    background: linear-gradient(to top, #f00 0%, #f00 0%, #0f0 0%, #0f0 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 0%;
+    transition: background-size 0.1s ease-out;
 }

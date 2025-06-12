@@ -15,6 +15,10 @@
 </head>
 <body>
 <header role="banner">
+    <!-- Clickable logo linking to neuralmimicry.ai -->
+    <a href="https://neuralmimicry.ai" target="_blank" rel="noopener" class="logo-link">
+        <img src="/favicon-32x32.png" alt="NeuralMimicry" width="32" height="32">
+    </a>
     AARNN Network Visualiser
     <div class="subtitle"> <!-- Replaced inline style with class -->
         Use mouse/touch to rotate, scroll to zoom, drag to pan.
@@ -32,7 +36,6 @@
             <span id="progressText">0%</span> <!-- Removed inline style -->
         </div>
     </div>
-
     <!-- Three.js will inject a <canvas> inside this container -->
     <div id="threeContainer" aria-label="3D rendering area"></div>
 
@@ -44,6 +47,10 @@
 </main>
 
 <footer role="contentinfo">
+    <!-- Graphic equaliser: shows inbound rate (green) vs backlog (red) -->
+    <div id="dataEqualiser" aria-label="Data throughput indicator">
+        <!-- bars will be injected by JS -->
+    </div>
     <span id="statusMessage">Status: Not connected</span>
 </footer>
 
