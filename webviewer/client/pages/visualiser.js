@@ -99,7 +99,7 @@ function webgl_support() {
         0.1, // Near clipping plane
         1500 // Far clipping plane
     );
-    camera.position.set(0, 0, 50); // Initial camera position
+    camera.position.set(0, 0, 20); // Initial camera position
 
     // Renderer setup: WebGL renderer with anti-aliasing for smoother edges.
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -121,7 +121,7 @@ function webgl_support() {
     controls.enableDamping   = true; // Enable smooth camera movement
     controls.dampingFactor   = 0.1; // Damping intensity
     controls.enableZoom      = true; // Enable zooming
-    controls.minDistance     = 5;    // Minimum zoom distance
+    controls.minDistance     = 0.01;    // Minimum zoom distance
     controls.maxDistance     = 200;  // Maximum zoom distance
 
     // ===========================================================================
@@ -247,7 +247,7 @@ function webgl_support() {
     function buildSingleGlyph(entry) {
         const { pos, type, color } = entry;
         const [x, y, z] = pos;
-        const [r, g, b] = color.map((c) => c / 255); // Normalize color components to [0,1]
+        const [r, g, b] = color;
 
         let geometry;
         switch (type) {
@@ -334,7 +334,8 @@ function webgl_support() {
             const existingMesh = activeGlyphMeshes.get(id);
 
             // Normalize color components to [0,1] for Three.js Color object
-            const [r, g, b] = incomingGlyph.color.map((c) => c / 255);
+            // const [r, g, b] = incomingGlyph.color.map((c) => c / 255);
+            const [r, g, b] = incomingGlyph.color;
 
             if (existingMesh) {
                 // UPDATE existing glyph's properties
@@ -418,6 +419,7 @@ function webgl_support() {
                     Array.isArray(data.glyphs) &&
                     data.glyphs.every(g => g.id !== undefined && g.id !== null) // Ensure all glyphs have an ID
                 ) {
+                    console.log('incoming glyph[0] color:', data.glyphs[0]?.color);
                     await updateSceneWithData(data); // Call the updated scene update function
                     renderedCount++;
                 } else {
@@ -487,7 +489,8 @@ function webgl_support() {
         0.1,
         1500
     );
-    miniCamera.position.copy(camera.position);
+    // start the mini‐camera twice as close
+    miniCamera.position.copy(camera.position).multiplyScalar(0.5);
     miniCamera.lookAt(scene.position);
 
     // 3) OrbitControls for mini viewport
@@ -495,7 +498,7 @@ function webgl_support() {
     miniControls.enableDamping = true;
     miniControls.dampingFactor = 0.1;
     miniControls.enableZoom    = true;
-    miniControls.minDistance   = 0.5;
+    miniControls.minDistance   = 0.01;
     miniControls.maxDistance   = 1400;
 
     // 4) Resize observer for mini viewport
