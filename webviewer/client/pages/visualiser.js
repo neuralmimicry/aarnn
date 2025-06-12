@@ -29,6 +29,7 @@ function webgl_support() {
     }
 }
 
+
 (async function () {
     'use strict';
 
@@ -96,7 +97,7 @@ function webgl_support() {
         60, // Field of view (vertical, in degrees)
         container.clientWidth / container.clientHeight, // Aspect ratio
         0.1, // Near clipping plane
-        1000 // Far clipping plane
+        1500 // Far clipping plane
     );
     camera.position.set(0, 0, 50); // Initial camera position
 
@@ -141,45 +142,36 @@ function webgl_support() {
     const rootGroup = new THREE.Group();
     scene.add(rootGroup);
 
-    // ——— Graphic‐equaliser setup ———
+    // — Graphic equaliser setup —
     const EQUALISER_BARS = 20;
     const equaliserEl = document.getElementById('dataEqualiser');
     const bars = [];
+    // Clear any existing children (in case of reload)
+    equaliserEl.innerHTML = '';
     for (let i = 0; i < EQUALISER_BARS; i++) {
         const b = document.createElement('div');
         b.className = 'eq-bar';
         equaliserEl.appendChild(b);
         bars.push(b);
     }
-
-    // Counters for incoming vs rendered frames
     let incomingCount = 0, renderedCount = 0;
-
-    // Every 100ms update the equaliser display
     setInterval(() => {
-        // Compute rates over the last interval
-        const inRate  = incomingCount;   // how many arrived
-        const outRate = renderedCount;   // how many rendered
-
-        // Reset counters for next window
+        const inRate  = incomingCount;
+        const outRate = renderedCount;
         incomingCount = 0;
         renderedCount = 0;
 
-        // Normalize to bar counts
-        // greenBars = proportion of maxExpectedRate
-        // redBars   = proportion of backlog = inRate - outRate
-        const maxExpected = 50;  // e.g. your target frames/sec × 0.1s
+        const maxExpected = 50;
         const backlog     = Math.max(0, inRate - outRate);
         const greenCount  = Math.min(EQUALISER_BARS, Math.floor((inRate / maxExpected) * EQUALISER_BARS));
         const redCount    = Math.min(EQUALISER_BARS, Math.floor((backlog / maxExpected) * EQUALISER_BARS));
 
-        // Update each bar's background-size: bottom X% red, above it green
         for (let i = 0; i < EQUALISER_BARS; i++) {
             const bar = bars[i];
             let redPct   = 0, greenPct = 0;
             if (i < redCount)   redPct = 100;
             if (i < greenCount) greenPct = 100;
-            // the gradient stops: first redPct% red, then from redPct to greenPct is green
+            // first redPct% red, then greenPct% green
             bar.style.backgroundSize = `100% ${redPct}% , 100% ${greenPct}%`;
         }
     }, 100);
@@ -329,18 +321,13 @@ function webgl_support() {
             });
         }
 
-        // Identify and REMOVE glyphs that are no longer in the incoming data
-        const glyphsToRemove = [];
+        // remove absent
         for (const [id, mesh] of activeGlyphMeshes) {
             if (!incomingGlyphMap.has(id)) {
-                glyphsToRemove.push({ id, mesh });
+                disposeMesh(mesh);
+                activeGlyphMeshes.delete(id);
             }
         }
-
-        glyphsToRemove.forEach(({ id, mesh }) => {
-            disposeMesh(mesh);
-            activeGlyphMeshes.delete(id);
-        });
 
         // Add or UPDATE glyphs present in the incoming data
         for (const [id, incomingGlyph] of incomingGlyphMap) {
@@ -391,8 +378,8 @@ function webgl_support() {
             progressContainer.classList.add('d-none');
         }
 
-        // --- 10.4) Render Scene ---
-        //renderer.render(scene, camera);
+        // Note: do not call renderer.render here; rendering is done in animation loop
+
     }
 
     // ===========================================================================
@@ -478,37 +465,40 @@ function webgl_support() {
         errorMessageEl.textContent = 'Could not connect to server. Check that ws://visualiser:9002 is running.';
     }
 
-// --------------- MINI VIEWPORT SETUP -----------------
-
-// Grab mini‐viewport elements
+    // --------------- MINI VIEWPORT SETUP -----------------
     const miniContainer = document.getElementById('miniViewport');
     const miniCanvas    = document.getElementById('miniCanvas');
     const miniHeader    = document.getElementById('miniHeader');
+    const dockToggleBtn = document.getElementById('dockToggle');
 
-// 1) Create a second renderer
+    // 1) Create second renderer
     const miniRenderer = new THREE.WebGLRenderer({ canvas: miniCanvas, antialias: true });
     miniRenderer.setPixelRatio(window.devicePixelRatio);
-    miniRenderer.setSize(miniContainer.clientWidth, miniContainer.clientHeight - miniHeader.clientHeight);
+    // initial size:
+    miniRenderer.setSize(
+        miniContainer.clientWidth,
+        miniContainer.clientHeight - miniHeader.clientHeight
+    );
 
-// 2) Make a second camera (same fov but you can zoom in further)
+    // 2) Second camera
     const miniCamera = new THREE.PerspectiveCamera(
         60,
         miniContainer.clientWidth / (miniContainer.clientHeight - miniHeader.clientHeight),
         0.1,
-        1000
+        1500
     );
-    miniCamera.position.copy(camera.position);  // start looking at same spot
+    miniCamera.position.copy(camera.position);
     miniCamera.lookAt(scene.position);
 
-// 3) OrbitControls for mini viewport
+    // 3) OrbitControls for mini viewport
     const miniControls = new OrbitControls(miniCamera, miniCanvas);
     miniControls.enableDamping = true;
     miniControls.dampingFactor = 0.1;
     miniControls.enableZoom    = true;
-    miniControls.minDistance   = 0.5;   // allow super tight zoom
-    miniControls.maxDistance   = 500;
+    miniControls.minDistance   = 0.5;
+    miniControls.maxDistance   = 1400;
 
-// 4) Resize observer for mini viewport
+    // 4) Resize observer for mini viewport
     new ResizeObserver(() => {
         const w = miniContainer.clientWidth;
         const h = miniContainer.clientHeight - miniHeader.clientHeight;
@@ -517,69 +507,77 @@ function webgl_support() {
         miniCamera.updateProjectionMatrix();
     }).observe(miniContainer);
 
-// 5) Dragging logic for the mini viewport
+    // 5) Dragging logic
     let isDragging = false, dragOffset = { x: 0, y: 0 };
     miniHeader.addEventListener('mousedown', e => {
         isDragging = true;
-        // 1) Compute current bounding rect
+        // Compute current on-screen pos, set left/top so it stays put after clearing bottom/right
         const rect = miniContainer.getBoundingClientRect();
-        // 2) Set style.left/top so it stays visually in place
-        //    We subtract the offsetParent's clientLeft/clientTop if needed; using getBoundingClientRect() is simplest:
-        miniContainer.style.left = rect.left + 'px';
-        miniContainer.style.top  = rect.top + 'px';
-        // 3) Now clear anchors
-        miniContainer.style.right = 'auto';
+        // Convert to offsetParent coordinates if needed
+        miniContainer.style.left   = rect.left + 'px';
+        miniContainer.style.top    = rect.top + 'px';
+        miniContainer.style.right  = 'auto';
         miniContainer.style.bottom = 'auto';
-        // 4) Compute dragOffset relative to those now‐set left/top
         dragOffset.x = e.clientX - rect.left;
         dragOffset.y = e.clientY - rect.top;
-        // Optionally: set pointer capture or prevent text selection
         e.preventDefault();
     });
-
     window.addEventListener('mousemove', e => {
         if (!isDragging) return;
         miniContainer.style.left = (e.clientX - dragOffset.x) + 'px';
         miniContainer.style.top  = (e.clientY - dragOffset.y) + 'px';
     });
-    window.addEventListener('mouseup', () => { isDragging = false; });
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
 
-// 6) In your animation loop, render both views:
+    // Dock/Undock toggle: when undocked, we allow free-floating via left/top; when docked, reset to bottom/right
+    let isDocked = true;
+    dockToggleBtn.addEventListener('click', () => {
+        if (isDocked) {
+            // Undock: keep current left/top (already set if dragged). Nothing else to do.
+            // If not yet set left/top, set it now:
+            const rect = miniContainer.getBoundingClientRect();
+            miniContainer.style.left   = rect.left + 'px';
+            miniContainer.style.top    = rect.top + 'px';
+            miniContainer.style.right  = 'auto';
+            miniContainer.style.bottom = 'auto';
+            isDocked = false;
+            dockToggleBtn.textContent = '↩'; // change icon
+        } else {
+            // Dock: clear left/top, restore bottom/right
+            miniContainer.style.left   = 'auto';
+            miniContainer.style.top    = 'auto';
+            miniContainer.style.right  = '1rem';
+            miniContainer.style.bottom = '1rem';
+            isDocked = true;
+            dockToggleBtn.textContent = '⇆';
+        }
+    });
 
+    // 6) Animation loop: render both views
     function animate() {
         requestAnimationFrame(animate);
 
-        // main view:
         controls.update();
         renderer.render(scene, camera);
 
-        // mini view:
         miniControls.update();
         miniRenderer.render(scene, miniCamera);
     }
-
     animate();
 
-    // ===========================================================================
-    // 13) HANDLE RESIZE
-    //
-    // Adjusts the camera aspect ratio and renderer size when the browser window is resized,
-    // ensuring the visualization remains correctly proportioned.
-    // ===========================================================================
+    // 13) HANDLE main resize
     window.addEventListener('resize', () => {
         const w = container.clientWidth;
         const h = container.clientHeight;
-        camera.aspect = w / h; // Update camera aspect ratio
-        camera.updateProjectionMatrix(); // Recalculate projection matrix
-        renderer.setSize(w, h); // Resize the renderer
-        renderer.render(scene, camera); // Re-render the scene
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+        // no need to explicitly render here; animation loop handles it
     });
 
-    // ===========================================================================
     // 14) INITIAL RENDER
-    //
-    // Performs an initial render of the empty scene once the script loads.
-    // This ensures something is displayed before data arrives.
-    // ===========================================================================
     renderer.render(scene, camera);
+
 })();

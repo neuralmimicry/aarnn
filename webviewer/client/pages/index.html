@@ -5,7 +5,7 @@
     <title>NeuralMimicry AARNN Visualiser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Favicon & Manifest (you can adjust or remove if not needed) -->
+    <!-- Favicon & Manifest -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -22,32 +22,33 @@
     <p>
         <span class="visually-hidden">NeuralMimicry </span>
         <strong>AARNN</strong> Visualiser
-        <!-- Visually hidden text for screen readers -->
-        <span class="visually-hidden"> - </span>
-        <!-- Main title with ARIA role for better semantics -->
     </p>
-    <div class="subtitle"> <!-- Replaced inline style with class -->
+    <div class="subtitle">
         Use mouse/touch to rotate, scroll to zoom, drag to pan.
     </div>
 </header>
 
 <main>
     <!-- Loading overlay initially visible for connection state. Classes controlled by JS. -->
-    <div id="loadingOverlay" role="status" aria-live="polite" class="d-flex"> <!-- Added d-flex for initial state -->
+    <div id="loadingOverlay" role="status" aria-live="polite" class="d-flex">
         <div class="spinner" aria-hidden="true"></div>
         <div id="loadingText">Connecting to server...</div>
-        <!-- PROGRESS BAR: hidden until we start loading actual JSON -->
-        <div id="progressContainer" class="d-none"> <!-- Added d-none for initial hidden state -->
-            <progress id="dataProgress" max="100" value="0"></progress> <!-- Removed inline style -->
-            <span id="progressText">0%</span> <!-- Removed inline style -->
+        <!-- PROGRESS BAR: hidden until loading JSON -->
+        <div id="progressContainer" class="d-none">
+            <progress id="dataProgress" max="100" value="0"></progress>
+            <span id="progressText">0%</span>
         </div>
     </div>
+
     <!-- Three.js will inject a <canvas> inside this container -->
     <div id="threeContainer" aria-label="3D rendering area"></div>
 
     <!-- Mini‐viewport -->
     <div id="miniViewport">
-        <div id="miniHeader">Drag me</div>
+        <div id="miniHeader">
+            <span>Drag me</span>
+            <button id="dockToggle" title="Dock/Undock">⇆</button>
+        </div>
         <canvas id="miniCanvas"></canvas>
     </div>
 </main>
@@ -55,7 +56,7 @@
 <footer role="contentinfo">
     <!-- Graphic equaliser: shows inbound rate (green) vs backlog (red) -->
     <div id="dataEqualiser" aria-label="Data throughput indicator">
-        <!-- bars will be injected by JS -->
+        <!-- bars injected by JS -->
     </div>
     <span id="statusMessage">Status: Not connected</span>
 </footer>
