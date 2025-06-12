@@ -76,6 +76,40 @@ main {
     align-items: center; /* Moved from inline style */
 }
 
+/* Mini‐viewport container */
+#miniViewport {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    width: 200px;
+    height: 200px;
+    background: #111;
+    border: 2px solid #FFD54F;
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header bar for dragging */
+#miniHeader {
+    background: #333;
+    color: #FFD54F;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    cursor: move;
+    user-select: none;
+}
+
+/* The canvas fills the rest */
+#miniCanvas {
+    flex: 1;
+    display: block;
+    width: 100%;
+    height: calc(100% - 1.2rem); /* header height */
+}
+
 /* Simple CSS spinner */
 .spinner {
     border: 4px solid rgba(255, 255, 255, 0.2);

@@ -148,18 +148,21 @@ function webgl_support() {
     // to prevent memory leaks in Three.js when objects are no longer needed.
     // ===========================================================================
     function disposeMesh(mesh) {
-        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.geometry && ![sphereGeometry, boxGeometry, cylinderGeometry].includes(mesh.geometry)) {
+            mesh.geometry.dispose();
+        }
         if (mesh.material) {
             if (Array.isArray(mesh.material)) {
-                mesh.material.forEach((m) => m.dispose());
+                mesh.material.forEach(m => m.dispose());
             } else {
                 mesh.material.dispose();
             }
         }
-        if (mesh.parent) { // Ensure the mesh is removed from its parent group
+        if (mesh.parent) {
             mesh.parent.remove(mesh);
         }
     }
+
 
     // ===========================================================================
     // 8) UTIL: BUILD LINESEGMENTS FOR “lines” + “points”
@@ -305,16 +308,25 @@ function webgl_support() {
 
             if (existingMesh) {
                 // UPDATE existing glyph's properties
-                existingMesh.position.set(incomingGlyph.pos[0], incomingGlyph.pos[1], incomingGlyph.pos[2]);
-                existingMesh.material.color.setRGB(r, g, b);
-
+                if (existingMesh.userData.type !== incomingGlyph.type) {
+                    // remove old, add new
+                    disposeMesh(existingMesh);
+                    activeGlyphMeshes.delete(id);
+                    const newMesh = buildSingleGlyph(incomingGlyph);
+                    newMesh.userData.type = incomingGlyph.type;
+                    rootGroup.add(newMesh);
+                    activeGlyphMeshes.set(id, newMesh);
+                } else {
+                    // just update pos/color
+                    existingMesh.position.set(incomingGlyph.pos[0], incomingGlyph.pos[1], incomingGlyph.pos[2]);
+                    existingMesh.material.color.setRGB(r, g, b);
+                }
                 // If glyph type changes, we must replace the mesh entirely as geometry changes.
                 // This assumes buildSingleGlyph returns a mesh with the correct geometry type.
-                // (Advanced: you could store `existingMesh.userData.type = entry.type;` during creation
-                // and compare `existingMesh.userData.type !== incomingGlyph.type` here to trigger recreation)
             } else {
                 // ADD new glyph
                 const newMesh = buildSingleGlyph(incomingGlyph);
+                newMesh.userData.type = incomingGlyph.type;
                 rootGroup.add(newMesh);
                 activeGlyphMeshes.set(id, newMesh);
             }
@@ -337,7 +349,7 @@ function webgl_support() {
         }
 
         // --- 10.4) Render Scene ---
-        renderer.render(scene, camera);
+        //renderer.render(scene, camera);
     }
 
     // ===========================================================================
@@ -421,18 +433,78 @@ function webgl_support() {
         errorMessageEl.textContent = 'Could not connect to server. Check that ws://visualiser:9002 is running.';
     }
 
-    // ===========================================================================
-    // 12) ANIMATION LOOP (for OrbitControls damping)
-    //
-    // This function continuously renders the scene, allowing for smooth camera
-    // controls and any Three.js animations.
-    // ===========================================================================
+// --------------- MINI VIEWPORT SETUP -----------------
+
+// Grab mini‐viewport elements
+    const miniContainer = document.getElementById('miniViewport');
+    const miniCanvas    = document.getElementById('miniCanvas');
+    const miniHeader    = document.getElementById('miniHeader');
+
+// 1) Create a second renderer
+    const miniRenderer = new THREE.WebGLRenderer({ canvas: miniCanvas, antialias: true });
+    miniRenderer.setPixelRatio(window.devicePixelRatio);
+    miniRenderer.setSize(miniContainer.clientWidth, miniContainer.clientHeight - miniHeader.clientHeight);
+
+// 2) Make a second camera (same fov but you can zoom in further)
+    const miniCamera = new THREE.PerspectiveCamera(
+        60,
+        miniContainer.clientWidth / (miniContainer.clientHeight - miniHeader.clientHeight),
+        0.1,
+        1000
+    );
+    miniCamera.position.copy(camera.position);  // start looking at same spot
+    miniCamera.lookAt(scene.position);
+
+// 3) OrbitControls for mini viewport
+    const miniControls = new OrbitControls(miniCamera, miniCanvas);
+    miniControls.enableDamping = true;
+    miniControls.dampingFactor = 0.1;
+    miniControls.enableZoom    = true;
+    miniControls.minDistance   = 0.5;   // allow super tight zoom
+    miniControls.maxDistance   = 500;
+
+// 4) Resize observer for mini viewport
+    new ResizeObserver(() => {
+        const w = miniContainer.clientWidth;
+        const h = miniContainer.clientHeight - miniHeader.clientHeight;
+        miniRenderer.setSize(w, h);
+        miniCamera.aspect = w / h;
+        miniCamera.updateProjectionMatrix();
+    }).observe(miniContainer);
+
+// 5) Dragging logic for the mini viewport
+    let isDragging = false, dragOffset = { x: 0, y: 0 };
+    miniHeader.addEventListener('mousedown', e => {
+        isDragging = true;
+        // Clear anchors so left/top positioning takes effect
+        miniContainer.style.right = 'auto';
+        miniContainer.style.bottom = 'auto';
+        dragOffset.x = e.clientX - miniContainer.offsetLeft;
+        dragOffset.y = e.clientY - miniContainer.offsetTop;
+    });
+
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        miniContainer.style.left = (e.clientX - dragOffset.x) + 'px';
+        miniContainer.style.top  = (e.clientY - dragOffset.y) + 'px';
+    });
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+// 6) In your animation loop, render both views:
+
     function animate() {
-        requestAnimationFrame(animate); // Request the next frame
-        controls.update(); // Update OrbitControls (for damping and interactivity)
-        renderer.render(scene, camera); // Render the scene from the camera's perspective
+        requestAnimationFrame(animate);
+
+        // main view:
+        controls.update();
+        renderer.render(scene, camera);
+
+        // mini view:
+        miniControls.update();
+        miniRenderer.render(scene, miniCamera);
     }
-    animate(); // Start the animation loop
+
+    animate();
 
     // ===========================================================================
     // 13) HANDLE RESIZE
