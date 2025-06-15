@@ -61,6 +61,8 @@ RUN apt-get update && \
   curl \
   freeglut3-dev \
   git \
+  gcc-14 \
+  g++-14 \
   iputils-ping \
   jq \
   libasound2-dev \
