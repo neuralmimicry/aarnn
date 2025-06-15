@@ -159,7 +159,7 @@ RUN set -eux; \
 
 # Build the application
 WORKDIR /app/source
-RUN mkdir build && cd build && cmake --version && cmake .. && make -j$(nproc)
+RUN mkdir build && cd build && cmake --version && cmake .. && make -j2
 
 # The compiled binaries are now in /app/source/build
 

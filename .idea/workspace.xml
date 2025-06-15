@@ -35,7 +35,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compiler" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compilerarm64" beforeDir="false" afterPath="$PROJECT_DIR$/BuildFromGit/podman/Containerfile.compilerarm64" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,8 +209,8 @@
       <item itemvalue="CMake Application.hello_world" />
       <item itemvalue="CMake Application.vtk_test" />
       <item itemvalue="Database Script.debug_database.sql" />
-      <item itemvalue="Shell Script.ComposeContainers.sh" />
       <item itemvalue="Shell Script.RunContainers" />
+      <item itemvalue="Shell Script.ComposeContainers.sh" />
     </list>
     <recent_temporary>
       <list>
@@ -353,7 +354,7 @@
       <workItem from="1749065664467" duration="21317000" />
       <workItem from="1749196490286" duration="93944000" />
       <workItem from="1749632331133" duration="28055000" />
-      <workItem from="1750000862418" duration="22000" />
+      <workItem from="1750000862418" duration="1449000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />
