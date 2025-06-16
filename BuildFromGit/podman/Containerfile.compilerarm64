@@ -127,7 +127,7 @@ RUN mkdir -p /root/.ssh \
 ARG REPO_URL
 #ARG SSH_AUTH_SOCK
 #RUN echo "Socket: $SSH_AUTH_SOCK"
-RUN --mount=type=ssh git clone git@github.com:neuralmimicry/aarnn.git source
+RUN --mount=type=ssh git clone -o PubkeyAcceptedKeyTypes=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa git@github.com:neuralmimicry/aarnn.git source
 RUN mkdir -p /app/source/thirdparty
 RUN --mount=type=ssh git clone git@github.com:zaphoyd/websocketpp.git /app/source/thirdparty/websocketpp
 #RUN --mount=type=ssh git clone git@github.com:nlohmann/json.git /app/source/thirdparty/json
