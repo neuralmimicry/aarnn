@@ -131,7 +131,7 @@ RUN echo "Contents of SSH_AUTH_SOCK env var: $SSH_AUTH_SOCK"
 RUN ssh -v git@github.com || true # Verbose SSH attempt to get more details
 
 ARG GITHUB_TOKEN
-RUN git clone https://neuralmimicry:${GITHUB_TOKEN}@github.com/neuralmimicry/aarnn.git source
+RUN git clone https://masterkiga:${GITHUB_TOKEN}@github.com/neuralmimicry/aarnn.git source
 RUN mkdir -p /app/source/thirdparty
 RUN git clone https://github.com/zaphoyd/websocketpp.git /app/source/thirdparty/websocketpp
 #RUN git clone https://github.com/nlohmann/json.git /app/source/thirdparty/json
