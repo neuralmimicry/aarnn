@@ -1,0 +1,187 @@
+# syntax=docker/dockerfile:1.2
+# Use an official build image with CMake and Git
+FROM ubuntu:24.04
+
+# Install locales
+RUN apt-get update && apt-get install -y locales
+
+# Set the locale to en_GB.utf8
+RUN localedef -i en_GB -c -f UTF-8 -A /usr/share/locale/locale.alias en_GB.UTF-8
+ENV LANG en_GB.utf8
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Set environment variable to make apt-get commands non-interactive
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ="Europe/London"
+
+RUN apt-get update && apt-get install -y \
+  apt-utils \
+  tzdata
+
+# Preconfigure tzdata package and configure it
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    echo "tzdata tzdata/Areas select Etc" | debconf-set-selections && \
+    echo "tzdata tzdata/Zones/Etc select UTC" | debconf-set-selections && \
+    echo "tzdata tzdata/Areas seen true" | debconf-set-selections && \
+    echo "tzdata tzdata/Zones/Etc seen true" | debconf-set-selections && \
+    DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
+# Install the basics we need to add an external repo
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      software-properties-common \
+      wget \
+      gnupg2 \
+      lsb-release && \
+    rm -rf /var/lib/apt/lists/*
+
+# Add Kitware’s official APT key & repo for latest CMake
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc \
+      | apt-key add - && \
+    echo "deb [signed-by=/etc/apt/trusted.gpg] https://apt.kitware.com/ubuntu/ \
+      $(lsb_release -cs) main" \
+      > /etc/apt/sources.list.d/kitware.list
+
+# Now install the newest CMake (and clean up apt lists)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cmake && \
+    rm -rf /var/lib/apt/lists/*
+
+# Combine installation commands and clean up to reduce layer size
+RUN apt-get update && \
+        apt-get install -y software-properties-common && \
+        add-apt-repository ppa:ubuntu-toolchain-r/test && \
+        apt-get update && \
+        apt-get install -y \
+  build-essential \
+  curl \
+  freeglut3-dev \
+  git \
+  gcc-14 \
+  g++-14 \
+  gnat \
+  iputils-ping \
+  jq \
+  libasound2-dev \
+  libavcodec-dev \
+  libavdevice-dev \
+  libavformat-dev \
+  libavutil-dev \
+  libboost-all-dev \
+  libcap2-bin \
+  libcgal-dev \
+  libcurl4 \
+  libcurl4-openssl-dev \
+  libfftw3-dev \
+  libfftw3-mpi-dev \
+  libgl1-mesa-dev \
+  libglew-dev \
+  libglew2.2 \
+  libglfw3 \
+  libglfw3-dev \
+  libglu1-mesa-dev \
+  libgmp-dev \
+  libmpfr-dev \
+  libomp-dev \
+  libopencv-dev \
+  libportaudio2 \
+  libportaudiocpp0 \
+  libpostproc-dev \
+  libpqxx-dev \
+  libpulse-dev \
+  libssl-dev \
+  libgstreamer1.0-dev \
+  libgstreamer-plugins-base1.0-dev \
+  libswscale-dev \
+  libswresample-dev \
+  libvtk9-dev \
+  libwebsocketpp-dev \
+  libx11-dev \
+  net-tools \
+  openssl \
+  openssh-client \
+  pkg-config \
+  portaudio19-dev \
+  postgresql-client \
+  pulseaudio \
+  pulseaudio-utils \
+  python3-vtk9 \
+  qt5-qmake \
+  qtbase5-dev \
+  qtcreator \
+  sudo \
+  unzip \
+  vtk9 \
+  wget \
+  xorg-dev && \
+ apt-get clean && \
+ rm -rf /var/lib/apt/lists/*
+
+# Clone the GitHub repository
+# trust GitHub’s host key so SSH cloning doesn’t prompt
+RUN mkdir -p /root/.ssh \
+    && ssh-keyscan github.com >> /root/.ssh/known_hosts
+ARG REPO_URL
+# NEW DEBUG STEPS BEFORE CLONE
+RUN ls -la /run/user/$(id -u)/ssh-agent || ls -la $SSH_AUTH_SOCK || echo "SSH_AUTH_SOCK not found"
+RUN echo "Contents of SSH_AUTH_SOCK env var: $SSH_AUTH_SOCK"
+RUN ssh -v git@github.com || true # Verbose SSH attempt to get more details
+
+ARG GITHUB_TOKEN
+RUN git clone https://masterkiga:${GITHUB_TOKEN}@github.com/neuralmimicry/aarnn.git source
+RUN mkdir -p /app/source/thirdparty
+RUN git clone https://github.com/zaphoyd/websocketpp.git /app/source/thirdparty/websocketpp
+#RUN git clone https://github.com/nlohmann/json.git /app/source/thirdparty/json
+RUN git clone https://github.com/libsndfile/libsndfile.git /app/source/thirdparty/libsndfile
+RUN cd /app/source/thirdparty/libsndfile && \
+    git checkout 1.2.2 && \
+    # force cmake_minimum_required(VERSION 3.5) (drop the ..3.18 range)
+    sed -i -E 's|^(cmake_minimum_required[[:space:]]*\(\s*VERSION)[[:space:]]+[0-9]+\.[0-9]+(\.\.[0-9]+\.[0-9]+)?|\1 3.5|' CMakeLists.txt && \
+    mkdir build && cd build && \
+    cmake .. && make -j2 && make install
+ARG POSTGRES_USERNAME
+ARG POSTGRES_PASSWORD
+ARG POSTGRES_DB
+ARG POSTGRES_HOST
+ARG POSTGRES_PORT
+
+# Check the ARGs are set and update the .env file
+RUN set -eux; \
+    touch /app/source/.env || true; \
+    for VAR_NAME in POSTGRES_USERNAME POSTGRES_PASSWORD POSTGRES_DB POSTGRES_HOST POSTGRES_PORT; do \
+        VAR_VALUE="$(eval echo \$$VAR_NAME)"; \
+        if [ -n "$VAR_VALUE" ]; then \
+            # Remove existing variable from .env if it exists
+            sed -i "/^$VAR_NAME=/d" /app/source/.env || true; \
+            # Append the new variable and value to .env
+            printf '%s\n' "$VAR_NAME=$VAR_VALUE" >> /app/source/.env; \
+        fi; \
+    done
+
+# Build the application
+WORKDIR /app/source
+RUN mkdir build && cd build && cmake --version && cmake .. && make -j2
+
+# The compiled binaries are now in /app/source/build
+
+# -------------------------------
+# Install the latest Node.js
+# -------------------------------
+# pulls in NodeSource’s setup script for “current” (or use setup_lts.x for LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# -------------------------------
+# Build the Webviewer JS assets
+# -------------------------------
+WORKDIR /app/source/webviewer
+RUN cd client && npm install && npm run build && cd ../server && npm install && npm run build
+
+# back to your default
+WORKDIR /app
