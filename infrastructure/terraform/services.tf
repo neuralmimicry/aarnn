@@ -12,7 +12,7 @@ resource "kubernetes_pod" "api_service_pod" {
       name  = "api-service"
       image = "gcr.io/${var.project_id}/api-service:v1"
       ports {
-        container_port = 8080
+        container_port = 8180
       }
       env {
         name  = "GOOGLE_APPLICATION_CREDENTIALS"
@@ -46,7 +46,7 @@ resource "kubernetes_service" "api_service" {
 
     port {
       port        = 80
-      target_port = 8080
+      target_port = 8180
     }
 
     type = "LoadBalancer"

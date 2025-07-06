@@ -18,11 +18,11 @@ resource "kubernetes_pod" "multi_container_pod" {
       name  = "aarnn-webui"
       image = "europe-west1-docker.pkg.dev/${var.project_id}/aarnn-webui-repo/aarnn-webui-app:v1"
       ports {
-        container_port = 8080
+        container_port = 8180
       }
       env {
         name  = "PORT"
-        value = "8080"
+        value = "8180"
       }
       resources {
         limits {
@@ -122,7 +122,7 @@ resource "kubernetes_service" "webui_service" {
 
     port {
       port        = 80
-      target_port = 8080
+      target_port = 8180
     }
 
     type = "LoadBalancer"

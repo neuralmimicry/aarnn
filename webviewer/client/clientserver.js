@@ -29,8 +29,8 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages', 'index.html'));
 });
 
-// 4) Start listening (8080, or whatever you prefer)
-const PORT = 8080;
+// 4) Start listening (8180, or whatever you prefer)
+const PORT = 8180;
 app.listen(PORT, () => {
     console.log(`Listening on http://localhost:${PORT}`);
 });

@@ -7,5 +7,5 @@ spec:
     app: visualiser
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 8180
+      targetPort: 8180
