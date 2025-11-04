@@ -37,9 +37,11 @@ jobs:
             build-essential ninja-build pkg-config git curl ca-certificates
           # Libraries required by CMakeLists.txt (no inline comments to avoid line-continuation issues)
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            libssl-dev libcurl4-openssl-dev libgmp-dev libfftw3-dev \
+            libssl-dev libcurl4-openssl-dev libgmp-dev libmpfr-dev libfftw3-dev \
             libpq-dev libpqxx-dev \
             libboost-all-dev \
+            libcgal-dev libeigen3-dev \
+            libwebsocketpp-dev libasio-dev \
             libopencv-dev \
             libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libglew-dev libfreetype6-dev libopengl-dev \
             libvtk9-dev \

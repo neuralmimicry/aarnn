@@ -66,6 +66,8 @@ find_package(Boost   REQUIRED COMPONENTS filesystem system json)
 find_package(OpenSSL REQUIRED)
 find_package(CURL    REQUIRED)
 find_package(OpenCV  REQUIRED COMPONENTS core imgproc highgui)
+# CGAL (computational geometry used in utils.h and neuron geometry)
+find_package(CGAL REQUIRED)
 
 find_library(PQXX_LIB pqxx HINTS /usr/lib64)
 
@@ -95,6 +97,7 @@ target_link_libraries(common PUBLIC
         ${GMP_LIBRARIES}
         ${GMP_LDFLAGS_OTHER}
         Boost::json
+        CGAL::CGAL
 #        nlohmann_json::nlohmann_json
 )
 target_include_directories(common PUBLIC
