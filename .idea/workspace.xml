@@ -35,7 +35,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad327350-3b1a-43bf-b1b0-36cc668718ac" name="Changes" comment="Builds for Podman">
+      <change afterPath="$PROJECT_DIR$/BuildFromGit/docker/Dockerfile.debian-aarnn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +87,9 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "CMake Application.AARNN.executor": "Run",
     "Database Script.debug_database.sql.executor": "Run",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
@@ -95,9 +100,11 @@
     "cf.advertisement.text.has.clang-format": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "devcontainer.show.open.project.notification": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/pbisaacs/Developer/nmc",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/pbisaacs/Developer/neuralmimicry/aarnn-network",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -105,6 +112,7 @@
     "nodejs_package_manager_path": "npm",
     "run.code.analysis.last.selected.profile": "aDefault",
     "settings.editor.selected.configurable": "CMakeSettings",
+    "to.speed.mode.migration.done": "true",
     "ts.external.directory.path": "/home/pbisaacs/.local/share/JetBrains/Toolbox/apps/clion/plugins/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   },
@@ -135,6 +143,11 @@
   </component>
   <component name="RunManager" selected="Database Script.debug_database.sql">
     <configuration name="Audio" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="AARNN" TARGET_NAME="Audio" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="AARNN" RUN_TARGET_NAME="Audio">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -357,6 +370,21 @@
       <workItem from="1750412188447" duration="3000" />
       <workItem from="1751644381417" duration="287000" />
       <workItem from="1751644710414" duration="656000" />
+      <workItem from="1751888651678" duration="1274000" />
+      <workItem from="1752048214162" duration="25000" />
+      <workItem from="1752140906125" duration="1000" />
+      <workItem from="1752527653111" duration="1714000" />
+      <workItem from="1754399278487" duration="911000" />
+      <workItem from="1755509749632" duration="404000" />
+      <workItem from="1755510342330" duration="2171000" />
+      <workItem from="1755522765558" duration="599000" />
+      <workItem from="1755613351775" duration="598000" />
+      <workItem from="1755617355183" duration="1211000" />
+      <workItem from="1755857367624" duration="599000" />
+      <workItem from="1756062011364" duration="598000" />
+      <workItem from="1756208060166" duration="717000" />
+      <workItem from="1756246992894" duration="15000" />
+      <workItem from="1761399996743" duration="6480000" />
     </task>
     <task id="LOCAL-00001" summary="Builds for Podman">
       <option name="closed" value="true" />

@@ -1,0 +1,123 @@
+version: "3.9"
+
+# AARNN full stack (multi-container)
+# Services:
+# - postgres: primary DB used by AARNN + Visualiser
+# - redis: optional cache/queue (included per request)
+# - aarnn: C++ engine/simulator (builds from repo)
+# - visualiser: Node.js WebSocket server broadcasting geometry frames from DB (ws://visualiser:9002)
+# - webviewer: static web UI served via Node/Express (http://localhost:8180), connects to visualiser via WS
+#
+# Notes:
+# - Values in .env are consumed by multiple services. Postgres requires POSTGRES_USER; we map POSTGRES_USERNAME -> POSTGRES_USER.
+# - The AARNN image is built from BuildFromGit/docker/Dockerfile.debian-aarnn which compiles AARNN (and tries to compile C++ Visualiser too).
+#   We run the AARNN binary; the WebSocket Visualiser here uses the Node.js implementation at webviewer/server/visualiser.js.
+# - PulseAudio variables in .env are optional. Running audio in containers may require host devices/sockets; adjust as needed.
+# - The web client has WS URL hardcoded to ws://visualiser:9002 and is allowed in the CSP header (clientserver.js).
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: aarnn-postgres
+    environment:
+      # Map repo `.env` to what the postgres image expects
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT_EXPOSE:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: aarnn-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  aarnn:
+    build:
+      context: .
+      dockerfile: BuildFromGit/docker/Dockerfile.debian-aarnn
+    image: aarnn/runtime:debian-bookworm
+    container_name: aarnn-core
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    # The runtime Dockerfile defaults to running /app/AARNN; command kept explicit for clarity
+    command: ["/bin/bash", "-lc", "/app/AARNN"]
+    # If you want to run with PulseAudio from host, uncomment and adapt the following (Linux desktop):
+    # environment:
+    #   PULSE_SERVER: ${PULSE_SERVER}
+    #   PULSE_COOKIE: ${PULSE_COOKIE}
+    #   PULSE_SINK: ${PULSE_SINK}
+    #   PULSE_SOURCE: ${PULSE_SOURCE}
+    # devices:
+    #   - "/dev/snd:/dev/snd"
+    # volumes:
+    #   - "${PULSE_COOKIE}:${PULSE_COOKIE}:ro"
+    #   - "/run/user/${UID:-1000}/pulse:/run/user/1000/pulse"
+    # ipc: host
+    # privileged: false
+
+  visualiser:
+    image: node:18-alpine
+    container_name: aarnn-visualiser
+    working_dir: /app
+    volumes:
+      - ./webviewer/server:/app:ro
+    # Provide Postgres connection for Node 'pg' client using standard env names
+    env_file:
+      - .env
+    environment:
+      PGHOST: ${POSTGRES_HOST}
+      PGPORT: ${POSTGRES_PORT}
+      PGDATABASE: ${POSTGRES_DB}
+      PGUSER: ${POSTGRES_USERNAME}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    command: sh -c "npm install ws pg && node visualiser.js"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "9002:9002"
+    healthcheck:
+      # Check the websocket port is open
+      test: ["CMD-SHELL", "nc -z localhost 9002 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  webviewer:
+    image: node:18-alpine
+    container_name: aarnn-webviewer
+    working_dir: /app
+    volumes:
+      - ./webviewer/client:/app:ro
+    command: sh -c "npm install && node clientserver.js"
+    depends_on:
+      visualiser:
+        condition: service_started
+    ports:
+      - "8180:8180"
+
+volumes:
+  pgdata:
+  redisdata:

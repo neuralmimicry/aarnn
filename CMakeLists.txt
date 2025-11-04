@@ -50,13 +50,16 @@ find_package(PostgreSQL REQUIRED)
 find_package(OpenGL     REQUIRED)
 find_package(GLEW       REQUIRED)
 find_package(Freetype   REQUIRED)
-find_package(SndFile    CONFIG REQUIRED)
+# Use pkg-config for libsndfile to improve portability on Debian/Ubuntu
+pkg_check_modules(SNDFILE REQUIRED sndfile)
 find_package(VTK REQUIRED COMPONENTS
         RenderingCore
         RenderingOpenGL2
         InteractionStyle
         RenderingFreeType
         FiltersSources
+        IOXML
+        RenderingContextOpenGL2
 )
 
 find_package(Boost   REQUIRED COMPONENTS filesystem system json)
@@ -128,7 +131,7 @@ add_library(audio_lib STATIC ${AUDIO_SRCS})
 
 target_link_libraries(audio_lib PUBLIC
         Threads::Threads
-        SndFile::sndfile
+        ${SNDFILE_LIBRARIES}
         ${ALSA_LIBRARIES}
         ${PORTAUDIO_LIBRARIES}
         ${FFMPEG_LIBRARIES}
@@ -145,6 +148,7 @@ target_link_libraries(audio_lib PUBLIC
 target_include_directories(audio_lib PUBLIC
         src/audio
         include
+        ${SNDFILE_INCLUDE_DIRS}
         ${GSTREAMER_INCLUDE_DIRS}
         ${FFTW3_INCLUDE_DIRS}
         ${PULSE_INCLUDE_DIRS}

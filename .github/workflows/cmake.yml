@@ -1,0 +1,75 @@
+name: CMake (AARNN)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }} • ${{ matrix.build-type }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        build-type: [Release, Debug]
+    env:
+      CMAKE_BUILD_TYPE: ${{ matrix.build-type }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up CMake 3.31.6
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: 3.31.6
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            build-essential ninja-build pkg-config \
+            git curl ca-certificates \
+            # Core/libs
+            libssl-dev libcurl4-openssl-dev libgmp-dev libfftw3-dev \
+            libpq-dev libpqxx-dev \
+            libboost-all-dev \
+            # OpenCV
+            libopencv-dev \
+            # Graphics/GL/Viz
+            libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libglew-dev libfreetype6-dev libopengl-dev \
+            # VTK
+            libvtk9-dev \
+            # MPI
+            libopenmpi-dev \
+            # Audio
+            libasound2-dev portaudio19-dev libpulse-dev libsndfile1-dev \
+            # FFmpeg
+            libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libswresample-dev \
+            # GStreamer
+            libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+
+      - name: Configure (Ninja)
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}
+
+      - name: Build
+        run: cmake --build build --config ${{ env.CMAKE_BUILD_TYPE }} -- -k 0
+
+      - name: Run ctest (if any)
+        run: |
+          ctest --test-dir build -C ${{ env.CMAKE_BUILD_TYPE }} --output-on-failure || true
+
+      - name: Upload AARNN artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AARNN-${{ matrix.os }}-${{ matrix.build-type }}
+          path: |
+            build/AARNN
+          if-no-files-found: warn

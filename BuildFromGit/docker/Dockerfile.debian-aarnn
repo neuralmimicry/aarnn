@@ -1,0 +1,90 @@
+# syntax=docker/dockerfile:1.7-labs
+# Multi-stage build for AARNN (C++) on Debian Bookworm
+
+FROM debian:bookworm-slim AS build
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install build toolchain and libs
+RUN set -eux; \
+    echo "deb http://deb.debian.org/debian bookworm-backports main" > /etc/apt/sources.list.d/backports.list; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends ca-certificates curl gnupg wget; \
+    install -d -m 0755 /etc/apt/keyrings; \
+    curl -fsSL https://apt.kitware.com/keys/kitware-archive-latest.asc | gpg --dearmor -o /etc/apt/keyrings/kitware-archive-keyring.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/debian/ bookworm main" > /etc/apt/sources.list.d/kitware.list; \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      git build-essential ninja-build pkg-config \
+      cmake \
+      # Core/libs
+      libssl-dev libcurl4-openssl-dev libgmp-dev libfftw3-dev \
+      libpq-dev libpqxx-dev \
+      # Boost from backports (for Boost.JSON component)
+      -t bookworm-backports libboost-all-dev \
+      # OpenCV
+      libopencv-dev \
+      # Graphics/GL/Viz
+      libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libglew-dev libfreetype6-dev libopengl-dev \
+      # VTK
+      libvtk9-dev \
+      # MPI
+      libopenmpi-dev \
+      # Audio
+      libasound2-dev portaudio19-dev libpulse-dev libsndfile1-dev \
+      # FFmpeg
+      libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libswresample-dev \
+      # GStreamer
+      libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+      # Other utilities
+      wget ca-certificates; \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy local repo into the image (build context should be repository root)
+COPY . /app/
+
+# Build AARNN and optionally Visualiser
+RUN set -eux; \
+    cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release; \
+    cmake --build build --target AARNN -j; \
+    # Build Visualiser as well when VTK is available; ignore failure to keep image useful
+    (cmake --build build --target Visualiser -j || true); \
+    cmake --install build --component Unspecified || true
+
+FROM debian:bookworm-slim AS runtime
+LABEL org.opencontainers.image.source="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.description="AARNN runtime (Debian Bookworm)"
+
+RUN set -eux; \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      # Runtime libs matching links
+      libssl3 libcurl4 libgmp10 libfftw3-3 \
+      libpq5 libpqxx-7 \
+      libboost-filesystem1.74.0 libboost-system1.74.0 libboost-json1.74.0 \
+      libopencv-core406 libopencv-imgproc406 libopencv-highgui406 || true; \
+    # Fallback: if specific versions unavailable, install metapackage
+    apt-get -y install --no-install-recommends libopencv-dev || true; \
+    apt-get install -y --no-install-recommends \
+      libgl1 libglx-mesa0 libgl1-mesa-dri libglu1-mesa freeglut3 libglew2.2 libfreetype6 \
+      libvtk9.1 \
+      libasound2 libportaudio2 libpulse0 libsndfile1 \
+      libavcodec59 libavformat59 libavutil57 libswscale6 libswresample4 \
+      libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 \
+      ca-certificates bash; \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy built binaries and default configs
+COPY --from=build /app/build/AARNN /app/AARNN
+# Visualiser may or may not exist
+COPY --from=build /app/build/Visualiser /app/Visualiser 2>/dev/null || true
+COPY configure/simulation.conf /app/simulation.conf
+COPY configure/Visualiser.conf /app/Visualiser.conf
+
+# Default command runs the AARNN simulator; override to run Visualiser
+ENTRYPOINT ["/bin/bash", "-lc"]
+CMD ["/app/AARNN"]
