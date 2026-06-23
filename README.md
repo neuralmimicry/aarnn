@@ -1,5 +1,13 @@
 # AARNN — Autonomic Asynchronous Recursive Neuromorphic Network
 
+## Sponsor NeuralMimicry
+
+AARNN is an open-source research platform for emergent cognition — a tiered, multi-agent, distributed neuromorphic AI with real-time sensory input, PostgreSQL persistence, and interactive 3D visualisation via VTK. NeuralMimicry is an independent open-source initiative and we rely on community support to sustain this work.
+
+**[☕ Support us on Crowdfunder](https://www.crowdfunder.co.uk/p/qr/aWggxwPW?utm_campaign=sharemodal&utm_medium=referral&utm_source=shortlink)**
+
+---
+
 ![Build](https://github.com/neuralmimicry/aarnn/actions/workflows/cmake.yml/badge.svg?branch=main)
 
 AARNN (pronounced “Aaron”) is an open-source research platform for emergent cognition built as a tiered, multi‑agent, distributed AI. It focuses on neuromorphic concepts (neurons, clusters, receptors/effectors) and supports real‑time sensory input, PostgreSQL persistence, and interactive 3D visualisation via VTK.
