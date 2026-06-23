@@ -17,7 +17,7 @@ This repository contains:
 - Executables to simulate AARNN, capture/process audio, and visualise the system state.
 - Optional web viewer utilities and containerisation assets (Docker/Podman) for reproducible runs.
 
-Project by NeuralMimicry (Paul Isaacs).
+Project by NeuralMimicry (Paul Isaac's).
 
 
 ## 1. Goals and Scope
