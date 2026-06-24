@@ -1,0 +1,10 @@
+# vault_env.sh.example — copy to vault_env.sh and fill in real values.
+# vault_env.sh is gitignored and must never be committed.
+#
+# Usage:
+#   cp BuildFromGit/generic/vault_env.sh.example BuildFromGit/generic/vault_env.sh
+#   source BuildFromGit/generic/vault_env.sh
+
+VAULT_ADDR=http://vault:8200
+VAULT_API_ADDR=http://vault:8200
+VAULT_TOKEN=YOUR_HASHICORP_VAULT_SERVICE_TOKEN

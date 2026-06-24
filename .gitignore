@@ -10,6 +10,10 @@ bin
 errors.log
 thirdparty
 .env
+vault_env.sh
+**/vault_env.sh
+BuildFromGit/run004.sh
+*.vault_token
 cmake-build-debug/
 cmake-build-release/
 node_modules/
