@@ -69,8 +69,8 @@ Available library targets:
 
 ### 4.1. Build using CLion profiles (recommended)
 Profiles and build directories:
-- Debug → /home/pbisaacs/Developer/aarnn/cmake-build-debug
-- Release → /home/pbisaacs/Developer/aarnn/cmake-build-release
+- Debug → ~/Developer/aarnn/cmake-build-debug
+- Release → ~/Developer/aarnn/cmake-build-release
 
 In CLion, select a profile (Debug/Release) and build the desired target.
 
