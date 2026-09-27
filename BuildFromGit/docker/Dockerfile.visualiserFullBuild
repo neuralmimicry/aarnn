@@ -1,4 +1,5 @@
 # Use an official C++ runtime as a parent image
+ARG TARGET_PAGE_SIZE=4k
 FROM ubuntu:22.04 as builder
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -60,6 +61,8 @@ RUN make -j$(nproc)
 
 # Use an official C++ runtime as a parent image
 FROM ubuntu:22.04
+ARG TARGET_PAGE_SIZE
+LABEL org.opencontainers.image.page-size="${TARGET_PAGE_SIZE}"
 
 # Set the working directory in the container to /app
 WORKDIR /app

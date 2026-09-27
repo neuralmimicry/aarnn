@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source "$(dirname "$0")/ensure_64k_hwe_nvidia.sh"
+aarnn_ensure_64k_hwe_nvidia "${AARNN_ENABLE_GPU:-false}"
+
 # Purpose: Manage containers for PostgreSQL, Aarnn, and Visualiser services using Podman
 
 # Load environment variables

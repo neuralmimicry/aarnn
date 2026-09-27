@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source "$(dirname "$0")/podman/ensure_64k_hwe_nvidia.sh"
+aarnn_ensure_64k_hwe_nvidia "${AARNN_ENABLE_GPU:-false}"
+
 # run003.sh - Build and upload multiple container images using Buildah
 
 echo "Starting run003.sh: Building and uploading container images..."
@@ -177,7 +180,7 @@ for (( j=0; j<$NUM_IMAGES; j++ )); do
 
     # Build the image using Buildah
     echo "Building image $LOCAL_IMAGE using Buildah..."
-    buildah bud --ssh default -f "$CONTAINERFILE_PATH" -t "$LOCAL_IMAGE" $BUILD_ARG
+    buildah bud --ssh default --build-arg TARGET_PAGE_SIZE="${CONTAINER_TARGET_PAGE_SIZE:-4k}" -f "$CONTAINERFILE_PATH" -t "$LOCAL_IMAGE" $BUILD_ARG
 
     if [ $? -ne 0 ]; then
         echo "Failed to build the image $LOCAL_IMAGE."
