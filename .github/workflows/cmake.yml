@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }} • ${{ matrix.build-type }}
-    runs-on: ${{ matrix.os }}
+    name: Build (Linux X64) • ${{ matrix.build-type }}
+    runs-on: [self-hosted, Linux, X64]
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [linux]
         build-type: [Release, Debug]
     env:
       CMAKE_BUILD_TYPE: ${{ matrix.build-type }}
