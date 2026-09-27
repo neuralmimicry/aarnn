@@ -62,7 +62,9 @@ find_package(VTK REQUIRED COMPONENTS
         RenderingContextOpenGL2
 )
 
-find_package(Boost   REQUIRED COMPONENTS filesystem system json)
+# Boost.System is header-only in current Boost releases (including 1.90), so
+# do not request a separate Boost::system package from BoostConfig.cmake.
+find_package(Boost   REQUIRED COMPONENTS filesystem json)
 find_package(OpenSSL REQUIRED)
 find_package(CURL    REQUIRED)
 find_package(OpenCV  REQUIRED COMPONENTS core imgproc highgui)
@@ -119,7 +121,7 @@ target_link_libraries(aarnn_core PUBLIC
         PostgreSQL::PostgreSQL
         ${OpenCV_LIBS}
         common
-        Boost::filesystem Boost::system
+        Boost::filesystem
 )
 target_include_directories(aarnn_core PUBLIC
         include
