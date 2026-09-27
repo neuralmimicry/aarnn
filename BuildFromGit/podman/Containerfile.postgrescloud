@@ -1,5 +1,8 @@
 # Use the official PostgreSQL image from the Docker Hub
+ARG TARGET_PAGE_SIZE=4k
 FROM postgres:14
+ARG TARGET_PAGE_SIZE
+LABEL org.opencontainers.image.page-size="${TARGET_PAGE_SIZE}"
 
 # Set environment variable to make apt-get commands non-interactive
 ENV DEBIAN_FRONTEND=noninteractive

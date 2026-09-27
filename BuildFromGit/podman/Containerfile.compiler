@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1.2
 # Use an official build image with CMake and Git
+ARG TARGET_PAGE_SIZE=4k
 FROM ubuntu:24.04
+ARG TARGET_PAGE_SIZE
+LABEL org.opencontainers.image.page-size="${TARGET_PAGE_SIZE}"
 
 # Install locales
 RUN apt-get update && apt-get install -y locales

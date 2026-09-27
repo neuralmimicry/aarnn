@@ -8,6 +8,9 @@
 # a list, or a compound command (see SHELL GRAMMAR above), exits with a non-zero status
 set -e
 
+source "$(dirname "$0")/../podman/ensure_64k_hwe_nvidia.sh"
+aarnn_ensure_64k_hwe_nvidia "${AARNN_ENABLE_GPU:-false}"
+
 # Check if the script is run as root or with sudo
 # if [ "$EUID" -ne 0 ]; then
 #     echo "Please run as root or with sudo"
@@ -53,12 +56,13 @@ done
 # Build the Vault image
 remove_if_exists vault
 echo "Building Vault image..."
-podman build -t vault -f Containerfile.vault .
+podman build --build-arg TARGET_PAGE_SIZE="${CONTAINER_TARGET_PAGE_SIZE:-4k}" -t vault -f Containerfile.vault .
 
 # Build the PostgreSQL image
 remove_if_exists postgres
 echo "Building PostgreSQL image..."
 podman build \
+  --build-arg TARGET_PAGE_SIZE="${CONTAINER_TARGET_PAGE_SIZE:-4k}" \
   --build-arg POSTGRES_USERNAME="${POSTGRES_USERNAME}" \
   --build-arg POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
   --build-arg POSTGRES_DB="${POSTGRES_DB}" \
@@ -69,9 +73,9 @@ podman build \
 # Build the Aarnn image
 remove_if_exists aarnn
 echo "Building AARNN image..."
-podman build -t aarnn -f Containerfile.aarnnFullBuild .
+podman build --build-arg TARGET_PAGE_SIZE="${CONTAINER_TARGET_PAGE_SIZE:-4k}" -t aarnn -f Containerfile.aarnnFullBuild .
 
 # Build the Visualiser image
 remove_if_exists visualiser
 echo "Building Visualiser image..."
-podman build -t visualiser -f Containerfile.visualiserFullBuild .
+podman build --build-arg TARGET_PAGE_SIZE="${CONTAINER_TARGET_PAGE_SIZE:-4k}" -t visualiser -f Containerfile.visualiserFullBuild .

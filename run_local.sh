@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source "$(dirname "$0")/BuildFromGit/podman/ensure_64k_hwe_nvidia.sh"
+aarnn_ensure_64k_hwe_nvidia "${AARNN_ENABLE_GPU:-false}"
+
 # run_local.sh - Run aarnn or visualiser locally while connecting to Vault and Postgres containers
 
 # Usage:

@@ -1,4 +1,7 @@
+ARG TARGET_PAGE_SIZE=4k
 FROM compiler
+ARG TARGET_PAGE_SIZE
+LABEL org.opencontainers.image.page-size="${TARGET_PAGE_SIZE}"
 
 # Set the working directory in the container
 WORKDIR /app
@@ -51,4 +54,3 @@ USER aarnn
 
 # Run the application when the container launches
 ENTRYPOINT ["/app/launch_aarnn.sh"]
-
