@@ -3,6 +3,7 @@
 #ifndef BODY_COMPONENT_H
 #define BODY_COMPONENT_H
 
+#include <cstdint>
 #include <memory>
 
 template<typename PositionType>

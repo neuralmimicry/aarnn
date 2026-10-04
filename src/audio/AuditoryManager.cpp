@@ -10,6 +10,7 @@
 #include <gst/app/gstappsink.h>
 #include <curl/curl.h> // For YouTube Data API
 #include <boost/json.hpp>
+#include <boost/system/system_error.hpp>
 #include "SensoryReceptor.h"   // <— for std::shared_ptr<SensoryReceptor>
 #include <sstream>             // <— for istringstream in YouTube JSON parse
 
@@ -315,7 +316,7 @@ std::string AuditoryManager::searchYouTubeVideo(
     try {
         root = json::parse(response);
     }
-    catch (const json::system_error& e) {
+    catch (const boost::system::system_error& e) {
         std::cerr << "Failed to parse JSON response: " << e.what() << "\n";
         return "";
     }
