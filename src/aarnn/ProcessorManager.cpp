@@ -50,7 +50,7 @@ void ProcessorManager::loadFromJsonConfig(const std::string& filePath) {
     }
 
     // Parse into a boost::json::value and get the root object
-    boost::json::error_code ec;
+    boost::system::error_code ec;
     boost::json::value parsed = boost::json::parse(jsonText, ec);
     if (ec) {
         std::cerr << "Failed to parse JSON config: " << ec.message() << std::endl;

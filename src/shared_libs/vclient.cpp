@@ -1,6 +1,7 @@
 #include "vclient.h"
 #include <curl/curl.h>
 #include <boost/json.hpp>
+#include <boost/system/system_error.hpp>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -54,7 +55,7 @@ bool getPostgresCredentials(const std::string& vault_api_addr,
     try {
         jsonData = json::parse(response_string);
     }
-    catch (const json::system_error& e) {
+    catch (const boost::system::system_error& e) {
         std::cerr << "Failed to parse JSON: " << e.what() << "\n";
         return false;
     }
@@ -89,7 +90,7 @@ bool getPostgresCredentials(const std::string& vault_api_addr,
         std::cerr << "Missing key in Vault JSON: " << e.what() << "\n";
         return false;
     }
-    catch (const json::system_error& e) {
+    catch (const boost::system::system_error& e) {
         std::cerr << "Type error in Vault JSON: " << e.what() << "\n";
         return false;
     }
