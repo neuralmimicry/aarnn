@@ -76,3 +76,10 @@ USER visualiser
 
 # Run the application when the container launches
 ENTRYPOINT ["/app/launch_visualiser.sh"]
+
+# OCI metadata (final stage) so GHCR links the package to its source repository.
+LABEL org.opencontainers.image.source="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.url="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.description="AARNN visualiserarm64 image built from BuildFromGit (legacy C++ AARNN)" \
+      org.opencontainers.image.vendor="NeuralMimicry" \
+      org.opencontainers.image.licenses="GPL-3.0-only"

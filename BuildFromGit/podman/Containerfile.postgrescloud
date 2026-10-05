@@ -85,3 +85,10 @@ ENTRYPOINT ["entrypoint.sh"]
 
 # Default command provided by the PostgreSQL image
 # CMD ["postgres"]
+
+# OCI metadata (final stage) so GHCR links the package to its source repository.
+LABEL org.opencontainers.image.source="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.url="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.description="AARNN postgrescloud image built from BuildFromGit (legacy C++ AARNN)" \
+      org.opencontainers.image.vendor="NeuralMimicry" \
+      org.opencontainers.image.licenses="GPL-3.0-only"
