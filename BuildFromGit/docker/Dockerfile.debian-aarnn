@@ -57,6 +57,9 @@ RUN set -eux; \
 FROM debian:bookworm-slim AS runtime
 ARG TARGET_PAGE_SIZE
 LABEL org.opencontainers.image.source="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.url="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.vendor="NeuralMimicry" \
+      org.opencontainers.image.licenses="GPL-3.0-only" \
       org.opencontainers.image.page-size="${TARGET_PAGE_SIZE}" \
       org.opencontainers.image.description="AARNN runtime (Debian Bookworm)"
 

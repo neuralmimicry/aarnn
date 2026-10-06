@@ -48,3 +48,10 @@ USER vault
 
 # Set entrypoint
 ENTRYPOINT ["/usr/local/bin/start_vault.sh"]
+
+# OCI metadata (final stage) so GHCR links the package to its source repository.
+LABEL org.opencontainers.image.source="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.url="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.description="AARNN vaultarm64 image built from BuildFromGit (legacy C++ AARNN)" \
+      org.opencontainers.image.vendor="NeuralMimicry" \
+      org.opencontainers.image.licenses="GPL-3.0-only"

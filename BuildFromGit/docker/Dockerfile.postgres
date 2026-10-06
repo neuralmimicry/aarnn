@@ -14,3 +14,10 @@ ENV POSTGRES_DB=neurons
 COPY ./configure/init.sql /docker-entrypoint-initdb.d/
 
 EXPOSE ${POSTGRES_PORT_EXPOSE}
+
+# OCI metadata (final stage) so GHCR links the package to its source repository.
+LABEL org.opencontainers.image.source="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.url="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.description="AARNN postgres image built from BuildFromGit (legacy C++ AARNN)" \
+      org.opencontainers.image.vendor="NeuralMimicry" \
+      org.opencontainers.image.licenses="GPL-3.0-only"

@@ -189,3 +189,10 @@ RUN cd client && npm install && npm run build && cd ../server && npm install && 
 
 # back to your default
 WORKDIR /app
+
+# OCI metadata (final stage) so GHCR links the package to its source repository.
+LABEL org.opencontainers.image.source="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.url="https://github.com/neuralmimicry/aarnn" \
+      org.opencontainers.image.description="AARNN compiler image built from BuildFromGit (legacy C++ AARNN)" \
+      org.opencontainers.image.vendor="NeuralMimicry" \
+      org.opencontainers.image.licenses="GPL-3.0-only"
