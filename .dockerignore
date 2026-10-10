@@ -1,0 +1,38 @@
+.git/
+.gitmodules
+.gitignore
+
+# Build outputs
+build/
+cmake-build-debug/
+cmake-build-release/
+CMakeFiles/
+CMakeCache.txt
+**/*.o
+**/*.obj
+**/*.a
+**/*.so
+**/*.dylib
+**/*.dll
+**/*.pdb
+**/*.dSYM/
+
+# Node modules
+node_modules/
+webviewer/client/node_modules/
+webviewer/server/node_modules/
+
+# IDEs and tooling
+.vscode/
+.idea/
+*.iml
+
+# Logs and misc
+errors.log
+*.log
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
