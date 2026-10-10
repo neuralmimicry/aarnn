@@ -1,5 +1,3 @@
-version: "3.9"
-
 # AARNN full stack (multi-container)
 # Services:
 # - postgres: primary DB used by AARNN + Visualiser
@@ -38,8 +36,10 @@ services:
     image: redis:7-alpine
     container_name: aarnn-redis
     command: ["redis-server", "--appendonly", "yes"]
-    ports:
-      - "6379:6379"
+    # By default, do not publish Redis on the host to avoid port conflicts (e.g., host already running Redis on 6379).
+    # If you need host access to Redis for debugging, uncomment the ports block below and ensure the host port is free.
+    # ports:
+    #   - "${REDIS_PORT_EXPOSE:-6379}:6379"
     volumes:
       - redisdata:/data
     healthcheck:
@@ -52,7 +52,7 @@ services:
     build:
       context: .
       dockerfile: BuildFromGit/docker/Dockerfile.debian-aarnn
-    image: aarnn/runtime:debian-bookworm
+    pull_policy: build
     container_name: aarnn-core
     depends_on:
       postgres:
